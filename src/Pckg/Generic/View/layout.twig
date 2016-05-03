@@ -1,0 +1,19 @@
+{% extends 'root.twig' %}
+
+{% block 'head' %}{% endblock %}
+
+{% block 'body' %}
+<div class="full-container">
+    <header></header>
+    <div class="main-container">
+        {% if top %}<div id="top">{{ left | raw }}</div>{% endif %}
+        {% if centerTop %}<div id="center-top">{{ centerTop | raw }}</div>{% endif %}
+        {% if left %}<div id="left">{{ left | raw }}</div>{% endif %}
+        {% if center %}<div id="center">{{ center | raw }}</div>{% endif %}
+        {% if right %}<div id="right">{{ right | raw }}</div>{% endif %}
+        {% if centerBottom %}<div id="center-bottom">{{ centerBottom | raw }}</div>{% endif %}
+        {% if bottom %}<div id="right">{{ right | raw }}</div>{% endif %}
+    </div>
+    <footer></footer>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+<ul>
+{% for language in languages %}
+    <li><a href="{{ language.getRootUrl }}">{{ language.slug }}</a></li>
+{% endfor %}
+</ul>

@@ -1,0 +1,21 @@
+{
+  "name": "pckg/generic",
+  "description": "Generic frontend",
+  "homepage": "https://github.com/pckg/generic",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bojan Rajh",
+      "email": "schtr4jh@schtr4jh.net"
+    }
+  ],
+  "require": {
+    "pckg/framework": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "Pckg": "src\\"
+    }
+  },
+  "minimum-stability": "dev"
+}

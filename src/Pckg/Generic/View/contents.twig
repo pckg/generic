@@ -1,0 +1,8 @@
+{% for content in contents %}
+    <section>
+        <h1>{{ content.title }}</h1>
+        <h3>{{ content.subtitle }}</h3>
+        <div style="font-style: italic;">{{ content.description | raw }}</div>
+        <div>{{ content.content | raw }}</div>
+    </section>
+{% endfor %}

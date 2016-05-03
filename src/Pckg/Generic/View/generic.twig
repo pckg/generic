@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {{ _seo | raw }}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    {{ _assetManager | raw }}
+</head>
+<body path="vendor\lfw\generic\Pckg\Generic\View\generic.twig">
+<div class="container">
+    <h1>Generic layout</h1>
+    {{ _debug | raw }}
+    {% block content %}{{ content | raw }}{% endblock %}
+</div>
+<!-- /container -->
+{{ debugBar.renderHead() | raw }}
+{{ debugBar.render() | raw }}
+</body>
+</html>
