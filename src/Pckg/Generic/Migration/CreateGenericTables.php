@@ -13,6 +13,8 @@ class CreateGenericTables extends Migration
         $this->variablesUp();
         $this->contentsUp();
         $this->actionsUp();
+
+        $this->save();
     }
 
     protected function languagesUp()

@@ -21,9 +21,9 @@ class EncapsulateResponse
     public function execute(callable $next)
     {
         if ($this->request->isGet()) {
-            $viewData = (string)$this->response->getViewData();
+            $viewData = $this->response->getViewData();
 
-            if (substr($viewData, 0, 5) !== '<html') {
+            if (is_string($viewData) && substr($viewData, 0, 5) !== '<html') {
                 $viewData = Reflect::create(Generic::class)->wrapIntoGeneric($viewData);
                 $this->response->setViewData($viewData);
             }
