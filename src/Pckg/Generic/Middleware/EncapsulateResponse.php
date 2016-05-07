@@ -21,11 +21,11 @@ class EncapsulateResponse
     public function execute(callable $next)
     {
         if ($this->request->isGet()) {
-            $viewData = $this->response->getViewData();
+            $output = $this->response->getOutput();
 
-            if (is_string($viewData) && substr($viewData, 0, 5) !== '<html') {
-                $viewData = Reflect::create(Generic::class)->wrapIntoGeneric($viewData);
-                $this->response->setViewData($viewData);
+            if (is_string($output) && substr($output, 0, 5) !== '<html') {
+                $output = Reflect::create(Generic::class)->wrapIntoGeneric($output);
+                $this->response->setOutput($output);
             }
         }
 

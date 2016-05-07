@@ -160,7 +160,7 @@ class Generic
         }
 
         // @T00D00 - handle translations
-        $arrRoutes = $routes->withTranslation()->all();
+        $arrRoutes = $routes/*->withTranslation()*/->all();
 
         foreach ($arrRoutes AS $route) {
             $router->add($route->route, [
