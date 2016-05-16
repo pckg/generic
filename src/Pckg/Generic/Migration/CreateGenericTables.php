@@ -13,6 +13,7 @@ class CreateGenericTables extends Migration
         $this->variablesUp();
         $this->contentsUp();
         $this->actionsUp();
+        $this->menusUp();
 
         $this->save();
     }
@@ -80,6 +81,22 @@ class CreateGenericTables extends Migration
         $actionsMorphs = $this->morphtable('actions', 'action');
         $actionsMorphs->integer('content_id')->references('contents');
         $actionsMorphs->integer('variable_id')->references('variables');
+    }
+
+    protected function menusUp()
+    {
+        $menus = $this->table('menus');
+        $menus->slug();
+        $menus->varchar('template');
+
+        $menuItems = $this->table('menu_items');
+        $menuItems->orderable();
+        $menuItems->integer('menu_id')->references('menus');
+        $menuItems->integer('parent_id')->references('menu_items');
+
+        $menuItemsI18n = $this->translatable('menu_items');
+        $menuItemsI18n->title();
+        $menuItemsI18n->varchar('url');
     }
 
 }
