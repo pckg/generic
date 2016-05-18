@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Provider;
 
 use Pckg\Framework\Provider;
+use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
@@ -34,7 +35,8 @@ class Config extends Provider
     public function viewObjects()
     {
         return [
-            '_menuService' => Menu::class,
+            '_menuService'   => Menu::class,
+            '_pluginService' => Plugin::class,
         ];
     }
 
