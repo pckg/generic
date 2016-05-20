@@ -14,6 +14,8 @@ class CreateGenericTables extends Migration
         $this->contentsUp();
         $this->actionsUp();
         $this->menusUp();
+        $this->settingsUp();
+        $this->translationsUp();
 
         $this->save();
     }
@@ -97,6 +99,36 @@ class CreateGenericTables extends Migration
         $menuItemsI18n = $this->translatable('menu_items');
         $menuItemsI18n->title();
         $menuItemsI18n->varchar('url');
+    }
+
+    protected function settingsUp()
+    {
+        $settingTypes = $this->table('setting_types');
+        $settingTypes->slug();
+
+        $settingTypesI18n = $this->translatable('setting_types');
+        $settingTypesI18n->title();
+
+        $settings = $this->table('settings');
+        $settings->integer('setting_type_id')->references('setting_types');
+
+        $settingsI18n = $this->translatable('settings');
+        $settingsI18n->text('value');
+    }
+
+    protected function translationsUp()
+    {
+        $translationTypes = $this->table('translation_types');
+        $translationTypes->slug();
+
+        $translationTypesI18n = $this->translatable('translation_types');
+        $translationTypesI18n->title();
+
+        $translations = $this->table('translations');
+        $translations->slug();
+
+        $translationsI18n = $this->translatable('translations');
+        $translationsI18n->text('value');
     }
 
 }
