@@ -34,7 +34,8 @@ class Routes extends Entity
     {
         return $this->morphsMany(Actions::class)
             ->over(ActionsMorphs::class)
-            ->on('content_id');
+            ->on('content_id')
+            ->fill('actionsMorphs');
     }
 
     /**
@@ -47,10 +48,10 @@ class Routes extends Entity
 
         })->withActions(function (MorphsMany $relation) {
             $relation->getMiddleEntity()->withVariable();
-            /*$relation->withContents(function(HasMany $relation){
+            $relation->withContents(function(HasMany $relation){
                 $relation->joinTranslations();
 
-            });*/
+            });
         });
     }
 

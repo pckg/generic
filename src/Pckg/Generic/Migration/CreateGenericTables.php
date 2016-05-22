@@ -80,9 +80,10 @@ class CreateGenericTables extends Migration
         $actionsI18n = $this->translatable('actions');
         $actionsI18n->title();
 
-        $actionsMorphs = $this->morphtable('actions', 'action');
+        $actionsMorphs = $this->morphtable('actions', 'action_id');
         $actionsMorphs->integer('content_id')->references('contents');
         $actionsMorphs->integer('variable_id')->references('variables');
+        $actionsMorphs->orderable();
     }
 
     protected function menusUp()

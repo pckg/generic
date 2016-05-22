@@ -20,7 +20,7 @@ class EncapsulateResponse
 
     public function execute(callable $next)
     {
-        if ($this->request->isGet()) {
+        if ($this->request->isGet() && !$this->request->isAjax()) {
             $output = $this->response->getOutput();
 
             if (is_string($output) && substr($output, 0, 5) !== '<html') {

@@ -26,7 +26,8 @@ class Layouts extends Entity
             ->over(ActionsMorphs::class)
             ->on('action_id')// id of morphs
             ->poly('poly_id')// id of related object
-            ->morph('morph_id'); // this class
+            ->morph('morph_id') // this class
+            ->fill('actionsMorphs');
     }
 
 }
