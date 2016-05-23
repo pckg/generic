@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {{ _seo | raw }}
+    {{ _seoManager | raw }}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    {{ _metaManager | raw }}
 
-    {{ _assetManager | raw }}
+    {{ _assetManager.getMeta(['css', 'js'], ['libraries', 'main']) | raw }}
+
+    {{ _assetManager.getGoogleFonts() | raw }}
+
+    {{ _assetManager.getExternals() | raw }}
 </head>
 <body path="vendor\lfw\generic\Pckg\Generic\View\generic.twig">
 <div class="container">
-    <h1>Generic layout</h1>
-    {{ _debug | raw }}
     {% block content %}{{ content | raw }}{% endblock %}
 </div>
-<!-- /container -->
-{{ debugBar.renderHead() | raw }}
-{{ debugBar.render() | raw }}
+{% if _debugBar %}
+    {# temp, we need to execute this before render in PHP #}
+    {% set renderer = _debugBar.getJavascriptRenderer() %}
+    {% set renderHead = renderer.renderHead() %}
+    {% set render = renderer.render() %}
+    {{ renderHead | raw }}
+    {{ render | raw }}
+{% endif %}
 </body>
 </html>
