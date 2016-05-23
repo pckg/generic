@@ -5,6 +5,7 @@ namespace Pckg\Generic\Provider;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Controller\Generic as GenericController;
+use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
 
@@ -19,6 +20,9 @@ class Config extends Provider
                     'view'       => 'generic',
                     'controller' => GenericController::class,
                     'name'       => 'home',
+                    'resolvers'  => [
+                        'route' => RouteResolver::class,
+                    ],
                 ],
             ],
             'method' => [
