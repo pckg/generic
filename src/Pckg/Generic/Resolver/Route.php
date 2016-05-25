@@ -25,7 +25,7 @@ class Route implements RouteResolver
 
     public function resolve($value)
     {
-        return $this->routes->where('id', $value)
+        return $this->routes->where($value ? 'id' : 'slug', $value ?: 'home')
             ->oneOrFail(function () {
                 $this->response->unauthorized('Route not found');
             });
