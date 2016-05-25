@@ -10,38 +10,6 @@
     {{ _assetManager.getGoogleFonts() | raw }}
 
     {{ _assetManager.getExternals() | raw }}
-
-    <script type="text/javascript">
-
-
-        var http = {
-
-            formToData: function (vueElement, keys) {
-                var data = {};
-
-                $.each(keys, function (i, key) {
-                    data[key] = vueElement.form[key];
-                });
-
-                return data;
-            },
-
-            submitForm: function (vueElement, fields) {
-                var data = http.formToData(vueElement, fields);
-                var $form = $(vueElement.$el);
-                var url = $form.attr('action');
-
-                $.post(url, data, function (data) {
-
-                }, 'JSON');
-            },
-
-            getJSON: function (url, onSuccess) {
-                $.get(url, 'JSON').success(onSuccess)
-            }
-
-        };
-    </script>
 </head>
 <body path="vendor\lfw\generic\Pckg\Generic\View\generic.twig">
 <div class="container">
