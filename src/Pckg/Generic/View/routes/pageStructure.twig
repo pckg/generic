@@ -3,12 +3,13 @@
         var data = {
             variables: {{ variables.toJSON() | raw }},
             route: {{ route.toJSON() | raw }},
-            layout: {{ layout.toJSON() | raw }},
+            layout: {% if layout %}{{ layout.toJSON() | raw }}{% else %}{}{% endif %},
             formActionMorph: {{ actionsMorph.toJSON() | raw }}
         };
         var routeActions = new Vue({
             el: '.pageStructure',
             data: function () {
+                console.log(data.route);
                 return {
                     variables: data.variables,
                     route: data.route,
