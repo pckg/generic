@@ -1,0 +1,10 @@
+{{ _assetManager.getMeta(['css', 'js'], ['footer']) | raw }}
+
+{% if _debugBar %}
+    {# temp, we need to execute this before render in PHP #}
+    {% set renderer = _debugBar.getJavascriptRenderer() %}
+    {% set renderHead = renderer.renderHead() %}
+    {% set render = renderer.render() %}
+    {{ renderHead | raw }}
+    {{ render | raw }}
+{% endif %}

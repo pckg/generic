@@ -1,12 +1,16 @@
 <ul class="nav navbar-nav">
     {% for menuItem in menuItems %}
     <li class="dropdown">
+        {% if not menuItem.getChildren %}
+            <a href="{{ menuItem.getRealUrl() }}" role="button" aria-haspopup="true">{{ menuItem.title }}</a>
+        {% else %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ menuItem.title }} <span class="caret"></span></a>
         <ul class="dropdown-menu">
             {% for menuSubItem in menuItem.getChildren %}
             <li><a href="{{ menuSubItem.getRealUrl() }}">{{ menuSubItem.title }}</a></li>
             {% endfor %}
         </ul>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

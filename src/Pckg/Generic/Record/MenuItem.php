@@ -10,6 +10,10 @@ class MenuItem extends Record
 
     public function getRealUrl()
     {
+        if (strpos($this->url, '://')) {
+            return $this->url;
+        }
+        
         return (dev() ? '/dev.php' : '') . $this->url;
     }
 
