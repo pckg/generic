@@ -27,6 +27,8 @@ class Menu
             return '<!-- no menu ' . $slug . ' -->';
         }
 
+        $first = $this->buildTree($menu->menuItems)->first();
+        //dd($first, $first->getRelation('_translations')->first()->title, $first->title);
         return view('Pckg\Generic:menu\\' . $menu->template, [
             'menu'      => $menu,
             'menuItems' => $this->buildTree($menu->menuItems),
