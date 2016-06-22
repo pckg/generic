@@ -26,9 +26,9 @@ class Route extends Record
             : null;
     }
 
-    public function getRoute()
+    public function getRoute($prefix = true)
     {
-        return env()->getUrlPrefix() . $this->getValue('route');
+        return ($prefix ? env()->getUrlPrefix() : '') . $this->getValue('route');
     }
 
 }

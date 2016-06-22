@@ -27,12 +27,15 @@ class Routes extends Entity
     public function layout()
     {
         return $this->belongsTo(Layouts::class)
+            ->foreignKey('layout_id')
             ->on('layout_id');
     }
 
     public function actions()
     {
         return $this->morphsMany(Actions::class)
+            ->leftForeignKey('action_id')
+            ->rightForeignKey('poly_id')
             ->over(ActionsMorphs::class)
             ->on('content_id')
             ->fill('actionsMorphs');

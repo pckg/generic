@@ -115,6 +115,9 @@ class CreateGenericTables extends Migration
 
         $settingsI18n = $this->translatable('settings');
         $settingsI18n->text('value');
+
+        $settingsMorphs = $this->morphtable('settings', 'setting_id');
+        $settingsMorphs->varchar('value');
     }
 
     protected function translationsUp()
