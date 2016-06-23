@@ -25,7 +25,6 @@ class Layouts extends Entity
         return $this->morphsMany(Actions::class)
                     ->leftForeignKey('action_id')
                     ->over(ActionsMorphs::class)
-                    ->on('action_id')
                     ->fill('actionsMorphs');
     }
 

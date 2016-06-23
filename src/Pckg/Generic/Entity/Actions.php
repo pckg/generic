@@ -33,7 +33,6 @@ class Actions extends Entity
     {
         return $this->morphsMany(Contents::class)
             ->over(ActionsMorphs::class)
-            ->on('action_id')
             ->poly('poly_id')
             ->morph('morph_id');
     }
