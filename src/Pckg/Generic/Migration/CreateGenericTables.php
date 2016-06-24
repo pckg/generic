@@ -100,6 +100,8 @@ class CreateGenericTables extends Migration
         $menuItemsI18n = $this->translatable('menu_items');
         $menuItemsI18n->title();
         $menuItemsI18n->varchar('url');
+
+        $menuItemsP17n = $this->permissiontable('menu_items');
     }
 
     protected function settingsUp()

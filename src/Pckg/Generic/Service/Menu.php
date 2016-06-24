@@ -20,7 +20,11 @@ class Menu
     public function build($slug)
     {
         $menu = $this->menus->withMenuItems(function (HasMany $relation) {
+            /**
+             * @T00D00 - make this join for better performance ;-)
+             */
             $relation->withTranslations();
+            $relation->joinPermissionTo('read');
         })->where('slug', $slug)->one();
 
         if (!$menu) {
@@ -28,7 +32,6 @@ class Menu
         }
 
         $first = $this->buildTree($menu->menuItems)->first();
-        //dd($first, $first->getRelation('_translations')->first()->title, $first->title);
         return view('Pckg\Generic:menu\\' . $menu->template, [
             'menu'      => $menu,
             'menuItems' => $this->buildTree($menu->menuItems),
