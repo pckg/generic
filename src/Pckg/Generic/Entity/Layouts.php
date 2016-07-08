@@ -4,7 +4,7 @@ namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Translatable;
-USE Pckg\Generic\Record\Layout;
+use Pckg\Generic\Record\Layout;
 
 /**
  * Class Layouts
@@ -21,7 +21,8 @@ class Layouts extends Entity
      */
     protected $record = Layout::class;
 
-    public function actions() {
+    public function actions()
+    {
         return $this->morphsMany(Actions::class)
                     ->leftForeignKey('action_id')
                     ->over(ActionsMorphs::class)

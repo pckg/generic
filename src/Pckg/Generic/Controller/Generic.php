@@ -7,17 +7,18 @@ use Pckg\Framework\Inter\Entity\Languages;
 use Pckg\Framework\Response;
 use Pckg\Framework\Router;
 use Pckg\Framework\View;
-use Pckg\Manager\Asset as AssetManager;
-use Pckg\Manager\Meta as MetaManager;
-use Pckg\Manager\Seo as SeoManager;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
+use Pckg\Manager\Asset as AssetManager;
+use Pckg\Manager\Meta as MetaManager;
+use Pckg\Manager\Seo as SeoManager;
 
 /**
  * Class Generic
+ *
  * @package Pckg\Generic\Controller
  */
 class Generic
@@ -73,16 +74,22 @@ class Generic
 
     public function getContentAction(Action $action)
     {
-        return view('contents', [
-            'contents' => (new Contents())->all(),
-        ]);
+        return view(
+            'contents',
+            [
+                'contents' => (new Contents())->all(),
+            ]
+        );
     }
 
     public function getLanguagesAction(Languages $languages)
     {
-        return view('languages', [
-            'languages' => $languages->joinTranslations()->all(),
-        ]);
+        return view(
+            'languages',
+            [
+                'languages' => $languages->joinTranslations()->all(),
+            ]
+        );
     }
 
 }

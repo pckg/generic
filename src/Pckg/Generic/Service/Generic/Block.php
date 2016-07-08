@@ -4,6 +4,7 @@ namespace Pckg\Generic\Service\Generic;
 
 /**
  * Class Block
+ *
  * @package Pckg\Generic\Service\Generic
  */
 class Block
@@ -37,6 +38,7 @@ class Block
 
     /**
      * @param Action ...$actions
+     *
      * @return $this
      */
     public function addAction(Action ...$actions)

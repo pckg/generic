@@ -13,9 +13,9 @@ class Variables extends Entity
     public function actions()
     {
         return $this->morphsMany(Actions::class)
-            ->over(ActionsMorphs::class)
-            ->poly('poly_id')
-            ->morph('morph_id');
+                    ->over(ActionsMorphs::class)
+                    ->poly('poly_id')
+                    ->morph('morph_id');
     }
 
 }

@@ -12,7 +12,8 @@ use Pckg\Generic\Service\Menu;
 class Generic extends Provider
 {
 
-    public function routes() {
+    public function routes()
+    {
         return [
             'url'    => [
                 '/' => [
@@ -30,18 +31,21 @@ class Generic extends Provider
         ];
     }
 
-    public function paths() {
+    public function paths()
+    {
         return $this->getViewPaths();
     }
 
-    public function viewObjects() {
+    public function viewObjects()
+    {
         return [
             '_menuService'   => Menu::class,
             '_pluginService' => Plugin::class,
         ];
     }
 
-    public function assets() {
+    public function assets()
+    {
         return [
             'footer' => [
                 'vue/pckg-generic-app.js',

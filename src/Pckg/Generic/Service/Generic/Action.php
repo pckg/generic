@@ -39,22 +39,26 @@ class Action
      * @param      $method
      * @param null $order
      */
-    public function __construct($class, $method, $args = [], $order = null) {
+    public function __construct($class, $method, $args = [], $order = null)
+    {
         $this->class = $class;
         $this->method = $method;
         $this->order = $order;
         $this->args = $args;
     }
 
-    public function getOrder() {
+    public function getOrder()
+    {
         return $this->order;
     }
 
-    public function getClass() {
+    public function getClass()
+    {
         return $this->class;
     }
 
-    public function getMethod() {
+    public function getMethod()
+    {
         return $this->method;
     }
 
@@ -62,7 +66,8 @@ class Action
      * @return string
      * @throws Exception
      */
-    public function getHtml() {
+    public function getHtml()
+    {
         if ($this->class && $this->method) {
             $prefix = strtolower(request()->getMethod());
 

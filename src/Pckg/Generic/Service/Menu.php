@@ -19,19 +19,24 @@ class Menu
 
     public function build($slug)
     {
-        $menu = $this->menus->withMenuItems(function (HasMany $relation) {
-            $relation->joinTranslation();
-            $relation->joinPermissionTo('read');
-        })->where('slug', $slug)->one();
+        $menu = $this->menus->withMenuItems(
+            function(HasMany $relation) {
+                $relation->joinTranslation();
+                $relation->joinPermissionTo('read');
+            }
+        )->where('slug', $slug)->one();
 
         if (!$menu) {
             return '<!-- no menu ' . $slug . ' -->';
         }
 
-        return view('Pckg\Generic:menu\\' . $menu->template, [
-            'menu'      => $menu,
-            'menuItems' => $this->buildTree($menu->menuItems),
-        ]);
+        return view(
+            'Pckg\Generic:menu\\' . $menu->template,
+            [
+                'menu'      => $menu,
+                'menuItems' => $this->buildTree($menu->menuItems),
+            ]
+        );
     }
 
     protected function buildTree(Collection $menuItems)

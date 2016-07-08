@@ -23,7 +23,10 @@ class EncapsulateResponse
         if ($this->request->isGet() && !$this->request->isAjax()) {
             $output = $this->response->getOutput();
 
-            if (is_string($output) && (substr($output, 0, 5)) !== '<html' && strtolower(substr($output, 0, 9)) != '<!doctype') {
+            if (is_string($output) && (substr($output, 0, 5)) !== '<html' && strtolower(
+                                                                                 substr($output, 0, 9)
+                                                                             ) != '<!doctype'
+            ) {
                 $output = Reflect::create(Generic::class)->wrapIntoGeneric($output);
                 $this->response->setOutput($output);
             }

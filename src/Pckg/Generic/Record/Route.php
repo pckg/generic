@@ -9,6 +9,7 @@ use Pckg\Generic\Entity\Routes;
 
 /**
  * Class Route
+ *
  * @package Pckg\Generic\Record
  */
 class Route extends Record

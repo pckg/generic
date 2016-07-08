@@ -26,11 +26,13 @@ class Route implements RouteResolver
     public function resolve($value)
     {
         return $this->routes//->where($value ? 'id' : 'slug', $value ?: 'home')
-            ->joinTranslation()
-            ->where('routes_i18n.route', $value)
-            ->oneOrFail(function () {
+        ->joinTranslation()
+        ->where('routes_i18n.route', $value)
+        ->oneOrFail(
+            function() {
                 $this->response->unauthorized('Route not found');
-            });
+            }
+        );
     }
 
     public function parametrize($record)

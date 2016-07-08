@@ -8,7 +8,8 @@ class Media
 
     }
 
-    public function getMediaListAction() {
+    public function getMediaListAction()
+    {
 
     }
 

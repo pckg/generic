@@ -8,6 +8,7 @@ use Pckg\Generic\Record\Content;
 
 /**
  * Class Contents
+ *
  * @package Pckg\Generic\Entity
  */
 class Contents extends Entity

@@ -7,6 +7,7 @@ use Pckg\Generic\Entity\Actions;
 
 /**
  * Class Action
+ *
  * @package Pckg\Generic\Record
  */
 class Action extends Record

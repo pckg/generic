@@ -10,9 +10,12 @@ class Content
         /**
          * Get content, set it to proper view.
          */
-        return view('content\simple', [
-            'content' => $content,
-        ]);
+        return view(
+            'content\simple',
+            [
+                'content' => $content,
+            ]
+        );
     }
 
     public function getListedAction(ContentRecord $content = null)
@@ -20,9 +23,12 @@ class Content
         /**
          * Get content, set it to proper view, also set subcontents.
          */
-        return view('content\simple', [
-            'content' => $content,
-        ]);
+        return view(
+            'content\simple',
+            [
+                'content' => $content,
+            ]
+        );
     }
 
     public function getTreeAction(ContentRecord $content = null)
@@ -30,9 +36,12 @@ class Content
         /**
          * Get content, set it to proper view, also set it as tree.
          */
-        return view('content\tree', [
-            'content' => $content,
-        ]);
+        return view(
+            'content\tree',
+            [
+                'content' => $content,
+            ]
+        );
     }
 
 }

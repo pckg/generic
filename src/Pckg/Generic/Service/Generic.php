@@ -7,9 +7,9 @@ use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Route;
+use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
-use Pckg\Generic\Resolver\Route as RouteResolver;
 
 /**
  * Class Generic
@@ -31,7 +31,8 @@ class Generic
      *
      * @return $this
      */
-    public function addBlock(Block ...$blocks) {
+    public function addBlock(Block ...$blocks)
+    {
         foreach ($blocks as $block) {
             $this->blocks[] = $block;
         }
@@ -44,7 +45,8 @@ class Generic
      *
      * @return Block
      */
-    public function touchBlock(...$blocks) {
+    public function touchBlock(...$blocks)
+    {
         foreach ($blocks as $block) {
             if (!isset($this->blocks[$block])) {
                 $this->blocks[$block] = new Block($block);
@@ -54,7 +56,8 @@ class Generic
         return $this->blocks[$block];
     }
 
-    public function readRoute(Route $route) {
+    public function readRoute(Route $route)
+    {
         $this->route = $route;
 
         $route->actions->each(
@@ -95,7 +98,8 @@ class Generic
      *
      * @return Action
      */
-    public function addAction($variable, $class, $method, $args = []) {
+    public function addAction($variable, $class, $method, $args = [])
+    {
         $block = $this->touchBlock($variable);
 
         $block->addAction($action = new Action($class, $method, $args));
@@ -106,14 +110,16 @@ class Generic
     /**
      * @return mixed
      */
-    public function getVariables() {
+    public function getVariables()
+    {
         return $this->mergeVariables($this->getVariablesFromOrder($this->makeOrderFromBlocks()));
     }
 
     /**
      * @return array
      */
-    private function makeOrderFromBlocks() {
+    private function makeOrderFromBlocks()
+    {
         $order = [];
         foreach ($this->blocks as $block) {
             foreach ($block->getActions() as $action) {
@@ -131,7 +137,8 @@ class Generic
      *
      * @return array
      */
-    private function getVariablesFromOrder($order) {
+    private function getVariablesFromOrder($order)
+    {
         $variables = [];
         foreach ($order as $order => $blocks) {
             foreach ($blocks as $block => $actions) {
@@ -157,7 +164,8 @@ class Generic
      *
      * @return mixed
      */
-    private function mergeVariables($variables) {
+    private function mergeVariables($variables)
+    {
         foreach ($variables as &$contents) {
             $contents = implode($contents);
         }
@@ -169,7 +177,8 @@ class Generic
      * @param Routes $routes
      * @param Router $router
      */
-    public static function addRoutesFromDb(Routes $routes, Router $router) {
+    public static function addRoutesFromDb(Routes $routes, Router $router)
+    {
         if (!$routes->getRepository()->getCache()->hasTable('routes')) {
             return;
         }

@@ -14,8 +14,7 @@ class Routes extends Controller
         Record $dynamicRecord,
         ActionMorph $actionMorphForm,
         ActionsMorph $actionsMorph
-    )
-    {
+    ) {
         $route = (new RoutesEntity())->withActions()->where('id', $dynamicRecord->id)->one();
         $variables = (new Variables())->all();
 
@@ -29,13 +28,16 @@ class Routes extends Controller
         $actionMorphForm->initFields();
         $actionMorphForm->populateFromRecord($actionsMorph);
 
-        return view('routes\pageStructure', [
-            'route'           => $route,
-            'variables'       => $variables,
-            'layout'          => $layout,
-            'actionMorphForm' => $actionMorphForm,
-            'actionsMorph'    => $actionsMorph,
-        ]);
+        return view(
+            'routes\pageStructure',
+            [
+                'route'           => $route,
+                'variables'       => $variables,
+                'layout'          => $layout,
+                'actionMorphForm' => $actionMorphForm,
+                'actionsMorph'    => $actionsMorph,
+            ]
+        );
     }
 
 }

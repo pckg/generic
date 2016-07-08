@@ -13,7 +13,7 @@ class MenuItem extends Record
         if (strpos($this->url, '://')) {
             return $this->url;
         }
-        
+
         return (dev() ? '/dev.php' : '') . $this->url;
     }
 

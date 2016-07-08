@@ -13,35 +13,37 @@ class ActionMorph extends Bootstrap
     public function initFields()
     {
         $this->addSelect('action_id')
-            ->setAttribute('v-model', 'form.action_id')
-            ->setLabel('Action')
-            ->addOptions((new Actions())->all()->getListID());
+             ->setAttribute('v-model', 'form.action_id')
+             ->setLabel('Action')
+             ->addOptions((new Actions())->all()->getListID());
 
         $this->addSelect('morph_id')
-            ->setAttribute('v-model', 'form.morph_id')
-            ->setLabel('Morph')
-            ->addOptions([
-                Layouts::class => Layouts::class,
-                Routes::class  => Routes::class,
-            ]);
+             ->setAttribute('v-model', 'form.morph_id')
+             ->setLabel('Morph')
+             ->addOptions(
+                 [
+                     Layouts::class => Layouts::class,
+                     Routes::class  => Routes::class,
+                 ]
+             );
 
         $this->addSelect('poly_id')
-            ->setAttribute('v-model', 'form.poly_id')
-            ->setLabel('Poly');
+             ->setAttribute('v-model', 'form.poly_id')
+             ->setLabel('Poly');
 
         $this->addSelect('content_id')
-            ->setAttribute('v-model', 'form.content_id')
-            ->setLabel('Content')
-            ->addOptions((new Contents())->all()->getListID());
+             ->setAttribute('v-model', 'form.content_id')
+             ->setLabel('Content')
+             ->addOptions((new Contents())->all()->getListID());
 
         $this->addSelect('variable_id')
-            ->setAttribute('v-model', 'form.variable_id')
-            ->setLabel('Variable')
-            ->addOptions((new Variables())->all()->getListID());
+             ->setAttribute('v-model', 'form.variable_id')
+             ->setLabel('Variable')
+             ->addOptions((new Variables())->all()->getListID());
 
         $this->addInteger('order')
-            ->setAttribute('v-model', 'form.order')
-            ->setLabel('Order');
+             ->setAttribute('v-model', 'form.order')
+             ->setLabel('Order');
 
         $submit = $this->addSubmit();
         $submit->setAttribute('v-on:click', 'onSubmit');

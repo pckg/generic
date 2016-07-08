@@ -8,7 +8,8 @@ class Menus extends Entity
 
     protected $record = Menu::class;
 
-    public function menuItems() {
+    public function menuItems()
+    {
         return $this->hasMany(MenuItems::class)
                     ->fill('menuItems')
                     ->foreignKey('menu_id');

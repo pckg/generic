@@ -10,7 +10,8 @@ class SettingsMorph extends Record
 
     protected $entity = SettingsMorphs::class;
 
-    public function resolve(&$args) {
+    public function resolve(&$args)
+    {
         if ($this->setting_id == 1) {
             $args[] = Reflect::class(Table::class)->resolve($this->value);
 

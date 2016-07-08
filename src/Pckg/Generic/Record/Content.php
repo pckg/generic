@@ -7,6 +7,7 @@ use Pckg\Generic\Entity\Contents;
 
 /**
  * Class Content
+ *
  * @package Pckg\Generic\Record
  */
 class Content extends Record
