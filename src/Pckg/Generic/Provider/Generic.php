@@ -9,7 +9,7 @@ use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
 
-class Config extends Provider
+class Generic extends Provider
 {
 
     public function routes() {
