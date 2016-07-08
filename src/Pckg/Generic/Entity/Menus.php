@@ -10,6 +10,7 @@ class Menus extends Entity
 
     public function menuItems() {
         return $this->hasMany(MenuItems::class)
+                    ->fill('menuItems')
                     ->foreignKey('menu_id');
     }
 

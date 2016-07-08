@@ -20,10 +20,7 @@ class Menu
     public function build($slug)
     {
         $menu = $this->menus->withMenuItems(function (HasMany $relation) {
-            /**
-             * @T00D00 - make this join for better performance ;-)
-             */
-            $relation->withTranslations();
+            $relation->joinTranslation();
             $relation->joinPermissionTo('read');
         })->where('slug', $slug)->one();
 
@@ -31,7 +28,6 @@ class Menu
             return '<!-- no menu ' . $slug . ' -->';
         }
 
-        $first = $this->buildTree($menu->menuItems)->first();
         return view('Pckg\Generic:menu\\' . $menu->template, [
             'menu'      => $menu,
             'menuItems' => $this->buildTree($menu->menuItems),

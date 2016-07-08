@@ -4,13 +4,7 @@ namespace Pckg\Generic\Service\Generic;
 
 use Exception;
 use Pckg\Concept\Reflect;
-use Pckg\Dynamic\Entity\Tables;
-use Pckg\Generic\Record\Action as ActionRecord;
-use Pckg\Generic\Record\ActionsLayout;
-use Pckg\Generic\Record\ActionsRoute;
-use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
-use Pckg\Generic\Record\SettingsMorph;
 
 /**
  * Class Action
@@ -94,9 +88,6 @@ class Action
                     throw $e;
                 }
                 throw $e;
-
-                // @T00D00 - log error!
-                return;
             }
 
             return '<!-- ' . $this->class . '::' . $method . ' start -->' . $result . '<!-- ' . $this->class . '::' . $method . ' end -->';
