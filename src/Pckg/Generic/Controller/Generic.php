@@ -58,7 +58,7 @@ class Generic
             : $vars;
     }
 
-    public function wrapIntoGeneric($view)
+    public function wrapIntoGeneric($view, $template = 'Pckg\Generic:generic')
     {
         $center = $this->genericService->touchBlock('content');
 
@@ -69,7 +69,7 @@ class Generic
 
         $vars = $this->genericService->getVariables();
 
-        return view('Pckg\Generic:generic', $vars);
+        return view($template, $vars);
     }
 
     public function getContentAction(Action $action)

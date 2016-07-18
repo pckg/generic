@@ -27,7 +27,8 @@ class EncapsulateResponse
                                                                                  substr($output, 0, 9)
                                                                              ) != '<!doctype'
             ) {
-                $output = Reflect::create(Generic::class)->wrapIntoGeneric($output);
+                $template = router()->get()['pckg']['generic']['template'] ?? 'Pckg\Generic:generic';
+                $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
                 $this->response->setOutput($output);
             }
         }
