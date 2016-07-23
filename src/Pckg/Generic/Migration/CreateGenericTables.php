@@ -34,6 +34,7 @@ class CreateGenericTables extends Migration
     {
         $layouts = $this->table('layouts');
         $layouts->slug();
+        $layouts->varchar('template');
 
         $layoutsI18n = $this->translatable('layouts');
         $layoutsI18n->title();
