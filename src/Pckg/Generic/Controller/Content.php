@@ -1,6 +1,8 @@
 <?php namespace Pckg\Generic\Controller;
 
 use Pckg\Generic\Record\Content as ContentRecord;
+use Pckg\Generic\Record\Setting;
+use Pckg\Generic\Service\Generic\Action;
 
 class Content
 {
@@ -38,6 +40,20 @@ class Content
          */
         return view(
             'content\tree',
+            [
+                'content' => $content,
+            ]
+        );
+    }
+
+    public function getTemplateAction(ContentRecord $content = null, Action $action, $settings)
+    {
+        return view(
+            $settings->first(
+                function(Setting $item) {
+                    return $item->slug == 'pckg-generic-content-template';
+                }
+            )->poly->value,
             [
                 'content' => $content,
             ]

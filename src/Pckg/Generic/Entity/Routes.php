@@ -27,7 +27,8 @@ class Routes extends Entity
     public function layout()
     {
         return $this->belongsTo(Layouts::class)
-                    ->foreignKey('layout_id');
+                    ->foreignKey('layout_id')
+                    ->fill('layout');
     }
 
     public function actions()

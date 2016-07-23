@@ -25,6 +25,10 @@ class CreateGenericTables extends Migration
         $languages = $this->table('languages');
         $languages->slug();
         $languages->varchar('flag');
+        $languages->varchar('floating_point', 1);
+        $languages->varchar('thousand_separator', 1);
+        $languages->varchar('currency', 3);
+        $languages->varchar('language', 5);
 
         $languagesI18n = $this->translatable('languages');
         $languagesI18n->title();
