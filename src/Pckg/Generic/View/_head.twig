@@ -13,3 +13,9 @@
 {{ _assetManager.getExternals() | raw }}
 
 {{ _vueManager.getComponents() | raw }}
+
+<script>
+    Vue.config.debug = true;
+    Vue.config.silent = false;
+    Vue.config.devtools = true;
+</script>
