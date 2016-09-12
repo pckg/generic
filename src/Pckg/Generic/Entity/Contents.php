@@ -14,8 +14,6 @@ use Pckg\Generic\Record\Content;
 class Contents extends Entity
 {
 
-    // protected $repositoryName = 'Repository.faker';
-
     use Translatable;
 
     /**
