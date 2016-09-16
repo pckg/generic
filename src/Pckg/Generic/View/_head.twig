@@ -14,8 +14,18 @@
 
 {{ _vueManager.getComponents() | raw }}
 
+{{ _vueManager.getFilters() | raw }}
+
 <script>
     Vue.config.debug = true;
     Vue.config.silent = false;
     Vue.config.devtools = true;
+
+    Vue.filter('price', function (price, decimals) {
+        return locale.price(price, decimals);
+    });
+
+    Vue.filter('date', function (date, format) {
+        return locale.date(date, format);
+    });
 </script>
