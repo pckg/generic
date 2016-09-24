@@ -1,10 +1,11 @@
-data.$root = new Vue({
+/**
+ * Push generic functionality to vue.
+ */
+utils.pushToVue({
     el: '#vue-app',
-    data: function () {
-        return {
-            alerts: [],
-            modals: []
-        };
+    data: {
+        alerts: [],
+        modals: []
     },
     methods: {
         openModal: function (data) {
@@ -14,5 +15,39 @@ data.$root = new Vue({
                 $('#' + data.id).modal('show');
             });
         }
-    }
+    },
+    ready: [
+        function(){
+            $('#main-row').animate({opacity: 1});
+        }
+    ]
 });
+
+/**
+ * Transform object to function which returns object.
+ */
+var vueData = $vue.data;
+$vue.data = function () {
+    var data = {};
+    $.each(vueData, function (key, val) {
+        data[key] = val;
+    });
+    console.log(data);
+
+    return data;
+};
+
+/**
+ * Transform ready method.
+ */
+var vueReady = $vue.ready;
+$vue.ready = function(){
+    $.each(vueReady, function(key, val){
+        val();
+    })
+};
+
+/**
+ * Initialize main VueJS app.
+ */
+data.$root = new Vue($vue);
