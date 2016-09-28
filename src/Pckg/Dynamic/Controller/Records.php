@@ -208,11 +208,16 @@ class Records extends Controller
 
     public function postAddAction(Dynamic $form, Record $record, Table $table, Entity $entity)
     {
+        if ($this->post('copy_to_language')) {
+            die('copying to language is not implemented ... yet ;-)');
+        }
+
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->setEntity($entity);
 
         $form->setTable($table);
+        $form->setRecord($record);
         $form->initFields();
 
         if ($table->getEntity()->isTranslatable()) {
@@ -416,7 +421,7 @@ class Records extends Controller
         Table $table,
         Entity $entity
     ) {
-        if ($this->post()->copy_to_language) {
+        if ($this->post('copy_to_language')) {
             die('copying to language is not implemented ... yet ;-)');
         }
 

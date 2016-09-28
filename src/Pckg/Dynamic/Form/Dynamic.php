@@ -123,7 +123,7 @@ class Dynamic extends Bootstrap
 
             if ($type == 'php') {
                 continue;
-            } elseif ($type != 'hidden' && !$field->hasPermissionTo('write')) {
+            } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
                     '<div class="form-group grouped"><label class="col-sm-3">' . $label . '<div class="help"><button type="button" class="btn btn-info btn-xs btn-rounded" data-toggle="popover" data-trigger="focus" title="" data-content="<p>This is help text.</p>" data-placement="top" data-container="body" data-original-title="Help"><i class="fa fa-question" aria-hidden="true"></i></button></div>
 </label>
@@ -139,7 +139,7 @@ class Dynamic extends Bootstrap
                 $element->setLabel($label);
             }
 
-            $element->setHelp('<p>This is help text.</p>');
+            $element->setHelp($field->help);
         }
 
         $this->addSubmit('submit');
@@ -177,6 +177,7 @@ class Dynamic extends Bootstrap
         } elseif ($type == 'select') {
             if ($this->record && $relation = $this->record->getRelationForSelect($this->table, $field)) {
                 $element = $this->addSelect($name);
+                $element->addOption(null);
                 foreach ($relation as $id => $value) {
                     $element->addOption($id, $value);
                 }

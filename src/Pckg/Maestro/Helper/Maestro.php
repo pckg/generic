@@ -20,10 +20,10 @@ trait Maestro
     {
         $this->vueManager()->addVueComponent(
             [
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-dynamic-paginator',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-maestro-table',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-dynamic-paginator',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
             ]
         );
 
@@ -41,10 +41,10 @@ trait Maestro
     {
         $this->vueManager()->addVueComponent(
             [
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-dynamic-paginator',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-maestro-table',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
-                'vendor/pckg/maestro/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-dynamic-paginator',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
             ]
         );
 
