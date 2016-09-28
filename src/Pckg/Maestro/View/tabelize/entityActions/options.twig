@@ -1,0 +1,28 @@
+<div class="btn-group btn-group-sm">
+    <a type="button" class="btn btn-info dropdown-toggle" href="#" title="{{ __('options') }}" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="popup-iframe" href="{{ tabelize.getEntity().getFieldsUrl() }}">
+                <i class="fa fa-columns" aria-hidden="true"></i> Fields
+            </a>
+        </li>
+        <li>
+            <a class="popup-iframe" href="{{ tabelize.getEntity().getFilterUrl() }}">
+                <i class="fa fa-filter" aria-hidden="true"></i> Filter by
+            </a>
+        </li>
+        <li>
+            <a class="popup-iframe" href="{{ tabelize.getEntity().getGroupUrl() }}">
+                <i class="fa fa-object-group" aria-hidden="true"></i> Group by
+            </a>
+        </li>
+        <li>
+            <a class="popup-iframe" href="{{ tabelize.getEntity().getSortUrl() }}">
+                <i class="fa fa-sort" aria-hidden="true"></i> Sort by
+            </a>
+        </li>
+    </ul>
+</div>

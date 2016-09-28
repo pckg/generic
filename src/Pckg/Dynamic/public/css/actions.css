@@ -1,0 +1,57 @@
+.action > :first-child input[name=remove],
+.action > :first-child input[name=up],
+.action > :first-child input[name=down] {
+    display: none;
+}
+
+.action > :last-child input[name=add] {
+    display: none;
+}
+
+fieldset.field {
+    display: inline-block;
+    clear: left;
+    float: left;
+    width: 75%;
+}
+
+fieldset.actions {
+    display: inline-block;
+    clear: right;
+    float: left;
+    width: 25%;
+    text-align: right;
+}
+
+fieldset.submit {
+    display: block;
+    float: left;
+    clear: both;
+    width: 100%;
+}
+
+.form-group > label {
+    padding-top: 6px;
+}
+
+td.actions a > i.fa {
+    min-width: 16px;
+}
+
+/**
+Derive
+Make nice table buttons
+**/
+td.actions ul.dropdown-menu li > a {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+td.actions .btn-group > div.btn {
+    padding: 0;
+}
+
+td.actions .btn-group > div.btn > a {
+    display: block;
+    padding: 8px;
+}

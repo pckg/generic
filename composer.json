@@ -10,7 +10,9 @@
     }
   ],
   "require": {
-    "pckg/framework": "dev-master"
+    "pckg/framework": "dev-master",
+    "phpoffice/phpexcel": "dev-master",
+    "phpoffice/phpword": "dev-master"
   },
   "autoload": {
     "psr-0": {

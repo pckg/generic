@@ -1,0 +1,242 @@
+{% extends 'Pckg/Generic/View/list.twig' %}
+
+{% set table = tabelize.getEntity().getTable() %}
+{% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
+
+{% block title %}
+    {{ tabelize.getTitle() }}
+    <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..." style="text-align: right;">
+        {% for action in tabelize.getEntityActions() %}
+            {% include 'tabelize/entityActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block afterContent %}
+    {% import _self as selfMacros %}
+    {% set records = tabelize.getRecords() %}
+    {% set fields = tabelize.getFields() %}
+    {% set recordActions = tabelize.getRecordActions() %}
+    {% set entityActions = tabelize.getEntityActions() %}
+
+    <script type="text/x-template" id="pckg-maestro-table-{{ table }}">
+        <div>
+            <div v-if="first" style="margin: 1rem auto; max-width: 360px; width: auto;">
+                <label>Quick search:</label>
+                <input type="text" v-model="search" debounce="500" class="form-control"/>
+            </div>
+            {% verbatim %}
+        <table class="table table-condensed table-striped table-hover">
+            <template v-if="depth > 0">
+                <tr v-for="(i,record) in records" track-by="$index">
+                    <td>
+                        <legend>{{ groups[depth - 1][i] ? groups[depth - 1][i] : i }}</legend>
+                            <pckg-maestro-table-{% endverbatim %}{{ table }}{% verbatim %} :records="record" :depth="depth - 1"
+                                                :fields="fields" :ids.sync="ids" :search.sync="search" :groups.sync="groups"></pckg-maestro-table-{% endverbatim %}{{ table }}{% verbatim %}>
+                    </td>
+                </tr>
+            </template>
+            <template v-else>
+                <thead>
+                    <tr>
+                        <th v-for="field in fields">{{ field.field ? field.field : field }}</th>
+                        <th style="text-align: right;">{% endverbatim %}
+            {% if entityActions %}<input type="checkbox" v-on:click="checkAll" v-model="allChecked"
+                                         value="1"/>{% endif %}
+            {% verbatim %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr v-for="record in records | filterBy search">
+                    <td v-for="field in fields" v-bind:class="[field.fieldType.slug ? field.fieldType.slug : '']">
+                        <template v-if="field.fieldType.slug == 'boolean'">
+                            <pckg-tabelize-field-boolean :field="field.id" :record="record.id" :value="record[field.field ? field.field : field]"></pckg-tabelize-field-boolean>
+                        </template>
+                        <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
+                            <pckg-tabelize-field-datetime :field="field.id" :record="record.id" :value="record[field.field ? field.field : field]" :min="field.minTogglable" :max="field.maxTogglable"></pckg-tabelize-field-datetime>
+                        </template>
+                        <template v-if="field.fieldType.slug != 'boolean' && (field.fieldType.slug != 'datetime' || !field.isTogglable)">
+                            {{{ record[field.field ? field.field : field] }}}
+                        </template>
+                    </td>
+                    <td class="actions">
+                    {% endverbatim %}
+            <!-- <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                {% for action in recordActions %}
+                    {% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
+                {% endfor %}
+            </div> -->
+            <!-- Split button -->
+            <div class="btn-group btn-group-sm">
+                <div type="button" class="btn btn-default">
+                    {% include 'tabelize/recordActions/' ~ ((recordActions|first).slug ? (recordActions|first).slug : (recordActions|first)) ~ '.twig' %}
+                </div>
+                <!-- <button type="button" class="btn btn-danger">Action</button> -->
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    {% for action in recordActions %}
+                        {% if not loop.first %}
+                            <li>{% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if entityActions %}<input type="checkbox" v-model="ids" v-bind:value="record.id"/>{% endif %}
+            {% verbatim %}
+                    </td>
+                </tr>
+                </tbody>
+            </template>
+        </table>
+        {% endverbatim %}
+            <div v-if="first">
+                <pckg-dynamic-paginator v-ref:maestro-paginator :per-page="{{ tabelize.getPerPage() }}"
+                                        :page="{{ tabelize.getPage() }}"
+                                        :total="{{ tabelize.getTotal() }}"></pckg-dynamic-paginator>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="pckg-tabelize-field-boolean">
+        <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle"><i class="fa" :class="iconClass"></i></a>
+    </script>
+
+    <script type="text/x-template" id="pckg-tabelize-field-datetime">
+        <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle">{{ '{{ value }}' }}</a>
+    </script>
+
+    <script type="text/javascript">
+        var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
+            name: 'pckg-maestro-table-{{ table }}',
+            template: '#pckg-maestro-table-{{ table }}',
+        }));
+
+        var pckgTabelizeFieldBoolean = Vue.component('pckg-tabelize-field-boolean', {
+            template: '#pckg-tabelize-field-boolean',
+            data: function () {
+                return {};
+            },
+            props: {
+                field: null,
+                record: null,
+                value: null
+            },
+            methods: {
+                toggle: function () {
+                    var url = '{{ url('dynamic.records.field.toggle', {table: dynamic.getTable()}) }}';
+                    this.value = this.value > 0 ? 0 : 1;
+                    http.getJSON(utils.url(url, {
+                                record: this.record,
+                                field: this.field,
+                                state: this.value > 0 ? 1 : 0
+                            }), function (data) {
+                            }.bind(this)
+                    );
+                }
+            },
+            computed: {
+                btnClass: function () {
+                    return this.value > 0 ? 'btn-success' : 'btn-danger';
+                },
+                iconClass: function () {
+                    return this.value > 0 ? 'fa-check' : 'fa-times';
+                }
+            }
+        });
+
+        var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
+            template: '#pckg-tabelize-field-datetime',
+            data: function () {
+                return {};
+            },
+            props: {
+                field: null,
+                record: null,
+                value: null,
+                min: null,
+                max: null
+            },
+            methods: {
+                toggle: function () {
+                    var url = '{{ url('dynamic.records.field.toggle', {table: dynamic.getTable()}) }}';
+                    this.value = this.value <= this.min ? this.max : this.min;
+                    http.getJSON(utils.url(url, {
+                                record: this.record,
+                                field: this.field,
+                                state: this.value == this.min ? 1 : 0
+                            }), function (data) {
+                            }.bind(this)
+                    );
+                }
+            },
+            computed: {
+                btnClass: function () {
+                    return this.value <= this.min ? 'btn-danger' : 'btn-success';
+                }
+            }
+        });
+    </script>
+
+    <pckg-maestro-table-{{ table }} v-ref:maestro-table :records="records"
+                                    :fields="fields" :depth="depth" :groups.sync="groups"
+                                    :first="1" :ids.sync="ids" :search.sync="search">
+    </pckg-maestro-table-{{ table }}>
+
+    <script type="text/javascript">
+        data.maestroFields = {{ tabelize.getFields() | json_encode | raw }};
+        data.maestroRecords = {{ tabelize.transformRecords() | json_encode | raw }};
+        data.maestroGroups = {{ tabelize.getGroups() | json_encode | raw }};
+
+        var maestroTable = new Vue({
+            el: '#{{ id }}',
+            //parent: vueApp,
+            data: function () {
+                return {
+                    fields: data.maestroFields,
+                    records: data.maestroRecords,
+                    groups: data.maestroGroups,
+                    depth: data.maestroGroups.length,
+                    ids: [],
+                    search: null
+                };
+            },
+            methods: {
+                recordAction: function (record, action) {
+                    console.log('broadCasting record:' + action);
+                    this.$broadcast('record:' + action, record.id, record);
+                },
+                entityAction: function (action) {
+                    console.log('broadCasting entity:' + action);
+                    this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
+                },
+                getSelectedRecords: function () {
+                    var selected = [];
+
+                    $.each(this.records, function (i, record) {
+                        if (this.ids.indexOf(record.id) >= 0) {
+                            selected.push(record);
+                        }
+                    }.bind(this));
+
+                    return selected;
+                }
+            },
+            watch: {
+                search: function (newValue) {
+                    if (this.$refs.maestroTable._searchTimeout) {
+                        this.$refs.maestroTable._searchTimeout.abort();
+                    }
+
+                    this.$refs.maestroTable._searchTimeout = http.getJSON(window.location.href + '?search=' + newValue, function (data) {
+                        this.$refs.maestroTable.records = data.records;
+                    }.bind(this));
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,6 @@
+.dataTables_info,
+.dataTables_filter,
+.dataTables_length,
+.dataTables_paginate {
+    display: none;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        body {
+            font-size: 12px;
+            line-height: 16px;
+        }
+
+        body, html, table, tr, td {
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 6px;
+            white-space: nowrap;
+        }
+
+        tr:nth-child(2n) td {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+{% if lines %}
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            {% for key,val in lines.0 %}
+                <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+        {% for line in lines %}
+            <tr>
+                {% for val in line %}
+                    <td>{{ val }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+</body>
+</html>

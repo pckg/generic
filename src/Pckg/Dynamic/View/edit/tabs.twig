@@ -1,0 +1,46 @@
+<div>
+    <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
+        <li role="presentation" class="active">
+            <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a>
+        </li>
+        {% for tab in tabs %}
+            <li role="presentation">
+                <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
+                   data-toggle="tab"
+                   @click.prevent="loadAjaxTab({{ tab.id }}, '{{ tab.getUrl() }}')">{{ tab.title ? tab.title : tab.id }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+            {{ formalize | raw }}
+
+            {% for tabelize in tabelizes.0 %}
+                {{ tabelize | raw }}
+            {% endfor %}
+            {% for functionize in functionizes.0 %}
+                {{ functionize | raw }}
+            {% endfor %}
+        </div>
+        {% for tab in tabs %}
+            <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
+                <p>Loading ...</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    utils.pushToVue({
+        methods: {
+            loadAjaxTab: function (tabId, url) {
+                http.getJSON(url, function (json) {
+                    $('#dynamic-tab-' + tabId).html(json._html);
+                });
+
+                return false;
+            }
+        }
+    });
+</script>

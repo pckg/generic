@@ -1,0 +1,59 @@
+{{ saveForm.open() | raw }}
+<div class="row action dynamic-view-save">
+    <div class="col-sm-12">
+        {% embed 'Pckg/Generic/View/panel.twig' %}
+
+            {% block title %}
+            Save view on <i>{{ table.table }}</i>
+            {% endblock %}
+
+            {% block content %}
+            {% verbatim %}
+                <div class="form-group">
+                    <label class="col-md-3">Save view</label>
+                    <select class="form-control col-md-4" v-model="view">
+                        <option value>-- as new --</option>
+                        <option v-for="v in savedViews" :value="v.id">{{ v.title ? v.title : ('Saved view #' + v.id) }}</option>
+                    </select>
+                    <input v-if="!view.length" type="text" v-model="name" class="form-control col-md-4" />
+                </div>
+
+                <button class="btn btn-success" v-on:click.prevent="saveView">Save</button>
+            {% endverbatim %}
+            {% endblock %}
+
+        {% endembed %}
+    </div>
+</div>
+{{ saveForm.close() | raw }}
+
+<script type="text/javascript">
+    var data = data || {};
+    data.savedViews = {{ savedViews | json_encode | raw }};
+
+    var dynamicFilter = new Vue({
+        el: '.dynamic-view-save',
+        data: function () {
+            return {
+                savedViews: data.savedViews,
+                view: null,
+                name: null
+            };
+        },
+        methods: {
+            saveView: function () {
+                http.post('{{ saveCurrentViewUrl }}', function () {
+                    if (this.name) {
+                        return {
+                            name: this.name
+                        };
+                    }
+
+                    return {
+                        id: this.view
+                    }
+                }.bind(this));
+            }
+        }
+    });
+</script>

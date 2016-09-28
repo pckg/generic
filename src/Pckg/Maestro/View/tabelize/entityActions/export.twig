@@ -1,0 +1,28 @@
+<div class="btn-group btn-group-sm">
+    <a type="button" class="btn btn-warning dropdown-toggle" href="#" title="{{ __('export') }}" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-download" aria-hidden="true"></i>
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a href="{{ tabelize.getEntity().getExportUrl('html') }}">
+                <i class="fa fa-code" aria-hidden="true"></i> .html
+            </a>
+        </li>
+        <li>
+            <a href="{{ tabelize.getEntity().getExportUrl('xlsx') }}">
+                <i class="fa fa-table" aria-hidden="true"></i> .xlsx
+            </a>
+        </li>
+        <li>
+            <a href="{{ tabelize.getEntity().getExportUrl('csv') }}">
+                <i class="fa fa-table" aria-hidden="true"></i> .csv
+            </a>
+        </li>
+        <li>
+            <a href="{{ tabelize.getEntity().getExportUrl('docx') }}">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i> .docx
+            </a>
+        </li>
+    </ul>
+</div>

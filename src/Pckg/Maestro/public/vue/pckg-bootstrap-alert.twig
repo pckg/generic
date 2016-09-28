@@ -1,0 +1,26 @@
+<script type="text/x-template" id="pckg-bootstrap-alert">
+    {% verbatim %}
+    <div :class="['fade in alert', 'alert-' + style, dismissable ? 'alert-dismissable' : '']" role="alert">
+        <button v-if="dismissable" type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{ text }}
+    </div>
+    {% endverbatim %}
+</script>
+
+<script type="text/javascript">
+    var pckgBootstrapAlertComponent = Vue.component('pckg-bootstrap-alert', {
+        name: 'pckg-bootstrap-alert',
+        template: '#pckg-bootstrap-alert',
+        props: {
+            style: null,
+            text: null,
+            dismissable: true
+        },
+        data: function () {
+            return {};
+        },
+        methods: {}
+    });
+</script>

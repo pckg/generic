@@ -1,0 +1,9 @@
+{% extends 'Pckg/Generic/View/panel.twig' %}
+
+{% block title %}
+    {{ formalize.getTitle() }}
+{% endblock %}
+
+{% block content %}
+    {{ form | raw }}
+{% endblock %}

@@ -1,0 +1,94 @@
+{{ fieldsForm.open() | raw }}
+<div class="row action dynamic-fields">
+    <div class="col-sm-3 fields-skipped">
+        {% embed 'Pckg/Generic/View/panel.twig' %}
+
+            {% block title %}
+                Available fields on <i>{{ table.table }}</i>
+            {% endblock %}
+
+            {% block content %}
+                {% verbatim %}
+                <p><b>Fields</b></p>
+                <div class="form-group" v-for="field in fields" v-if="!field.applied">
+                    <label class="col-sm-8">{{ field.field }}</label>
+                    <div class="col-sm-4">
+                        <button class="btn btn-info btn-block" v-on:click.prevent="addField(field)">+</button>
+                    </div>
+                </div>
+            {% endverbatim %}
+            {% endblock %}
+
+        {% endembed %}
+    </div>
+    <div class="col-sm-9 fields-applied">
+        {% embed 'Pckg/Generic/View/panel.twig' %}
+
+            {% block title %}
+                Visible fields on <i>{{ table.table }}</i>
+            {% endblock %}
+
+            {% block content %}
+                {% verbatim %}
+                <p v-if="!applied.length">Remove fields</p>
+                <div class="form-group" v-for="field in fields" v-if="field.applied">
+                    <label class="col-sm-8">{{ field.field }}</label>
+                    <div class="col-sm-4">
+                        <button class="btn btn-danger btn-block" v-on:click.prevent="removeField(field)">-</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" v-on:click.prevent="save">Save to session</button>
+                {% endverbatim %}
+
+            {% endblock %}
+
+        {% endembed %}
+    </div>
+</div>
+{{ fieldsForm.close() | raw }}
+
+<script type="text/javascript">
+    data.fields = {{ fields.toJSON() | raw }};
+    data.appliedFields = {{ appliedFields | json_encode | raw }};
+
+    var dynamicFields = new Vue({
+        el: '.action.dynamic-fields',
+        data: function () {
+            return {
+                fields: data.fields,
+                appliedFields: data.appliedFields
+            };
+        },
+        methods: {
+            isApplied: function (field) {
+                return this.appliedFields.indexOf({field: field.field}) >= 0;
+            },
+            addField: function (field) {
+                field.applied = true;
+            },
+            removeField: function (field) {
+                field.applied = false;
+            },
+            getAppliedFields: function () {
+                var applied = [];
+                $.each(this.fields, function (i, field) {
+                    if (field.applied) {
+                        applied.push(field.field);
+                    }
+                });
+                return applied;
+            },
+            save: function () {
+                http.post(
+                        '{{ saveFieldsUrl }}',
+                        function () {
+                            return {
+                                fields: this.getAppliedFields()
+                            };
+                        }.bind(this)
+                );
+            }
+        }
+    });
+</script>

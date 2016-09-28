@@ -1,0 +1,70 @@
+<script type="text/x-template" id="pckg-maestro-table">
+    <div>
+        <div v-if="first">
+            <input type="text" v-model="search" debounce="500"/>
+        </div>
+        {% verbatim %}
+        <table class="table table-condensed table-striped table-hover">
+            <template v-if="depth > 0">
+                <tr v-for="(i,record) in records">
+                    <td>
+                        <legend>{{ i }}</legend>
+                            <pckg-maestro-table :records="record" :depth="depth - 1"
+                                                :fields="fields" :ids.sync="ids" :search.sync="search"></pckg-maestro-table>
+                    </td>
+                </tr>
+            </template>
+            <template v-else>
+                <thead>
+                    <tr>
+                        <th v-for="field in fields">{{ field }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr v-for="record in records | filterBy search">
+                    <td v-for="field in fields">{{{ record[field] }}}</td>
+                </tr>
+                </tbody>
+            </template>
+        </table>
+        {% endverbatim %}
+    </div>
+</script>
+
+<script type="text/javascript">
+    var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
+        name: 'pckg-maestro-table', // recursive
+        template: '#pckg-maestro-table',
+        props: {
+            fields: [],
+            depth: 0,
+            records: [],
+            groups: [],
+            first: false,
+            ids: [],
+            allChecked: false,
+            search: null
+        },
+        data: function () {
+            return {
+                _searchTimeout: null
+            };
+        },
+        methods: {
+            recordAction: function (record, action) {
+                this.$parent.recordAction(record, action);
+            },
+            checkAll: function () {
+                if (!this.allChecked) {
+                    $.each(this.records, function (i, record) {
+                        this.ids.push(record.id);
+                    }.bind(this));
+
+                    this.ids = Array.from(new Set(this.ids));
+                } else {
+                    this.ids = [];
+                }
+            }
+        }
+    });
+</script>
