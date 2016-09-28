@@ -17,4 +17,9 @@ class MenuItem extends Record
         return (dev() ? '/dev.php' : '') . $this->url;
     }
 
+    public function isActive()
+    {
+        return false;
+    }
+
 }
