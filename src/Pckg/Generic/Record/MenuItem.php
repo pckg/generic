@@ -19,7 +19,20 @@ class MenuItem extends Record
 
     public function isActive()
     {
-        return false;
+        $currentUrl = router()->getURL();
+
+        if ($currentUrl == $this->url) {
+            return true;
+        }
+
+        $childActive = false;
+        $this->menuItems->each(
+            function(MenuItem $menuItem) use (&$childActive) {
+                $childActive = $childActive || $menuItem->isActive();
+            }
+        );
+
+        return $childActive;
     }
 
 }

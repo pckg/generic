@@ -13,4 +13,10 @@ class MenuItems extends Entity
 
     protected $record = MenuItem::class;
 
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItems::class)
+                    ->foreignKey('parent_id');
+    }
+
 }
