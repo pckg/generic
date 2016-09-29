@@ -1,9 +1,6 @@
 {% extends 'Pckg/Generic/View/panel.twig' %}
 
-{% block title %}
-    {{ formalize.getTitle() }}
-{% endblock %}
-
 {% block content %}
+    <h2>{{ formalize.getTitle() }}</h2>
     {{ form | raw }}
 {% endblock %}

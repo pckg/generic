@@ -3,21 +3,19 @@
 {% set table = tabelize.getEntity().getTable() %}
 {% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
 
-{% block title %}
-    {{ tabelize.getTitle() }}
-    <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..." style="text-align: right;">
-        {% for action in tabelize.getEntityActions() %}
-            {% include 'tabelize/entityActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
-        {% endfor %}
-    </div>
-{% endblock %}
-
 {% block afterContent %}
     {% import _self as selfMacros %}
     {% set records = tabelize.getRecords() %}
     {% set fields = tabelize.getFields() %}
     {% set recordActions = tabelize.getRecordActions() %}
     {% set entityActions = tabelize.getEntityActions() %}
+
+    {{ tabelize.getTitle() }}
+    <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..." style="text-align: right;">
+        {% for action in tabelize.getEntityActions() %}
+            {% include 'tabelize/entityActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
+        {% endfor %}
+    </div>
 
     <script type="text/x-template" id="pckg-maestro-table-{{ table }}">
         <div>

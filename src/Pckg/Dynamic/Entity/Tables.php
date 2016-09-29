@@ -1,6 +1,6 @@
 <?php namespace Pckg\Dynamic\Entity;
 
-use Pckg\Database\Entity;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Database\Entity\Extension\Permissionable;
 use Pckg\Database\Entity\Extension\Translatable;
@@ -8,7 +8,7 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
-class Tables extends Entity implements MaestroEntity
+class Tables extends DatabaseEntity implements MaestroEntity
 {
 
     use Paginatable, Translatable, Permissionable;

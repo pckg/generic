@@ -48,6 +48,7 @@ class CreateDynamicTables extends Migration
         $dynamicFields->varchar('field');
         $dynamicFields->integer('dynamic_field_type_id')->references('dynamic_field_types');
         $dynamicFields->integer('dynamic_table_id')->references('dynamic_tables');
+        $dynamicFields->integer('order');
         $dynamicFields->orderable();
 
         $dynamicFieldsI18n = $this->translatable('dynamic_fields');

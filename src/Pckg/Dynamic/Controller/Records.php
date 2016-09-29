@@ -316,7 +316,6 @@ class Records extends Controller
             }
         );
         $tabs = $table->tabs;
-
         $tabelizes = [];
         $tablesController = Reflect::create(Records::class);
         $relations->each(

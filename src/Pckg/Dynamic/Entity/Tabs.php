@@ -1,10 +1,10 @@
 <?php namespace Pckg\Dynamic\Entity;
 
-use Pckg\Database\Entity;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Dynamic\Record\Tab;
 
-class Tabs extends Entity
+class Tabs extends DatabaseEntity
 {
 
     use Translatable;

@@ -1,64 +1,16 @@
 <?php namespace Pckg\Dynamic\Migration;
 
-use Pckg\Dynamic\Entity\Tables;
-use Pckg\Migration\Migration;
+use Pckg\Dynamic\Record\Field;
+use Pckg\Dynamic\Record\FieldType;
+use Pckg\Dynamic\Record\Relation;
+use Pckg\Dynamic\Record\RelationType;
+use Pckg\Dynamic\Record\Table;
 
-abstract class DynamicMigration extends Migration
+trait DynamicMigration
 {
 
-    public function upDynamic()
+    public function upDynamicTables($data = [])
     {
-        return [
-            'packet_deductions' => [
-                'id',
-                'addition_id' => [
-                    'type' => 'select',
-                ],
-                'title'       => [
-                    'type' => 'varchar',
-                ],
-                '_relations'  => [
-                    [
-                        'type'          => 'belongs_to',
-                        'table'         => 'packets',
-                        'primary_field' => 'packet_id',
-                        'foreign_field' => 'id',
-                    ],
-                    [
-                        'type'          => 'belongs_to',
-                        'table'         => 'additions',
-                        'primary_field' => 'addition_id',
-                        'foreign_field' => 'id',
-                    ],
-                ],
-            ],
-            'packets'           => [
-                '_relations' => [
-                    [
-                        'type'          => 'has_many',
-                        'table'         => 'packets_deductions',
-                        'primary_field' => 'id',
-                        'foreign_field' => 'packet_id',
-                    ],
-                ],
-            ],
-            'additions'         => [
-                '_relations' => [
-                    [
-                        'type'          => 'has_many',
-                        'table'         => 'packets_deductions',
-                        'primary_field' => 'id',
-                        'foreign_field' => 'addition_id',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    public function upDynamicTables()
-    {
-        $data = $this->upDynamic();
-
         foreach ($data as $table => $properties) {
             $dynamicTable = $this->upDynamicTable($table);
             foreach ($properties as $key => $val) {
@@ -70,15 +22,64 @@ abstract class DynamicMigration extends Migration
                         $this->upDynamicRelation($dynamicTable, $relation);
                     }
                 } else {
-                    $this->upDynamicKey($dynamicTable, $key, $val);
+                    $this->upDynamicField($dynamicTable, $key, $val);
                 }
             }
         }
     }
 
-    public function upDynamicTable($table)
+    protected function upDynamicTable($table)
     {
-        $table = Tables::getOrCreate(['table' => $table]);
+        return Table::getOrCreate(['table' => $table]);
+    }
+
+    protected function upDynamicId(Table $table)
+    {
+        $fieldType = $this->upDynamicFieldType('id');
+
+        $field = Field::getOrCreate(['dynamic_table_id' => $table->id, 'field' => 'id']);
+        $field->dynamic_field_type_id = $fieldType->id;
+        $field->save();
+    }
+
+    protected function upDynamicField(Table $table, $field, $props = [])
+    {
+        $field = Field::getOrCreate(['dynamic_table_id' => $table->id, 'field' => $field]);
+
+        if (isset($props['type'])) {
+            $field->dynamic_field_type_id = $this->upDynamicFieldType($props['type'])->id;
+        }
+
+        $field->save();
+
+        return $field;
+    }
+
+    protected function upDynamicFieldType($fieldType)
+    {
+        return FieldType::getOrCreate(['slug' => $fieldType]);
+    }
+
+    protected function upDynamicRelationType($relationType)
+    {
+        return RelationType::getOrCreate(['slug' => $relationType]);
+    }
+
+    protected function upDynamicRelation(Table $table, $relation)
+    {
+        $onField = $this->upDynamicField($table, $relation['primary_field']);
+        $relationType = $this->upDynamicRelationType($relation['type']);
+
+        $relation = Relation::getOrCreate(
+            [
+                'show_table_id'            => $this->upDynamicTable($relation['table'])->id,
+                'on_table_id'              => $table->id,
+                'on_field_id'              => $onField->id,
+                'dynamic_relation_type_id' => $relationType->id,
+            ]
+        );
+
+        return $relation;
     }
 
 }

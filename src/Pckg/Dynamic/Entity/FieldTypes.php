@@ -1,9 +1,9 @@
 <?php namespace Pckg\Dynamic\Entity;
 
-use Pckg\Database\Entity;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Dynamic\Record\FieldType;
 
-class FieldTypes extends Entity
+class FieldTypes extends DatabaseEntity
 {
 
     protected $table = 'dynamic_field_types';

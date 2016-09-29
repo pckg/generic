@@ -1,6 +1,6 @@
 <?php namespace Pckg\Dynamic\Entity;
 
-use Pckg\Database\Entity;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Orderable;
 use Pckg\Database\Entity\Extension\Permissionable;
 use Pckg\Database\Entity\Extension\Translatable;
@@ -8,7 +8,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
-class Fields extends Entity
+class Fields extends DatabaseEntity
 {
 
     use Translatable, Orderable, Permissionable;

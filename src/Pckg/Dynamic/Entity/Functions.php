@@ -1,10 +1,10 @@
 <?php namespace Pckg\Dynamic\Entity;
 
-use Pckg\Database\Entity;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Dynamic\Record\Func;
 
-class Functions extends Entity
+class Functions extends DatabaseEntity
 {
 
     use Translatable;
