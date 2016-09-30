@@ -17,6 +17,9 @@ trait DynamicMigration
                 if ($val == 'id') {
                     $this->upDynamicId($dynamicTable);
 
+                } elseif ($val == 'slug') {
+                    $this->upDynamicField($dynamicTable, 'slug', ['type' => 'slug']);
+
                 } else if ($key == '_relations') {
                     foreach ($val as $relation) {
                         $this->upDynamicRelation($dynamicTable, $relation);
