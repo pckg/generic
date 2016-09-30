@@ -8,15 +8,13 @@
             {% endblock %}
 
             {% block content %}
-                {% verbatim %}
                 <p><b>Fields</b></p>
                 <div class="form-group" v-for="field in fields" v-if="!field.applied">
-                    <label class="col-sm-8">{{ field.field }}</label>
+                    <label class="col-sm-8">${ field.field }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-info btn-block" v-on:click.prevent="addField(field)">+</button>
                     </div>
                 </div>
-            {% endverbatim %}
             {% endblock %}
 
         {% endembed %}
@@ -29,18 +27,15 @@
             {% endblock %}
 
             {% block content %}
-                {% verbatim %}
                 <p v-if="!applied.length">Remove fields</p>
                 <div class="form-group" v-for="field in fields" v-if="field.applied">
-                    <label class="col-sm-8">{{ field.field }}</label>
+                    <label class="col-sm-8">${ field.field }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-danger btn-block" v-on:click.prevent="removeField(field)">-</button>
                     </div>
                 </div>
 
                 <button class="btn btn-success" v-on:click.prevent="save">Save to session</button>
-                {% endverbatim %}
-
             {% endblock %}
 
         {% endembed %}

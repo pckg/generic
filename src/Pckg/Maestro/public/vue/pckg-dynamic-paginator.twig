@@ -1,5 +1,4 @@
 <script type="text/x-template" id="pckg-dynamic-paginator">
-    {% verbatim %}
         <nav style="display: table; margin: 0 auto;">
             <ul class="pagination">
                 <li>
@@ -8,7 +7,7 @@
                     </a>
                 </li>
                 <li v-for="(i,p) in pages" track-by="$index" v-bind:class="{ active: p == page }">
-                    <a v-bind:class="{ disabled: page == '...' }" href="#" v-on:click.prevent="navigate(p)">{{ p }}</a>
+                    <a v-bind:class="{ disabled: page == '...' }" href="#" v-on:click.prevent="navigate(p)">${ p }</a>
                 </li>
                 <li>
                     <a v-bind:class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next" v-on:click.prevent="next">
@@ -17,7 +16,6 @@
                 </li>
             </ul>
         </nav>
-        {% endverbatim %}
 </script>
 
 <script type="text/javascript">

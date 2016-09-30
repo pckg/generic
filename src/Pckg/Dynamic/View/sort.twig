@@ -8,14 +8,12 @@
             {% endblock %}
 
             {% block content %}
-            {% verbatim %}
                 <div class="form-group" v-for="sort in sorts">
-                    <label class="col-sm-8">{{ sort.label }}</label>
+                    <label class="col-sm-8">${ sort.label }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-info btn-block" v-on:click.prevent="addSort(sort)">+</button>
                     </div>
                 </div>
-                {% endverbatim %}
             {% endblock %}
 
         {% endembed %}
@@ -29,13 +27,12 @@
 
             {% block content %}
 
-                {% verbatim %}
                 <p v-if="!applied.length">Add sorts from left panel</p>
                 <div class="form-group" v-for="sort in applied">
-                    <label class="col-sm-3">{{ sorts[sort.field].label }}</label>
+                    <label class="col-sm-3">${ sorts[sort.field].label }</label>
                     <div class="col-sm-4">
                         <select v-model="sort.options.direction" class="form-control">
-                            <option v-for="(key,option) in typeMethods" :value="key">{{ option.label }}</option>
+                            <option v-for="(key,option) in typeMethods" :value="key">${ option.label }</option>
                         </select>
                     </div>
                     <div class="col-sm-2">
@@ -44,7 +41,6 @@
                 </div>
 
                 <button class="btn btn-success" v-on:click.prevent="save">Save to session</button>
-                {% endverbatim %}
 
             {% endblock %}
 

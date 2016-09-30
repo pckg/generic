@@ -3,12 +3,11 @@
         <div v-if="first">
             <input type="text" v-model="search" debounce="500"/>
         </div>
-        {% verbatim %}
         <table class="table table-condensed table-striped table-hover">
             <template v-if="depth > 0">
                 <tr v-for="(i,record) in records">
                     <td>
-                        <legend>{{ i }}</legend>
+                        <legend>${ i }</legend>
                             <pckg-maestro-table :records="record" :depth="depth - 1"
                                                 :fields="fields" :ids.sync="ids" :search.sync="search"></pckg-maestro-table>
                     </td>
@@ -17,17 +16,16 @@
             <template v-else>
                 <thead>
                     <tr>
-                        <th v-for="field in fields">{{ field }}</th>
+                        <th v-for="field in fields">${ field }</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr v-for="record in records | filterBy search">
-                    <td v-for="field in fields">{{{ record[field] }}}</td>
+                    <td v-for="field in fields">!${ record[field] }</td>
                 </tr>
                 </tbody>
             </template>
         </table>
-        {% endverbatim %}
     </div>
 </script>
 

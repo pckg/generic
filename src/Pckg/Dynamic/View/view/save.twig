@@ -8,18 +8,16 @@
             {% endblock %}
 
             {% block content %}
-            {% verbatim %}
                 <div class="form-group">
                     <label class="col-md-3">Save view</label>
                     <select class="form-control col-md-4" v-model="view">
                         <option value>-- as new --</option>
-                        <option v-for="v in savedViews" :value="v.id">{{ v.title ? v.title : ('Saved view #' + v.id) }}</option>
+                        <option v-for="v in savedViews" :value="v.id">${ v.title ? v.title : ('Saved view #' + v.id) }</option>
                     </select>
                     <input v-if="!view.length" type="text" v-model="name" class="form-control col-md-4" />
                 </div>
 
                 <button class="btn btn-success" v-on:click.prevent="saveView">Save</button>
-            {% endverbatim %}
             {% endblock %}
 
         {% endembed %}

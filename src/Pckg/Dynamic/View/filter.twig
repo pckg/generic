@@ -8,22 +8,20 @@
             {% endblock %}
 
             {% block content %}
-            {% verbatim %}
                 <p><b>Relations</b></p>
                 <div class="form-group" v-for="relationFilter in relationFilters">
-                    <label class="col-sm-8">{{ relationFilter.table }}</label>
+                    <label class="col-sm-8">${ relationFilter.table }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-info btn-block" v-on:click.prevent="addRelationFilter(relationFilter)">+</button>
                     </div>
                 </div>
                 <p><b>Fields</b></p>
                 <div class="form-group" v-for="filter in filters">
-                    <label class="col-sm-8">{{ filter.label }}</label>
+                    <label class="col-sm-8">${ filter.label }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-info btn-block" v-on:click.prevent="addFilter(filter)">+</button>
                     </div>
                 </div>
-            {% endverbatim %}
             {% endblock %}
 
         {% endembed %}
@@ -36,20 +34,18 @@
             {% endblock %}
 
             {% block content %}
-
-                {% verbatim %}
                 <p v-if="!applied.length">Add filters from left panel</p>
                 <div class="form-group" v-for="filter in applied">
-                    <label class="col-sm-3">{{ filters[filter.field].label }}</label>
+                    <label class="col-sm-3">${ filters[filter.field].label }</label>
                     <div class="col-sm-2">
                         <select v-model="filter.options.method" class="form-control">
-                            <option v-for="(key,option) in typeMethods" :value="key">{{ option.label }}</option>
+                            <option v-for="(key,option) in typeMethods" :value="key">${ option.label }</option>
                         </select>
                     </div>
                     <div class="col-sm-5">
                         <template v-if="filters[filter.field].type == 'select'">
                             <select v-model="filter.value" class="form-control">
-                                <option v-for="(key, option) in filters[filter.field].options.options" :value="key">{{ option }}</option>
+                                <option v-for="(key, option) in filters[filter.field].options.options" :value="key">${ option }</option>
                             </select>
                         </template>
                         <template v-else>
@@ -61,15 +57,15 @@
                     </div>
                 </div>
                 <div class="form-group" v-for="relationFilter in appliedRelations">
-                    <label class="col-sm-3">{{ relationFilter.relationFilter.table }}</label>
+                    <label class="col-sm-3">${ relationFilter.relationFilter.table }</label>
                     <div v-if="relationFilter.relationFilter.type == 2" class="col-sm-2">
                         <select v-model="relationFilter.field" class="form-control">
-                            <option v-for="option in relationFilter.relationFilter.fields" :value="option.field">{{ option.label }}</option>
+                            <option v-for="option in relationFilter.relationFilter.fields" :value="option.field">${ option.label }</option>
                         </select>
                     </div>
                     <div class="col-sm-2">
                         <select v-model="relationFilter.options.method" class="form-control">
-                            <option v-for="(key,option) in relationMethods" :value="key">{{ option.label }}</option>
+                            <option v-for="(key,option) in relationMethods" :value="key">${ option.label }</option>
                         </select>
                     </div>
                     <div v-if="relationFilter.relationFilter.type == 2" class="col-sm-3">
@@ -77,10 +73,10 @@
                     </div>
                     <div v-if="relationFilter.relationFilter.type != 2" class="col-sm-5">
                         <select v-model="relationFilter.value" class="form-control" v-if="relationFilter.options.method == 'equals' || relationFilter.options.method == 'not'">
-                            <option v-for="option in relationFilter.relationFilter.options.options" :value="option.key">{{ option.value }}</option>
+                            <option v-for="option in relationFilter.relationFilter.options.options" :value="option.key">${ option.value }</option>
                         </select>
                         <select v-model="relationFilter.value" class="form-control" multiple v-else>
-                            <option v-for="option in relationFilter.relationFilter.options.options" :value="option.key" key-by="option.key">{{ option.value }}</option>
+                            <option v-for="option in relationFilter.relationFilter.options.options" :value="option.key" key-by="option.key">${ option.value }</option>
                         </select>
                     </div>
                     <div class="col-sm-2">
@@ -89,8 +85,6 @@
                 </div>
 
                 <button class="btn btn-success" v-on:click.prevent="save">Save to session</button>
-                {% endverbatim %}
-
             {% endblock %}
 
         {% endembed %}

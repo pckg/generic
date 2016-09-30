@@ -23,25 +23,24 @@
                 <label>Quick search:</label>
                 <input type="text" v-model="search" debounce="500" class="form-control"/>
             </div>
-            {% verbatim %}
         <table class="table table-condensed table-striped table-hover">
             <template v-if="depth > 0">
                 <tr v-for="(i,record) in records" track-by="$index">
                     <td>
-                        <legend>{{ groups[depth - 1][i] ? groups[depth - 1][i] : i }}</legend>
-                            <pckg-maestro-table-{% endverbatim %}{{ table }}{% verbatim %} :records="record" :depth="depth - 1"
-                                                :fields="fields" :ids.sync="ids" :search.sync="search" :groups.sync="groups"></pckg-maestro-table-{% endverbatim %}{{ table }}{% verbatim %}>
+                        <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
+                            <pckg-maestro-table-{{ table }} :records="record" :depth="depth - 1"
+                                                :fields="fields" :ids.sync="ids" :search.sync="search" :groups.sync="groups"></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
             <template v-else>
                 <thead>
                     <tr>
-                        <th v-for="field in fields">{{ field.field ? field.field : field }}</th>
-                        <th style="text-align: right;">{% endverbatim %}
+                        <th v-for="field in fields">${ field.field ? field.field : field }</th>
+                        <th style="text-align: right;">
             {% if entityActions %}<input type="checkbox" v-on:click="checkAll" v-model="allChecked"
                                          value="1"/>{% endif %}
-            {% verbatim %}</th>
+            </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,11 +53,10 @@
                             <pckg-tabelize-field-datetime :field="field.id" :record="record.id" :value="record[field.field ? field.field : field]" :min="field.minTogglable" :max="field.maxTogglable"></pckg-tabelize-field-datetime>
                         </template>
                         <template v-if="field.fieldType.slug != 'boolean' && (field.fieldType.slug != 'datetime' || !field.isTogglable)">
-                            {{{ record[field.field ? field.field : field] }}}
+                            !${ record[field.field ? field.field : field] }
                         </template>
                     </td>
                     <td class="actions">
-                    {% endverbatim %}
             <!-- <div class="btn-group btn-group-sm" role="group" aria-label="...">
                 {% for action in recordActions %}
                     {% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
@@ -85,13 +83,11 @@
                 </ul>
             </div>
             {% if entityActions %}<input type="checkbox" v-model="ids" v-bind:value="record.id"/>{% endif %}
-            {% verbatim %}
                     </td>
                 </tr>
                 </tbody>
             </template>
         </table>
-        {% endverbatim %}
             <div v-if="first">
                 <pckg-dynamic-paginator v-ref:maestro-paginator :per-page="{{ tabelize.getPerPage() }}"
                                         :page="{{ tabelize.getPage() }}"

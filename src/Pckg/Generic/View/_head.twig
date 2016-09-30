@@ -21,7 +21,8 @@
     Vue.config.debug = true;
     Vue.config.silent = false;
     Vue.config.devtools = true;
-    // Vue.config.delimiters = ['${', '}'];
+    Vue.config.delimiters = ['${', '}'];
+    Vue.config.unsafeDelimiters = ['!${', '}'];
 
     Vue.filter('price', function (price, decimals) {
         return locale.price(price, decimals);

@@ -35,23 +35,23 @@
     <div class="list-group" v-for="variable in variables">
         {% embed 'Pckg/Generic/View/panel.twig' %}
             {% block title %}
-                Variable: {% verbatim %}{{ variable.slug }}{% endverbatim %}
+                Variable: ${ variable.slug }
             {% endblock %}
             {% block content %}
                 <a href="#" class="list-group-item" v-for="actionMorph in route.actionsMorphs"
                    v-if="actionMorph.variable_id == variable.id">
-                    <h4 class="list-group-item-heading">1 Action: {{ actionMorph.action.slug }}</h4>
-                    <p>Order: {% verbatim %}{{ actionMorph.order }}{% endverbatim %}</p>
+                    <h4 class="list-group-item-heading">1 Action: ${ actionMorph.action.slug }</h4>
+                    <p>Order: ${ actionMorph.order }</p>
                     <p class="list-group-item-text" v-if="actionMorph.content_id">
-                        Content: {% verbatim %}{{ actionMorph.content_id }}{% endverbatim %}
+                        Content: ${ actionMorph.content_id }
                     </p>
                 </a>
                 <a href="#" class="list-group-item" v-for="actionMorph in layout.actionsMorphs"
                    v-if="actionMorph.variable_id == variable.id">
-                    <h4 class="list-group-item-heading">2 Layout action: {{ actionMorph.action.slug }}</h4>
-                    <p>Order: {% verbatim %}{{ actionMorph.order }}{% endverbatim %}</p>
+                    <h4 class="list-group-item-heading">2 Layout action: ${ actionMorph.action.slug }</h4>
+                    <p>Order: ${ actionMorph.order }</p>
                     <p class="list-group-item-text" v-if="actionMorph.content_id">
-                        Content: {% verbatim %}{{ actionMorph.content_id }}{% endverbatim %}
+                        Content: ${ actionMorph.content_id }
                     </p>
                 </a>
                 <a href="#" class="list-group-item">
@@ -67,18 +67,18 @@
         {% block content %}
             <a href="#" class="list-group-item" v-for="actionMorph in route.actionsMorphs"
                v-if="!actionMorph.variable_id">
-                <h4 class="list-group-item-heading">3 Action: {{ actionMorph.action.slug }}</h4>
-                <p>Order: {% verbatim %}{{ actionMorph.order }}{% endverbatim %}</p>
+                <h4 class="list-group-item-heading">3 Action: ${ actionMorph.action.slug }</h4>
+                <p>Order: ${ actionMorph.order }</p>
                 <p class="list-group-item-text" v-if="actionMorph.content_id">
-                    Content: {% verbatim %}{{ actionMorph.content_id }}{% endverbatim %}
+                    Content: ${ actionMorph.content_id }
                 </p>
             </a>
             <a href="#" class="list-group-item" v-for="actionMorph in layout.actionsMorphs"
                v-if="!actionMorph.variable_id">
-                <h4 class="list-group-item-heading">4 Layout action: {{ actionMorph.action.slug }}</h4>
-                <p>Order: {% verbatim %}{{ actionMorph.order }}{% endverbatim %}</p>
+                <h4 class="list-group-item-heading">4 Layout action: ${ actionMorph.action.slug }</h4>
+                <p>Order: ${ actionMorph.order }</p>
                 <p class="list-group-item-text" v-if="actionMorph.content_id">
-                    Content: {% verbatim %}{{ actionMorph.content_id }}{% endverbatim %}
+                    Content: ${ actionMorph.content_id }
                 </p>
             </a>
             <a href="#" class="list-group-item">

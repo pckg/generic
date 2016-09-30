@@ -1,15 +1,14 @@
 <script type="text/x-template" id="pckg-bootstrap-modal">
-    {% verbatim %}
         <div :class="['modal fade', visible ? 'in' : '']" :style="[visible ? 'display: block;' : '']" tabindex="-1" role="dialog" :id="id">
             <div class="modal-dialog">
                 <div class="modal-content">
                         <div class="modal-header">
                             <button v-if="dismissable" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><slot name="header"></slot>{{ header }}</h4>
+                            <h4 class="modal-title"><slot name="header"></slot>!${ header }</h4>
                         </div>
                         <slot name="body">
                             <div v-if="body" class="modal-body">
-                                {{ body }}
+                                !${ body }
                             </div>
                         </slot>
                     <div class="modal-footer">
@@ -18,7 +17,6 @@
                 </div>
             </div>
         </div>
-    {% endverbatim %}
 </script>
 
 <script type="text/javascript">
