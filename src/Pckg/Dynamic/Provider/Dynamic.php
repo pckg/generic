@@ -17,8 +17,9 @@ use Pckg\Dynamic\Resolver\Tab as TabResolver;
 use Pckg\Dynamic\Resolver\Table as TableResolver;
 use Pckg\Dynamic\Resolver\TableView as ViewResolver;
 use Pckg\Framework\Provider;
+use Pckg\Framework\Provider\Frontend as FrontendProvider;
 use Pckg\Framework\View\Event\RenderingView;
-use Pckg\Frontend\Provider\Frontend as FrontendProvider;
+use Pckg\Generic\Middleware\RegisterGenericAssets;
 
 class Dynamic extends Provider
 {
@@ -35,6 +36,7 @@ class Dynamic extends Provider
         return [
             RenderingView::class => [
                 RegisterDynamicAssets::class,
+                RegisterGenericAssets::class,
             ],
         ];
     }

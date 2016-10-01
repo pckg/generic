@@ -24,6 +24,8 @@ trait Maestro
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-datetime',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-boolean',
             ]
         );
 
@@ -45,6 +47,8 @@ trait Maestro
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-modal',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-datetime',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-boolean',
             ]
         );
 

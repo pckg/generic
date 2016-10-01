@@ -29,7 +29,7 @@ class DynamicAssets extends Provider
             /**
              * Externals
              */
-            'https://use.fontawesome.com/90d4cc6ef0.js',
+            //'https://use.fontawesome.com/90d4cc6ef0.js',
             //'https://cdn.datatables.net/t/bs/dt-1.10.11/datatables.min.css',
             //'https://cdn.datatables.net/t/bs/dt-1.10.11/datatables.min.js',
             //'https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js',

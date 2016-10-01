@@ -26,7 +26,7 @@ class Paginate
     public function applyOnEntity(Entity $entity)
     {
         $entity->count()
-               ->limit(50)
+               ->limit(10)
                ->page($this->get->get('page') ?? 1);
 
         return $this;
