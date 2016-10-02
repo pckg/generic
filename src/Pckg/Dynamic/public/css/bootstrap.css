@@ -131,3 +131,8 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:not(:empty) {
 table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(:empty) {
     display: none;
 }
+
+.input-group[class*=col-] {
+    padding-right: 15px;
+    padding-left: 15px;
+}

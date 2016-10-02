@@ -28,4 +28,17 @@ $(document).ready(function () {
         $(this).closest('tr').find('td input[type=checkbox]').prop('checked', $(this).is(':checked'));
     });
 
+    $('input.datetime').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm'
+    });
+    $('input.date').datetimepicker({
+        format: 'YYYY-MM-DD'
+    });
+    $('input.time').datetimepicker({
+        format: 'HH:mm'
+    });
+    $('.form-group .input-group .fa.fa-calendar').on('click', function () {
+        $(this).closest('.input-group').find('input.datetime').focus();
+    });
+
 });

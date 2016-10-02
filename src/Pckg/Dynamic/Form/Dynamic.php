@@ -115,10 +115,12 @@ class Dynamic extends Bootstrap
     public function initFields()
     {
         $this->addFieldset();
-        $fields = $this->table->listableFields(function(HasMany $fields){
-            $fields->withPermissions();
-            $fields->withFieldType();
-        });
+        $fields = $this->table->listableFields(
+            function(HasMany $fields) {
+                $fields->withPermissions();
+                $fields->withFieldType();
+            }
+        );
 
         foreach ($fields as $field) {
             $type = $field->fieldType->slug;
@@ -126,6 +128,10 @@ class Dynamic extends Bootstrap
             $label = $field->title ?: $name;
 
             if ($type == 'php') {
+                /**
+                 * PHP field is not editable.
+                 * Should we display content?
+                 */
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
@@ -165,18 +171,20 @@ class Dynamic extends Bootstrap
             'decimal',
             'date',
             'time',
-            'datetime',
         ];
         if (in_array($type, $auto)) {
             return $this->{'add' . ucfirst($type)}($name);
 
-        } elseif ($type == 'slug') {
-            $type = 'text';
+        } elseif ($type == 'datetime') {
+            $element = $this->addDatetime($name);
+            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+            return $element;
 
-            return $this->{'add' . ucfirst($type)}($name);
+        } elseif (in_array($type, ['slug', 'order', 'hash', 'picture'])) {
+            return $this->addText($name);
 
         } elseif ($type == 'boolean') {
-            return $this->{'addCheckbox'}($name);
+            return $this->addCheckbox($name);
 
         } elseif ($type == 'select') {
             if ($this->record && $relation = $this->record->getRelationForSelect($this->table, $field)) {
@@ -190,11 +198,6 @@ class Dynamic extends Bootstrap
             } else {
                 return $this->{'addText'}($name);
             }
-
-        } elseif (in_array($type, ['order', 'hash', 'datetime', 'decimal', 'picture'])) {
-            $type = 'text';
-
-            return $this->{'add' . ucfirst($type)}($name);
 
         } else {
             dd('Unknown dynamic form type: ' . $type);
