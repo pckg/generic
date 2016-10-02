@@ -41,7 +41,7 @@ table.table td {
     word-break: break-all;
 }
 
-.panel > div:not([class]) {
+.pckg-maestro-tabelize > [class^='pckg-maestro-table-'] {
     overflow-x: scroll;
     overflow-y: hidden;
     width: 100%;

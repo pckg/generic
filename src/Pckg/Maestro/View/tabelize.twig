@@ -1,14 +1,15 @@
-{% extends 'Pckg/Generic/View/list.twig' %}
+{% import _self as selfMacros %}
 
 {% set table = tabelize.getEntity().getTable() %}
+
+{% set records = tabelize.getRecords() %}
+{% set fields = tabelize.getFields() %}
+{% set recordActions = tabelize.getRecordActions() %}
+{% set entityActions = tabelize.getEntityActions() %}
+
 {% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
 
-{% block afterContent %}
-    {% import _self as selfMacros %}
-    {% set records = tabelize.getRecords() %}
-    {% set fields = tabelize.getFields() %}
-    {% set recordActions = tabelize.getRecordActions() %}
-    {% set entityActions = tabelize.getEntityActions() %}
+<div class="pckg-maestro-tabelize" id="{{ id }}">
 
     <div class="header">
         <h2>
@@ -77,7 +78,7 @@
     </script>
 
     <script type="text/x-template" id="pckg-maestro-table-{{ table }}">
-        <div>
+        <div class="pckg-maestro-table-{{ table }}">
             <div v-if="first" style="margin: 1rem auto; max-width: 360px; width: auto;">
                 <label>Quick search:</label>
                 <input type="text" v-model="search" debounce="500" class="form-control"/>
@@ -215,4 +216,5 @@
             }
         });
     </script>
-{% endblock %}
+
+</div>

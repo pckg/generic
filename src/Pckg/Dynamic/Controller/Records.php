@@ -376,20 +376,21 @@ class Records extends Controller
                 $entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
 
-                $tableResolver = Reflect::create(TableResolver::class);
+                /*$tableResolver = Reflect::create(TableResolver::class);
                 $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
 
-                /*$tabelize = $recordsController->getViewTableAction(
+                $tabelize = $recordsController->getViewTableAction(
                     $table,
                     $this->dynamic,
                     $entity
                 );*/
+                $tabelize = null;
 
                 if ($tabs->count()) {
-                    $tabelizes[$relation->dynamic_table_tab_id ?: 0][] = null;//$tabelize;
+                    $tabelizes[$relation->dynamic_table_tab_id ?: 0][] = $tabelize;
 
                 } else {
-                    $tabelizes[] = null;//$tabelize;
+                    $tabelizes[] = $tabelize;
 
                 }
             }
