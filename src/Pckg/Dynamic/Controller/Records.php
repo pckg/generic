@@ -18,6 +18,7 @@ use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableAction;
+use Pckg\Dynamic\Resolver\Table as TableResolver;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
@@ -375,17 +376,20 @@ class Records extends Controller
                 $entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
 
-                $tabelize = $recordsController->getViewTableAction(
-                    (new Tables())->where('id', $relation->showTable->id)->one(),
+                $tableResolver = Reflect::create(TableResolver::class);
+                $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
+
+                /*$tabelize = $recordsController->getViewTableAction(
+                    $table,
                     $this->dynamic,
                     $entity
-                );
+                );*/
 
                 if ($tabs->count()) {
-                    $tabelizes[$relation->dynamic_table_tab_id ?: 0][] = $tabelize;
+                    $tabelizes[$relation->dynamic_table_tab_id ?: 0][] = null;//$tabelize;
 
                 } else {
-                    $tabelizes[] = $tabelize;
+                    $tabelizes[] = null;//$tabelize;
 
                 }
             }

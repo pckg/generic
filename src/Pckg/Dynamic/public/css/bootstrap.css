@@ -2,36 +2,45 @@
     left: auto;
     right: 0;
 }
+
 .tab-content .tab-pane {
     padding: 2rem;
     border: 1px solid #ddd;
     border-width: 0 1px 1px 1px;
 }
+
 form label .help {
     float: right;
 }
+
 .btn-rounded {
     border-radius: 50%;
 }
+
 .help .btn-rounded {
     width: 22px;
 }
+
 fieldset.permissionable,
 fieldset.translatable {
     display: block;
     clear: both;
 }
+
 table.table {
     min-width: 100%;
     width: auto;
     max-width: none;
 }
+
 table.table th {
     word-break: normal;
 }
+
 table.table td {
     word-break: break-all;
 }
+
 .panel > div:not([class]) {
     overflow-x: scroll;
     overflow-y: hidden;
@@ -43,6 +52,7 @@ fieldset.submit:after {
     display: block;
     clear: both;
 }
+
 div.row {
     clear: both;
 }
@@ -50,10 +60,10 @@ div.row {
 .container-fluid > .panel > .panel-heading {
     line-height: 3rem;
 }
+
 /**
 Derive
 */
-
 
 /**
 Style tds
@@ -68,6 +78,7 @@ table.table td.url {
 table.table td.datetime {
     white-space: normal;
     word-break: break-word;
+    min-width: 80px;
 }
 
 table.table td.text,
@@ -82,13 +93,41 @@ table.table td.decimal,
 table.table td.order {
     text-align: right;
 }
+
+table.table td.editor {
+    min-width: 240px;
+}
+
 #main-row > div {
     transition: all 500ms ease-in-out;
 }
+
 .col-md-0 {
     width: 0;
     overflow: hidden;
     float: left;
     position: relative;
     min-height: 1px;
+}
+
+table.table td.actions .btn-group > div.btn a:not(:first-child) {
+    display: none;
+}
+
+table.table td.actions .btn-group > ul li:not(:empty):first-of-type {
+    display: none;
+}
+
+/* Hide first child and empty lis */
+table.table td.actions .btn-group > ul li:first-child,
+table.table td.actions .btn-group > ul li:empty {
+    display: none;
+}
+
+table.table td.actions .btn-group > ul li:first-child:empty + li:not(:empty) {
+    display: none;
+}
+
+table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(:empty) {
+    display: none;
 }

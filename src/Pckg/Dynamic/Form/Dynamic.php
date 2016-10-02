@@ -2,6 +2,7 @@
 
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
@@ -114,7 +115,10 @@ class Dynamic extends Bootstrap
     public function initFields()
     {
         $this->addFieldset();
-        $fields = $this->table->listableFields;
+        $fields = $this->table->listableFields(function(HasMany $fields){
+            $fields->withPermissions();
+            $fields->withFieldType();
+        });
 
         foreach ($fields as $field) {
             $type = $field->fieldType->slug;

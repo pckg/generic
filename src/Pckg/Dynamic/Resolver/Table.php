@@ -54,20 +54,18 @@ class Table implements RouteResolver
         return $this->tables->where('id', $value)
                             ->withFields(
                                 function(HasMany $fields) {
+                                    $fields->joinTranslations();
                                     $fields->withFieldType();
-
                                 }
                             )
                             ->withTabs(
                                 function(HasMany $tabs) {
-                                    $tabs->withTranslations();
-
+                                    $tabs->joinTranslations();
                                 }
                             )
                             ->oneOrFail(
                                 function() {
                                     $this->response->unauthorized('Table not found');
-
                                 }
                             );
     }
