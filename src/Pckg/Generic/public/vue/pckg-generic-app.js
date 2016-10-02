@@ -17,10 +17,11 @@ utils.pushToVue({
         }
     },
     ready: [
-        function(){
+        function () {
             $('#main-row').animate({opacity: 1});
         }
-    ]
+    ],
+    on: {}
 });
 
 /**
@@ -32,7 +33,6 @@ $vue.data = function () {
     $.each(vueData, function (key, val) {
         data[key] = val;
     });
-    console.log(data);
 
     return data;
 };
@@ -41,13 +41,23 @@ $vue.data = function () {
  * Transform ready method.
  */
 var vueReady = $vue.ready;
-$vue.ready = function(){
-    $.each(vueReady, function(key, val){
+$vue.ready = function () {
+    $.each(vueReady, function (key, val) {
         val();
     })
 };
+
+var on = $vue.on;
 
 /**
  * Initialize main VueJS app.
  */
 data.$root = new Vue($vue);
+
+/**
+ * Attach listeners
+ */
+$.each(on, function(event, callback){
+    console.log('registering ' + event);
+    data.$root.$on(event, callback);
+});

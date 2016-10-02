@@ -62,8 +62,8 @@
             },
             methods: {
                 recordAction: function (record, action) {
-                    console.log('broadCasting record:' + action);
-                    this.$broadcast('record:' + action, record.id, record);
+                    console.log('dispatching record:' + action);
+                    data.$root.$dispatch('record:' + action, record.id, record);
                 }
             }
         });

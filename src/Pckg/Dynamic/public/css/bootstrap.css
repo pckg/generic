@@ -110,6 +110,18 @@ table.table td.editor {
     min-height: 1px;
 }
 
+
+table.table td.actions .btn-group {
+    display: table;
+}
+table.table td.actions .btn-group > div.btn,
+table.table td.actions .btn-group > button.btn {
+    display: table-cell;
+    float: none;
+}
+table.table td.actions .btn-group > button.btn {
+    margin-bottom: -1px;
+}
 table.table td.actions .btn-group > div.btn a:not(:first-child) {
     display: none;
 }
