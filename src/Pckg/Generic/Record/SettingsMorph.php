@@ -3,6 +3,7 @@
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Dynamic\Resolver\Table;
+use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\SettingsMorphs;
 
 class SettingsMorph extends Record
@@ -15,6 +16,8 @@ class SettingsMorph extends Record
         if ($this->setting_id == 1) {
             $args[] = Reflect::class(Table::class)->resolve($this->value);
 
+        } else if ($this->setting_id == 7) {
+            $args[] = (new ActionsMorphs())->where('id', $this->value)->oneOrFail();
         }
     }
 

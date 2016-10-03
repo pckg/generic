@@ -46,7 +46,8 @@ class ActionMorph extends Bootstrap
              ->setLabel('Order');
 
         $submit = $this->addSubmit();
-        $submit->setAttribute('v-on:click', 'onSubmit');
+        $submit->setAttribute('@click.prevent', 'onSubmit');
+        $this->setAttribute('@submit.prevent', 'onSubmit');
 
         return $this;
     }

@@ -69,6 +69,7 @@ class Generic
                     [
                         'content'  => $action->poly->content,
                         'settings' => $action->poly->settings,
+                        'route'    => $this->route,
                     ]
                 );
             }
@@ -84,6 +85,7 @@ class Generic
                         [
                             'content'  => $action->poly->content,
                             'settings' => $action->poly->settings,
+                            'route'    => $this->route,
                         ]
                     );
                 }
@@ -167,7 +169,17 @@ class Generic
     private function mergeVariables($variables)
     {
         foreach ($variables as &$contents) {
-            $contents = implode($contents);
+            $isArray = false;
+            foreach ($contents as $content) {
+                if (is_array($content)) {
+                    $isArray = true;
+                    break;
+                }
+            }
+            
+            if (!$isArray) {
+                $contents = implode($contents);
+            }
         }
 
         return $variables;

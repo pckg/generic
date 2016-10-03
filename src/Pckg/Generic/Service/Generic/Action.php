@@ -87,15 +87,21 @@ class Action
             }
 
             try {
-                $result = (string)Reflect::method($controller, $method, $args);
+                $result = Reflect::method($controller, $method, $args);
+
+                if (is_array($result)) {
+                    return $result;
+
+                } else {
+                    return '<!-- ' . $this->class . '::' . $method . ' start -->' . $result . '<!-- ' . $this->class . '::' . $method . ' end -->';
+
+                }
             } catch (\Exception $e) {
                 if (env()->isDev()) {
                     throw $e;
                 }
                 throw $e;
             }
-
-            return '<!-- ' . $this->class . '::' . $method . ' start -->' . $result . '<!-- ' . $this->class . '::' . $method . ' end -->';
         }
     }
 

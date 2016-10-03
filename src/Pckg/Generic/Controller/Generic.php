@@ -58,6 +58,15 @@ class Generic
             : $vars;
     }
 
+    public function postGenericAction(Route $route)
+    {
+        $this->genericService->readRoute($route);
+
+        $vars = $this->genericService->getVariables();
+
+        return $vars;
+    }
+
     public function wrapIntoGeneric($view, $template = 'Pckg\Generic:generic')
     {
         $center = $this->genericService->touchBlock('content');

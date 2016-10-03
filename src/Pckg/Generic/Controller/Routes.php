@@ -1,21 +1,19 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Controller;
-use Pckg\Generic\Entity\Routes as RoutesEntity;
 use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\ActionsMorph;
+use Pckg\Generic\Record\Route;
 
 class Routes extends Controller
 {
 
     public function getPageStructureAction(
-        Record $dynamicRecord,
+        Route $route,
         ActionMorph $actionMorphForm,
         ActionsMorph $actionsMorph
     ) {
-        $route = (new RoutesEntity())->withActions()->where('id', $dynamicRecord->id)->one();
         $variables = (new Variables())->all();
 
         /**
@@ -38,6 +36,14 @@ class Routes extends Controller
                 'actionsMorph'    => $actionsMorph,
             ]
         );
+    }
+
+    public function postPageStructureAction(
+        Route $route,
+        ActionMorph $actionMorphForm,
+        ActionsMorph $actionsMorph
+    ) {
+        return $_POST;
     }
 
 }
