@@ -169,8 +169,6 @@ class Dynamic extends Bootstrap
             'editor',
             'integer',
             'decimal',
-            'date',
-            'time',
         ];
         if (in_array($type, $auto)) {
             return $this->{'add' . ucfirst($type)}($name);
@@ -178,6 +176,18 @@ class Dynamic extends Bootstrap
         } elseif ($type == 'datetime') {
             $element = $this->addDatetime($name);
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+
+            return $element;
+
+        } elseif ($type == 'date') {
+            $element = $this->addDate($name);
+            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+
+            return $element;
+
+        } elseif ($type == 'time') {
+            $element = $this->addTime($name);
+            $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
 
             return $element;
 
