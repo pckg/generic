@@ -40,4 +40,10 @@ $(document).ready(function () {
     $('.form-group .input-group .fa.fa-calendar').on('click', function () {
         $(this).closest('.input-group').find('input.datetime').focus();
     });
+
+    $('textarea.editor').each(function () {
+        $(this).summernote({
+            resetCss: true
+        });
+    });
 });

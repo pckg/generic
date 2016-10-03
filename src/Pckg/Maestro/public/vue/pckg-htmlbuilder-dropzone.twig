@@ -1,9 +1,11 @@
 <script type="text/x-template" id="pckg-htmlbuilder-dropzone">
     <div class="pckg-htmlbuilder-dropzone">
         <div class="row">
-            <div class="col-md-2 preview"><img v-bind:src="current" class="img-responsive"/></div>
-            <div class="col-md-10">
-                <p>Drop or <a href="#" class="btn btn-info select-files">select</a> files for upload.</p>
+            <div class="col-md-3 preview"><img v-bind:src="current" class="img-responsive"/></div>
+            <div class="col-md-9">
+                <p><button type="button" class="btn btn-info select-files">Select</button> or drop image for upload.</p>
+                <p v-if="original && current != original"><button type="button" class="btn btn-warning">Restore</button> original image.</p>
+                <p v-if="current"><button type="button" class="btn btn-danger">Delete</button> current image.</p>
 
                 <div class="table table-striped" class="files" id="previews">
                     <div id="template" class="file-row">
@@ -51,11 +53,13 @@
         template: '#pckg-htmlbuilder-dropzone',
         props: {
             current: null,
-            prev: null,
             url: null
         },
         data: function () {
-            return {};
+            return {
+                original: null,
+                _dropzone: null
+            };
         },
         computed: {},
         ready: function () {
@@ -65,9 +69,9 @@
             var previewTemplate = previewNode.parentNode.innerHTML;
             previewNode.parentNode.removeChild(previewNode);
 
-            this.prev = this.current;
+            this.original = this.current;
 
-            var d = $(this.$el).dropzone({
+            this._dropzone = $(this.$el).dropzone({
                 url: this.url,
                 previewsContainer: '#previews',
                 previewTemplate: previewTemplate,
@@ -80,15 +84,7 @@
                         this.prev = this.current;
                         this.current = data.url;
                     }
-                }.bind(this)/*,
-                 complete: function (file, a) {
-                 console.log('complete', file, a);
-                 //d.removeFile(file);
-                 },
-                 queuecomplete: function (file, a) {
-                 console.log('queuecomplete', file, a);
-                 //d.removeFile(file);
-                 }*/
+                }.bind(this)
             });
         }
     });
