@@ -178,9 +178,27 @@ class Dynamic extends Bootstrap
         } elseif ($type == 'datetime') {
             $element = $this->addDatetime($name);
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+
             return $element;
 
-        } elseif (in_array($type, ['slug', 'order', 'hash', 'picture'])) {
+        } elseif ($type == 'picture') {
+            $element = $this->addPicture($name);
+            $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
+            $element->setAttribute(
+                'data-url',
+                url(
+                    'dynamic.records.field.upload',
+                    [
+                        'table'  => $this->table,
+                        'field'  => $field,
+                        'record' => $this->record,
+                    ]
+                )
+            );
+
+            return $element;
+
+        } elseif (in_array($type, ['slug', 'order', 'hash'])) {
             return $this->addText($name);
 
         } elseif ($type == 'boolean') {

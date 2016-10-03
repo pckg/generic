@@ -148,3 +148,47 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
     padding-right: 15px;
     padding-left: 15px;
 }
+.pckg-image-preview {
+    display: table-cell;
+    width: 160px;
+    height: auto;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    border-width: 1px 0;
+
+    img {
+        max-width: 160px;
+        max-height: 90px;
+        width: 100%;
+        height: auto;
+    }
+}
+.pckg-htmlbuilder-dropzone {
+    display: table-cell;
+    width: 100%;
+    height: auto;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-width: 1px 1px 1px 0;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.pckg-htmlbuilder-dropzone + input[type=file] {
+    display: none;
+}

@@ -1,0 +1,95 @@
+<script type="text/x-template" id="pckg-htmlbuilder-dropzone">
+    <div class="pckg-htmlbuilder-dropzone">
+        <div class="row">
+            <div class="col-md-2 preview"><img v-bind:src="current" class="img-responsive"/></div>
+            <div class="col-md-10">
+                <p>Drop or <a href="#" class="btn btn-info select-files">select</a> files for upload.</p>
+
+                <div class="table table-striped" class="files" id="previews">
+                    <div id="template" class="file-row">
+                        <!-- This is used as the file preview template -->
+                        <!-- <div>
+                            <span class="preview"><img data-dz-thumbnail/></span>
+                        </div>
+                        <div>
+                            <p class="name" data-dz-name></p>
+                            <strong class="error text-danger" data-dz-errormessage></strong>
+                        </div> -->
+                        <div>
+                            <p class="size" data-dz-size></p>
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0"
+                                 aria-valuemax="100" aria-valuenow="0">
+                                <div class="progress-bar progress-bar-success" style="width:0%;"
+                                     data-dz-uploadprogress></div>
+                            </div>
+                        </div>
+                        <!--                        <div>
+                                                    <button class="btn btn-primary start">
+                                                        <i class="glyphicon glyphicon-upload"></i>
+                                                        <span>Start</span>
+                                                    </button>
+                                                    <button data-dz-remove class="btn btn-warning cancel">
+                                                        <i class="glyphicon glyphicon-ban-circle"></i>
+                                                        <span>Cancel</span>
+                                                    </button>
+                                                    <button data-dz-remove class="btn btn-danger delete">
+                                                        <i class="glyphicon glyphicon-trash"></i>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </div>
+                                                -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
+        template: '#pckg-htmlbuilder-dropzone',
+        props: {
+            current: null,
+            prev: null,
+            url: null
+        },
+        data: function () {
+            return {};
+        },
+        computed: {},
+        ready: function () {
+
+            var previewNode = document.querySelector("#template");
+            previewNode.id = "";
+            var previewTemplate = previewNode.parentNode.innerHTML;
+            previewNode.parentNode.removeChild(previewNode);
+
+            this.prev = this.current;
+
+            var d = $(this.$el).dropzone({
+                url: this.url,
+                previewsContainer: '#previews',
+                previewTemplate: previewTemplate,
+                clickable: $(this.$el).parent().find('.select-files').get()[0],
+                maxFilesize: 8,
+                success: function (file, data) {
+                    data = JSON.parse(data);
+
+                    if (data.success) {
+                        this.prev = this.current;
+                        this.current = data.url;
+                    }
+                }.bind(this)/*,
+                 complete: function (file, a) {
+                 console.log('complete', file, a);
+                 //d.removeFile(file);
+                 },
+                 queuecomplete: function (file, a) {
+                 console.log('queuecomplete', file, a);
+                 //d.removeFile(file);
+                 }*/
+            });
+        }
+    });
+</script>

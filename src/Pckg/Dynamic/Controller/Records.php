@@ -18,7 +18,6 @@ use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableAction;
-use Pckg\Dynamic\Resolver\Table as TableResolver;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
@@ -521,6 +520,26 @@ class Records extends Controller
         $record->save($table->createEntity());
 
         return $this->response()->respondWithSuccessRedirect();
+    }
+
+    public function postUploadAction(Table $table, Record $record, Field $field)
+    {
+        /**
+         * @T00D00 - save and process file!
+         */
+        $entity = $table->createEntity();
+        $record->setEntity($entity);
+        $record->{$field->field} = 'https://google.si/logos/doodles/2016/childrens-day-2016-slovenia-5151167878266880-hp.jpg#' . sha1(
+                microtime()
+            );
+        $record->save($entity);
+
+        return [
+            'success' => 'true',
+            'url'     => $record->{$field->field},
+            'request' => $_REQUEST,
+            'files'   => $_FILES,
+        ];
     }
 
 }
