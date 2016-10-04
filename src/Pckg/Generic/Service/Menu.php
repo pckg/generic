@@ -22,7 +22,7 @@ class Menu
         $menu = $this->menus->withMenuItems(
             function(HasMany $relation) {
                 $relation->joinTranslation();
-                $relation->joinPermissionTo('read');
+                // $relation->joinPermissionTo('read');
             }
         )->where('slug', $slug)->one();
 
