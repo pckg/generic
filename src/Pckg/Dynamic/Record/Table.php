@@ -100,16 +100,13 @@ class Table extends Record
      */
     public function createEntity()
     {
+        $repository = $this->repository ? context()->get(Repository::class . '.' . $this->repository) : null;
         if ($this->framework_entity) {
-            $entity = Reflect::create($this->framework_entity);
+            $entity = Reflect::create($this->framework_entity, ['repository' => $repository]);
 
         } else {
-            $entity = new Entity($this->repository ? context()->get(Repository::class . '.' . $this->repository) : null);
+            $entity = new Entity($repository);
             $entity->setTable($this->table);
-
-            if ($this->repository) {
-                $entity->setRepository(context()->get(Repository::class . '.' . $this->repository));
-            }
 
         }
 
