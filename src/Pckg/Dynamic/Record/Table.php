@@ -104,7 +104,7 @@ class Table extends Record
             $entity = Reflect::create($this->framework_entity);
 
         } else {
-            $entity = new Entity();
+            $entity = new Entity($this->repository ? context()->get(Repository::class . '.' . $this->repository) : null);
             $entity->setTable($this->table);
 
             if ($this->repository) {
