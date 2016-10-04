@@ -220,11 +220,11 @@ class Records extends Controller
         $form->setRecord($record);
         $form->initFields();
 
-        if ($table->getEntity()->isTranslatable()) {
+        if ($entity->isTranslatable()) {
             $form->initLanguageFields();
         }
 
-        if ($table->getEntity()->isPermissionable()) {
+        if ($entity->getEntity()->isPermissionable()) {
             $form->initPermissionFields();
         }
 
