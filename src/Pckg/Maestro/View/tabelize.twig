@@ -99,7 +99,9 @@
                 <template v-if="depth < 1">
                     <thead>
                     <tr>
-                        <th v-for="field in fields">${ field.field ? field.field : field }</th>
+                        <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
+                            ${ field.field ? field.field : field }
+                        </th>
                         <th></th>
                         <th>
                             <input type="checkbox" v-on:click="checkAll"

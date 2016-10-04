@@ -9,6 +9,7 @@ class CreateDynamicTables extends Migration
     {
         $this->dynamicTablesUp();
         $this->dynamicFieldTypesUp();
+        $this->dynamicFieldGroupsUp();
         $this->dynamicFieldsUp();
         $this->dynamicRelationTypesUp();
         $this->dynamicRelationsUp();
@@ -42,12 +43,22 @@ class CreateDynamicTables extends Migration
         $dynamicFieldTypesI18n->title();
     }
 
+    protected function dynamicFieldGroupsUp()
+    {
+        $dynamicFieldGroups = $this->table('dynamic_field_groups');
+        $dynamicFieldGroups->boolean('opened');
+
+        $dynamicFieldGroupsI18n = $this->translatable('dynamic_field_groups');
+        $dynamicFieldGroupsI18n->title();
+    }
+
     protected function dynamicFieldsUp()
     {
         $dynamicFields = $this->table('dynamic_fields');
         $dynamicFields->varchar('field');
         $dynamicFields->integer('dynamic_field_type_id')->references('dynamic_field_types');
         $dynamicFields->integer('dynamic_table_id')->references('dynamic_tables');
+        $dynamicFields->integer('dynamic_field_group_id')->references('dynamic_field_groups');
         $dynamicFields->integer('order');
         $dynamicFields->orderable();
 

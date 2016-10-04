@@ -56,6 +56,9 @@ class Dynamic extends Bootstrap
 
     public function initPermissionFields()
     {
+        /**
+         * @T00D00 - this should be handled separately, like in different form or even different page/tab.
+         */
         $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->each(
             function($permissions) {
                 return (new Collection($permissions))->groupBy('action');
@@ -76,13 +79,13 @@ class Dynamic extends Bootstrap
 
         $authGroups = (new UserGroups())->all();
 
-        $child = '<h3>Permissions</h3><table class="table table-striped table-condensed">';
+        $child = '<hr /><h4>Permissions</h4><table class="table table-striped table-condensed">';
         $child .= '<thead><tr><th></th>';
         foreach ($authGroups as $group) {
             $child .= '<th>' . $group->slug . '&nbsp;<input type="checkbox" class="toggle-vertically"/></th>';
         }
         $child .= '</tr></thead><tbody>';
-        $child .= '<tr><td><b>Table permissions</b></td></tr>';
+        $child .= '<tr><td colspan="' . ($authGroups->count() + 1) . '"><b>Table permissions</b></td></tr>';
         foreach ($tablePermissions as $permissionKey => $permissionTitle) {
             $child .= '<tr>';
             $child .= '<td>' . $permissionTitle . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
@@ -93,7 +96,7 @@ class Dynamic extends Bootstrap
         }
 
         $table = (new Tables())->where('id', $this->table->id)->withActions()->one();
-        $child .= '<tr><td><b>Actions permissions</b></td></tr>';
+        $child .= '<tr><td colspan="' . ($authGroups->count() + 1) . '"><b>Actions permissions</b></td></tr>';
         foreach ($table->actions as $action) {
             $child .= '<tr>';
             $child .= '<td>' . $action->slug . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
@@ -117,12 +120,23 @@ class Dynamic extends Bootstrap
         $this->addFieldset();
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
+                $fields->getRightEntity()->orderBy('dynamic_field_group_id, `order`');
                 $fields->withPermissions();
                 $fields->withFieldType();
             }
         );
 
+        $prevGroup = null;
         foreach ($fields as $field) {
+            if (
+                ($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
+                (!$prevGroup && $field->dynamic_field_group_id)
+            ) {
+                $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
+                $fieldset->addChild('<hr /><h4>Field group #' . $field->dynamic_field_group_id . '</h4>');
+                $prevGroup = $field->dynamic_field_group_id;
+            }
+
             $type = $field->fieldType->slug;
             $name = $field->field;
             $label = $field->title ?: $name;

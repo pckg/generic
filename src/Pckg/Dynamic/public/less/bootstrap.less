@@ -68,35 +68,48 @@ Derive
 /**
 Style tds
 **/
-table.table td.num,
-table.table td.slug,
-table.table td.id,
-table.table td.url,
-table.table td.email {
-  white-space: nowrap;
-}
+table.table {
+  td,
+  th {
 
-table.table td.datetime {
-  white-space: normal;
-  word-break: break-word;
-  min-width: 80px;
-}
+  }
+  td {
+    &.num,
+    &.slug,
+    &.id,
+    &.url,
+    &.email {
+      white-space: nowrap;
+    }
 
-table.table td.text,
-table.table td.select,
-table.table td.php {
-  white-space: normal;
-  word-break: normal;
-}
+    &.datetime,
+    &.date,
+    &.time {
+      white-space: normal;
+      word-break: break-word;
+      min-width: 80px;
+    }
 
-table.table td.integer,
-table.table td.decimal,
-table.table td.order {
-  text-align: right;
-}
+    &.text,
+    &.select,
+    &.php {
+      white-space: normal;
+      word-break: normal;
+    }
 
-table.table td.editor {
-  min-width: 240px;
+    &.integer,
+    &.decimal,
+    &.order {
+      text-align: right;
+    }
+
+    &.editor {
+      min-width: 240px;
+    }
+  }
+  th {
+
+  }
 }
 
 #main-row > div {
