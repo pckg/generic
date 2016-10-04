@@ -224,7 +224,7 @@ class Records extends Controller
             $form->initLanguageFields();
         }
 
-        if ($entity->getEntity()->isPermissionable()) {
+        if ($entity->isPermissionable()) {
             $form->initPermissionFields();
         }
 
