@@ -1,6 +1,9 @@
 <script type="text/javascript">
     var data = data || {};
     var $vue = $vue || {};
+    var props = props || {};
+
+    props.locale = '{{ _localeManager.getDefault() }}';
 </script>
 
 {{ _seoManager | raw }}
