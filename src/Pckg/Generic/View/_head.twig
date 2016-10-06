@@ -8,8 +8,6 @@
 
 {{ _seoManager | raw }}
 
-{{ _metaManager | raw }}
-
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
 
 {{ _assetManager.getGoogleFonts() | raw }}
