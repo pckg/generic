@@ -1,3 +1,7 @@
+{{ _seoManager | raw }}
+
+{{ _metaManager.getMeta('header') | raw }}
+
 <script type="text/javascript">
     var data = data || {};
     var $vue = $vue || {};
@@ -5,8 +9,6 @@
 
     props.locale = '{{ _localeManager.getDefault() }}';
 </script>
-
-{{ _seoManager | raw }}
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
 
