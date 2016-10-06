@@ -23,19 +23,12 @@
     </div>
 
     <script type="text/x-template" id="pckg-maestro-actions">
-        <!-- <div class="btn-group btn-group-sm" role="group" aria-label="...">
-                {% for action in recordActions %}
-                    {% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
-                {% endfor %}
-            </div> -->
-        <!-- Split button -->
         <div class="btn-group btn-group-sm">
             <div type="button" class="btn btn-default">
                 {% for action in recordActions %}
                     {% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
                 {% endfor %}
             </div>
-            <!-- <button type="button" class="btn btn-danger">Action</button> -->
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false">
@@ -91,7 +84,7 @@
                             <pckg-maestro-table-{{ table }} :records="record" :depth="depth - 1"
                                                             :fields="fields" :ids.sync="ids" :search.sync="search"
                                                             :groups.sync="groups"
-                                                            :tabelize.sync="tabelize"
+                                                            :paginator.sync="paginator"
                                                             :entityactions.sync="entityactions"></pckg-maestro-table-{{ table }}>
                         </td>
                     </tr>
@@ -143,9 +136,9 @@
                 </template>
             </table>
             <div v-if="first">
-                <pckg-dynamic-paginator v-ref:maestro-paginator per-page="tabelize.perPage"
-                                        page="tabelize.page"
-                                        total="tabelize.total"></pckg-dynamic-paginator>
+                <pckg-dynamic-paginator v-ref:maestro-paginator :per-page="paginator.perPage"
+                                        :page="paginator.page"
+                                        :total="paginator.total"></pckg-dynamic-paginator>
             </div>
         </div>
     </script>
@@ -159,8 +152,8 @@
 
     <pckg-maestro-table-{{ table }} v-ref:maestro-table :records="records"
                                     :fields="fields" :depth="depth" :groups.sync="groups"
-                                    :first="1" :ids.sync="ids" :search.sync="search" :tabelize.sync="tabelize"
-                                    :entityactions.sync="entityactions">
+                                    :first="1" :ids.sync="ids" :search.sync="search"
+                                    :entityactions.sync="entityactions" :paginator.sync="paginator">
     </pckg-maestro-table-{{ table }}>
 
     <script type="text/javascript">
@@ -168,7 +161,7 @@
         data.maestroRecords = {{ tabelize.transformRecords() | json_encode | raw }};
         data.maestroGroups = {{ tabelize.getGroups() | json_encode | raw }};
         data.entityactions = {{ tabelize.getEntityActions() | json_encode | raw }};
-        data.tabelize = {
+        data.paginator = {
             perPage: {{ tabelize.getPerPage() }},
             page: {{ tabelize.getPage() }},
             total: {{ tabelize.getTotal() }}
@@ -182,7 +175,7 @@
                     records: data.maestroRecords,
                     groups: data.maestroGroups,
                     depth: data.maestroGroups.length,
-                    tabelize: data.tabelize,
+                    paginator: data.paginator,
                     entityactions: data.entityactions,
                     ids: [],
                     search: null

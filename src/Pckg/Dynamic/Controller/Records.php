@@ -17,7 +17,6 @@ use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
-use Pckg\Dynamic\Record\TableAction;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
@@ -72,8 +71,11 @@ class Records extends Controller
                     'ds'
                 ) . 'View' . path('ds');
             Twig::addDir($dir);
-            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
+            /**
+             * This is needed for table actions.
+             */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
+            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
         }
 
         /**
@@ -158,13 +160,7 @@ class Records extends Controller
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews(
-                             $tableRecord->actions->map(
-                                 function(TableAction $action) {
-                                     return $action->slug;
-                                 }
-                             )
-                         );
+                         ->setViews($tableRecord->actions->keyBy('slug')->map('slug'));
 
         if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
             return [
@@ -317,13 +313,12 @@ class Records extends Controller
         );
         $tabs = $table->tabs;
         $tabelizes = [];
-        $tablesController = Reflect::create(Records::class);
         $relations->each(
-            function(Relation $relation) use ($tabs, $record, &$tabelizes, $tablesController) {
+            function(Relation $relation) use ($tabs, $record, &$tabelizes) {
                 $entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
 
-                $tabelize = $tablesController->getViewTableAction(
+                $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),
                     $this->dynamic,
                     $entity

@@ -121,6 +121,7 @@ class CreateDynamicTables extends Migration
         $dynamicTableActions = $this->table('dynamic_table_actions');
         $dynamicTableActions->integer('dynamic_table_id')->references('dynamic_tables');
         $dynamicTableActions->slug();
+        $dynamicTableActions->varchar('template');
         $dynamicTableActions->varchar('type');
 
         $dynamicTableActionsI18n = $this->translatable('dynamic_table_actions');

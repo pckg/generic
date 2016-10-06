@@ -28,6 +28,7 @@ trait Maestro
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-boolean',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-editor',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-dropzone',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-select',
             ]
         );
 
@@ -53,6 +54,7 @@ trait Maestro
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-boolean',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-editor',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-dropzone',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-select',
             ]
         );
 

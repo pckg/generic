@@ -43,7 +43,8 @@ $(document).ready(function () {
 
     $('textarea.editor').each(function () {
         $(this).summernote({
-            resetCss: true
+            resetCss: true,
+            minHeight: '240px'
         });
     });
 });

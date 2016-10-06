@@ -1,3 +1,7 @@
+body {
+  color: @clrbody;
+}
+
 .panel-heading .dropdown-menu {
   left: auto;
   right: 0;
@@ -189,6 +193,11 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
   }
 }
 
+.checkbox label,
+.radio label {
+  line-height: 1em;
+}
+
 .pckg-htmlbuilder-dropzone {
   display: table-cell;
   width: 100%;
@@ -210,6 +219,17 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
 
 .pckg-htmlbuilder-dropzone + input[type=file] {
   display: none;
+}
+
+.pckg-htmlbuilder-select {
+  width: 82px;
+  float: right;
+}
+
+.pckg-htmlbuilder-select + div {
+  float: left;
+  width: ~'calc(100% - 82px) !important';
+  padding-right: 4px !important;
 }
 
 .note-editor .form-group {

@@ -360,13 +360,15 @@ class Tabelize
             /**
              * Parse tabelize view.
              */
-            $string = $this->view->autoparse();
+            $string = '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
 
             /**
              * Then parse all additional views (custom actions).
              */
             foreach ($this->views as $view) {
-                $string .= is_string($view) ? view($view)->autoparse() : $view;
+                $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
+                $string .= is_string($view) ? view('tabelize/listActions/' . $view)->autoparse() : $view;
+                $string .= '<!-- end tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
             }
         } catch (Exception $e) {
             return exception($e);
