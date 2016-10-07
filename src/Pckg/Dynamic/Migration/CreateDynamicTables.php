@@ -97,7 +97,7 @@ class CreateDynamicTables extends Migration
     protected function dynamicTableTabsUp()
     {
         $dynamicTableTabs = $this->table('dynamic_table_tabs');
-        $dynamicTableTabs->integer('dynamic_table_id')->references('tables');
+        $dynamicTableTabs->integer('dynamic_table_id')->references('dynamic_tables');
         $dynamicTableTabs->orderable();
 
         $dynamicTableTabsI18n = $this->translatable('dynamic_table_tabs');
