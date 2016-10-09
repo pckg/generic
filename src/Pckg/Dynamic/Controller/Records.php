@@ -6,6 +6,8 @@ use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Relation\MorphedBy;
+use Pckg\Database\Relation\MorphsMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
@@ -307,8 +309,25 @@ class Records extends Controller
     {
         $relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
-                $relation->where('dynamic_relation_type_id', 2);
                 $relation->where('dynamic_table_tab_id', $tab->id);
+            }
+        );
+        $table->morphsManyRelation(
+            function(MorphsMany $relation) use ($tab) {
+                $relation->where('dynamic_table_tab_id', $tab->id);
+            }
+        )->each(
+            function($item) use ($relations) {
+                $relations->push($item);
+            }
+        );
+        $table->morphedByRelation(
+            function(MorphedBy $relation) use ($tab) {
+                $relation->where('dynamic_table_tab_id', $tab->id);
+            }
+        )->each(
+            function($item) use ($relations) {
+                $relations->push($item);
             }
         );
         $tabs = $table->tabs;

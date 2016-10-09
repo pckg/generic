@@ -72,6 +72,20 @@ class Tables extends DatabaseEntity implements MaestroEntity
                     ->fill('hasManyRelation');
     }
 
+    public function morphsManyRelation()
+    {
+        return $this->relations()
+                    ->where('dynamic_relation_type_id', 6)
+                    ->fill('morphsManyRelation');
+    }
+
+    public function morphedByRelation()
+    {
+        return $this->relations()
+                    ->where('dynamic_relation_type_id', 5)
+                    ->fill('morphedByRelation');
+    }
+
     public function relations()
     {
         return $this->hasMany(Relations::class)
