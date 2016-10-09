@@ -54,7 +54,7 @@ class Sort
         ];
 
         foreach ($sorts as $sort) {
-            $entity->orderBy($sort['field'] . ' ' . ($directionMapper[$sort['direction'] ?? ''] ?? 'DESC'));
+            $entity->orderBy($sort['field'] . ' ' . ($directionMapper[$sort['options']['direction'] ?? 'descending'] ?? 'DESC'));
         }
     }
 

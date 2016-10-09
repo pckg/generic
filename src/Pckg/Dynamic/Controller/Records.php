@@ -134,7 +134,7 @@ class Records extends Controller
          * Filter records by $_GET['search']
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
-        $records = $entity->all();
+        $records = $entity->count()->all();
 
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
         $tabelize = $this->tabelize()
@@ -156,7 +156,7 @@ class Records extends Controller
                          )
                          ->setPerPage(50)
                          ->setPage(1)
-                         ->setTotal($entity->total())
+                         ->setTotal($records->total())
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())

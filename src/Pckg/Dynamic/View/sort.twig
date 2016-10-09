@@ -32,7 +32,7 @@
                     <label class="col-sm-3">${ sorts[sort.field].label }</label>
                     <div class="col-sm-4">
                         <select v-model="sort.options.direction" class="form-control">
-                            <option v-for="(key,option) in typeMethods" :value="key">${ option.label }</option>
+                            <option v-for="(key,option) in directions" :value="key">${ option.label }</option>
                         </select>
                     </div>
                     <div class="col-sm-2">
