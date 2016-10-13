@@ -149,7 +149,7 @@ class Dynamic extends Bootstrap
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped"><label class="col-sm-3">' . $label . '<div class="help"><button type="button" class="btn btn-info btn-xs btn-rounded" data-toggle="popover" data-trigger="focus" title="" data-content="<p>This is help text.</p>" data-placement="top" data-container="body" data-original-title="Help"><i class="fa fa-question" aria-hidden="true"></i></button></div>
+                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '<div class="help"><button type="button" class="btn btn-info btn-xs btn-rounded" data-toggle="popover" data-trigger="focus" title="" data-content="<p>This is help text.</p>" data-placement="top" data-container="body" data-original-title="Help"><i class="fa fa-question" aria-hidden="true"></i></button></div>
 </label>
 <div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
                 );
@@ -164,6 +164,8 @@ class Dynamic extends Bootstrap
             }
 
             $element->setHelp($field->help);
+
+            $element->setAttribute('data-field-id', $field->id);
         }
 
         $this->addSubmit('submit');
@@ -218,6 +220,11 @@ class Dynamic extends Bootstrap
                         'record' => $this->record,
                     ]
                 )
+            );
+            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+            $element->setAttribute(
+                'data-image',
+                img($this->record->{$field->field}, null, true, $dir)
             );
 
             return $element;

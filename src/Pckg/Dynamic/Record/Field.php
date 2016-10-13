@@ -52,7 +52,7 @@ class Field extends Record
                || ($this->fieldType->slug == 'datetime' && $this->getSetting('pckg-generic-field-toggle'));
     }
 
-    public function getSetting($key)
+    public function getSetting($key, $default = null)
     {
         $setting = $this->settings->first(
             function($item) use ($key) {
@@ -61,7 +61,7 @@ class Field extends Record
         );
 
         if (!$setting) {
-            return null;
+            return $default;
         }
 
         return $setting->poly->value;
@@ -87,6 +87,15 @@ class Field extends Record
         }
 
         return isset($setting->max->eval) ? eval('return ' . $setting->max->eval . ';') : $setting->max;
+    }
+
+    public function getAbsoluteDir($dir)
+    {
+        if (strpos($dir, path('ds')) === 0) {
+            return $dir;
+        }
+
+        return path('uploads') . $dir . path('ds');
     }
 
 }

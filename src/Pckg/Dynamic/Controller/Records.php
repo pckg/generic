@@ -2,6 +2,7 @@
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
+use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Relation\BelongsTo;
@@ -538,21 +539,49 @@ class Records extends Controller
 
     public function postUploadAction(Table $table, Record $record, Field $field)
     {
+        $file = $_FILES['file'];
+
+        if ($file['error']) {
+            return [
+                'success' => false,
+                'message' => 'Error uploading file ...',
+            ];
+        }
+
+        if (!$file['size']) {
+            return [
+                'success' => false,
+                'message' => 'Empty file size ...',
+            ];
+        }
+
         /**
          * @T00D00 - save and process file!
          */
         $entity = $table->createEntity();
         $record->setEntity($entity);
-        $record->{$field->field} = 'https://google.si/logos/doodles/2016/childrens-day-2016-slovenia-5151167878266880-hp.jpg#' . sha1(
-                microtime()
-            );
+
+        $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+        $name = Convention::url(substr($file['name'], 0, strrpos($file['name'], '.')));
+        $extension = substr($file['name'], strrpos($file['name'], '.'));
+        $i = 0;
+        do {
+            $filename = $name . ($i ? '_' . $i : '') . $extension;
+            $i++;
+        } while (is_file($dir . $filename));
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        move_uploaded_file($file['tmp_name'], $dir . $filename);
+
+        $record->{$field->field} = $filename;
         $record->save($entity);
 
         return [
             'success' => 'true',
-            'url'     => $record->{$field->field},
-            'request' => $_REQUEST,
-            'files'   => $_FILES,
+            'url'     => img($record->{$field->field}, $dir, true, $dir),
         ];
     }
 
