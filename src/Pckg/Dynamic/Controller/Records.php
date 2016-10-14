@@ -353,12 +353,16 @@ class Records extends Controller
         $functionizes = [];
         $functions = $table->functions;
         $pluginService = $this->pluginService;
+        $args = [$record];
+        if ($table->framework_entity) {
+            $args[] = $table->createEntity()->where('id', $record->id)->one();
+        }
         $functions->each(
-            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record) {
+            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $args) {
                 $functionize = $pluginService->make(
                     $function->class,
                     ($this->request()->isGet() ? 'get' : 'post') . ucfirst($function->method),
-                    [$record]
+                    $args
                 );
 
                 $functionizes[] = (string)$functionize;
