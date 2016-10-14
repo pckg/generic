@@ -7,7 +7,7 @@
     var $vue = $vue || {};
     var props = props || {};
 
-    props.locale = '{{ _localeManager.getDefault() }}';
+    props.locale = '{{ _localeManager.getCurrent() }}';
 </script>
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}

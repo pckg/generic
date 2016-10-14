@@ -23,12 +23,15 @@ class CreateGenericTables extends Migration
     protected function languagesUp()
     {
         $languages = $this->table('languages');
+        /**
+         * @T00D00 - add index for relations on slug
+         */
         $languages->slug();
         $languages->varchar('flag');
         $languages->varchar('floating_point', 1);
         $languages->varchar('thousand_separator', 1);
         $languages->varchar('currency', 3);
-        $languages->varchar('language', 5);
+        $languages->varchar('locale', 5);
 
         $languagesI18n = $this->translatable('languages');
         $languagesI18n->title();
