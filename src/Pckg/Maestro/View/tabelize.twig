@@ -80,7 +80,8 @@
                                                             :fields="fields" :ids.sync="ids" :search.sync="search"
                                                             :groups.sync="groups"
                                                             :paginator.sync="paginator"
-                                                            :entityactions.sync="entityactions"></pckg-maestro-table-{{ table }}>
+                                                            :entityactions.sync="entityactions"
+                                                            :table.sync="table"></pckg-maestro-table-{{ table }}>
                         </td>
                     </tr>
                 </template>
@@ -103,7 +104,8 @@
                         <td v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
                             <template v-if="field.fieldType.slug == 'boolean'">
                                 <pckg-tabelize-field-boolean :field="field.id" :record="record.id"
-                                                             :value="record[field.field ? field.field : field]"></pckg-tabelize-field-boolean>
+                                                             :value="record[field.field ? field.field : field]"
+                                                             :table="table"></pckg-tabelize-field-boolean>
                             </template>
                             <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
                                 <pckg-tabelize-field-datetime :field="field.id" :record="record.id"
@@ -148,7 +150,8 @@
     <pckg-maestro-table-{{ table }} v-ref:maestro-table :records="records"
                                     :fields="fields" :depth="depth" :groups.sync="groups"
                                     :first="1" :ids.sync="ids" :search.sync="search"
-                                    :entityactions.sync="entityactions" :paginator.sync="paginator">
+                                    :entityactions.sync="entityactions" :paginator.sync="paginator"
+                                    :table.sync="table">
     </pckg-maestro-table-{{ table }}>
 
     <script type="text/javascript">
@@ -156,6 +159,7 @@
         data.maestroRecords = {{ tabelize.transformRecords() | json_encode | raw }};
         data.maestroGroups = {{ tabelize.getGroups() | json_encode | raw }};
         data.entityactions = {{ tabelize.getEntityActions() | json_encode | raw }};
+        data.maestroTable = {{ tabelize.getTable() | json_encode | raw }};
         data.paginator = {
             perPage: {{ tabelize.getPerPage() }},
             page: {{ tabelize.getPage() }},
@@ -172,6 +176,7 @@
                     depth: data.maestroGroups.length,
                     paginator: data.paginator,
                     entityactions: data.entityactions,
+                    table: data.maestroTable,
                     ids: [],
                     search: null
                 };

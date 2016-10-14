@@ -134,6 +134,7 @@ class Records extends Controller
 
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
         $tabelize = $this->tabelize()
+                         ->setTable($tableRecord)
                          ->setTitle($tableRecord->getListTitle())
                          ->setEntity($entity)
                          ->setRecords($records)

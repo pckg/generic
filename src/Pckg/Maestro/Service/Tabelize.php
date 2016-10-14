@@ -71,6 +71,8 @@ class Tabelize
 
     protected $view;
 
+    protected $table;
+
     public function __construct(Entity $entity = null, $fields = [])
     {
         $this->entity = $entity;
@@ -81,6 +83,18 @@ class Tabelize
                 'tabelize' => $this,
             ]
         );
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
     }
 
     public function setDataOnly($dataOnly = true)
