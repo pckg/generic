@@ -51,7 +51,7 @@ class Group
         $groups = $this->getAppliedGroups();
 
         foreach ($groups as $group) {
-            if ($group['type'] == 'db') {
+            if (($group['type'] ?? null) == 'db') {
                 $entity->groupBy($group['field']);
             }
         }
