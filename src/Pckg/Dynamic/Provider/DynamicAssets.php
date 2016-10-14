@@ -1,5 +1,6 @@
 <?php namespace Pckg\Dynamic\Provider;
 
+use Pckg\Charts\Provider\Charts;
 use Pckg\Framework\Provider;
 
 class DynamicAssets extends Provider
@@ -32,10 +33,13 @@ class DynamicAssets extends Provider
             'footer' => [
                 'js/vue.js',
             ],
-            /**
-             * Chart.js
-             */
-            '/bower_components/chart.js/dist/Chart.min.js',
+        ];
+    }
+
+    public function providers()
+    {
+        return [
+            Charts::class,
         ];
     }
 
