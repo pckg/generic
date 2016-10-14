@@ -22,6 +22,7 @@ use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
+use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
 use ReflectionClass;
@@ -36,10 +37,17 @@ class Records extends Controller
      */
     protected $dynamic;
 
+    /**
+     * @var Plugin
+     */
+    protected $pluginService;
+
     public function __construct(
-        DynamicService $dynamic
+        DynamicService $dynamic,
+        Plugin $pluginService
     ) {
         $this->dynamic = $dynamic;
+        $this->pluginService = $pluginService;
     }
 
     /**
