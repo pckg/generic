@@ -22,7 +22,6 @@ use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
-use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
 use ReflectionClass;
@@ -37,14 +36,8 @@ class Records extends Controller
      */
     protected $dynamic;
 
-    /**
-     * @var Plugin
-     */
-    protected $pluginService;
-
     public function __construct(
-        DynamicService $dynamic,
-        Plugin $pluginService
+        DynamicService $dynamic
     ) {
         $this->dynamic = $dynamic;
     }
@@ -153,7 +146,7 @@ class Records extends Controller
                                  function(Field $field) use ($tableRecord) {
                                      $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
 
-                                     return !$fields || in_array($field->field, $fields);
+                                     return (!$fields && $field->visible) || in_array($field->field, $fields);
                                  }
                              )
                          )
@@ -163,7 +156,7 @@ class Records extends Controller
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews($tableRecord->actions->keyBy('slug')->map('slug'));
+                         ->setViews($tableRecord->actions()->keyBy('slug')->map('slug'));
 
         if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
             return [

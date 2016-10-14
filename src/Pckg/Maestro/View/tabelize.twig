@@ -39,6 +39,7 @@
             <ul class="dropdown-menu dropdown-menu-right">
                 {% for action in recordActions %}
                     <li>{% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}</li>
+
                 {% endfor %}
             </ul>
             {#% endif %#}
@@ -60,14 +61,6 @@
                     console.log('dispatching record:' + action);
                     data.$root.$dispatch('record:' + action, record.id, record);
                 }
-            }
-        });
-
-        Vue.component('pckg-maestro-field', {
-            template: '<div>I am async!</div>',
-            props: {
-                record: null,
-                field: null
             }
         });
     </script>
