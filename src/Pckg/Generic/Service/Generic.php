@@ -156,6 +156,7 @@ class Generic
                     );
                 }
             }
+            
         }
 
         return $variables;

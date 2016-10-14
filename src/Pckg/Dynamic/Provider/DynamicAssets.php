@@ -32,6 +32,10 @@ class DynamicAssets extends Provider
             'footer' => [
                 'js/vue.js',
             ],
+            /**
+             * Chart.js
+             */
+            '/bower_components/chart.js/dist/Chart.min.js',
         ];
     }
 
