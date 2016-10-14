@@ -3,9 +3,18 @@
         <div class="row">
             <div class="col-md-3 preview"><img v-bind:src="current" class="img-responsive"/></div>
             <div class="col-md-9">
-                <p><button type="button" class="btn btn-info select-files">Select</button> or drop image for upload.</p>
-                <p v-if="original && current != original"><button type="button" class="btn btn-warning">Restore</button> original image.</p>
-                <p v-if="current"><button type="button" class="btn btn-danger">Delete</button> current image.</p>
+                <p>
+                    <button type="button" class="btn btn-info select-files">Select</button>
+                    or drop image for upload.
+                </p>
+                <p v-if="original && current != original">
+                    <button type="button" class="btn btn-warning">Restore</button>
+                    original image.
+                </p>
+                <p v-if="current">
+                    <button type="button" class="btn btn-danger">Delete</button>
+                    current image.
+                </p>
 
                 <div class="table table-striped" class="files" id="previews">
                     <div id="template" class="file-row">
@@ -46,46 +55,4 @@
             </div>
         </div>
     </div>
-</script>
-
-<script>
-    var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
-        template: '#pckg-htmlbuilder-dropzone',
-        props: {
-            current: null,
-            url: null
-        },
-        data: function () {
-            return {
-                original: null,
-                _dropzone: null
-            };
-        },
-        computed: {},
-        ready: function () {
-
-            var previewNode = document.querySelector("#template");
-            previewNode.id = "";
-            var previewTemplate = previewNode.parentNode.innerHTML;
-            previewNode.parentNode.removeChild(previewNode);
-
-            this.original = this.current;
-
-            this._dropzone = $(this.$el).dropzone({
-                url: this.url,
-                previewsContainer: '#previews',
-                previewTemplate: previewTemplate,
-                clickable: $(this.$el).parent().find('.select-files').get()[0],
-                maxFilesize: 8,
-                success: function (file, data) {
-                    data = JSON.parse(data);
-
-                    if (data.success) {
-                        this.prev = this.current;
-                        this.current = data.url;
-                    }
-                }.bind(this)
-            });
-        }
-    });
 </script>
