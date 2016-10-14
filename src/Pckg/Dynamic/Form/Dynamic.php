@@ -7,6 +7,7 @@ use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Table;
+use Pckg\Framework\Inter\Entity\Languages;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
 class Dynamic extends Bootstrap
@@ -38,15 +39,19 @@ class Dynamic extends Bootstrap
 
     public function initLanguageFields()
     {
+        $languages = (new Languages())->joinTranslation()
+                                      ->all()
+                                      ->keyBy('slug')
+                                      ->map('title');
+
+        if (count($languages) < 2) {
+            return;
+        }
+
         $this->addFieldset('translatable');
         $this->addSelect('language_id')
              ->setValue($this->record ? $this->record->language_id : null)
-             ->addOptions(
-                 [
-                     'sl' => 'Slovenski',
-                     'en' => 'English',
-                 ]
-             )
+             ->addOptions($languages)
              ->setLabel('Language');
         $this->addSubmit('switch_language')->setValue('Switch language');
         $this->addSubmit('copy_to_language')->setValue('Copy to language');
