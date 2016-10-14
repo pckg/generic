@@ -29,7 +29,7 @@
                     {% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}
                 {% endfor %}
             </div>
-            {% if recordActions.length > 1 %}
+            {#% if recordActions|length > 1 %#}
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false">
@@ -41,7 +41,7 @@
                     <li>{% include 'tabelize/recordActions/' ~ (action.slug ? action.slug : action) ~ '.twig' %}</li>
                 {% endfor %}
             </ul>
-            {% endif %}
+            {#% endif %#}
         </div>
     </script>
 
