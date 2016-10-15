@@ -39,7 +39,7 @@ class Fields extends DatabaseEntity
         return $this->morphsMany(Settings::class)
                     ->over(SettingsMorphs::class)
                     ->fill('settings')
-                    ->leftForeignKey('setting_id');
+                    ->rightForeignKey('setting_id');
     }
 
     /**

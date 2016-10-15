@@ -56,6 +56,7 @@ class Table implements RouteResolver
                                 function(HasMany $fields) {
                                     $fields->joinTranslations();
                                     $fields->withFieldType();
+                                    $fields->withSettings();
                                 }
                             )
                             ->withTabs(

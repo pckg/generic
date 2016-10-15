@@ -313,11 +313,15 @@ class Records extends Controller
         $relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
+                //$relation->withShowTable();
+                //$relation->withOnField();
             }
         );
         $table->morphsManyRelation(
             function(MorphsMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
+                //$relation->withShowTable();
+                //$relation->withOnField();
             }
         )->each(
             function($item) use ($relations) {
@@ -327,6 +331,8 @@ class Records extends Controller
         $table->morphedByRelation(
             function(MorphedBy $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
+                //$relation->withShowTable();
+                //$relation->withOnField();
             }
         )->each(
             function($item) use ($relations) {
