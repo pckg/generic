@@ -7,7 +7,7 @@
             <li role="presentation">
                 <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
                    data-toggle="tab"
-                   @click.prevent="loadAjaxTab({{ tab.id }}, '{{ tab.getUrl() }}')">{{ tab.title ? tab.title : tab.id }}</a>
+                   @click.prevent="loadAjaxTab({{ tab.id }}, '{{ tab.getUrl() }}')">{{ tab.name }}</a>
             </li>
         {% endfor %}
     </ul>

@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Record;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tabs;
 
 class Tab extends Record
@@ -22,6 +23,25 @@ class Tab extends Record
                 'record' => static::$dynamicRecord,
             ]
         );
+    }
+
+    public function getNameAttribute()
+    {
+        if ($this->title) {
+            return $this->title;
+        }
+
+        $t = $this;
+        return $this->table->relations(
+            function(HasMany $relations) use ($t) {
+                $relations->where('dynamic_table_tab_id', $t->id);
+                $relations->withShowTable();
+            }
+        )->map(
+            function(Relation $relation) {
+                return $relation->showTable->title ?? $relation->showTable->table;
+            }
+        )->implode(', ');
     }
 
 }

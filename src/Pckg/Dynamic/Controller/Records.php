@@ -397,10 +397,10 @@ class Records extends Controller
         $recordsController = Reflect::create(Records::class);
         $relations->each(
             function(Relation $relation) use ($tabs, $record, &$tabelizes, $recordsController) {
-                $entity = $relation->showTable->createEntity();
+                /*$entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
 
-                /*$tableResolver = Reflect::create(TableResolver::class);
+                $tableResolver = Reflect::create(TableResolver::class);
                 $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
 
                 $tabelize = $recordsController->getViewTableAction(

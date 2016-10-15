@@ -1,5 +1,5 @@
 <script type="text/x-template" id="pckg-dynamic-paginator">
-    <nav style="display: table; margin: 0 auto;">
+    <nav style="display: table; margin: 0 auto;" v-if="total > perPage">
         <ul class="pagination">
             <li>
                 <a v-bind:class="{ disabled: page == 1 }" href="#" aria-label="Previous" v-on:click.prevent="prev">
