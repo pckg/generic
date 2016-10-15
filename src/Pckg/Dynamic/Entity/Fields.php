@@ -23,22 +23,19 @@ class Fields extends DatabaseEntity
     public function table()
     {
         return $this->belongsTo(Tables::class)
-                    ->foreignKey('dynamic_table_id')
-                    ->fill('table');
+                    ->foreignKey('dynamic_table_id');
     }
 
     public function fieldType()
     {
         return $this->belongsTo(FieldTypes::class)
-                    ->foreignKey('dynamic_field_type_id')
-                    ->fill('fieldType');
+                    ->foreignKey('dynamic_field_type_id');
     }
 
     public function settings()
     {
         return $this->morphsMany(Settings::class)
                     ->over(SettingsMorphs::class)
-                    ->fill('settings')
                     ->rightForeignKey('setting_id');
     }
 
@@ -49,8 +46,7 @@ class Fields extends DatabaseEntity
     {
         return $this->hasOne(Relations::class)
                     ->foreignKey('on_field_id')
-                    ->where('dynamic_relation_type_id', 1)
-                    ->fill('hasOneSelectRelation');
+                    ->where('dynamic_relation_type_id', 1);
     }
 
 }

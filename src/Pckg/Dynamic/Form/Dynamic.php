@@ -122,14 +122,19 @@ class Dynamic extends Bootstrap
 
     public function initFields()
     {
+        // 33 queries
         $this->addFieldset();
+
+        //d('test');
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id, `order`');
+                $fields->getRightEntity()->withFieldType();
                 $fields->withPermissions();
-                $fields->withFieldType();
             }
         );
+        //dd('were table fields, fields types and fields permissions selected?');
+        // 35 queries
 
         $prevGroup = null;
         foreach ($fields as $field) {
@@ -173,6 +178,7 @@ class Dynamic extends Bootstrap
             $element->setAttribute('data-field-id', $field->id);
         }
 
+        // 69 queries
         $this->addSubmit('submit');
         $this->addSubmit('as_new')->setValue('As new');
 

@@ -245,13 +245,17 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table)
     {
+        // 12 queries
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
         }
+        // 13 queries
 
         $form->setTable($table);
         $form->setRecord($record);
+        // 13 queries
         $form->initFields();
+        // 49 queries
 
         $form->populateFromRecord($record);
 
@@ -272,7 +276,9 @@ class Records extends Controller
          */
         $tabs = $table->tabs;
         try {
+            // 49 queries
             list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table);
+            // 51 queries
         } catch (\Exception $e) {
             $tabelizes = [];
             $functionizes = [];
@@ -297,6 +303,8 @@ class Records extends Controller
         /**
          * We have to build tabs.
          */
+        // 51 queries
+        // after 69 queries
         return view(
             'edit/tabs',
             [
