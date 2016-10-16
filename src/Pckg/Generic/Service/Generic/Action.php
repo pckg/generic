@@ -81,26 +81,30 @@ class Action
                  */
                 $args['settings']->each(
                     function(Setting $setting) use (&$args) {
-                        $setting->poly->resolve($args);
+                        $setting->pivot->resolve($args);
                     }
                 );
             }
 
+            $result = null;
+            $e = null;
             try {
                 $result = Reflect::method($controller, $method, $args);
-
+            } catch (\Exception $e) {
+                dd();
+                if (env()->isPro()) {
+                    throw $e;
+                }
+            } finally {
                 if (is_array($result)) {
                     return $result;
 
                 } else {
-                    return '<!-- ' . $this->class . '::' . $method . ' start -->' . $result . '<!-- ' . $this->class . '::' . $method . ' end -->';
+                    return '<!-- ' . $this->class . '::' . $method . ' start -->' . ($e ? exception(
+                        $e
+                    ) : $result) . '<!-- ' . $this->class . '::' . $method . ' end -->';
 
                 }
-            } catch (\Exception $e) {
-                if (env()->isDev()) {
-                    throw $e;
-                }
-                throw $e;
             }
         }
     }

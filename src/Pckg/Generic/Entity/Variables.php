@@ -14,8 +14,7 @@ class Variables extends Entity
     {
         return $this->morphsMany(Actions::class)
                     ->over(ActionsMorphs::class)
-                    ->poly('poly_id')
-                    ->morph('morph_id');
+                    ->leftForeignKey('variable_id');
     }
 
 }

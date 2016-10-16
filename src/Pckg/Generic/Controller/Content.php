@@ -53,7 +53,7 @@ class Content
                 function(Setting $item) {
                     return $item->slug == 'pckg-generic-content-template';
                 }
-            )->poly->value,
+            )->pivot->value,
             [
                 'content' => $content,
             ]

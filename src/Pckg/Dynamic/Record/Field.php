@@ -64,7 +64,7 @@ class Field extends Record
             return $default;
         }
 
-        return $setting->poly->value;
+        return $setting->pivot->value;
     }
 
     public function getMinTogglableAttribute()

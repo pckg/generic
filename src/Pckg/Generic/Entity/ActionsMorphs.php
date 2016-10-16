@@ -31,11 +31,9 @@ class ActionsMorphs extends Entity
 
     public function settings()
     {
-        return $this->morphsMany(Settings::class)
-                    ->leftForeignKey('setting_id')
-                    ->rightForeignKey('poly_id')
+        return $this->morphedBy(Settings::class)
                     ->over(SettingsMorphs::class)
-                    ->fill('settingsMorphs');
+                    ->rightForeignKey('setting_id');
     }
 
 }

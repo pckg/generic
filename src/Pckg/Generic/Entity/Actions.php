@@ -22,9 +22,7 @@ class Actions extends Entity
     {
         return $this->morphedBy(Layouts::class)
                     ->over(ActionsMorphs::class)// middle entity
-                    ->on('action_id')// id of morphs
-                    ->poly('poly_id')// id of this object
-                    ->morph('morph_id'); // related class
+                    ->leftForeignKey('action_id'); // related class
     }
 
     /**
@@ -34,8 +32,7 @@ class Actions extends Entity
     {
         return $this->morphsMany(Contents::class)
                     ->over(ActionsMorphs::class)
-                    ->poly('poly_id')
-                    ->morph('morph_id');
+                    ->leftForeignKey('content_id');
     }
 
 }

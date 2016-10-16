@@ -63,12 +63,12 @@ class Generic
         $route->actions->each(
             function(ActionRecord $action) {
                 $this->addAction(
-                    $action->poly->variable->slug,
+                    $action->pivot->variable->slug,
                     $action->class,
                     $action->method,
                     [
-                        'content'  => $action->poly->content,
-                        'settings' => $action->poly->settings,
+                        'content'  => $action->pivot->content,
+                        'settings' => $action->pivot->settings,
                         'route'    => $this->route,
                     ]
                 );
@@ -79,12 +79,12 @@ class Generic
             $route->layout->actions->each(
                 function(ActionRecord $action) {
                     $this->addAction(
-                        $action->poly->variable->slug,
+                        $action->pivot->variable->slug,
                         $action->class,
                         $action->method,
                         [
-                            'content'  => $action->poly->content,
-                            'settings' => $action->poly->settings,
+                            'content'  => $action->pivot->content,
+                            'settings' => $action->pivot->settings,
                             'route'    => $this->route,
                         ]
                     );
