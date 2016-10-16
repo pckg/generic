@@ -42,9 +42,43 @@ $(document).ready(function () {
     });
 
     $('textarea.editor').each(function () {
-        $(this).summernote({
-            resetCss: true,
-            minHeight: '240px'
-        });
+        var selector = null;
+        if ($(this).attr('id')) {
+            selector = '#' + $(this).attr('id');
+        } else {
+            selector = 'html-editor-' + Math.round((Math.random() * 100000));
+            $(this).attr('id', selector);
+
+        }
+
+        if ($(this).html().indexOf('{% ') === false && $(this).html().indexOf('{{ ') === false) {
+            tinymce.init({
+                selector: '#' + selector, height: 500,
+                theme: 'modern',
+                plugins: [
+                    'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                    'insertdatetime media nonbreaking save table contextmenu directionality',
+                    'emoticons template paste textcolor colorpicker textpattern imagetools'
+                ],
+                toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                toolbar2: 'print preview media | forecolor backcolor emoticons',
+                image_advtab: true,
+                allow_html_in_named_anchor: true,
+                protect: [
+                    /{{[^}]+}}/g,  // Protect {{ }}
+                    /{%[^}]+%}/g,  // Protect {% %}
+                ],
+                valid_elements: '*[*]'
+                /*templates: [
+                 {title: 'Test template 1', content: 'Test 1'},
+                 {title: 'Test template 2', content: 'Test 2'}
+                 ],
+                 content_css: [
+                 '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+                 '//www.tinymce.com/css/codepen.min.css'
+                 ]*/
+            });
+        }
     });
 });
