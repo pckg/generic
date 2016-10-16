@@ -31,9 +31,7 @@
                 <div class="form-group" v-for="group in applied">
                     <label class="col-sm-3">${ groups[group.field].label }</label>
                     <div class="col-sm-4">
-                        <select v-model="group.options.direction" class="form-control">
-                            <option v-for="(key,option) in typeMethods" :value="key">${ option.label }</option>
-                        </select>
+                        <input type="text" disabled class="form-control">
                     </div>
                     <div class="col-sm-2">
                         <button class="btn btn-danger btn-block" v-on:click.prevent="removeGroup(group)">-</button>
