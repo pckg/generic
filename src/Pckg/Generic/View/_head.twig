@@ -11,13 +11,10 @@
 </script>
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
-
 {{ _assetManager.getGoogleFonts() | raw }}
-
 {{ _assetManager.getExternals() | raw }}
 
 {{ _vueManager.getComponents() | raw }}
-
 {{ _vueManager.getFilters() | raw }}
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
@@ -28,6 +25,7 @@
     Vue.config.silent = false;
     Vue.config.devtools = true;
     {% endif %}
+    
     Vue.config.delimiters = ['${', '}'];
     Vue.config.unsafeDelimiters = ['!${', '}'];
 
