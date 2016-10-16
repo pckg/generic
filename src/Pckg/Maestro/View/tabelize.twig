@@ -76,8 +76,11 @@
                     <tr v-for="(i,record) in records" track-by="$index">
                         <td>
                             <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
-                            <pckg-maestro-table-{{ table }} :records="record" :depth="depth - 1"
-                                                            :fields="fields" :ids.sync="ids" :search.sync="search"
+                            <pckg-maestro-table-{{ table }} :records="record"
+                                                            :depth="depth - 1"
+                                                            :fields="fields"
+                                                            :ids.sync="ids"
+                                                            :search.sync="search"
                                                             :groups.sync="groups"
                                                             :paginator.sync="paginator"
                                                             :entityactions.sync="entityactions"
@@ -119,7 +122,7 @@
                             </template>
                             <template
                                     v-if="field.fieldType.slug != 'boolean' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable)">
-                                !${ record[field.field ? field.field : field] }
+                                !${record[field.field ? field.field : field] }
                             </template>
                         </td>
                         <td class="actions">
@@ -148,9 +151,14 @@
     </script>
 
     <pckg-maestro-table-{{ table }} v-ref:maestro-table :records="records"
-                                    :fields="fields" :depth="depth" :groups.sync="groups"
-                                    :first="1" :ids.sync="ids" :search.sync="search"
-                                    :entityactions.sync="entityactions" :paginator.sync="paginator"
+                                    :fields="fields"
+                                    :depth="depth"
+                                    :groups.sync="groups"
+                                    :first="1"
+                                    :ids.sync="ids"
+                                    :search.sync="search"
+                                    :entityactions.sync="entityactions"
+                                    :paginator.sync="paginator"
                                     :table.sync="table">
     </pckg-maestro-table-{{ table }}>
 

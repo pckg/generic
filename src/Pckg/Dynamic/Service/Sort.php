@@ -26,7 +26,7 @@ class Sort
 
     public function getAppliedSorts()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['sort'] ?? [['field' => 'id', 'options' => ['direction' => 'descending']]];
+        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['sort'] ?? [];
     }
 
     public function getAvailableSorts()

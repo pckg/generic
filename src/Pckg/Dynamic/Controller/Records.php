@@ -45,7 +45,8 @@ class Records extends Controller
     public function __construct(
         DynamicService $dynamic,
         Plugin $pluginService
-    ) {
+    )
+    {
         $this->dynamic = $dynamic;
         $this->pluginService = $pluginService;
     }
@@ -62,7 +63,8 @@ class Records extends Controller
         Table $tableRecord,
         DynamicService $dynamicService,
         DatabaseEntity $entity = null
-    ) {
+    )
+    {
         /**
          * Set table.
          */
@@ -138,9 +140,14 @@ class Records extends Controller
          * Filter records by $_GET['search']
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
-        $records = $entity->count()->all();
-
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
+        $records = $entity->count()->all();
+        $total = $records->total();
+
+        foreach ($groups as $group) {
+            $records = $records->groupBy($group['field']);
+        }
+
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
                          ->setTitle($tableRecord->getListTitle())
@@ -161,7 +168,7 @@ class Records extends Controller
                          )
                          ->setPerPage(50)
                          ->setPage(1)
-                         ->setTotal($records->total())
+                         ->setTotal($total)
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
@@ -362,7 +369,7 @@ class Records extends Controller
                 $functions->where('dynamic_table_tab_id', $tab->id);
             }
         );
-        
+
         $pluginService = $this->pluginService;
         $args = [$record];
         if ($table->framework_entity) {
@@ -455,7 +462,8 @@ class Records extends Controller
         Record $record,
         Table $table,
         Entity $entity
-    ) {
+    )
+    {
         if ($this->post('copy_to_language')) {
             die('copying to language is not implemented ... yet ;-)');
         }
