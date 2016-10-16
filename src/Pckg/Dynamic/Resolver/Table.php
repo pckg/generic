@@ -73,11 +73,7 @@ class Table implements RouteResolver
 
     public function parametrize($record)
     {
-        if (!$record) {
-            return $record;
-        }
-
-        return $record->id;
+        return $record->id ?? $record;
     }
 
 }
