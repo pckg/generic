@@ -3,6 +3,7 @@
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
@@ -122,19 +123,21 @@ class Dynamic extends Bootstrap
 
     public function initFields()
     {
-        // 33 queries
         $this->addFieldset();
 
-        //d('test');
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
-                $fields->getRightEntity()->orderBy('dynamic_field_group_id, `order`');
-                $fields->getRightEntity()->withFieldType();
+                $fields->orderBy('dynamic_field_group_id, `order`');
+                $fields->withFieldType();
                 $fields->withPermissions();
+                $fields->withHasOneSelectRelation(
+                    function(HasOne $relation) {
+                        $relation->withOnTable();
+                        $relation->withShowTable();
+                    }
+                );
             }
         );
-        //dd('were table fields, fields types and fields permissions selected?');
-        // 35 queries
 
         $prevGroup = null;
         foreach ($fields as $field) {
@@ -178,7 +181,6 @@ class Dynamic extends Bootstrap
             $element->setAttribute('data-field-id', $field->id);
         }
 
-        // 69 queries
         $this->addSubmit('submit');
         $this->addSubmit('as_new')->setValue('As new');
 
@@ -247,9 +249,12 @@ class Dynamic extends Bootstrap
             return $this->addCheckbox($name);
 
         } elseif ($type == 'select') {
-            if ($this->record && $relation = $this->record->getRelationForSelect($this->table, $field)) {
+            if ($this->record && $relation = $field->getRelationForSelect()) {
                 $element = $this->addSelect($name);
-                $element->addOption(null);
+                /**
+                 * @T00D00 - add setting for select placeholder for speciffic field
+                 */
+                $element->addOption(null, ' -- select value -- ');
                 foreach ($relation as $id => $value) {
                     $element->addOption($id, $value);
                 }

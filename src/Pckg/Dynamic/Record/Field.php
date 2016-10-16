@@ -3,6 +3,7 @@
 use Pckg\Database\Record;
 use Pckg\Database\Record\Extension\Permissionable;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
 
 class Field extends Record
@@ -24,19 +25,51 @@ class Field extends Record
      *
      * @return Relation
      */
-    public function getSelectRelation(Table $onTable)
+    /*public function getSelectRelation(Table $onTable)
     {
         $self = $this;
         $relation = $this->relationExists('hasOneSelectRelation')
             ? $this->getRelation('hasOneSelectRelation')
             : $this->hasOneSelectRelation(
-                function(HasMany $relation) use ($onTable, $self) {
+                function(HasOne $relation) use ($onTable, $self) {
                     $relation->where('on_table_id', $onTable->id)
                              ->where('on_field_id', $self->id);
                 }
             );
 
         return $relation;
+    }*/
+
+    public function getRelationForSelect()
+    {
+        /**
+         * So, $table is users table, $field is user_group_id for which we need to get relation.
+         * We need to create entity user_groups (which is found on relation)
+         * and select all records.
+         */
+        $relation = $this->hasOneSelectRelation;
+
+        if (!$relation) {
+            return $relation;
+        }
+
+        $showTable = $relation->showTable;
+        $entity = $showTable->createEntity();
+
+        $values = [];
+        $entity->all()->each(
+            function(Record $record) use ($relation, &$values) {
+                try {
+                    $eval = eval(' return ' . $relation->value . '; ');
+                } catch (\Exception $e) {
+                    dd(exception($e));
+                }
+
+                $values[$record->id] = $eval;
+            }
+        );
+
+        return $values;
     }
 
     /**
