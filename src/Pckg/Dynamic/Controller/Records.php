@@ -362,6 +362,7 @@ class Records extends Controller
                 $functions->where('dynamic_table_tab_id', $tab->id);
             }
         );
+        
         $pluginService = $this->pluginService;
         $args = [$record];
         if ($table->framework_entity) {
