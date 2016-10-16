@@ -33,11 +33,9 @@ class Routes extends Entity
 
     public function actions()
     {
-        return $this->morphsMany(Actions::class)
-                    ->leftForeignKey('action_id')
-                    ->rightForeignKey('poly_id')
+        return $this->morphedBy(Actions::class)
                     ->over(ActionsMorphs::class)
-                    ->fill('actionsMorphs');
+                    ->rightForeignKey('action_id');
     }
 
     /**

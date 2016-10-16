@@ -59,7 +59,6 @@ class Generic
     public function readRoute(Route $route)
     {
         $this->route = $route;
-
         $route->actions->each(
             function(ActionRecord $action) {
                 $this->addAction(

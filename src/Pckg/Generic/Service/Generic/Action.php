@@ -90,21 +90,20 @@ class Action
             $e = null;
             try {
                 $result = Reflect::method($controller, $method, $args);
-            } catch (\Exception $e) {
-                dd();
+            } catch (Exception $e) {
                 if (env()->isPro()) {
                     throw $e;
                 }
-            } finally {
-                if (is_array($result)) {
-                    return $result;
+            }
 
-                } else {
-                    return '<!-- ' . $this->class . '::' . $method . ' start -->' . ($e ? exception(
+            if (is_array($result)) {
+                return $result;
+
+            } else {
+                return '<!-- ' . $this->class . '::' . $method . ' start -->' . ($e ? 'Exception: ' . exception(
                         $e
                     ) : $result) . '<!-- ' . $this->class . '::' . $method . ' end -->';
 
-                }
             }
         }
     }
