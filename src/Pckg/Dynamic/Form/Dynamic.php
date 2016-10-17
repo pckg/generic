@@ -245,6 +245,9 @@ class Dynamic extends Bootstrap
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
             return $this->addText($name);
 
+        } elseif (in_array($type, ['json'])) {
+            return $this->addTextarea($name);
+
         } elseif ($type == 'boolean') {
             return $this->addCheckbox($name);
 
