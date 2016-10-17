@@ -50,6 +50,9 @@ class Dynamic extends Bootstrap
         }
 
         $this->addFieldset('translatable');
+        /**
+         * @T00D00 - field language_id could/will interfere with main table fields ...
+         */
         $this->addSelect('language_id')
              ->setValue($this->record ? $this->record->language_id : null)
              ->addOptions($languages)

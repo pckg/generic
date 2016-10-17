@@ -474,6 +474,11 @@ class Records extends Controller
 
         $form->setTable($table);
         $form->initFields();
+
+        if ($entity->isTranslatable()) {
+            $form->initLanguageFields();
+        }
+
         $form->populateFromRequest();
         $form->populateToRecord($record);
 
