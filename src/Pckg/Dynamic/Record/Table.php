@@ -100,9 +100,11 @@ class Table extends Record
      */
     public function createEntity()
     {
-        $repository = $this->repository ? context()->get(Repository::class . '.' . $this->repository) : null;
-        $entityClass = $this->framework_entity ?
-            $this->framework_entity
+        $repository = $this->repository
+            ? context()->get(Repository::class . '.' . $this->repository)
+            : null;
+        $entityClass = $this->framework_entity
+            ? $this->framework_entity
             : Entity::class;
         $entity = new $entityClass($repository);
         $entity->setTable($this->table);

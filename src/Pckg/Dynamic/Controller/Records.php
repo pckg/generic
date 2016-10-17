@@ -25,7 +25,6 @@ use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
-use ReflectionClass;
 
 class Records extends Controller
 {
@@ -73,9 +72,8 @@ class Records extends Controller
         if (!$entity) {
             $entity = $tableRecord->createEntity();
 
-            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) . path(
-                    'ds'
-                ) . 'View' . path('ds');
+            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
+                   . path('ds') . 'View' . path('ds');
             Twig::addDir($dir);
             /**
              * This is needed for table actions.
@@ -92,11 +90,7 @@ class Records extends Controller
         /**
          * This is used for URLs.
          */
-        $class = new ReflectionClass($entity->getRecordClass());
-        $class->setStaticPropertyValue('dynamicTable', $tableRecord);
-
-        $class = new ReflectionClass(get_class($entity));
-        $class->setStaticPropertyValue('dynamicTable', $tableRecord);
+        $entity->setStaticDynamicTable($tableRecord);
 
         /**
          * Join extensions.

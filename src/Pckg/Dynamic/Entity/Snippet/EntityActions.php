@@ -1,12 +1,25 @@
 <?php namespace Pckg\Dynamic\Entity\Snippet;
 
-use Pckg\Dynamic\Entity\Entity;
+use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Record\Table;
+use ReflectionClass;
 
 trait EntityActions
 {
 
+    use Paginatable;
+
     public static $dynamicTable;
+
+    public function setStaticDynamicTable(Table $table)
+    {
+        $class = new ReflectionClass($this->getRecordClass());
+        $class->setStaticPropertyValue('dynamicTable', $table);
+
+        $class = new ReflectionClass(get_class($this));
+        $class->setStaticPropertyValue('dynamicTable', $table);
+    }
 
     public function getSavedViews()
     {

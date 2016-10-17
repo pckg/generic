@@ -18,7 +18,7 @@ use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 class Entity extends DatabaseEntity implements MaestroEntity
 {
 
-    use Paginatable, EntityActions, Translatable, Permissionable;
+    use EntityActions, Translatable, Permissionable;
 
     protected $record = Record::class;
 
