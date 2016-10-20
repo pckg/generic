@@ -172,7 +172,11 @@ class Records extends Controller
                                      return $action->template ?? $action->slug;
                                  }
                              )
-                         );
+                         )->setFieldTransformations(
+                [
+                    'tabelizeClass',
+                ]
+            );
 
         if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
             return [

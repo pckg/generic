@@ -226,11 +226,6 @@ class Tabelize
         return $this;
     }
 
-    public function isAllowedRecordAction($record, $action)
-    {
-        return true;
-    }
-
     /**
      * @param Field|string $field
      * @param Record       $originalRecord

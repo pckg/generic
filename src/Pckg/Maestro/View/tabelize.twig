@@ -103,7 +103,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="record in records | filterBy search">
+                    <tr v-for="record in records | filterBy search" v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
                         <td v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
                             <template v-if="field.fieldType.slug == 'boolean'">
                                 <pckg-tabelize-field-boolean :field="field.id" :record="record.id"
