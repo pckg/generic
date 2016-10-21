@@ -166,17 +166,12 @@ class Records extends Controller
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews(
-                             $tableRecord->actions()->keyBy('slug')->map(
-                                 function($action) {
-                                     return $action->template ?? $action->slug;
-                                 }
-                             )
-                         )->setFieldTransformations(
-                [
-                    'tabelizeClass',
-                ]
-            );
+                         ->setViews($tableRecord->actions()->keyBy('slug'))
+                         ->setFieldTransformations(
+                             [
+                                 'tabelizeClass',
+                             ]
+                         );
 
         if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
             return [

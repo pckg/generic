@@ -1,7 +1,7 @@
 <?php namespace Pckg\Dynamic\Record;
 
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
-use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -18,26 +18,29 @@ class Table extends Record
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where(new Raw('type = \'entity\''));
+                $relation->where('type', ['entity', 'entity-plugin']);
                 $relation->joinPermission();
             }
         );
-
-        return $actions->count()
-            ? $actions
-            : [
+        $defaultActions = new Collection(
+            [
                 'add',
                 'options',
                 'export',
                 'view',
-            ];
+            ]
+        );
+
+        $actions->copyTo($defaultActions);
+
+        return $defaultActions;
     }
 
     public function getRecordActions()
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where(new Raw('type = \'record\''));
+                $relation->where('type', ['record', 'record-plugin']);
                 $relation->joinPermission();
             }
         );

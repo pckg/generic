@@ -8,6 +8,7 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Record\RecordInterface;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
+use Pckg\Framework\Service\Plugin;
 
 class Tabelize
 {
@@ -376,7 +377,27 @@ class Tabelize
              */
             foreach ($this->views as $view) {
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
-                $string .= is_string($view) ? view('tabelize/listActions/' . $view)->autoparse() : $view;
+                
+                if (is_object($view)) {
+                    $view = $view->template;
+                }
+
+                if (!is_string($view)) {
+                    $string .= $view;
+
+                } elseif (strpos($view, '@')) {
+                    list($class, $method) = explode('@', $view);
+                    if (strpos($method, ':')) {
+                        list($method, $view) = explode(':', $method);
+                    }
+
+                    $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
+
+                } else {
+                    $string .= view('tabelize/listActions/' . $view)->autoparse();
+
+                }
+
                 $string .= '<!-- end tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
             }
         } catch (Exception $e) {
