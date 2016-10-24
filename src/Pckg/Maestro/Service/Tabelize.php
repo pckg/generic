@@ -193,7 +193,13 @@ class Tabelize
 
     public function getFields()
     {
-        return $this->fields;
+        return (new Collection($this->fields))->map(
+            function($item, $key) {
+                return is_string($key)
+                    ? $key
+                    : $item;
+            }
+        )->toArray();
     }
 
     public function getFieldTransformations()
@@ -377,7 +383,7 @@ class Tabelize
              */
             foreach ($this->views as $view) {
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
-                
+
                 if (is_object($view)) {
                     $view = $view->template;
                 }
@@ -441,10 +447,8 @@ class Tabelize
          * Table fields
          */
         foreach ($this->getFields() as $key => $field) {
-            $transformed[is_string($key) ? $key : (is_string($field) ? $field : $field->field)] = $this->getRecordValue(
-                $field,
-                $record
-            );
+            $transformed[is_string($key) ? $key : (is_string($field) ? $field : $field->field)] =
+                $this->getRecordValue($field, $record);
         }
 
         /**
@@ -469,9 +473,10 @@ class Tabelize
                     $transformed[$method . 'Url'] = $record->{'get' . Convention::toPascal($method) . 'Url'}();
                 }
             }
-            foreach ($record->getToArrayValues() as $key => $value) {
+            $transformed = array_merge($record->getToArrayValues(), $transformed);
+            /*foreach ($record->getToArrayValues() as $key => $value) {
                 $transformed[$key] = $value;
-            }
+            }*/
         }
 
         return $transformed;
