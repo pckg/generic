@@ -193,13 +193,7 @@ class Tabelize
 
     public function getFields()
     {
-        return (new Collection($this->fields))->map(
-            function($item, $key) {
-                return is_string($key)
-                    ? $key
-                    : $item;
-            }
-        )->toArray();
+        return $this->fields;
     }
 
     public function getFieldTransformations()
