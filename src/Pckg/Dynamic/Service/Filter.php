@@ -121,6 +121,10 @@ class Filter
         ];
 
         foreach ($filters as $filter) {
+            if (!is_array($filter['value']) && in_array($filter['options']['method'], ['in', 'notIn'])) {
+                $filter['value'] = explode(',', $filter['value']);
+            }
+
             $entity->where($filter['field'], $filter['value'], $signMapper[$filter['options']['method']]);
         }
 
