@@ -1,5 +1,7 @@
 <?php namespace Pckg\Dynamic\Controller;
 
+use Derive\Orders\Entity\Orders;
+use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Helper\Convention;
@@ -142,6 +144,14 @@ class Records extends Controller
             $records = $records->groupBy($group['field']);
         }
 
+        $fieldTransformations = ['tabelizeClass'];
+
+        if (get_class($entity) == Orders::class) {
+            $fieldTransformations['bills_payed'] = function(Order $order) {
+                return $order->getPayedBillsSum();
+            };
+        }
+
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
                          ->setTitle($tableRecord->getListTitle())
@@ -167,11 +177,7 @@ class Records extends Controller
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
-                         ->setFieldTransformations(
-                             [
-                                 'tabelizeClass',
-                             ]
-                         );
+                         ->setFieldTransformations($fieldTransformations);
 
         if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
             return [
