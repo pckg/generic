@@ -274,7 +274,7 @@ class Dynamic extends Provider
                                  ],
                              ],
                          ]
-                     ),
+                     )
         ];
     }
 
