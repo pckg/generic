@@ -16,7 +16,7 @@ class Generic extends Provider
     {
         return [
             'url'    => [
-                '/' => [
+                '/generic' => [
                     'view'       => 'generic',
                     'controller' => GenericController::class,
                     'name'       => 'home',
