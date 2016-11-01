@@ -55,7 +55,7 @@ class Generic
         $vars = $this->genericService->getVariables();
 
         return $route->layout
-            ? view($route->layout->template ?? 'Pckg\Generic:generic', $vars)
+            ? view($route->layout->template ?: 'Pckg\Generic:generic', $vars)
             : $vars;
     }
 
