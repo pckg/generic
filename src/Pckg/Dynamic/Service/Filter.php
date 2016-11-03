@@ -94,11 +94,30 @@ class Filter
     {
         return $collection->each(
             function(Field $field) {
+                $type = $field->fieldType->slug;
+
+                $options = [];
+                if ($type == 'select') {
+                    $relation = $field->hasOneSelectRelation;
+                    if (false && $relation) {
+                        $options = $relation->showTable()
+                                            ->createEntity()
+                                            ->limit(100)
+                                            ->all()
+                                            ->keyBy($relation->onField->field)
+                                            ->map(
+                                                function($record) {
+                                                    return $record->id;
+                                                }
+                                            )->toArray();
+                    }
+                }
+
                 return [
                     'field'   => $field->field,
                     'label'   => $field->title ?? $field->field,
-                    'type'    => $field->fieldType->slug,
-                    'options' => [],
+                    'type'    => $type,
+                    'options' => $options,
                 ];
             }
         )->keyBy('field');

@@ -276,7 +276,7 @@ class Dynamic extends Bootstrap
                  */
                 $element->addOption(null, ' -- select value -- ');
                 foreach ($relation as $id => $value) {
-                    $element->addOption($id, $value);
+                    $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
                 }
 
                 return $element;

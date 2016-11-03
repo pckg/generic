@@ -7,15 +7,13 @@ var pckgTabelizeFieldBoolean = Vue.component('pckg-tabelize-field-boolean', {
         field: null,
         record: null,
         value: null,
-        table: null
+        table: null,
+        url: null
     },
     methods: {
         toggle: function () {
-            var url = '{{ url('
-            dynamic.records.field.toggle
-            ') }}';
             this.value = this.value > 0 ? 0 : 1;
-            http.getJSON(utils.url(url, {
+            http.getJSON(utils.url(this.url, {
                     table: this.table.id,
                     record: this.record,
                     field: this.field,

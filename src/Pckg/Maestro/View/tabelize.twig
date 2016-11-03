@@ -112,7 +112,7 @@
                             <template v-if="field.fieldType.slug == 'boolean'">
                                 <pckg-tabelize-field-boolean :field="field.id" :record="record.id"
                                                              :value="record[field.field ? field.field : field]"
-                                                             :table="table"></pckg-tabelize-field-boolean>
+                                                             :table="table" :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
                             </template>
                             <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
                                 <pckg-tabelize-field-datetime :field="field.id" :record="record.id"
