@@ -130,7 +130,7 @@ class Dynamic extends Bootstrap
 
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
-                $fields->orderBy('dynamic_field_group_id, `order`');
+                $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withFieldType();
                 $fields->withPermissions();
                 $fields->withHasOneSelectRelation(
@@ -205,21 +205,16 @@ class Dynamic extends Bootstrap
         if (in_array($type, $auto)) {
             return $this->{'add' . ucfirst($type)}($name);
 
-        } elseif ($type == 'datetime') {
-            $element = $this->addDatetime($name);
-            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+        } elseif (in_array($type, ['file', 'pdf'])) {
+            $element = $this->addFile($name);
+            $element->setPrefix('<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>');
 
-            return $element;
-
-        } elseif ($type == 'date') {
-            $element = $this->addDate($name);
-            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
-
-            return $element;
-
-        } elseif ($type == 'time') {
-            $element = $this->addTime($name);
-            $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
+            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+            $element->setAttribute(
+                'data-image',
+                media($this->record->{$field->field}, null, true, $dir)
+            );
+            $element->setAttribute('data-type', $type);
 
             return $element;
 
@@ -242,6 +237,25 @@ class Dynamic extends Bootstrap
                 'data-image',
                 img($this->record->{$field->field}, null, true, $dir)
             );
+            $element->setAttribute('data-type', 'picture');
+
+            return $element;
+
+        } elseif ($type == 'datetime') {
+            $element = $this->addDatetime($name);
+            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+
+            return $element;
+
+        } elseif ($type == 'date') {
+            $element = $this->addDate($name);
+            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+
+            return $element;
+
+        } elseif ($type == 'time') {
+            $element = $this->addTime($name);
+            $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
 
             return $element;
 
