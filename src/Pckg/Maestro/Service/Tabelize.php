@@ -9,6 +9,7 @@ use Pckg\Database\Record\RecordInterface;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
+use Pckg\Framework\View;
 
 class Tabelize
 {
@@ -379,7 +380,11 @@ class Tabelize
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
                 if (is_object($view)) {
-                    $view = $view->template;
+                    if ($view instanceof View\Twig) {
+                        $view = $view->autoparse();
+                    } else {
+                        $view = $view->template;
+                    }
                 }
 
                 if (!is_string($view)) {

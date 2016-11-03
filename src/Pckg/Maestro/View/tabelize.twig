@@ -95,7 +95,7 @@
                     <thead>
                     <tr>
                         <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
-                            ${ field.field ? field.field : field }
+                            ${ field.title ? field.title : (field.field ? field.field : field) }
                         </th>
                         <th></th>
                         <th>

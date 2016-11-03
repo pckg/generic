@@ -159,8 +159,9 @@ class Records extends Controller
                          ->setRecords($records)
                          ->setFields(
                              $tableRecord->listableFields(
-                                 function($relation) {
+                                 function(HasMany $relation) {
                                      $relation->withFieldType();
+                                     $relation->joinTranslations();
                                  }
                              )->reduce(
                                  function(Field $field) use ($tableRecord) {
