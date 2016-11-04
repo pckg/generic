@@ -69,7 +69,8 @@ class Generic
                         'content'  => $action->pivot->content,
                         'settings' => $action->pivot->settings,
                         'route'    => $this->route,
-                    ]
+                    ],
+                    $action->pivot->order
                 );
             }
         );
@@ -85,7 +86,8 @@ class Generic
                             'content'  => $action->pivot->content,
                             'settings' => $action->pivot->settings,
                             'route'    => $this->route,
-                        ]
+                        ],
+                        $action->pivot->order
                     );
                 }
             );
@@ -99,11 +101,11 @@ class Generic
      *
      * @return Action
      */
-    public function addAction($variable, $class, $method, $args = [])
+    public function addAction($variable, $class, $method, $args = [], $order = null)
     {
         $block = $this->touchBlock($variable);
 
-        $block->addAction($action = new Action($class, $method, $args));
+        $block->addAction($action = new Action($class, $method, $args, $order));
 
         return $action;
     }
@@ -128,7 +130,7 @@ class Generic
             }
         }
 
-        asort($order);
+        ksort($order);
 
         return $order;
     }
@@ -155,7 +157,7 @@ class Generic
                     );
                 }
             }
-            
+
         }
 
         return $variables;
@@ -176,7 +178,7 @@ class Generic
                     break;
                 }
             }
-            
+
             if (!$isArray) {
                 $contents = implode($contents);
             }

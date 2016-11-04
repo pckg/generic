@@ -91,9 +91,11 @@ class Action
             try {
                 $result = Reflect::method($controller, $method, $args);
             } catch (Exception $e) {
-                if (env()->isPro()) {
-                    throw $e;
+                if (prod()) {
+                    return null;
                 }
+
+                throw $e;
             }
 
             if (is_array($result)) {
