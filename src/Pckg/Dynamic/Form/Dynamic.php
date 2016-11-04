@@ -165,7 +165,16 @@ class Dynamic extends Bootstrap
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '<div class="help"><button type="button" class="btn btn-info btn-xs btn-rounded" data-toggle="popover" data-trigger="focus" title="" data-content="<p>This is help text.</p>" data-placement="top" data-container="body" data-original-title="Help"><i class="fa fa-question" aria-hidden="true"></i></button></div>
+                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
+</label>
+<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
+                );
+
+                continue;
+            } elseif (false && !$field->hasPermissionTo('edit')) {
+                // @T00D00
+                $element = $this->addDiv()->addChild(
+                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
 </label>
 <div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
                 );

@@ -12,7 +12,9 @@ var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
     },
     computed: {},
     ready: function () {
-
+        if (!this.url) {
+            return;
+        }
         var previewNode = document.querySelector("#template");
         previewNode.id = "";
         var previewTemplate = previewNode.parentNode.innerHTML;
