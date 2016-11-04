@@ -1,9 +1,9 @@
 <?php namespace Pckg\Dynamic\Record;
 
-use Pckg\Database\Record;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\TableViews;
 
-class TableView extends Record
+class TableView extends DatabaseRecord
 {
 
     protected $entity = TableViews::class;
