@@ -7,7 +7,7 @@
         <li><a href="{{ tabelize.getEntity().getResetViewUrl() }}">Default view</a></li>
         {% if tabelize.getEntity.getSavedViews() %}
             <li role="separator" class="divider"></li>
-            {% for view in tabelize.getEntity.getSavedViews() %}
+            {% for view in tabelize.getEntity().getSavedViews() %}
                 <li><a href="{{ view.getLoadUrl() }}">{{ view.title ? view.title : ('Saved view #' ~ view.id) }}</a>
                 </li>
             {% endfor %}
