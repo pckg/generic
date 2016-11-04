@@ -1,10 +1,7 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
-use Pckg\Concept\Reflect;
-use Pckg\Database\Record;
 use Pckg\Dynamic\Entity\Tabs;
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Framework\Response;
 
 class Tab implements RouteResolver
 {
