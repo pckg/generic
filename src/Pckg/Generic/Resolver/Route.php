@@ -7,30 +7,14 @@ use Pckg\Generic\Entity\Routes;
 class Route implements RouteResolver
 {
 
-    /**
-     * @var Routes
-     */
-    protected $routes;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    public function __construct(Routes $routes, Response $response)
-    {
-        $this->routes = $routes;
-        $this->response = $response;
-    }
-
     public function resolve($value)
     {
-        return $this->routes//->where($value ? 'id' : 'slug', $value ?: 'home')
+        return (new Routes())//->where($value ? 'id' : 'slug', $value ?: 'home')
         ->joinTranslation()
         ->where('routes_i18n.route', $value)
         ->oneOrFail(
             function() {
-                $this->response->unauthorized('Route not found');
+                response()->unauthorized('Route not found');
             }
         );
     }

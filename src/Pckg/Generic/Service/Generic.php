@@ -26,6 +26,13 @@ class Generic
 
     protected $route;
 
+    public function authCheckRoute()
+    {
+        $route = (new RouteResolver())->resolve(router()->getUri());
+
+        return $route->hasPermissionToView();
+    }
+
     /**
      * @param Block ...$blocks
      *

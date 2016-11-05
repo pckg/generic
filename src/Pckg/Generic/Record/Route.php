@@ -32,4 +32,12 @@ class Route extends Record
         return ($prefix ? env()->getUrlPrefix() : '') . $this->getValue('route');
     }
 
+    public function hasPermissionToView()
+    {
+        /**
+         * @T00D00 - check for permissions!
+         */
+        return true;
+    }
+
 }
