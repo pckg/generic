@@ -52,7 +52,7 @@ class Table extends Record
 
     public function getListTitle()
     {
-        return 'Table: ' . $this->table;
+        return ($this->title ?? ('Table ' . $this->table));
     }
 
     public function getViewUrl()
