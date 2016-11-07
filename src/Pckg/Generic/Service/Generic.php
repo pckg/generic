@@ -2,6 +2,7 @@
 
 namespace Pckg\Generic\Service;
 
+use Exception;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Routes;
@@ -28,7 +29,13 @@ class Generic
 
     public function authCheckRoute()
     {
-        $route = (new RouteResolver())->resolve(router()->getUri());
+        try {
+            $route = (new RouteResolver())->resolve(router()->getUri());
+
+        } catch (Exception $e) {
+            return true;
+
+        }
 
         return $route->hasPermissionToView();
     }
