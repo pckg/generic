@@ -555,7 +555,7 @@ class Records extends Controller
     public function getToggleFieldAction(Table $table, Field $field, Record $record, $state)
     {
         if ($field->fieldType->slug == 'boolean') {
-            $record->{$field->field} = $state ? 1 : -1;
+            $record->{$field->field} = $state ? 1 : null;
 
         } elseif ($field->fieldType->slug == 'datetime') {
             $record->{$field->field} = $state ? $field->getMinTogglableAttribute() : $field->getMaxTogglableAttribute();
