@@ -8,18 +8,18 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
         record: null,
         value: null,
         min: null,
-        max: null
+        max: null,
+        table: null,
+        url: null
     },
     methods: {
         toggle: function () {
-            var url = '{{ url('
-            dynamic.records.field.toggle
-            ', {table: dynamic.getTable()}) }}';
             this.value = this.value <= this.min ? this.max : this.min;
-            http.getJSON(utils.url(url, {
+            http.getJSON(utils.url(this.url, {
                     record: this.record,
                     field: this.field,
-                    state: this.value == this.min ? 1 : 0
+                    state: this.value == this.min ? 1 : 0,
+                    table: this.table.id
                 }), function (data) {
                 }.bind(this)
             );

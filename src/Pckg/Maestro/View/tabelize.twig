@@ -110,15 +110,20 @@
                         v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
                         <td v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
                             <template v-if="field.fieldType.slug == 'boolean'">
-                                <pckg-tabelize-field-boolean :field="field.id" :record="record.id"
+                                <pckg-tabelize-field-boolean :field="field.id"
+                                                             :record="record.id"
                                                              :value="record[field.field ? field.field : field]"
-                                                             :table="table" :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
+                                                             :table="table"
+                                                             :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
                             </template>
                             <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
-                                <pckg-tabelize-field-datetime :field="field.id" :record="record.id"
+                                <pckg-tabelize-field-datetime :field="field.id"
+                                                              :record="record.id"
                                                               :value="record[field.field ? field.field : field]"
+                                                              :table="table"
                                                               :min="field.minTogglable"
-                                                              :max="field.maxTogglable"></pckg-tabelize-field-datetime>
+                                                              :max="field.maxTogglable"
+                                                              :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
                             </template>
                             <template v-if="field.fieldType.slug == 'editor'">
                                 <pckg-tabelize-field-editor
