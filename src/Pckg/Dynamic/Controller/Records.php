@@ -215,7 +215,7 @@ class Records extends Controller
             $form->initPermissionFields();
         }
 
-        $formalize = $this->formalize($form, $record, 'Add ' . $table->table . ' ' . $table->title);
+        $formalize = $this->formalize($form, $record, $table->getFormTitle('Add'));
 
         return $formalize;
     }
@@ -278,7 +278,7 @@ class Records extends Controller
             $form->initPermissionFields();
         }
 
-        $formalize = $this->formalize($form, $record, 'Edit ' . $table->table . ' ' . $table->title);
+        $formalize = $this->formalize($form, $record, $table->getFormTitle('Edit'));
 
         /**
          * We also have to return related tables.

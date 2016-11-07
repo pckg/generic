@@ -52,7 +52,12 @@ class Table extends Record
 
     public function getListTitle()
     {
-        return ($this->title ?? ('Table ' . $this->table));
+        return ($this->title ?? ('List <i>' . $this->table . '</i>'));
+    }
+
+    public function getFormTitle($type = 'Add')
+    {
+        return $type . ' ' . lcfirst($this->title ?? ('<i>' . $this->table . '</i>'));
     }
 
     public function getViewUrl()
