@@ -133,6 +133,7 @@ class Dynamic extends Bootstrap
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withFieldType();
                 $fields->withPermissions();
+                $fields->joinTranslation();
                 $fields->withHasOneSelectRelation(
                     function(HasOne $relation) {
                         $relation->withOnTable();
@@ -155,7 +156,7 @@ class Dynamic extends Bootstrap
 
             $type = $field->fieldType->slug;
             $name = $field->field;
-            $label = $field->title ?: $name;
+            $label = $field->label;
 
             if ($type == 'php') {
                 /**

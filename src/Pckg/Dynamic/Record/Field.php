@@ -129,4 +129,9 @@ class Field extends DatabaseRecord
         return path('uploads') . $dir . path('ds');
     }
 
+    public function getLabelAttribute()
+    {
+        return $this->title ?? $this->field;
+    }
+
 }
