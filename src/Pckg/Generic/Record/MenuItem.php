@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Record;
 
+use Pckg\Collection;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\MenuItems;
 
@@ -19,11 +20,11 @@ class MenuItem extends Record
 
     public function isActive()
     {
-        if (router()->getURL() == $this->url) {
+        if (router()->getCleanUri() == $this->url) {
             return true;
         }
 
-        return $this->menuItems->has(
+        return (new Collection($this->getChildren))->has(
             function(MenuItem $menuItem) {
                 return $menuItem->isActive();
             }
