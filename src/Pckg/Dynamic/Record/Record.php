@@ -9,8 +9,36 @@ use Pckg\Maestro\Service\Contract\Record as MaestroRecord;
 class Record extends DatabaseRecord implements MaestroRecord
 {
 
-    use RecordActions;
+    use RecordActions {
+        forceDelete as forceDeleteExtension;
+        delete as deleteExtension;
+    }
 
     protected $entity = Entity::class;
+
+    /**
+     * @return mixed
+     */
+    public function forceDelete(Entity $entity = null, Repository $repository = null)
+    {
+        return $this->forceDeleteExtension($entity, $repository);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function delete(Entity $entity = null, Repository $repository = null)
+    {
+        /**
+         * @T00D00 - this should be checked via entity!
+         */
+        if ($this->hasKey('deleted_at')) {
+            return $this->deleteExtension($entity, $repository);
+
+        } else {
+            return $this->forceDeleteExtension($entity, $repository);
+
+        }
+    }
 
 }

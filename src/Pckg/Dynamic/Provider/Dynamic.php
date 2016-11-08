@@ -110,6 +110,14 @@ class Dynamic extends Provider
                                      'record' => RecordResolver::class,
                                  ],
                              ],
+                             '/dynamic/records/force-delete/[table]/[record]'                 => [
+                                 'name'      => 'dynamic.record.forceDelete',
+                                 'view'      => 'forceDelete',
+                                 'resolvers' => [
+                                     'table'  => TableResolver::class,
+                                     'record' => RecordResolver::class,
+                                 ],
+                             ],
                              '/dynamic/records/tab/[table]/[record]/[tab]'                    => [
                                  'name'      => 'dynamic.record.tab',
                                  'view'      => 'tab',
@@ -274,7 +282,7 @@ class Dynamic extends Provider
                                  ],
                              ],
                          ]
-                     )
+                     ),
         ];
     }
 

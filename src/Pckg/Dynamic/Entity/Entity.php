@@ -3,6 +3,7 @@
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Database\Entity\Extension\Permissionable;
+use Pckg\Database\Entity\Extension\Deletable;
 use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Dynamic\Entity\Snippet\EntityActions;
 use Pckg\Dynamic\Record\Record;

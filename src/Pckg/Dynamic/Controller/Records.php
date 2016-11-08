@@ -99,6 +99,7 @@ class Records extends Controller
          */
         $dynamicService->joinTranslationsIfTranslatable($entity);
         $dynamicService->joinPermissionsIfPermissionable($entity);
+        $dynamicService->removeDeletedIfDeletable($entity);
 
         /**
          * Get all relations for fields with type (select).
@@ -556,11 +557,20 @@ class Records extends Controller
         }
     }
 
-    public function getDeleteAction(Record $record, Entity $entity)
+    public function getDeleteAction(Record $record)
     {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->delete($entity);
+
+        return $this->response()->respondWithSuccessRedirect();
+    }
+
+    public function getForceDeleteAction(Record $record)
+    {
+        $table = $this->router()->resolved('table');
+        $entity = $table->createEntity();
+        $record->forceDelete($entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }

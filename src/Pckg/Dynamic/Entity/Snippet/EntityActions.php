@@ -1,5 +1,6 @@
 <?php namespace Pckg\Dynamic\Entity\Snippet;
 
+use Pckg\Database\Entity\Extension\Deletable;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Table;
@@ -8,7 +9,7 @@ use ReflectionClass;
 trait EntityActions
 {
 
-    use Paginatable;
+    use Paginatable, Deletable;
 
     public static $dynamicTable;
 
@@ -54,6 +55,13 @@ trait EntityActions
     {
         return isset($this->permissionableTableSuffix)
             ? $this->getRepository()->getCache()->hasTable($this->table . $this->permissionableTableSuffix)
+            : false;
+    }
+
+    public function isDeletable()
+    {
+        return isset($this->deletableField)
+            ? $this->getRepository()->getCache()->tableHasField($this->table, $this->deletableField)
             : false;
     }
 

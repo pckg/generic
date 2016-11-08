@@ -1,7 +1,11 @@
 <?php namespace Pckg\Dynamic\Record\Snippet;
 
+use Pckg\Database\Record\Extension\Deletable;
+
 trait RecordActions
 {
+
+    use Deletable;
 
     public static $dynamicTable;
 
@@ -20,6 +24,17 @@ trait RecordActions
     {
         return url(
             'dynamic.record.delete',
+            [
+                'table'  => static::$dynamicTable,
+                'record' => $this,
+            ]
+        );
+    }
+
+    public function getForceDeleteUrl()
+    {
+        return url(
+            'dynamic.record.forceDelete',
             [
                 'table'  => static::$dynamicTable,
                 'record' => $this,

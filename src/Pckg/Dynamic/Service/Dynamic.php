@@ -32,7 +32,8 @@ class Dynamic
         GroupService $groupService,
         Paginate $paginateService,
         Fields $fieldsService
-    ) {
+    )
+    {
         $this->session = $session;
         $this->filterService = $filterService;
         $this->sortService = $sortService;
@@ -49,6 +50,13 @@ class Dynamic
     public function getFilterService()
     {
         return $this->filterService;
+    }
+
+    public function removeDeletedIfDeletable($entity)
+    {
+        if ($entity->isDeletable()) {
+            $entity->nonDeleted();
+        }
     }
 
     public function joinTranslationsIfTranslatable($entity)
