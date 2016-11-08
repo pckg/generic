@@ -630,7 +630,7 @@ class Records extends Controller
 
         return [
             'success' => 'true',
-            'url'     => img($record->{$field->field}, $dir, true, $dir),
+            'url'     => img($record->{$field->field}, null, true, $dir),
         ];
     }
 
