@@ -2,14 +2,14 @@
 
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
-use Pckg\Database\Record;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Tables;
 
-class Table extends Record
+class Table extends DatabaseRecord
 {
 
     protected $entity = Tables::class;
@@ -70,7 +70,7 @@ class Table extends Record
         );
     }
 
-    public function getEditUrl(Record $record)
+    public function getEditUrl(DatabaseRecord $record)
     {
         return url(
             'dynamic.record.edit',

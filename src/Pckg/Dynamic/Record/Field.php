@@ -1,12 +1,10 @@
 <?php namespace Pckg\Dynamic\Record;
 
-use Pckg\Database\Record;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Record\Extension\Permissionable;
-use Pckg\Database\Relation\HasMany;
-use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
 
-class Field extends Record
+class Field extends DatabaseRecord
 {
 
     use Permissionable;
@@ -58,7 +56,7 @@ class Field extends Record
 
         $values = [];
         $entity->all()->each(
-            function(Record $record) use ($relation, &$values) {
+            function($record) use ($relation, &$values) {
                 try {
                     $eval = eval(' return ' . $relation->value . '; ');
                 } catch (\Exception $e) {

@@ -1,10 +1,10 @@
 <?php namespace Pckg\Dynamic\Record;
 
-use Pckg\Database\Record;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tabs;
 
-class Tab extends Record
+class Tab extends DatabaseRecord
 {
 
     protected $entity = Tabs::class;
