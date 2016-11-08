@@ -1,0 +1,17 @@
+<div class="pckg-dynamic-record-singular">
+    <h2>{{ formalize.getTitle() | raw }}</h2>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {{ formalize | raw }}
+
+            {% for tabelize in tabelizes %}
+                {{ tabelize | raw }}
+            {% endfor %}
+
+            {% for functionize in functionizes %}
+                {{ functionize | raw }}
+            {% endfor %}
+        </div>
+    </div>
+</div>

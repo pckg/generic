@@ -217,7 +217,12 @@ class Records extends Controller
 
         $formalize = $this->formalize($form, $record, $table->getFormTitle('Add'));
 
-        return $formalize;
+        return view(
+            'edit/singular',
+            [
+                'formalize' => $formalize,
+            ]
+        );
     }
 
     public function postAddAction(Dynamic $form, Record $record, Table $table, Entity $entity)
@@ -278,7 +283,8 @@ class Records extends Controller
             $form->initPermissionFields();
         }
 
-        $formalize = $this->formalize($form, $record, $table->getFormTitle('Edit'));
+        $title = 'Edit ' . $record->title ?? ($record->slug ?? ($record->email ?? $table->title));
+        $formalize = $this->formalize($form, $record, $title);
 
         /**
          * We also have to return related tables.
@@ -298,7 +304,14 @@ class Records extends Controller
             /**
              * Return simple html without tabs.
              */
-            return $formalize . implode($tabelizes) . implode($functionizes);
+            return view(
+                'edit/singular',
+                [
+                    'formalize'    => $formalize,
+                    'tabelizes'    => $tabelizes,
+                    'functionizes' => $functionizes,
+                ]
+            );
         }
 
         ksort($tabelizes);
