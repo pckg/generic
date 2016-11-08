@@ -126,7 +126,7 @@ class Field extends DatabaseRecord
             return $dir;
         }
 
-        return path('uploads') . $dir . path('ds');
+        return path('app_uploads') . $dir . path('ds');
     }
 
     public function getLabelAttribute()
