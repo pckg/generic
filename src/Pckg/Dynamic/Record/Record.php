@@ -1,5 +1,6 @@
 <?php namespace Pckg\Dynamic\Record;
 
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Entity;
@@ -27,7 +28,7 @@ class Record extends DatabaseRecord implements MaestroRecord
     /**
      * @return mixed
      */
-    public function delete(Entity $entity = null, Repository $repository = null)
+    public function delete(DatabaseEntity $entity = null, Repository $repository = null)
     {
         /**
          * @T00D00 - this should be checked via entity!
