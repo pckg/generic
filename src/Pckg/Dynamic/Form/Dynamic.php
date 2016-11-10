@@ -220,10 +220,12 @@ class Dynamic extends Bootstrap
             $element->setPrefix('<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>');
 
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-            $element->setAttribute(
-                'data-image',
-                media($this->record->{$field->field}, null, true, $dir)
-            );
+            if ($this->record) {
+                $element->setAttribute(
+                    'data-image',
+                    media($this->record->{$field->field}, null, true, $dir)
+                );
+            }
             $element->setAttribute('data-type', $type);
 
             return $element;
