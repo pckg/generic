@@ -51,7 +51,7 @@ $(document).ready(function () {
 
         }
 
-        if ($(this).html().indexOf('{% ') === false && $(this).html().indexOf('{{ ') === false) {
+        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0) {
             tinymce.init({
                 selector: '#' + selector, height: 500,
                 theme: 'modern',
