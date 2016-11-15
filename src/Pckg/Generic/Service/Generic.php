@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service;
 
 use Exception;
+use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Routes;
@@ -73,7 +74,11 @@ class Generic
     public function readRoute(Route $route)
     {
         $this->route = $route;
-        $route->actions->each(
+        $route->actions(
+            function(MorphedBy $actions) {
+                $actions->getMiddleEntity()->joinPermissionTo('read');
+            }
+        )->each(
             function(ActionRecord $action) {
                 $this->addAction(
                     $action->pivot->variable->slug,

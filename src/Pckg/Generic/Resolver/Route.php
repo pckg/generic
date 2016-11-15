@@ -11,12 +11,12 @@ class Route implements RouteResolver
     {
         return (new Routes())//->where($value ? 'id' : 'slug', $value ?: 'home')
         ->joinTranslation()
-        ->where('routes_i18n.route', $value)
+        ->where('routes_i18n.route', $value)// @T00D00 ... what about dynamic routes? /news/[id] ?
         ->oneOrFail(
-            function() {
-                response()->unauthorized('Route not found');
-            }
-        );
+                function() {
+                    response()->unauthorized('Route not found');
+                }
+            );
     }
 
     public function parametrize($record)
