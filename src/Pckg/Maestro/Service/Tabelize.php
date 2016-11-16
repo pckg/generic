@@ -376,7 +376,11 @@ class Tabelize
             /**
              * Then parse all additional views (custom actions).
              */
-            foreach ($this->views as $view) {
+            foreach ($this->views as $key => $view) {
+                if ($key == 'delete') {
+                    $view = 'delete';
+                }
+                
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
                 if (is_object($view)) {

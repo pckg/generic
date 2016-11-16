@@ -1,1 +1,1 @@
-<a class="delete" v-bind:href="record.deleteUrl" title="{{ __('delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i> {{ __('delete') }}</a>
+<a class="delete" v-on:click.prevent="recordAction(record, 'checkDeleteRecord')" href="#" title="{{ __('delete') }}"><i class="fa fa-trash-o" aria-hidden="true"></i> {{ __('delete') }}</a>

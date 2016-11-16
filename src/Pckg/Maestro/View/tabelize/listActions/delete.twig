@@ -1,1 +1,50 @@
-<script>alert("test");</script>
+{% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
+    {% block header %}
+        Delete record
+    {% endblock %}
+    {% block body %}
+        <p>Do you really want to delete #${ record.id }?</p>
+        <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
+    {% endblock %}
+{% endembed %}
+
+{% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordDeletedModal'} %}
+    {% block header %}
+        Record deleted
+    {% endblock %}
+    {% block body %}
+        <p>#${ record.id } was deleted.</p>
+    {% endblock %}
+{% endembed %}
+
+<script>
+    (function (Vue, $, utils, data, http) {
+
+        utils.pushToVue({
+            methods: {
+                checkDeleteRecord: function (record) {
+                    this.record = record;
+
+                    $('#deleteRecordModal').modal('show');
+                },
+                deleteRecord: function () {
+                    $('#deleteRecordModal').modal('hide');
+                    http.get(this.record.delete, function () {
+                        $('#recordDeletedModal').modal('show');
+                    });
+                }
+            },
+            data: {
+                record: null
+            },
+            on: {
+                'record:checkDeleteRecord': function (id, record) {
+                    this.checkDeleteRecord(record);
+
+                    return true;
+                }
+            }
+        });
+
+    })(Vue, jQuery, utils, data, http);
+</script>

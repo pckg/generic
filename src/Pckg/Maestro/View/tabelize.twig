@@ -235,6 +235,15 @@
                 }
             }
         });
+        maestroTable.$on('record:removeFromList', function(record){
+            console.log('dispatched remove');
+            $.each(this.records, function(i, val){
+                if (val.id == record.id) {
+                    this.records.$delete(i);
+                    return false;
+                }
+            }.bind(this));
+        });
     </script>
 
 </div>
