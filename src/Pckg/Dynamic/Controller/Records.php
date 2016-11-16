@@ -595,6 +595,15 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
+    public function getOrderFieldAction(Table $table, Field $field, Record $record, $order)
+    {
+        $record->{$field->field} = $order;
+
+        $record->save($table->createEntity());
+
+        return $this->response()->respondWithSuccessRedirect();
+    }
+
     public function postUploadAction(Table $table, Record $record, Field $field)
     {
         $file = $_FILES['file'];

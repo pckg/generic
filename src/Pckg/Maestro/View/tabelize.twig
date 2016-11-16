@@ -116,6 +116,13 @@
                                                              :table="table"
                                                              :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
                             </template>
+                            <template v-if="field.fieldType.slug == 'order'">
+                                <pckg-tabelize-field-order :field="field.id"
+                                                           :record="record.id"
+                                                           :value="record[field.field ? field.field : field]"
+                                                           :table="table"
+                                                           :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
+                            </template>
                             <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
                                 <pckg-tabelize-field-datetime :field="field.id"
                                                               :record="record.id"
@@ -130,7 +137,7 @@
                                         :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
                             </template>
                             <template
-                                    v-if="!field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
+                                    v-if="!field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
                                 !${ record[field.field ? field.field : field] }
                             </template>
                         </td>

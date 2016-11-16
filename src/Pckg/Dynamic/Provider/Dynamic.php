@@ -136,6 +136,15 @@ class Dynamic extends Provider
                                      'record' => RecordResolver::class,
                                  ],
                              ],
+                             '/dynamic/records/field/[table]/[field]/[record]/order/[order]'  => [
+                                 'name'      => 'dynamic.records.field.order',
+                                 'view'      => 'orderField',
+                                 'resolvers' => [
+                                     'table'  => TableResolver::class,
+                                     'field'  => FieldResolver::class,
+                                     'record' => RecordResolver::class,
+                                 ],
+                             ],
                              '/dynamic/records/field/[table]/[field]/[record]/upload'         => [
                                  'name'      => 'dynamic.records.field.upload',
                                  'view'      => 'upload',
