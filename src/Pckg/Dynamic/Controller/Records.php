@@ -372,7 +372,6 @@ class Records extends Controller
             function(Relation $relation) use ($tabs, $record, &$tabelizes) {
                 $entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
-
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),
                     $this->dynamic,
