@@ -193,7 +193,13 @@ class Records extends Controller
         return $tabelize;
     }
 
-    public function getAddAction(Dynamic $form, Table $table, Record $record)
+    public function getAddAction(
+        Dynamic $form,
+        Table $table,
+        Record $record,
+        Relation $relation = null,
+        $foreign = null
+    )
     {
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
@@ -201,6 +207,10 @@ class Records extends Controller
 
         $tableEntity = $table->createEntity();
         $record->setEntity($tableEntity);
+
+        if ($foreign) {
+            $record->{$relation->onField->field} = $foreign;
+        }
 
         $form->setTable($table);
         $form->setRecord($record);
@@ -371,6 +381,8 @@ class Records extends Controller
         $relations->each(
             function(Relation $relation) use ($tabs, $record, &$tabelizes) {
                 $entity = $relation->showTable->createEntity();
+                $entity->setStaticDynamicRecord($record);
+                $entity->setStaticDynamicRelation($relation);
                 $entity->where($relation->onField->field, $record->id);
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),

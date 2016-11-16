@@ -3,6 +3,8 @@
 use Pckg\Database\Entity\Extension\Deletable;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Record\Record;
+use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
 use ReflectionClass;
 
@@ -13,6 +15,10 @@ trait EntityActions
 
     public static $dynamicTable;
 
+    public static $dynamicRecord;
+
+    public static $dynamicRelation;
+
     public function setStaticDynamicTable(Table $table)
     {
         $class = new ReflectionClass($this->getRecordClass());
@@ -20,6 +26,18 @@ trait EntityActions
 
         $class = new ReflectionClass(get_class($this));
         $class->setStaticPropertyValue('dynamicTable', $table);
+    }
+
+    public function setStaticDynamicRecord(Record $record)
+    {
+        $class = new ReflectionClass(get_class($this));
+        $class->setStaticPropertyValue('dynamicRecord', $record);
+    }
+
+    public function setStaticDynamicRelation(Relation $relation)
+    {
+        $class = new ReflectionClass(get_class($this));
+        $class->setStaticPropertyValue('dynamicRelation', $relation);
     }
 
     public function getSavedViews()
@@ -67,6 +85,19 @@ trait EntityActions
 
     public function getAddUrl()
     {
+        if (static::$dynamicRecord) {
+            $record = static::$dynamicRecord;
+            $relation = static::$dynamicRelation;
+            return url(
+                'dynamic.record.add.related',
+                [
+                    'table'    => $this->getDynamicTable(),
+                    'relation' => static::$dynamicRelation,
+                    'foreign'  => $record->id,
+                ]
+            );
+        }
+
         return url(
             'dynamic.record.add',
             [
