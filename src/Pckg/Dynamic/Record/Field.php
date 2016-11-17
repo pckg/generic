@@ -106,7 +106,7 @@ class Field extends DatabaseRecord
             return null;
         }
 
-        return $setting->min;
+        return isset($setting->min->eval) ? eval('return ' . $setting->min->eval . ';') : $setting->min;
     }
 
     public function getMaxTogglableAttribute()

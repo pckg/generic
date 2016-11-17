@@ -9,7 +9,7 @@
 
             {% block content %}
                 <p><b>Fields</b></p>
-                <div class="form-group" v-for="field in fields" v-if="!field.applied">
+                <div class="form-group" v-for="field in fields | filterBy null in 'applied'">
                     <label class="col-sm-8">${ field.field }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-info btn-block" v-on:click.prevent="addField(field)">+</button>
@@ -27,8 +27,8 @@
             {% endblock %}
 
             {% block content %}
-                <p v-if="!applied.length">Remove fields</p>
-                <div class="form-group" v-for="field in fields" v-if="field.applied">
+                <p v-if="!appliedFields.length">Remove fields</p>
+                <div class="form-group" v-for="field in fields | filterBy true in 'applied'">
                     <label class="col-sm-8">${ field.field }</label>
                     <div class="col-sm-4">
                         <button class="btn btn-danger btn-block" v-on:click.prevent="removeField(field)">-</button>
@@ -50,6 +50,10 @@
     var dynamicFields = new Vue({
         el: '.action.dynamic-fields',
         data: function () {
+            $.each(data.appliedFields, function(i, field){
+                field.applied = !!field.applied;
+                data.appliedFields[i] = field;
+            });
             return {
                 fields: data.fields,
                 appliedFields: data.appliedFields
@@ -61,9 +65,13 @@
             },
             addField: function (field) {
                 field.applied = true;
+                this.$set("x", 0);
+                this.$delete("x");
             },
             removeField: function (field) {
                 field.applied = false;
+                this.$set("x", 0);
+                this.$delete("x");
             },
             getAppliedFields: function () {
                 var applied = [];
