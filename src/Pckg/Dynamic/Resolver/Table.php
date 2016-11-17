@@ -54,14 +54,16 @@ class Table implements RouteResolver
         return $this->tables->where('id', $value)
                             ->withFields(
                                 function(HasMany $fields) {
-                                    $fields->joinTranslations();
+                                    $fields->joinTranslation();
+                                    $fields->joinFallbackTranslation();
                                     $fields->withFieldType();
                                     $fields->withSettings();
                                 }
                             )
                             ->withTabs(
                                 function(HasMany $tabs) {
-                                    $tabs->joinTranslations();
+                                    $tabs->joinTranslation();
+                                    $tabs->joinFallbackTranslation();
                                 }
                             )
                             ->oneOrFail(

@@ -51,7 +51,7 @@ $(document).ready(function () {
 
         }
 
-        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0) {
+        function initTinymce(selector) {
             tinymce.init({
                 selector: '#' + selector, height: 500,
                 theme: 'modern',
@@ -59,12 +59,14 @@ $(document).ready(function () {
                     'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                     'searchreplace wordcount visualblocks visualchars code fullscreen',
                     'insertdatetime media nonbreaking save table contextmenu directionality',
-                    'emoticons template paste textcolor colorpicker textpattern imagetools'
+                    'emoticons template paste textcolor colorpicker textpattern imagetools codesample'
                 ],
                 toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-                toolbar2: 'print preview media | forecolor backcolor emoticons',
+                toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
                 image_advtab: true,
                 allow_html_in_named_anchor: true,
+                allow_unsafe_link_target: true,
+                forced_root_block: false,
                 protect: [
                     /{{[^}]+}}/g,  // Protect {{ }}
                     /{%[^}]+%}/g,  // Protect {% %}
@@ -79,6 +81,17 @@ $(document).ready(function () {
                  '//www.tinymce.com/css/codepen.min.css'
                  ]*/
             });
+        }
+
+        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0 && $(this).html().indexOf('<') == 0) {
+            initTinymce(selector);
+        } else {
+            var changeEvent = $(this).on('focus', function () {
+                if (confirm('Do you want to enable editor?')) {
+                    initTinymce(selector);
+                }
+                changeEvent.off();
+            })
         }
     });
 });
