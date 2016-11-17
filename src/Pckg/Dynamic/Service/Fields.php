@@ -7,6 +7,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Request\Data\Get;
+use Throwable;
 
 class Fields
 {
@@ -60,8 +61,8 @@ class Fields
                     function($record) use ($relation, $entity) {
                         try {
                             $eval = eval(' return ' . $relation->value . '; ');
-                        } catch (\Exception $e) {
-                            dd(exception($e));
+                        } catch (Throwable $e) {
+                            $eval = exception($e);
                         }
 
                         return [

@@ -2,8 +2,8 @@
 
 namespace Pckg\Generic\Service;
 
-use Exception;
 use Pckg\Database\Relation\MorphedBy;
+use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Routes;
@@ -33,7 +33,7 @@ class Generic
         try {
             $route = (new RouteResolver())->resolve(router()->getUri());
 
-        } catch (Exception $e) {
+        } catch (NotFound $e) {
             return true;
 
         }

@@ -3,6 +3,7 @@
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Record\Extension\Permissionable;
 use Pckg\Dynamic\Entity\Fields;
+use Throwable;
 
 class Field extends DatabaseRecord
 {
@@ -59,11 +60,10 @@ class Field extends DatabaseRecord
             function($record) use ($relation, &$values) {
                 try {
                     $eval = eval(' return ' . $relation->value . '; ');
-                } catch (\Exception $e) {
-                    dd(exception($e));
+                    $values[$record->id] = $eval;
+                } catch (Throwable $e) {
+                    $values[$record->id] = exception($e);
                 }
-
-                $values[$record->id] = $eval;
             }
         );
 

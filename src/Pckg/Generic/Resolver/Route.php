@@ -14,7 +14,7 @@ class Route implements RouteResolver
         ->where('routes_i18n.route', $value)// @T00D00 ... what about dynamic routes? /news/[id] ?
         ->oneOrFail(
                 function() {
-                    response()->unauthorized('Route not found');
+                    response()->notFound('Route not found');
                 }
             );
     }
