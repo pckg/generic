@@ -134,6 +134,7 @@ class Dynamic extends Bootstrap
                 $fields->withFieldType();
                 $fields->withPermissions();
                 $fields->joinTranslation();
+                $fields->joinFallbackTranslation();
                 $fields->withHasOneSelectRelation(
                     function(HasOne $relation) {
                         $relation->withOnTable();
