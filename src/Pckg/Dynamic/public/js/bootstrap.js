@@ -83,7 +83,7 @@ $(document).ready(function () {
             });
         }
 
-        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0 && $(this).html().indexOf('<') == 0) {
+        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0 && $(this).html().indexOf('<') == 0 && $(this).html().split("\n").length > 1) {
             initTinymce(selector);
         } else {
             var changeEvent = $(this).on('focus', function () {
