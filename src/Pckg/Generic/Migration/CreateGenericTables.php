@@ -129,7 +129,7 @@ class CreateGenericTables extends Migration
         $settingsI18n->text('value');
 
         $settingsMorphs = $this->morphtable('settings', 'setting_id');
-        $settingsMorphs->varchar('value');
+        $settingsMorphs->varchar('value', 512);
     }
 
     protected function translationsUp()
