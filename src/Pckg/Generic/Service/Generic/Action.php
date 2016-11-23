@@ -5,6 +5,7 @@ namespace Pckg\Generic\Service\Generic;
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Generic\Record\Setting;
+use Throwable;
 
 /**
  * Class Action
@@ -90,7 +91,7 @@ class Action
             $e = null;
             try {
                 $result = Reflect::method($controller, $method, $args);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 if (prod()) {
                     return null;
                 }

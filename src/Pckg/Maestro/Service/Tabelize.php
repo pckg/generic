@@ -10,6 +10,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Throwable;
 
 class Tabelize
 {
@@ -285,7 +286,7 @@ class Tabelize
 
             return $originalRecord->{$field->field};
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return '-- ' . exception($e) . ' --';
 
         }
@@ -380,7 +381,7 @@ class Tabelize
                 if ($key == 'delete') {
                     $view = 'delete';
                 }
-                
+
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
                 if (is_object($view)) {
@@ -409,7 +410,7 @@ class Tabelize
 
                 $string .= '<!-- end tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return exception($e);
         }
 
