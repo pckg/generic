@@ -71,19 +71,20 @@ $(document).ready(function () {
                     /{{[^}]+}}/g,  // Protect {{ }}
                     /{%[^}]+%}/g,  // Protect {% %}
                 ],
-                valid_elements: '*[*]'
-                /*templates: [
-                 {title: 'Test template 1', content: 'Test 1'},
-                 {title: 'Test template 2', content: 'Test 2'}
-                 ],
-                 content_css: [
-                 '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-                 '//www.tinymce.com/css/codepen.min.css'
-                 ]*/
+                valid_elements: '*[*]',
+                templates: [
+                    /*{title: 'Test template 1', content: 'Test 1'},
+                     {title: 'Test template 2', content: 'Test 2'}*/
+                ]/*,
+                content_css: [
+                    '/css/bootstrap.css',
+                    '/css/default.css',
+                ]*/
             });
         }
 
-        if ($(this).html().indexOf('{% ') < 0 && $(this).html().indexOf('{{ ') < 0 && $(this).html().indexOf('<') == 0 && $(this).html().split("\n").length > 1) {
+        var val = $(this).val();
+        if (val.indexOf('{% ') < 0 && val.indexOf('{{ ') < 0 && val.indexOf('<') == 0 && val.split("\n").length > 1) {
             initTinymce(selector);
         } else {
             var changeEvent = $(this).on('focus', function () {
