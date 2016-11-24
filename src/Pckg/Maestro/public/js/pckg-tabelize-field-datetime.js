@@ -14,7 +14,6 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
     },
     methods: {
         toggle: function () {
-            console.log('min', this.min, 'max', this.max);
             var state = null
             if (this.min == '2999-01-01 00:00:00') {
                 if (this.value <= this.max) {
@@ -53,8 +52,6 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
     },
     computed: {
         btnClass: function () {
-            console.log('min', this.min, 'max', this.max);
-
             if (this.min == '2999-01-01 00:00:00') {
                 return this.value > this.max ? 'btn-danger' : 'btn-success';
             } else if (this.min == null) {
@@ -62,6 +59,9 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
             } else {
                 return this.value <= this.min ? 'btn-danger' : 'btn-success';
             }
+        },
+        brValue: function(){
+            return this.value.replace(' ', '<br />');
         }
     }
 });

@@ -11,8 +11,6 @@
 </script>
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
-{{ _assetManager.getGoogleFonts() | raw }}
-{{ _assetManager.getExternals() | raw }}
 
 {{ _vueManager.getComponents() | raw }}
 {{ _vueManager.getFilters() | raw }}

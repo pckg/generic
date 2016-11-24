@@ -1,3 +1,6 @@
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footer']) | raw }}
 
+{{ _assetManager.getGoogleFonts() | raw }}
+{{ _assetManager.getExternals() | raw }}
+
 {{ _metaManager.getMeta('footer') | raw }}

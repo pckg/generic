@@ -98,9 +98,20 @@ class Field extends DatabaseRecord
         return $setting->pivot->value;
     }
 
+    public function getJsonSetting($key, $default = null)
+    {
+        $setting = $this->getSetting($key, $default);
+
+        if (!$setting) {
+            return $default;
+        }
+
+        return \json_decode($setting);
+    }
+
     public function getMinTogglableAttribute()
     {
-        $setting = \json_decode($this->getSetting('pckg-generic-field-toggle'));
+        $setting = $this->getJsonSetting('pckg-generic-field-toggle');
 
         if (!$setting) {
             return null;
@@ -111,7 +122,7 @@ class Field extends DatabaseRecord
 
     public function getMaxTogglableAttribute()
     {
-        $setting = \json_decode($this->getSetting('pckg-generic-field-toggle'));
+        $setting = $this->getJsonSetting('pckg-generic-field-toggle');
 
         if (!$setting) {
             return null;
