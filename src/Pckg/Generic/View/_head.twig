@@ -15,6 +15,9 @@
 {{ _vueManager.getComponents() | raw }}
 {{ _vueManager.getFilters() | raw }}
 
+{{ _assetManager.getGoogleFonts() | raw }}
+{{ _assetManager.getExternals() | raw }}
+
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 
 <script>
