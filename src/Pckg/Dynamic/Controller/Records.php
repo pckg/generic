@@ -512,6 +512,7 @@ class Records extends Controller
 
         $form->populateFromRequest();
         $form->populateToRecord($record);
+        $form->populatePasswords($record);
 
         $record->save($entity);
 

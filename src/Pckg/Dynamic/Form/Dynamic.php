@@ -4,6 +4,7 @@ use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
@@ -36,6 +37,28 @@ class Dynamic extends Bootstrap
         $this->record = $record;
 
         return $this;
+    }
+
+    public function populatePasswords(Record $record)
+    {
+        $data = $this->getData();
+        if (!isset($data['password'])) {
+            return;
+        }
+
+        $password = $data['password'];
+        $field = (new Fields())->where('dynamic_table_id', $this->table->id)
+                               ->where('field', 'password')
+                               ->one();
+        if (!$field) {
+            return;
+        }
+
+        $provider = $field->getSetting('pckg.dynamic.field.passwordProvider');
+
+        $record->password = $provider
+            ? auth($provider)->makePassword($password)
+            : $password;
     }
 
     public function initLanguageFields()
@@ -218,7 +241,9 @@ class Dynamic extends Bootstrap
 
         } elseif (in_array($type, ['file', 'pdf'])) {
             $element = $this->addFile($name);
-            $element->setPrefix('<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>');
+            $element->setPrefix(
+                '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
+            );
 
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
             if ($this->record) {
