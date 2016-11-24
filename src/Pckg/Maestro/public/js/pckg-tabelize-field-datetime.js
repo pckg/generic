@@ -61,7 +61,7 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
                     ? 'btn-danger'
                     : 'btn-success';
             } else {
-                return this.value <= this.min 
+                return this.value <= this.min
                     ? 'btn-danger'
                     : 'btn-success';
             }
