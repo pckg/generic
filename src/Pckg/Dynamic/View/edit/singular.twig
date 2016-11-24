@@ -1,3 +1,9 @@
+{% if flash('dynamic.records.add.success', false) %}
+    <div class="alert alert-success" role="alert">{{ flash('dynamic.records.add.success') }}</div>
+{% endif %}
+{% if flash('dynamic.records.edit.success', false) %}
+    <div class="alert alert-success" role="alert">{{ flash('dynamic.records.edit.success') }}</div>
+{% endif %}
 <div class="pckg-dynamic-record-singular">
     <h2>{{ formalize.getTitle() | raw }}</h2>
 

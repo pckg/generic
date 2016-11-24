@@ -290,6 +290,8 @@ class Records extends Controller
 
         Record::$dynamicTable = $table;
 
+        flash('dynamic.records.add.success', __('dynamic.records.add.success'));
+
         return $this->response()->respondWithSuccessRedirect($record->getEditUrl());
     }
 
@@ -540,6 +542,8 @@ class Records extends Controller
         if ($this->post()->p17n) {
             $this->saveP17n($record, $entity);
         }
+
+        flash('dynamic.records.edit.success', __('dynamic.records.edit.success'));
 
         return $this->response()->respondWithSuccessRedirect();
     }
