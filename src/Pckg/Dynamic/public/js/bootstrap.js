@@ -68,8 +68,8 @@ $(document).ready(function () {
                 allow_unsafe_link_target: true,
                 forced_root_block: false,
                 protect: [
-                    /{{[^}]+}}/g,  // Protect {{ }}
-                    /{%[^}]+%}/g,  // Protect {% %}
+                    // /{{[^}]+}}/g,  // Protect {{ }}
+                    // /{%[^}]+%}/g,  // Protect {% %}
                 ],
                 valid_elements: '*[*]',
                 templates: [
