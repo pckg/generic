@@ -57,7 +57,7 @@ class Filter
 
     public function getAvailableRelationFilters()
     {
-        return $this->table->relations->each(
+        return $this->table->relations->eachNew(
             function(Relation $relation) {
                 $entity = $relation->showTable->createEntity();
 
