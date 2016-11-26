@@ -74,11 +74,14 @@ class Generic
     public function readRoute(Route $route)
     {
         $this->route = $route;
-        $route->actions(
+        $actions = $route->actions(
             function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->joinPermissionTo('read');
             }
-        )->each(
+        );
+        
+        $hasAction = $actions->count() > 0;
+        $actions->each(
             function(ActionRecord $action) {
                 $this->addAction(
                     $action->pivot->variable->slug,
@@ -95,7 +98,13 @@ class Generic
         );
 
         if ($route->layout) {
-            $route->layout->actions->each(
+            $layoutActions = $route->layout->actions(
+                function(MorphedBy $actions) {
+                    $actions->getMiddleEntity()->joinPermissionTo('read');
+                }
+            );
+            $hasAction = $hasAction || $layoutActions->count() > 0;
+            $layoutActions->each(
                 function(ActionRecord $action) {
                     $this->addAction(
                         $action->pivot->variable->slug,
@@ -110,6 +119,10 @@ class Generic
                     );
                 }
             );
+        }
+        
+        if (!$hasAction) {
+            response()->notFound('No actions defined');
         }
     }
 
