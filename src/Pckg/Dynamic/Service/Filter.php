@@ -61,7 +61,7 @@ class Filter
             function(Relation $relation) {
                 $entity = $relation->showTable->createEntity();
 
-                $options = $relation->onField && $relation->dynamic_relation_type_id == 1 ? $entity->all()->each(
+                $options = $relation->onField && $relation->dynamic_relation_type_id == 1 ? $entity->all()->eachNew(
                     function($record) use ($relation, $entity) {
                         try {
                             $eval = eval(' return ' . $relation->value . '; ');
