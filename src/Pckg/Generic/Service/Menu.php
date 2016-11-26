@@ -2,6 +2,7 @@
 
 use Pckg\Collection;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Repository;
 use Pckg\Generic\Entity\Menus;
 
 class Menu
@@ -17,8 +18,12 @@ class Menu
         $this->menus = $menus;
     }
 
-    public function build($slug)
+    public function build($slug, $repository = null)
     {
+        if ($repository) {
+            $this->menus->setRepository(context()->get(Repository::class . ($repository ? '.' . $repository : '')));
+        }
+
         $menu = $this->menus->withMenuItems(
             function(HasMany $relation) {
                 $relation->joinTranslation();
