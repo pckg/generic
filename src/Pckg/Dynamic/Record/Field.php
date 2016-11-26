@@ -39,7 +39,7 @@ class Field extends DatabaseRecord
         return $relation;
     }*/
 
-    public function getRelationForSelect()
+    public function getRelationForSelect($record = null, $foreignRecord = null)
     {
         /**
          * So, $table is users table, $field is user_group_id for which we need to get relation.
@@ -55,19 +55,53 @@ class Field extends DatabaseRecord
         $showTable = $relation->showTable;
         $entity = $showTable->createEntity();
 
+        /**
+         * Append relation if we want to print for example
+         *  - $record->order->num
+         *  - $record->order->num . '<br />' . $record->user->email
+         */
+        $toEval = $relation->value;
+        $explodedEvals = explode(' ', $toEval);
+        foreach ($explodedEvals as $partialToExplode) {
+            $explodedEval = explode('->', $partialToExplode);
+            if (count($explodedEval) == 3) {
+                $entity->{'with' . ucfirst($explodedEval[1])}();
+            }
+        }
+
+        /**
+         * Now, we have $record->addition->title, editing related orders_users_additions on orders_users.
+         * We have to select additions that are added to packets_additions for orders_user.packet_id
+         */
+        $relation->applyFilterOnEntity($entity, $foreignRecord);
+
         $values = [];
         $entity->all()->each(
             function($record) use ($relation, &$values) {
-                try {
-                    $eval = eval(' return ' . $relation->value . '; ');
-                    $values[$record->id] = $eval;
-                } catch (Throwable $e) {
-                    $values[$record->id] = exception($e);
-                }
+                $values[$record->id] = $this->eval($relation->value, $record, $relation);
             }
         );
 
         return $values;
+    }
+
+    /**
+     * @param      $eval
+     * @param      $record
+     * @param      $originalRecord
+     * @param null $relation
+     *
+     * @return mixed|string
+     *
+     * See if we can do this in more secure way! @T00D00
+     */
+    public function eval($eval, $record, $relation)
+    {
+        try {
+            return eval(' return ' . $eval . '; ');
+        } catch (\Exception $e) {
+            return '-- ' . exception($e) . ' --';
+        }
     }
 
     /**

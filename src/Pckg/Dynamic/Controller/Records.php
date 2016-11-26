@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use Derive\Orders\Entity\Orders;
+use Derive\Orders\Entity\OrdersUsers;
 use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
@@ -231,6 +232,8 @@ class Records extends Controller
 
         if ($foreign) {
             $record->{$relation->onField->field} = $foreign;
+            $form->setForeignFieldId($relation->on_field_id);
+            $form->setForeignRecord((new OrdersUsers())->where('id', $foreign)->one());
         }
 
         $form->setTable($table);

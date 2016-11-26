@@ -25,6 +25,16 @@ class Dynamic extends Bootstrap
      */
     protected $record;
 
+    /**
+     * @var Record
+     */
+    protected $foreignRecord;
+
+    /**
+     * @var string
+     */
+    protected $foreignFieldId;
+
     public function setTable(Table $table)
     {
         $this->table = $table;
@@ -35,6 +45,20 @@ class Dynamic extends Bootstrap
     public function setRecord(Record $record)
     {
         $this->record = $record;
+
+        return $this;
+    }
+
+    public function setForeignFieldId($foreign)
+    {
+        $this->foreignFieldId = $foreign;
+
+        return $this;
+    }
+
+    public function setForeignRecord($foreign)
+    {
+        $this->foreignRecord = $foreign;
 
         return $this;
     }
@@ -205,6 +229,9 @@ class Dynamic extends Bootstrap
                 );
 
                 continue;
+            } elseif ($field->id == $this->foreignFieldId) {
+                $this->createElementByType('hidden', $name, $field);
+                continue;
             }
 
             $element = $this->createElementByType($type, $name, $field);
@@ -228,6 +255,7 @@ class Dynamic extends Bootstrap
     {
         $auto = [
             'id',
+            'hidden',
             'email',
             'password',
             'text',
@@ -307,7 +335,7 @@ class Dynamic extends Bootstrap
             return $this->addCheckbox($name);
 
         } elseif ($type == 'select') {
-            if ($this->record && $relation = $field->getRelationForSelect()) {
+            if ($this->record && $relation = $field->getRelationForSelect($this->record, $this->foreignRecord)) {
                 $element = $this->addSelect($name);
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field
