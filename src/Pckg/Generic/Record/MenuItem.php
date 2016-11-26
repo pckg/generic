@@ -24,6 +24,12 @@ class MenuItem extends Record
             return true;
         }
 
+        if (router()->get('name') == 'dynamic.record.edit'
+            && $this->url == '/dynamic/tables/list/' . explode('/', router()->getCleanUri())[4]
+        ) {
+            return true;
+        }
+
         return (new Collection($this->getChildren))->has(
             function(MenuItem $menuItem) {
                 return $menuItem->isActive();
