@@ -246,7 +246,7 @@ class Dynamic extends Bootstrap
         }
 
         $this->addSubmit('submit');
-        $this->addSubmit('as_new')->setValue('As new');
+        $this->addSubmit('as_new')->setValue('As new')->setClass('btn-link');
 
         return $this;
     }
