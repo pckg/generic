@@ -57,9 +57,9 @@ $(document).ready(function () {
 
         $('.affix-thead-container').each(function() {
             cwidth = $(this).children('.affix-thead-static').width();
-            cheight = $(this).height();
+            cheight = $(this).children('.affix-thead-static').height();
             $(this).children('.affix-thead-fixed').width(cwidth);
-            $('.affix-dynamic-offset').css('padding-bottom', 25 + cheight);
+            $('.affix-dynamic-offset').css('padding-bottom', 40 + cheight);
         })
 
         //set width when fixed
