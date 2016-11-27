@@ -114,6 +114,7 @@ class Records extends Controller
              * Right table entity is created here.
              */
             $relationEntity = $relation->showTable->createEntity();
+            $dynamicService->joinTranslationsIfTranslatable($relationEntity);
 
             /**
              * We need to add relations to select.
@@ -152,7 +153,10 @@ class Records extends Controller
                 $entity->orderBy('`' . $entity->getTable() . '`.`position` ASC');
 
             } else if ($cache->tableHasField($entity->getTable(), 'dt_published')) {
-                $entity->orderBy('IF(`' . $entity->getTable() . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, id ASC');
+                $entity->orderBy(
+                    'IF(`' . $entity->getTable(
+                    ) . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, id ASC'
+                );
 
             } else {
                 $entity->orderBy('`' . $entity->getTable() . '`.`id` DESC');
