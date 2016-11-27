@@ -101,8 +101,8 @@ class Field extends DatabaseRecord
     {
         try {
             return eval(' return ' . $eval . '; ');
-        } catch (\Exception $e) {
-            return '-- ' . exception($e) . ' --';
+        } catch (Throwable $e) {
+            throw $e;
         }
     }
 
