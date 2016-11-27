@@ -115,11 +115,10 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - this should be handled separately, like in different form or even different page/tab.
          */
-        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->each(
+        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->eachNew(
             function($permissions) {
-                return (new Collection($permissions))->groupBy('action');
-            },
-            true
+                return (new Collection($permissions))->keyBy('action');
+            }
         )->toArray();
 
         $this->addFieldset('permissionable');
@@ -127,10 +126,11 @@ class Dynamic extends Bootstrap
         $tablePermissions = [
             'read'  => 'Read',
             'write' => 'Write',
+            'delete' => 'Delete',
         ];
 
         if ($this->table->table == 'dynamic_fields' || $this->table->table == 'dynamic_relations') {
-            $tablePermissions['view'] = 'View';
+            // $tablePermissions['view'] = 'View';
         }
 
         $authGroups = (new UserGroups())->all();
