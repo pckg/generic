@@ -98,7 +98,8 @@
                 <template v-if="depth < 1">
                     <thead>
                     <tr>
-                        <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''" class="affix-thead-container">
+                        <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''"
+                            class="affix-thead-container">
                             <div class="affix-thead-fixed">
                                 <div>
                                     ${ field.title ? field.title : (field.field ? field.field : field) }
@@ -108,11 +109,29 @@
                                 ${ field.title ? field.title : (field.field ? field.field : field) }
                             </div>
                         </th>
-                        <th class="text-right">{{ __('select_all') }}</th>
-                        <th>
-                            <input type="checkbox" v-on:click="checkAll"
-                                   v-model="allChecked"
-                                   value="1"/>
+                        <th class="text-right affix-thead-container">
+                            <div class="affix-thead-fixed">
+                                <div>
+                                    {{ __('select_all') }}
+                                </div>
+                            </div>
+                            <div class="affix-thead-static">
+                                {{ __('select_all') }}
+                            </div>
+                        </th>
+                        <th class="affix-thead-container">
+                            <div class="affix-thead-fixed">
+                                <div>
+                                    <input type="checkbox" v-on:click="checkAll"
+                                           v-model="allChecked"
+                                           value="1"/>
+                                </div>
+                            </div>
+                            <div class="affix-thead-static">
+                                <input type="checkbox" v-on:click="checkAll"
+                                       v-model="allChecked"
+                                       value="1"/>
+                            </div>
                         </th>
                     </tr>
                     </thead>
