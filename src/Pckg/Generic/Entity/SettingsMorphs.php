@@ -8,4 +8,10 @@ class SettingsMorphs extends Entity
 
     protected $record = SettingsMorph::class;
 
+    public function setting()
+    {
+        return $this->belongsTo(Settings::class)
+                    ->foreignKey('setting_id');
+    }
+
 }
