@@ -3,6 +3,7 @@
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Record\Extension\Permissionable;
 use Pckg\Dynamic\Entity\Fields;
+use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
 
 class Field extends DatabaseRecord
@@ -54,6 +55,7 @@ class Field extends DatabaseRecord
 
         $showTable = $relation->showTable;
         $entity = $showTable->createEntity();
+        resolve(Dynamic::class)->joinTranslationsIfTranslatable($entity);
 
         /**
          * Append relation if we want to print for example
