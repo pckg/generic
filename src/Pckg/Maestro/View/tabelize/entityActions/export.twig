@@ -1,14 +1,15 @@
 <div class="btn-group btn-group-sm">
-    <a type="button" class="btn btn-warning dropdown-toggle" href="#" title="{{ __('export') }}" data-toggle="dropdown"
-       aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-download" aria-hidden="true"></i>
+    <a href="{{ tabelize.getEntity().getExportUrl('html') }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
+        <i class="fa fa-download" aria-hidden="true"></i> .html
     </a>
+
+    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false" title="Export options">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+
     <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <a href="{{ tabelize.getEntity().getExportUrl('html') }}">
-                <i class="fa fa-code" aria-hidden="true"></i> .html
-            </a>
-        </li>
         <li>
             <a href="{{ tabelize.getEntity().getExportUrl('xlsx') }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .xlsx

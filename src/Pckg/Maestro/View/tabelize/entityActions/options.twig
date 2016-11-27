@@ -1,27 +1,23 @@
 <div class="btn-group btn-group-sm">
-    <a type="button" class="btn btn-info dropdown-toggle" href="#" title="{{ __('options') }}" data-toggle="dropdown"
-       aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-cogs" aria-hidden="true"></i>
+    <a href="{{ tabelize.getEntity().getExportUrl('html') }}" class="btn btn-info" title="{{ __('Filter table') }}">
+        <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
     </a>
+
+    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false" title="Table view options">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntity().getFieldsUrl() }}">
-                <i class="fa fa-columns" aria-hidden="true"></i> Fields
-            </a>
-        </li>
-        <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntity().getFilterUrl() }}">
-                <i class="fa fa-filter" aria-hidden="true"></i> Filter by
-            </a>
-        </li>
-        <li>
             <a class="popup-iframe" href="{{ tabelize.getEntity().getGroupUrl() }}">
-                <i class="fa fa-object-group" aria-hidden="true"></i> Group by
+                <i class="fa fa-object-group" aria-hidden="true"></i> {{ __('group_by') }}
             </a>
         </li>
         <li>
             <a class="popup-iframe" href="{{ tabelize.getEntity().getSortUrl() }}">
-                <i class="fa fa-sort" aria-hidden="true"></i> Sort by
+                <i class="fa fa-sort" aria-hidden="true"></i> {{ __('sort_by') }}
             </a>
         </li>
     </ul>

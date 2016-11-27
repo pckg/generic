@@ -41,6 +41,18 @@ table.table td {
   word-break: break-all;
 }
 
+.pckg-maestro-tabelize > [class^='pckg-maestro-table-'] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+
+  .header {
+    h2 {
+      margin-bottom: 20px;
+    }
+  }
+}
+
 fieldset.submit:after {
   content: '';
   display: block;
@@ -261,5 +273,35 @@ table tr.strong > td:not(.actions) {
   > h2 {
     margin-top: 1rem;
     margin-bottom: 3rem;
+  }
+}
+
+.affix-dynamic-offset-container {
+  height: 60px;
+
+  .affix-dynamic-offset {
+    input {
+      width: 50%;
+    }
+
+    &.affix {
+      background: #FFF;
+      padding: 10px 10px 30px;
+      right: 0;
+      top: 0;
+      z-index: 10;
+    }
+  }
+}
+
+.affix-thead-container {
+  .affix-thead-fixed {
+    visibility: hidden;
+
+    &.affix {
+      top: 60px;
+      visibility: visible;
+      z-index: 11;
+    }
   }
 }

@@ -1,10 +1,10 @@
 <div class="btn-group btn-group-sm">
     <a type="button" class="btn btn-default dropdown-toggle" href="#" title="{{ __('view') }}" data-toggle="dropdown"
        aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-bars" aria-hidden="true"></i>
+        <i class="fa fa-bars" aria-hidden="true"></i> {{ __('view') }}
     </a>
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a href="{{ tabelize.getEntity().getResetViewUrl() }}">Default view</a></li>
+        <li><a href="{{ tabelize.getEntity().getResetViewUrl() }}">{{ __('default_view') }}</a></li>
         {% if tabelize.getEntity.getSavedViews() %}
             <li role="separator" class="divider"></li>
             {% for view in tabelize.getEntity().getSavedViews() %}
@@ -13,8 +13,9 @@
             {% endfor %}
         {% endif %}
         <li role="separator" class="divider"></li>
-        <li><a href="{{ tabelize.getEntity().getSaveViewUrl() }}" class="popup-iframe">Save current view</a></li>
+        <li><a class="popup-iframe" href="{{ tabelize.getEntity().getFieldsUrl() }}"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('customize') }}</a></li>
+        <li><a href="{{ tabelize.getEntity().getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('save_current_view') }}</a></li>
         <li role="separator" class="divider"></li>
-        <li><a href="{{ tabelize.getEntity().getShareViewUrl() }}" class="popup-iframe">Share current view</a></li>
+        <li><a href="{{ tabelize.getEntity().getShareViewUrl() }}" class="popup-iframe"><i class="fa fa-share" aria-hidden="true"></i> {{ __('share_current_view') }}</a></li>
     </ul>
 </div>

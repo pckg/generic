@@ -11,21 +11,6 @@
 
 <div class="pckg-maestro-tabelize" id="{{ id }}">
 
-    <div class="header">
-        <h2>
-            {{ tabelize.getTitle() | raw }}
-            <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..." style="text-align: right;">
-                {% for action in tabelize.getEntityActions() %}
-                    {% if action.slug and action.entityTemplate %}
-                        {% include 'tabelize/entityActions/' ~ action.entityTemplate ~ '.twig' %}
-                    {% elseif not action.slug %}
-                        {% include 'tabelize/entityActions/' ~ action ~ '.twig' %}
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </h2>
-    </div>
-
     <script type="text/x-template" id="pckg-maestro-actions">
         <div class="btn-group btn-group-sm">
             <div type="button" class="btn btn-default">
@@ -70,9 +55,28 @@
 
     <script type="text/x-template" id="pckg-maestro-table-{{ table }}">
         <div class="pckg-maestro-table-{{ table }}">
-            <div v-if="first" style="margin: 1rem auto; max-width: 360px; width: auto;">
-                <label>Quick search:</label>
-                <input type="text" v-model="search" debounce="500" class="form-control"/>
+            <div class="header">
+                <h2>
+                    {{ tabelize.getTitle() | raw }}
+                </h2>
+                <div class="affix-dynamic-offset-container">
+                    <div class="affix-dynamic-offset">
+                        <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..."
+                             style="text-align: right;">
+                            {% for action in tabelize.getEntityActions() %}
+                                {% if action.slug and action.entityTemplate %}
+                                    {% include 'tabelize/entityActions/' ~ action.entityTemplate ~ '.twig' %}
+                                {% elseif not action.slug %}
+                                    {% include 'tabelize/entityActions/' ~ action ~ '.twig' %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="quick-search">
+                            <input type="text" v-model="search" debounce="500" class="form-control"
+                                   placeholder="Quick search"/>
+                        </div>
+                    </div>
+                </div>
             </div>
             <table class="table table-condensed table-striped table-hover">
                 <template v-if="depth > 0">
@@ -94,10 +98,17 @@
                 <template v-if="depth < 1">
                     <thead>
                     <tr>
-                        <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
-                            ${ field.title ? field.title : (field.field ? field.field : field) }
+                        <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''" class="affix-thead-container">
+                            <div class="affix-thead-fixed">
+                                <div>
+                                    ${ field.title ? field.title : (field.field ? field.field : field) }
+                                </div>
+                            </div>
+                            <div class="affix-thead-static">
+                                ${ field.title ? field.title : (field.field ? field.field : field) }
+                            </div>
                         </th>
-                        <th></th>
+                        <th class="text-right">{{ __('select_all') }}</th>
                         <th>
                             <input type="checkbox" v-on:click="checkAll"
                                    v-model="allChecked"
@@ -235,9 +246,9 @@
                 }
             }
         });
-        maestroTable.$on('record:removeFromList', function(record){
+        maestroTable.$on('record:removeFromList', function (record) {
             console.log('dispatched remove');
-            $.each(this.records, function(i, val){
+            $.each(this.records, function (i, val) {
                 if (val.id == record.id) {
                     this.records.$delete(i);
                     return false;
