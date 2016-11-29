@@ -64,7 +64,8 @@ class Records extends Controller
     public function getViewTableAction(
         Table $tableRecord,
         DynamicService $dynamicService,
-        DatabaseEntity $entity = null
+        DatabaseEntity $entity = null,
+        $viewType = 'full'
     )
     {
         /**
@@ -207,7 +208,7 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations);
 
-        if ($this->request()->isAjax() && strpos($_SERVER['REQUEST_URI'], '/tab/') === false) {
+        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || post('search'))) {
             return [
                 'records' => $tabelize->transformRecords(),
                 'groups'  => $groups,
@@ -215,6 +216,8 @@ class Records extends Controller
         }
 
         $tabelize->getView()->addData('dynamic', $this->dynamic);
+        $tabelize->getView()->addData('viewType', $viewType);
+        $tabelize->getView()->addData('searchUrl', router()->getUri());
 
         return $tabelize;
     }
@@ -417,10 +420,11 @@ class Records extends Controller
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),
                     $this->dynamic,
-                    $entity
+                    $entity,
+                    'related'
                 );
 
-                $tabelizes[] = (string)$tabelize;
+                $tabelizes[] = is_array($tabelize) ? \json_encode($tabelize) : (string)$tabelize;
             }
         );
 

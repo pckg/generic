@@ -10,6 +10,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Inter\Entity\Languages;
+use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
 class Dynamic extends Bootstrap
@@ -34,6 +35,13 @@ class Dynamic extends Bootstrap
      * @var string
      */
     protected $foreignFieldId;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->addDecorator($this->decoratorFactory->create(DynamicDecorator::class));
+    }
 
     public function setTable(Table $table)
     {
@@ -124,8 +132,8 @@ class Dynamic extends Bootstrap
         $this->addFieldset('permissionable');
 
         $tablePermissions = [
-            'read'  => 'Read',
-            'write' => 'Write',
+            'read'   => 'Read',
+            'write'  => 'Write',
             'delete' => 'Delete',
         ];
 

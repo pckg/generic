@@ -15,10 +15,10 @@
         <div class="btn-group btn-group-sm">
             <div type="button" class="btn btn-default">
                 {% for action in recordActions %}
-                    {% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}
+                        {% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}
                 {% endfor %}
             </div>
-            {#% if recordActions|length > 1 %#}
+            {% if recordActions|length > 1 %}
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false">
@@ -30,7 +30,7 @@
                     <li>{% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}</li>
                 {% endfor %}
             </ul>
-            {#% endif %#}
+            {% endif %}
         </div>
     </script>
 
@@ -64,17 +64,21 @@
                         <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..."
                              style="text-align: right;">
                             {% for action in tabelize.getEntityActions() %}
-                                {% if action.slug and action.entityTemplate %}
-                                    {% include 'tabelize/entityActions/' ~ action.entityTemplate ~ '.twig' %}
-                                {% elseif not action.slug %}
-                                    {% include 'tabelize/entityActions/' ~ action ~ '.twig' %}
+                                {% if viewType == 'full' or (viewType == 'related' and action == 'add') %}
+                                    {% if action.slug and action.entityTemplate %}
+                                        {% include 'tabelize/entityActions/' ~ action.entityTemplate ~ '.twig' %}
+                                    {% elseif not action.slug %}
+                                        {% include 'tabelize/entityActions/' ~ action ~ '.twig' %}
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </div>
+                        {% if viewType == 'full' %}
                         <div class="quick-search">
                             <input type="text" v-model="search" debounce="500" class="form-control"
                                    placeholder="Quick search"/>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -259,7 +263,7 @@
                         this.$refs.maestroTable._searchTimeout.abort();
                     }
 
-                    this.$refs.maestroTable._searchTimeout = http.getJSON(window.location.href + '?search=' + newValue, function (data) {
+                    this.$refs.maestroTable._searchTimeout = http.getJSON('{{ searchUrl }}?search=' + newValue, function (data) {
                         this.$refs.maestroTable.records = data.records;
                     }.bind(this));
                 }
