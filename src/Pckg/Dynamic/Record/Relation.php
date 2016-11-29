@@ -3,6 +3,7 @@
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Relations;
+use Throwable;
 
 class Relation extends DatabaseRecord
 {
@@ -11,19 +12,25 @@ class Relation extends DatabaseRecord
 
     public function applyFilterOnEntity($entity, $foreignRecord)
     {
-        if (!$this->filter) {
+        if (!$this->filter || !$foreignRecord) {
             return;
         }
 
-        $entity->where(Raw::raw($this->eval($this->filter, $foreignRecord)));
+        $evalResult = $this->eval($this->filter, $foreignRecord);
+
+        if (!$evalResult) {
+            return;
+        }
+
+        $entity->where(Raw::raw($evalResult));
     }
 
     public function eval($eval, $foreignRecord)
     {
         try {
             return eval(' return ' . $eval . '; ');
-        } catch (\Exception $e) {
-            return '-- ' . exception($e) . ' --';
+        } catch (Throwable $e) {
+            throw $e;
         }
     }
 
