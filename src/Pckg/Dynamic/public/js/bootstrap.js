@@ -44,35 +44,37 @@ $(document).ready(function () {
     /* fix search, group actions and table header on lists */
 
     function affixFromTop() {
-        offsetFromTop = $('.affix-dynamic-offset').offset().top;
+        if($('.affix-dynamic-offset').length) {
+            offsetFromTop = $('.affix-dynamic-offset').offset().top;
 
-        /*  */
-        $('.affix-thead-fixed, .affix-dynamic-offset').each(function() {
-            $(this).affix({
-                offset: {
-                    top: offsetFromTop
-                }
+            /*  */
+            $('.affix-thead-fixed, .affix-dynamic-offset').each(function () {
+                $(this).affix({
+                    offset: {
+                        top: offsetFromTop
+                    }
+                })
+            });
+
+            $('.affix-thead-container').each(function () {
+                cwidth = $(this).children('.affix-thead-static').width();
+                cheight = $(this).children('.affix-thead-static').height();
+                $(this).children('.affix-thead-fixed').width(cwidth);
+                $('.affix-dynamic-offset').css('padding-bottom', 40 + cheight);
             })
-        });
 
-        $('.affix-thead-container').each(function() {
-            cwidth = $(this).children('.affix-thead-static').width();
-            cheight = $(this).children('.affix-thead-static').height();
-            $(this).children('.affix-thead-fixed').width(cwidth);
-            $('.affix-dynamic-offset').css('padding-bottom', 40 + cheight);
-        })
-
-        //set width when fixed
-        $('.affix-dynamic-offset').on('affix.bs.affix', function() {
-            $(this).addClass('col-sm-10');
-        })
-        //default width when not fixed
-        $('.affix-dynamic-offset').on('affixed-top.bs.affix', function() {
-            $(this).removeClass('col-sm-10');
-        })
-        //on ready set width if fixed
-        if($('.affix-dynamic-offset').hasClass('affix')) {
-            $('.affix-dynamic-offset').addClass('col-sm-10');
+            //set width when fixed
+            $('.affix-dynamic-offset').on('affix.bs.affix', function () {
+                $(this).addClass('col-sm-10');
+            })
+            //default width when not fixed
+            $('.affix-dynamic-offset').on('affixed-top.bs.affix', function () {
+                $(this).removeClass('col-sm-10');
+            })
+            //on ready set width if fixed
+            if ($('.affix-dynamic-offset').hasClass('affix')) {
+                $('.affix-dynamic-offset').addClass('col-sm-10');
+            }
         }
     }
     affixFromTop();
