@@ -80,7 +80,6 @@ class Generic
             }
         );
         
-        $hasAction = $actions->count() > 0;
         $actions->each(
             function(ActionRecord $action) {
                 $this->addAction(
@@ -103,7 +102,6 @@ class Generic
                     $actions->getMiddleEntity()->joinPermissionTo('read');
                 }
             );
-            $hasAction = $hasAction || $layoutActions->count() > 0;
             $layoutActions->each(
                 function(ActionRecord $action) {
                     $this->addAction(
@@ -119,10 +117,6 @@ class Generic
                     );
                 }
             );
-        }
-        
-        if (!$hasAction) {
-            response()->notFound('No actions defined');
         }
     }
 
