@@ -32,6 +32,12 @@ class Fields extends DatabaseEntity
                     ->foreignKey('dynamic_field_type_id');
     }
 
+    public function fieldGroup()
+    {
+        return $this->belongsTo(FieldGroups::class)
+                    ->foreignKey('dynamic_field_group_id');
+    }
+
     public function settings()
     {
         return $this->morphsMany(Settings::class)

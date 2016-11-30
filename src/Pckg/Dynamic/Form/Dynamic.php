@@ -2,6 +2,7 @@
 
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
@@ -196,6 +197,12 @@ class Dynamic extends Bootstrap
                         $relation->withShowTable();
                     }
                 );
+                $fields->withFieldGroup(
+                    function(BelongsTo $fieldGroup) {
+                        $fieldGroup->joinTranslation();
+                        $fieldGroup->joinFallbackTranslation();
+                    }
+                );
             }
         );
 
@@ -206,7 +213,7 @@ class Dynamic extends Bootstrap
                 (!$prevGroup && $field->dynamic_field_group_id)
             ) {
                 $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<hr /><h4>Field group #' . $field->dynamic_field_group_id . '</h4>');
+                $fieldset->addChild('<hr /><h4>' . $field->fieldGroup->title . '</h4>');
                 $prevGroup = $field->dynamic_field_group_id;
             }
 
@@ -276,19 +283,35 @@ class Dynamic extends Bootstrap
             return $this->{'add' . ucfirst($type)}($name);
 
         } elseif (in_array($type, ['file', 'pdf'])) {
-            $element = $this->addFile($name);
-            $element->setPrefix(
-                '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
-            );
-
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-            if ($this->record) {
-                $element->setAttribute(
-                    'data-image',
-                    media($this->record->{$field->field}, null, true, $dir)
+            $fullPath = $this->record->{$field->field}
+                ? media($this->record->{$field->field}, null, true, $dir)
+                : null;
+
+            if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
+                $element = $this->addDiv();
+                if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
+                    $element->addChild(
+                        '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute($this->record) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
+                    );
+                }
+                if ($this->record->{$field->field}) {
+                    $element->addChild(
+                        '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
+                    );
+                }
+
+            } else {
+                $element = $this->addFile($name);
+                $element->setPrefix(
+                    '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
                 );
+
+                if ($fullPath) {
+                    $element->setAttribute('data-image', $fullPath);
+                }
+                $element->setAttribute('data-type', $type);
             }
-            $element->setAttribute('data-type', $type);
 
             return $element;
 

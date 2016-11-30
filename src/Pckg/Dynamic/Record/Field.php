@@ -97,7 +97,7 @@ class Field extends DatabaseRecord
      *
      * See if we can do this in more secure way! @T00D00
      */
-    public function eval($eval, $record, $relation)
+    public function eval($eval, $record = null, $relation = null)
     {
         try {
             return eval(' return ' . $eval . '; ');
@@ -165,6 +165,17 @@ class Field extends DatabaseRecord
         }
 
         return isset($setting->max->eval) ? eval('return ' . $setting->max->eval . ';') : $setting->max;
+    }
+
+    public function getGenerateFileUrlAttribute($record = null)
+    {
+        $setting = $this->getSetting('pckg.dynamic.field.generateFileUrl');
+
+        if (!$setting) {
+            return null;
+        }
+
+        return $this->eval($setting, $record);
     }
 
     public function getAbsoluteDir($dir)
