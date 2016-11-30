@@ -675,9 +675,6 @@ class Records extends Controller
             ];
         }
 
-        /**
-         * @T00D00 - save and process file!
-         */
         $entity = $table->createEntity();
         $record->setEntity($entity);
 

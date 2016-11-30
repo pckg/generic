@@ -30,6 +30,11 @@ class MenuItem extends Record
             return true;
         }
 
+        return $this->isSubActive();
+    }
+
+    public function isSubActive()
+    {
         return (new Collection($this->getChildren))->has(
             function(MenuItem $menuItem) {
                 return $menuItem->isActive();
