@@ -178,13 +178,13 @@ class Field extends DatabaseRecord
         return $this->eval($setting, $record);
     }
 
-    public function getAbsoluteDir($dir)
+    public function getAbsoluteDir($dir, $private = false)
     {
         if (strpos($dir, path('ds')) === 0) {
             return $dir;
         }
 
-        return path('app_uploads') . $dir . path('ds');
+        return path($private ? 'app_private' : 'app_uploads') . $dir . path('ds');
     }
 
     public function getLabelAttribute()

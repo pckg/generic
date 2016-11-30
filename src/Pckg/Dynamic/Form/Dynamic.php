@@ -283,7 +283,7 @@ class Dynamic extends Bootstrap
             return $this->{'add' . ucfirst($type)}($name);
 
         } elseif (in_array($type, ['file', 'pdf'])) {
-            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'), true);
             $fullPath = $this->record->{$field->field}
                 ? media($this->record->{$field->field}, null, true, $dir)
                 : null;
