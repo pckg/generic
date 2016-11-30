@@ -48,13 +48,47 @@ class Sort
     {
         $sorts = $this->getAppliedSorts();
 
+        if (!$sorts) {
+            $this->applyGuessedSorts($entity);
+
+            return;
+        }
+
         $directionMapper = [
             'ascending'  => 'ASC',
             'descending' => 'DESC',
         ];
 
         foreach ($sorts as $sort) {
-            $entity->orderBy($sort['field'] . ' ' . ($directionMapper[$sort['options']['direction'] ?? 'descending'] ?? 'DESC'));
+            $entity->orderBy(
+                $sort['field'] . ' ' . ($directionMapper[$sort['options']['direction'] ?? 'descending'] ?? 'DESC')
+            );
+        }
+    }
+
+    protected function applyGuessedSorts(Entity $entity)
+    {
+        if (!$entity->getQuery()->getOrderBy()) {
+            $cache = $entity->getRepository()->getCache();
+            if ($cache->tableHasField($entity->getTable(), 'order')) {
+                $entity->orderBy('`' . $entity->getTable() . '`.`order` ASC');
+
+            } else if ($cache->tableHasField($entity->getTable(), 'ord')) {
+                $entity->orderBy('`' . $entity->getTable() . '`.`ord` ASC');
+
+            } else if ($cache->tableHasField($entity->getTable(), 'position')) {
+                $entity->orderBy('`' . $entity->getTable() . '`.`position` ASC');
+
+            } else if ($cache->tableHasField($entity->getTable(), 'dt_published')) {
+                $entity->orderBy(
+                    'IF(`' . $entity->getTable(
+                    ) . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, id ASC'
+                );
+
+            } else {
+                $entity->orderBy('`' . $entity->getTable() . '`.`id` DESC');
+
+            }
         }
     }
 
