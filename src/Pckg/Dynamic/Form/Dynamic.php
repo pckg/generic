@@ -283,7 +283,10 @@ class Dynamic extends Bootstrap
             return $this->{'add' . ucfirst($type)}($name);
 
         } elseif (in_array($type, ['file', 'pdf'])) {
-            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'), true);
+            $dir = $field->getAbsoluteDir(
+                $field->getSetting('pckg.dynamic.field.dir'),
+                $field->getSetting('pckg.dynamic.field.privateUpload')
+            );
             $fullPath = $this->record->{$field->field}
                 ? media($this->record->{$field->field}, null, true, $dir)
                 : null;
@@ -292,7 +295,9 @@ class Dynamic extends Bootstrap
                 $element = $this->addDiv();
                 if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                     $element->addChild(
-                        '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute($this->record) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
+                        '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
+                            $this->record
+                        ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
                     );
                 }
                 if ($this->record->{$field->field}) {
