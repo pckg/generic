@@ -1,6 +1,5 @@
 <?php namespace Pckg\Maestro\Service;
 
-use Exception;
 use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
@@ -306,7 +305,7 @@ class Tabelize
     {
         try {
             return eval(' return ' . $eval . '; ');
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return '-- ' . exception($e) . ' --';
         }
     }

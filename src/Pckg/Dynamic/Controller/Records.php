@@ -28,6 +28,7 @@ use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
+use Throwable;
 
 class Records extends Controller
 {
@@ -329,7 +330,7 @@ class Records extends Controller
         $tabs = $table->tabs;
         try {
             list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table);
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             $tabelizes = [];
             $functionizes = [];
         }
@@ -462,6 +463,7 @@ class Records extends Controller
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
                 $query->where('dynamic_relation_type_id', 2);
+                $query->where('dynamic_table_tab_id', null);
             }
         );
 
@@ -469,21 +471,20 @@ class Records extends Controller
         $recordsController = Reflect::create(Records::class);
         $relations->each(
             function(Relation $relation) use ($tabs, $record, &$tabelizes, $recordsController) {
-                /*$entity = $relation->showTable->createEntity();
+                $entity = $relation->showTable->createEntity();
                 $entity->where($relation->onField->field, $record->id);
 
-                $tableResolver = Reflect::create(TableResolver::class);
+                $tableResolver = Reflect::create(\Pckg\Dynamic\Resolver\Table::class);
                 $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
 
                 $tabelize = $recordsController->getViewTableAction(
                     $table,
                     $this->dynamic,
                     $entity
-                );*/
-                $tabelize = null;
+                );
 
                 if ($tabs->count()) {
-                    $tabelizes[$relation->dynamic_table_tab_id ?: 0][] = $tabelize;
+                    $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = $tabelize;
 
                 } else {
                     $tabelizes[] = $tabelize;
