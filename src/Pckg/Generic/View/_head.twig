@@ -7,8 +7,13 @@
 {{ _metaManager.getMeta('header') | raw }}
 
 <script type="text/javascript">
+    {# Classic JS data #}
     var data = data || {};
+
+    {# Data prepared for magic creation of main Vue object #}
     var $vue = $vue || {};
+
+    {# Some properties needed on different parts #}
     var props = props || {};
 
     props.locale = '{{ _localeManager.getCurrent() }}';
