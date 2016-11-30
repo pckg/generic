@@ -29,7 +29,7 @@
                 },
                 deleteRecord: function () {
                     $('#deleteRecordModal').modal('hide');
-                    http.get(this.record.delete, function () {
+                    http.get(this.record.deleteUrl, function () {
                         $('#recordDeletedModal').modal('show');
                     });
                 }

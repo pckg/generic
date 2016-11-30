@@ -486,4 +486,26 @@ class Tabelize
         return $transformed;
     }
 
+    public function getEntityActionsHtml() {
+        $html = null;
+        foreach ($this->getEntityActions() as $action) {
+            if (isset($action->slug) && isset($action->entityTemplate)) {
+                $html .= view('tabelize/entityActions/' . $action->entityTemplate);
+            } else {
+                $html .= view('tabelize/entityActions/' . $action);
+            }
+        }
+
+        return $html;
+        /*{% for action in tabelize.getEntityActions() %}
+        {#% if viewType == 'full' or (viewType == 'related' and action == 'add') %#}
+            {% if action.slug and action.entityTemplate %}
+            {% include 'tabelize/entityActions/' ~ action.entityTemplate ~ '.twig' %}
+            {% elseif not action.slug %}
+            {% include 'tabelize/entityActions/' ~ action ~ '.twig' %}
+            {% endif %}
+            {#% endif %#}
+                {% endfor %}*/
+    }
+
 }
