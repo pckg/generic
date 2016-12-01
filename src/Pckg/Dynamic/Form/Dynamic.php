@@ -37,11 +37,20 @@ class Dynamic extends Bootstrap
      */
     protected $foreignFieldId;
 
+    protected $editable = true;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->addDecorator($this->decoratorFactory->create(DynamicDecorator::class));
+    }
+
+    public function setEditable($editable)
+    {
+        $this->editable = $editable;
+
+        return $this;
     }
 
     public function setTable(Table $table)
@@ -235,7 +244,7 @@ class Dynamic extends Bootstrap
                 );
 
                 continue;
-            } elseif (false && !$field->hasPermissionTo('edit')) {
+            } elseif (!$this->editable/* !$field->hasPermissionTo('edit')*/) {
                 // @T00D00
                 $element = $this->addDiv()->addChild(
                     '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '

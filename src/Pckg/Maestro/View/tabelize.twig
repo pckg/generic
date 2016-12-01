@@ -21,6 +21,7 @@
     {% include '_tabelize_table_template.twig' %}
 
     <script type="text/javascript">
+        console.log('extending pckgMaestroTableComponent with pckg-maestro-table-{{ table }}');
         var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
             name: 'pckg-maestro-table-{{ table }}',
             template: '#pckg-maestro-table-{{ table }}'
@@ -51,7 +52,8 @@
             total: {{ tabelize.getTotal() }}
         };
 
-        var maestroTable = new Vue({
+        console.log('Constructing maestroTable {{ id }}');
+        var maestroTable = utils.createVue('maestroTable', {
             el: '#{{ id }}',
             data: function () {
                 return {
@@ -96,7 +98,7 @@
                 }
             }
         });
-        maestroTable.$on('record:removeFromList', function (record) {
+        /*maestroTable.$on('record:removeFromList', function (record) {
             console.log('dispatched remove');
             $.each(this.records, function (i, val) {
                 if (val.id == record.id) {
@@ -104,7 +106,7 @@
                     return false;
                 }
             }.bind(this));
-        });
+        });*/
     </script>
 
 </div>

@@ -44,7 +44,9 @@
         methods: {
             loadAjaxTab: function (tabId, url) {
                 http.getJSON(url, function (json) {
+                    //utils.prepareVue('#dynamic-tab-' + tabId, {});
                     $('#dynamic-tab-' + tabId).html(json._html);
+                    //utils.createVue('#dynamic-tab-' + tabId, utils.lastVue);
                 });
 
                 return false;

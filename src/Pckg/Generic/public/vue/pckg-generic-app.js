@@ -52,7 +52,7 @@ var on = $vue.on;
 /**
  * Initialize main VueJS app.
  */
-data.$root = new Vue($vue);
+data.$root = utils.createVue('root', $vue);
 
 /**
  * Attach listeners

@@ -299,6 +299,13 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect($record->getEditUrl());
     }
 
+    public function getViewAction(Dynamic $form, Record $record, Table $table)
+    {
+        $form->setEditable(false);
+
+        return $this->getEditAction($form, $record, $table);
+    }
+
     public function getEditAction(Dynamic $form, Record $record, Table $table)
     {
         if (!$table->listableFields->count()) {

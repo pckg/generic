@@ -34,7 +34,8 @@
         methods: {
             recordAction: function (record, action) {
                 console.log('dispatching record:' + action);
-                data.$root.$dispatch('record:' + action, record.id, record);
+                // data.$root.$dispatch('record:' + action, record.id, record);
+                utils.lastVue.$dispatch('record:' + action, record.id, record);
             }
         }
     });

@@ -9,6 +9,17 @@ trait RecordActions
 
     public static $dynamicTable;
 
+    public function getViewUrl()
+    {
+        return url(
+            'dynamic.record.view',
+            [
+                'table'  => static::$dynamicTable,
+                'record' => $this,
+            ]
+        );
+    }
+
     public function getEditUrl()
     {
         return url(

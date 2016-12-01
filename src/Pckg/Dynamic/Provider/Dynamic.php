@@ -100,6 +100,14 @@ class Dynamic extends Provider
                                      'relation' => Relation::class,
                                  ],
                              ],
+                             '/dynamic/records/view/[table]/[record]'                         => [
+                                 'name'      => 'dynamic.record.view',
+                                 'view'      => 'view',
+                                 'resolvers' => [
+                                     'table'  => TableResolver::class,
+                                     'record' => RecordResolver::class,
+                                 ],
+                             ],
                              '/dynamic/records/edit/[table]/[record]'                         => [
                                  'name'        => 'dynamic.record.edit',
                                  'view'        => 'edit',
