@@ -52,8 +52,9 @@
             total: {{ tabelize.getTotal() }}
         };
 
-        console.log('Constructing maestroTable {{ id }}');
-        var maestroTable = utils.createVue('maestroTable', {
+        console.log('Constructing maestroTable {{ id }}' + ' #' + $('#{{ id }}').closest('[id]').attr('id'));
+        var maestroTable = utils.createVue('{{ id }}', {
+            //el: '#' + $('#{{ id }}').closest('[id]').attr('id'),
             el: '#{{ id }}',
             data: function () {
                 return {

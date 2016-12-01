@@ -30,8 +30,7 @@
                 },
                 deleteRecord: function () {
                     $('#deleteRecordModal').modal('hide');
-                    console.log(this.record.deleteUrl);
-                    //return;
+
                     http.get(this.record.deleteUrl, function () {
                         $('#recordDeletedModal').modal('show');
                     });
@@ -42,7 +41,6 @@
             },
             on: {
                 'record:checkDeleteRecord': function (id, record) {
-                    console.log(this.checkDeleteRecord, utils.lastVue.checkDeleteRecord, this);
                     this.checkDeleteRecord(record);
 
                     return true;

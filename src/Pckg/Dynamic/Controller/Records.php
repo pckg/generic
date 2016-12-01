@@ -470,7 +470,7 @@ class Records extends Controller
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
                 $query->where('dynamic_relation_type_id', 2);
-                $query->where('dynamic_table_tab_id', null);
+                //$query->where('dynamic_table_tab_id', null);
             }
         );
 
@@ -491,10 +491,10 @@ class Records extends Controller
                 );
 
                 if ($tabs->count()) {
-                    $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = $tabelize;
+                    $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = (string)$tabelize;
 
                 } else {
-                    $tabelizes[] = $tabelize;
+                    $tabelizes[] = (string)$tabelize;
 
                 }
             }
@@ -511,10 +511,10 @@ class Records extends Controller
                     [$record]
                 );
                 if ($tabs->count()) {
-                    $functionizes[$function->dynamic_table_tab_id ?: 0][] = $functionize;
+                    $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;
 
                 } else {
-                    $functionizes[] = $functionize;
+                    $functionizes[] = (string)$functionize;
 
                 }
             }
@@ -606,9 +606,8 @@ class Records extends Controller
         }
     }
 
-    public function getDeleteAction(Record $record)
+    public function getDeleteAction(Record $record, Table $table)
     {
-        $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->delete($entity);
 
