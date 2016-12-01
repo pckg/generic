@@ -33,12 +33,12 @@
         </div>
         {% for tab in tabs %}
             <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                {% for tabelize in tabelizes[tab.id] %}
+                {#% for tabelize in tabelizes[tab.id] %}
                     {{ tabelize | raw }}
                 {% endfor %}
                 {% for functionize in functionizes[tab.id] %}
                     {{ functionize | raw }}
-                {% endfor %}
+                {% endfor %#}
             </div>
         {% endfor %}
     </div>
@@ -52,12 +52,9 @@
         methods: {
             loadAjaxTab: function (tabId, url) {
                 http.getJSON(url, function (json) {
-                    //utils.prepareVue('#dynamic-tab-' + tabId, {});
-                    //$('#dynamic-tab-' + tabId + " > div").html(json._html);
-                    //utils.vues['root'].$set('x', null);
-                    //utils.vues['maestroTable'].$set('x', null);
-                    //utils.createVue('#dynamic-tab-' + tabId, utils.lastVue);
-                });
+                    var $element = $('#dynamic-tab-' + tabId).html(json._html);
+                    this.$compile($element.get(0));
+                }.bind(this));
             }
         }
     });

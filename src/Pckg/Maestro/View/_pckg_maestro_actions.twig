@@ -29,13 +29,16 @@
             record: {
                 type: Object,
                 required: true
+            },
+            recordactionhandler: {
+                type: Function,
+                required: true
             }
         },
         methods: {
             recordAction: function (record, action) {
-                console.log('dispatching record:' + action);
-
-                data.$root.$dispatch('record:' + action, record.id, record);
+                console.log('Caught recordAction ' + action + ', calling handler');
+                this.recordactionhandler(record, action);
             }
         }
     });

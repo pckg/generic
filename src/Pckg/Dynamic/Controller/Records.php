@@ -470,7 +470,7 @@ class Records extends Controller
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
                 $query->where('dynamic_relation_type_id', 2);
-                //$query->where('dynamic_table_tab_id', null);
+                $query->where('dynamic_table_tab_id', null);
             }
         );
 

@@ -26,88 +26,96 @@
             name: 'pckg-maestro-table-{{ table }}',
             template: '#pckg-maestro-table-{{ table }}'
         }));
-    </script>
 
-    <pckg-maestro-table-{{ table }} v-ref:maestro-table :records="records"
-                                    :fields="fields"
-                                    :depth="depth"
-                                    :groups.sync="groups"
-                                    :first="1"
-                                    :ids.sync="ids"
-                                    :search.sync="search"
-                                    :entityactions.sync="entityactions"
-                                    :paginator.sync="paginator"
-                                    :table.sync="table">
-    </pckg-maestro-table-{{ table }}>
-
-    <script type="text/javascript">
-        data.maestroFields = {{ tabelize.getFields() | json_encode | raw }};
-        data.maestroRecords = {{ tabelize.transformRecords() | json_encode | raw }};
-        data.maestroGroups = {{ tabelize.getGroups() | json_encode | raw }};
-        data.entityactions = {{ tabelize.getEntityActions() | json_encode | raw }};
-        data.maestroTable = {{ tabelize.getTable() | json_encode | raw }};
-        data.paginator = {
-            perPage: {{ tabelize.getPerPage() }},
-            page: {{ tabelize.getPage() }},
-            total: {{ tabelize.getTotal() }}
-        };
-
-        console.log('Constructing maestroTable {{ id }}' + ' #' + $('#{{ id }}').closest('[id]').attr('id'));
-        var maestroTable = utils.createVue('{{ id }}', {
-            //el: '#' + $('#{{ id }}').closest('[id]').attr('id'),
-            el: '#{{ id }}',
-            data: function () {
-                return {
-                    fields: data.maestroFields,
-                    records: data.maestroRecords,
-                    groups: data.maestroGroups,
-                    depth: data.maestroGroups.length,
-                    paginator: data.paginator,
-                    entityactions: data.entityactions,
-                    table: data.maestroTable,
-                    ids: [],
-                    search: null
-                };
-            },
+        utils.pushToVue({
             methods: {
-                entityAction: function (action) {
-                    console.log('broadcasting and dispatching entity:' + action);
-                    this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
-                    data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
-                },
-                getSelectedRecords: function () {
-                    var selected = [];
+                recordactionhandler: function (record, action) {
+                    console.log('dispatching record:' + action);
 
-                    $.each(this.records, function (i, record) {
-                        if (this.ids.indexOf(record.id) >= 0) {
-                            selected.push(record);
-                        }
-                    }.bind(this));
-
-                    return selected;
-                }
-            },
-            watch: {
-                search: function (newValue) {
-                    if (this.$refs.maestroTable._searchTimeout) {
-                        this.$refs.maestroTable._searchTimeout.abort();
-                    }
-
-                    this.$refs.maestroTable._searchTimeout = http.getJSON('{{ searchUrl }}?search=' + newValue, function (data) {
-                        this.$refs.maestroTable.records = data.records;
-                    }.bind(this));
+                    this.$dispatch('record:' + action, record.id, record);
+                    this.$emit('record:' + action, record.id, record);
+                    this.$broadcast('record:' + action, record.id, record);
                 }
             }
         });
+    </script>
+
+    <!-- pckg-maestro-table -->
+    <pckg-maestro-table-{{ table }} v-ref:maestro-table
+                                    :records="{{ tabelize.transformRecords() | json_encode | raw | escape('html_attr') }}"
+                                    :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
+                                    :depth="{{ tabelize.getGroups() | length }}"
+                                    :groups="{{ tabelize.getGroups() | json_encode | raw | escape('html_attr') }}"
+                                    :first="1"
+                                    :ids="[]"
+                                    :search=""
+                                    :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
+                                    :paginator="{'perPage':{{ tabelize.getPerPage() }},'page':{{ tabelize.getPage() }},'total':{{ tabelize.getTotal() }}}"
+                                    :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
+                                    :recordactionhandler="recordactionhandler">
+    </pckg-maestro-table-{{ table }}>
+
+    <script type="text/javascript">
+        //console.log('Constructing maestroTable {{ id }}' + ' #' + $('#{{ id }}').closest('[id]').attr('id'));
+        /*var maestroTable = utils.createVue('{{ id }}', {
+         //el: '#' + $('#{{ id }}').closest('[id]').attr('id'),
+         el: '#{{ id }}',
+         data: function () {
+         return {
+         //fields: {{ tabelize.getFields() | json_encode | raw }},
+         //records: {{ tabelize.transformRecords() | json_encode | raw }},
+         //groups: {{ tabelize.getGroups() | json_encode | raw }},
+         //depth: {{ tabelize.getGroups() | length }},
+         //paginator: {
+         //    perPage: {{ tabelize.getPerPage() }},
+         //    page: {{ tabelize.getPage() }},
+         //    total: {{ tabelize.getTotal() }}
+         //},
+         //entityactions: {{ tabelize.getEntityActions() | json_encode | raw }},
+         //table: {{ tabelize.getTable() | json_encode | raw }},
+         //ids: [],
+         //search: null
+         };
+         },
+         methods: {
+         entityAction: function (action) {
+         console.log('broadcasting and dispatching entity:' + action);
+         this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
+         data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
+         },
+         getSelectedRecords: function () {
+         var selected = [];
+
+         $.each(this.records, function (i, record) {
+         if (this.ids.indexOf(record.id) >= 0) {
+         selected.push(record);
+         }
+         }.bind(this));
+
+         return selected;
+         }
+         },
+         watch: {
+         search: function (newValue) {
+         if (this.$refs.maestroTable._searchTimeout) {
+         this.$refs.maestroTable._searchTimeout.abort();
+         }
+
+         this.$refs.maestroTable._searchTimeout = http.getJSON('{{ searchUrl }}?search=' + newValue, function (data) {
+         this.$refs.maestroTable.records = data.records;
+         }.bind(this));
+         }
+         }
+         });*/
         /*maestroTable.$on('record:removeFromList', function (record) {
-            console.log('dispatched remove');
-            $.each(this.records, function (i, val) {
-                if (val.id == record.id) {
-                    this.records.$delete(i);
-                    return false;
-                }
-            }.bind(this));
-        });*/
+         console.log('dispatched remove');
+         $.each(this.records, function (i, val) {
+         if (val.id == record.id) {
+         this.records.$delete(i);
+         return false;
+         }
+         }.bind(this));
+         });*/
     </script>
 
 </div>

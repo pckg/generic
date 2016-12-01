@@ -13,7 +13,8 @@
                                                         :groups.sync="groups"
                                                         :paginator.sync="paginator"
                                                         :entityactions.sync="entityactions"
-                                                        :table.sync="table"></pckg-maestro-table-{{ table }}>
+                                                        :table.sync="table"
+                                                        :recordactionhandler="recordactionhandler"></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
@@ -94,7 +95,8 @@
                         </template>
                     </td>
                     <td class="actions">
-                        <pckg-maestro-actions :record="record"></pckg-maestro-actions>
+                        <pckg-maestro-actions :record="record"
+                                              :recordactionhandler="recordactionhandler"></pckg-maestro-actions>
                     </td>
                     <td class="checkboxes">
                         <input type="checkbox" v-model="ids" v-bind:value="record.id"/>

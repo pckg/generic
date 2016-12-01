@@ -1,52 +1,88 @@
-{% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
-    {% block header %}
-        Delete record
-    {% endblock %}
-    {% block body %}
-        <p>Do you really want to delete #${ record.id }?</p>
-        <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
-    {% endblock %}
-{% endembed %}
+<script type="text/x-template" id="pckg-dynamic-delete">
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
+        {% block header %}
+            Delete record
+        {% endblock %}
+        {% block body %}
+            <p>Do you really want to delete #${ record.id }?</p>
+            <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
+        {% endblock %}
+    {% endembed %}
 
-{% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordDeletedModal'} %}
-    {% block header %}
-        Record deleted
-    {% endblock %}
-    {% block body %}
-        <p>#${ record.id } was deleted.</p>
-    {% endblock %}
-{% endembed %}
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordDeletedModal'} %}
+        {% block header %}
+            Record deleted
+        {% endblock %}
+        {% block body %}
+            <p>#${ record.id } was deleted.</p>
+        {% endblock %}
+    {% endembed %}
+</script>
 
 <script>
-    (function (Vue, $, utils, data, http) {
+    var pckgDynamicDelete = Vue.component('pckg-dynamic-delete', {
+        name: 'pckg-dynamic-delete',
+        template: '#pckg-dynamic-delete',
+        data: function () {
+            return {
+                record: {}
+            };
+        },
+        methods: {
+            checkDeleteRecord: function (record) {
+                console.log('checkDeleteRecord is called, yeeeey');
+                this.record = record;
 
-        utils.pushToVue({
-            methods: {
-                checkDeleteRecord: function (record) {
-                    console.log('checkDeleteRecord is called, yeeeey');
-                    this.record = record;
-
-                    $('#deleteRecordModal').modal('show');
-                },
-                deleteRecord: function () {
-                    $('#deleteRecordModal').modal('hide');
-
-                    http.get(this.record.deleteUrl, function () {
-                        $('#recordDeletedModal').modal('show');
-                    });
-                }
+                $('#deleteRecordModal').modal('show');
             },
-            data: {
-                record: null
-            },
-            on: {
-                'record:checkDeleteRecord': function (id, record) {
-                    this.checkDeleteRecord(record);
+            deleteRecord: function () {
+                $('#deleteRecordModal').modal('hide');
 
-                    return true;
-                }
+                http.get(this.record.deleteUrl, function () {
+                    $('#recordDeletedModal').modal('show');
+                });
             }
-        });
+        },
+        events: {
+            'record:checkDeleteRecord': function (id, record) {
+                this.checkDeleteRecord(record);
 
-    })(Vue, jQuery, utils, data, http);
+                return true;
+            }
+        }
+    });
+
+    /*(function (Vue, $, utils, data, http) {
+
+     utils.pushToVue({
+     methods: {
+     checkDeleteRecord: function (record) {
+     console.log('checkDeleteRecord is called, yeeeey');
+     this.record = record;
+
+     $('#deleteRecordModal').modal('show');
+     },
+     deleteRecord: function () {
+     $('#deleteRecordModal').modal('hide');
+
+     http.get(this.record.deleteUrl, function () {
+     $('#recordDeletedModal').modal('show');
+     });
+     }
+     },
+     data: {
+     record: {}
+     },
+     on: {
+     'record:checkDeleteRecord': function (id, record) {
+     this.checkDeleteRecord(record);
+
+     return true;
+     }
+     }
+     });
+
+     })(Vue, jQuery, utils, data, http);*/
 </script>
+
+<pckg-dynamic-delete></pckg-dynamic-delete>
