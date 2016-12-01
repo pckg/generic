@@ -37,7 +37,7 @@
             },
             deleteRecord: function () {
                 $('#deleteRecordModal').modal('hide');
-
+                
                 http.get(this.record.deleteUrl, function () {
                     $('#recordDeletedModal').modal('show');
                 });
