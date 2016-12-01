@@ -88,6 +88,37 @@ $(document).ready(function () {
     }
     affixFromTop();
 
+    function initTinymce(selector) {
+        return tinymce.init({
+            selector: '#' + selector, height: 500,
+            theme: 'modern',
+            plugins: [
+                'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern imagetools codesample'
+            ],
+            toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+            toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
+            image_advtab: true,
+            allow_html_in_named_anchor: true,
+            allow_unsafe_link_target: true,
+            forced_root_block: false,
+            protect: [
+                // /{{[^}]+}}/g,  // Protect {{ }}
+                // /{%[^}]+%}/g,  // Protect {% %}
+            ],
+            valid_elements: '*[*]',
+            templates: [
+                /*{title: 'Test template 1', content: 'Test 1'},
+                 {title: 'Test template 2', content: 'Test 2'}*/
+            ]/*,
+             content_css: [
+             '/css/bootstrap.css',
+             '/css/default.css',
+             ]*/
+        });
+    }
 
     $('textarea.editor').each(function () {
         var selector = null;
@@ -99,39 +130,7 @@ $(document).ready(function () {
 
         }
 
-        function initTinymce(selector) {
-            tinymce.init({
-                selector: '#' + selector, height: 500,
-                theme: 'modern',
-                plugins: [
-                    'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                    'searchreplace wordcount visualblocks visualchars code fullscreen',
-                    'insertdatetime media nonbreaking save table contextmenu directionality',
-                    'emoticons template paste textcolor colorpicker textpattern imagetools codesample'
-                ],
-                toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-                toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
-                image_advtab: true,
-                allow_html_in_named_anchor: true,
-                allow_unsafe_link_target: true,
-                forced_root_block: false,
-                protect: [
-                    // /{{[^}]+}}/g,  // Protect {{ }}
-                    // /{%[^}]+%}/g,  // Protect {% %}
-                ],
-                valid_elements: '*[*]',
-                templates: [
-                    /*{title: 'Test template 1', content: 'Test 1'},
-                     {title: 'Test template 2', content: 'Test 2'}*/
-                ]/*,
-                content_css: [
-                    '/css/bootstrap.css',
-                    '/css/default.css',
-                ]*/
-            });
-        }
-
-        var val = $(this).val();
+        /*var val = $(this).val();
         if (val.indexOf('{% ') < 0 && val.indexOf('{{ ') < 0 && val.indexOf('<') == 0 && val.split("\n").length > 1) {
             initTinymce(selector);
         } else {
@@ -141,6 +140,17 @@ $(document).ready(function () {
                 }
                 changeEvent.off();
             })
+        }*/
+    });
+
+    var editors = {};
+    $('.pckg-editor-toggle').on('click', function(){
+        var id = $(this).closest('div').find('textarea.editor').attr('id');
+        if (editors[id]) {
+            tinymce.remove('#' + id);
+            delete editors[id];
+        } else {
+            editors[id] = initTinymce(id);
         }
     });
 });
