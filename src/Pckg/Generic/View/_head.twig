@@ -43,6 +43,10 @@
         return locale.price(price, decimals);
     });
 
+    Vue.filter('roundPrice', function (price, decimals) {
+        return locale.roundPrice(price, decimals);
+    });
+
     Vue.filter('date', function (date, format) {
         return locale.date(date, format);
     });
