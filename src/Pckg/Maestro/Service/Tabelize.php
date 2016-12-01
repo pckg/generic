@@ -488,11 +488,14 @@ class Tabelize
     public function getEntityActionsHtml()
     {
         $html = null;
+        $data = [
+            'tabelize' => $this,
+        ];
         foreach ($this->getEntityActions() as $action) {
             if (isset($action->slug) && isset($action->entityTemplate)) {
-                $html .= view('tabelize/entityActions/' . $action->entityTemplate);
+                $html .= view('tabelize/entityActions/' . $action->entityTemplate, $data);
             } else {
-                $html .= view('tabelize/entityActions/' . $action);
+                $html .= view('tabelize/entityActions/' . $action, $data);
             }
         }
 
