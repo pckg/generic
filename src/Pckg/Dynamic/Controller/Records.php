@@ -324,11 +324,12 @@ class Records extends Controller
             $form->initLanguageFields();
         }
 
-        if ($tableEntity->isPermissionable()) {
+        if ($tableEntity->isPermissionable() && $form->isEditable()) {
             $form->initPermissionFields();
         }
 
-        $title = 'Edit ' . $record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title)));
+        $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' .
+                 ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
         $formalize = $this->formalize($form, $record, $title);
 
         /**

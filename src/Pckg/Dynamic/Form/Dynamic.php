@@ -53,6 +53,11 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
+    public function isEditable()
+    {
+        return $this->editable;
+    }
+
     public function setTable(Table $table)
     {
         $this->table = $table;
@@ -122,8 +127,10 @@ class Dynamic extends Bootstrap
              ->setValue($this->record ? $this->record->language_id : null)
              ->addOptions($languages)
              ->setLabel('Language');
-        $this->addSubmit('switch_language')->setValue('Switch language');
-        $this->addSubmit('copy_to_language')->setValue('Copy to language');
+        if ($this->isEditable()) {
+            $this->addSubmit('switch_language')->setValue('Switch language');
+            $this->addSubmit('copy_to_language')->setValue('Copy to language');
+        }
 
         return $this;
     }
@@ -269,8 +276,10 @@ class Dynamic extends Bootstrap
             $element->setAttribute('data-field-id', $field->id);
         }
 
-        $this->addSubmit('submit');
-        $this->addSubmit('as_new')->setValue('As new')->setClass('btn-link');
+        if ($this->isEditable()) {
+            $this->addSubmit('submit');
+            $this->addSubmit('as_new')->setValue('As new')->setClass('btn-link');
+        }
 
         return $this;
     }
