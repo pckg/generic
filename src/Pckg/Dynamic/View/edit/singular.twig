@@ -5,17 +5,22 @@
     <div class="alert alert-success" role="alert">{{ flash('dynamic.records.edit.success') }}</div>
 {% endif %}
 <div class="pckg-dynamic-record-singular">
-    <h2>{{ formalize.getTitle() | raw }}</h2>
+    <h2>
+        {{ formalize.getTitle() | raw }}
+        {% if not formalize.getForm().isEditable() and record.id %}
+            <a href="{{ record.editUrl }}" class="btn btn-info pull-right">Edit</a>
+        {% endif %}
+    </h2>
 
     <div class="panel panel-default">
         <div class="panel-body">
             {{ formalize | raw }}
 
-            {% for tabelize in tabelizes %}
+            {% for tabelize in tabelizes.0 %}
                 {{ tabelize | raw }}
             {% endfor %}
 
-            {% for functionize in functionizes %}
+            {% for functionize in functionizes.0 %}
                 {{ functionize | raw }}
             {% endfor %}
         </div>

@@ -5,7 +5,12 @@
     <div class="alert alert-success" role="alert">{{ flash('dynamic.records.edit.success') }}</div>
 {% endif %}
 <div class="pckg-dynamic-record-tabs">
-    <h2>{{ formalize.getTitle() | raw }}</h2>
+    <h2>
+        {{ formalize.getTitle() | raw }}
+        {% if not formalize.getForm().isEditable() and record.id %}
+            <a href="{{ record.editUrl }}" class="btn btn-info pull-right">Edit</a>
+        {% endif %}
+    </h2>
 
     <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
         <li role="presentation" class="active">

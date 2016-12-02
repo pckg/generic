@@ -45,6 +45,11 @@ class Formalize
         return $this->title;
     }
 
+    public function getForm()
+    {
+        return $this->form;
+    }
+
     public function __toString()
     {
         return (string)view(

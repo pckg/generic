@@ -356,6 +356,7 @@ class Records extends Controller
                     'formalize'    => $formalize,
                     'tabelizes'    => $tabelizes,
                     'functionizes' => $functionizes,
+                    'record'       => $record,
                 ]
             );
         }
@@ -365,6 +366,7 @@ class Records extends Controller
 
         Tab::$dynamicRecord = $record;
         Tab::$dynamicTable = $table;
+        $record::$dynamicTable = $table;
 
         /**
          * We have to build tabs.
@@ -376,6 +378,7 @@ class Records extends Controller
                 'tabelizes'    => $tabelizes,
                 'formalize'    => $formalize,
                 'functionizes' => $functionizes,
+                'record'       => $record,
             ]
         );
     }
