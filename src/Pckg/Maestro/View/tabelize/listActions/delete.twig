@@ -51,38 +51,6 @@
             }
         }
     });
-
-    /*(function (Vue, $, utils, data, http) {
-
-     utils.pushToVue({
-     methods: {
-     checkDeleteRecord: function (record) {
-     console.log('checkDeleteRecord is called, yeeeey');
-     this.record = record;
-
-     $('#deleteRecordModal').modal('show');
-     },
-     deleteRecord: function () {
-     $('#deleteRecordModal').modal('hide');
-
-     http.get(this.record.deleteUrl, function () {
-     $('#recordDeletedModal').modal('show');
-     });
-     }
-     },
-     data: {
-     record: {}
-     },
-     on: {
-     'record:checkDeleteRecord': function (id, record) {
-     this.checkDeleteRecord(record);
-
-     return true;
-     }
-     }
-     });
-
-     })(Vue, jQuery, utils, data, http);*/
 </script>
 
 <pckg-dynamic-delete></pckg-dynamic-delete>

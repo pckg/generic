@@ -119,6 +119,17 @@ class Dynamic extends Provider
                                      SwitchLanguage::class,
                                  ],
                              ],
+                             '/dynamic/records/clone/[table]/[record]'                        => [
+                                 'name'        => 'dynamic.record.clone',
+                                 'view'        => 'clone',
+                                 'resolvers'   => [
+                                     'table'  => TableResolver::class,
+                                     'record' => RecordResolver::class,
+                                 ],
+                                 'middlewares' => [
+                                     SwitchLanguage::class,
+                                 ],
+                             ],
                              '/dynamic/records/delete/[table]/[record]'                       => [
                                  'name'      => 'dynamic.record.delete',
                                  'view'      => 'delete',

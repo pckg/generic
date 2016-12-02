@@ -299,6 +299,19 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect($record->getEditUrl());
     }
 
+    public function postCloneAction(Record $record, Table $table)
+    {
+        $clonedRecord = $record->duplicate($table->createEntity());
+
+        $clonedRecord::$dynamicTable = $table;
+
+        return $this->response()->respondWithSuccess(
+            [
+                'clonedUrl' => $clonedRecord->getViewUrl(),
+            ]
+        );
+    }
+
     public function getViewAction(Dynamic $form, Record $record, Table $table)
     {
         $form->setEditable(false);

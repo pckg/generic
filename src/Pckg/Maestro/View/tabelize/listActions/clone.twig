@@ -1,0 +1,58 @@
+<script type="text/x-template" id="pckg-dynamic-clone">
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'cloneRecordModal', 'class': 'danger'} %}
+        {% block header %}
+            clone record
+        {% endblock %}
+        {% block body %}
+            <p>Do you really want to clone #${ record.id }?</p>
+            <p><a @click.prevent="cloneRecord" href="#" class="btn btn-danger">Yes, clone record</a></p>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordClonedModal'} %}
+        {% block header %}
+            Record cloned
+        {% endblock %}
+        {% block body %}
+            <p>#${ record.id } was cloned.</p>
+            <p><a v-bind:href="clonedUrl" class="btn btn-success">Open it</a></p>
+        {% endblock %}
+    {% endembed %}
+</script>
+
+<script>
+    var pckgDynamicClone = Vue.component('pckg-dynamic-clone', {
+        name: 'pckg-dynamic-clone',
+        template: '#pckg-dynamic-clone',
+        data: function () {
+            return {
+                record: {},
+                clonedUrl: null
+            };
+        },
+        methods: {
+            checkCloneRecord: function (record) {
+                this.record = record;
+
+                $('#cloneRecordModal').modal('show');
+            },
+            cloneRecord: function () {
+                $('#cloneRecordModal').modal('hide');
+
+                http.post(this.record.cloneUrl, {}, function (data) {
+                    this.clonedUrl = data.clonedUrl;
+                    $('#recordClonedModal').modal('show');
+                }.bind(this));
+            }
+        },
+        events: {
+            'record:checkCloneRecord': function (id, record) {
+                this.checkCloneRecord(record);
+
+                return true;
+            }
+        }
+    });
+</script>
+
+<pckg-dynamic-clone></pckg-dynamic-clone>

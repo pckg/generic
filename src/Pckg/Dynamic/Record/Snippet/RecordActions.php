@@ -31,6 +31,17 @@ trait RecordActions
         );
     }
 
+    public function getCloneUrl()
+    {
+        return url(
+            'dynamic.record.clone',
+            [
+                'table'  => static::$dynamicTable,
+                'record' => $this,
+            ]
+        );
+    }
+
     public function getDeleteUrl()
     {
         return url(

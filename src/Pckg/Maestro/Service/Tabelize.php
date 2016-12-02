@@ -377,8 +377,11 @@ class Tabelize
              * Then parse all additional views (custom actions).
              */
             foreach ($this->views as $key => $view) {
-                if ($key == 'delete') {
-                    $view = 'delete';
+                /**
+                 * @T00D00 - this should be automatic ...
+                 */
+                if (in_array($key, ['delete','clone'])) {
+                    $view = $key;
                 }
 
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
