@@ -183,7 +183,6 @@ class Records extends Controller
                              $tableRecord->listableFields(
                                  function(HasMany $relation) {
                                      $relation->withFieldType();
-                                     $relation->joinTranslations();
                                  }
                              )->reduce(
                                  function(Field $field) use ($tableRecord) {

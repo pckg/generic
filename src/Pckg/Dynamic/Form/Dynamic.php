@@ -205,7 +205,6 @@ class Dynamic extends Bootstrap
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withFieldType();
                 $fields->withPermissions();
-                $fields->joinTranslation();
                 $fields->joinFallbackTranslation();
                 $fields->withHasOneSelectRelation(
                     function(HasOne $relation) {
