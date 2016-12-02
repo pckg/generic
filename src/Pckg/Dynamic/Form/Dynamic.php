@@ -402,6 +402,28 @@ class Dynamic extends Bootstrap
                     $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
                 }
 
+                $element->setAttribute(
+                    'data-url',
+                    url(
+                        'dynamic.record.list',
+                        [
+                            'table' => $this->table,
+                        ]
+                    )
+                );
+
+                $element->setAttribute(
+                    'data-refresh-url',
+                    url(
+                        'dynamic.records.field.selectList',
+                        [
+                            'table'  => $this->table,
+                            'field'  => $field,
+                            'record' => $this->record,
+                        ]
+                    )
+                );
+
                 return $element;
             } else {
                 return $this->{'addText'}($name);

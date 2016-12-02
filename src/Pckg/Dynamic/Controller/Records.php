@@ -3,6 +3,7 @@
 use Derive\Orders\Entity\OrdersUsers;
 use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
@@ -51,6 +52,26 @@ class Records extends Controller
     {
         $this->dynamic = $dynamic;
         $this->pluginService = $pluginService;
+    }
+
+    public function getSelectListAction(
+        Table $table,
+        Field $field,
+        Record $record
+    )
+    {
+        $collection = new Collection();
+        $collection->push(' -- select value --', null);
+        $relation = $field->getRelationForSelect($record);
+        foreach ($relation as $id => $value) {
+            $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
+        }
+
+        return $this->response()->respondWithSuccess(
+            [
+                'records' => $collection->all(),
+            ]
+        );
     }
 
     /**

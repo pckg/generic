@@ -182,6 +182,15 @@ class Dynamic extends Provider
                                      'record' => RecordResolver::class,
                                  ],
                              ],
+                             '/dynamic/records/field/[table]/[field]/[record]/select-list'    => [
+                                 'name'      => 'dynamic.records.field.selectList',
+                                 'view'      => 'selectList',
+                                 'resolvers' => [
+                                     'table'  => TableResolver::class,
+                                     'field'  => FieldResolver::class,
+                                     'record' => RecordResolver::class,
+                                 ],
+                             ],
                          ]
                      ) + array_merge_array(
                          [
