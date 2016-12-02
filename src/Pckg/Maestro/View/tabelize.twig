@@ -21,7 +21,6 @@
     {% include '_tabelize_table_template.twig' %}
 
     <script type="text/javascript">
-        console.log('extending pckgMaestroTableComponent with pckg-maestro-table-{{ table }}');
         var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
             name: 'pckg-maestro-table-{{ table }}',
             template: '#pckg-maestro-table-{{ table }}'
@@ -37,7 +36,7 @@
                     this.$broadcast('record:' + action, record.id, record);
                 },
                 entityAction: function (action) {
-                    console.log('broadcasting and dispatching entity:' + action);
+                    console.log('broadcasting and dispatching entity:' + action, this.ids);
                     this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
                     data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
                 },
@@ -65,19 +64,22 @@
                 }
             },
             data: {
-                search: null
+                search: null,
+                records: {{ tabelize.transformRecords() | json_encode | raw }},
+                groups: {{ tabelize.getGroups() | json_encode | raw }},
+                ids: []
             }
         });
     </script>
 
     <!-- pckg-maestro-table -->
     <pckg-maestro-table-{{ table }} v-ref:maestro-table
-                                    :records="{{ tabelize.transformRecords() | json_encode | raw | escape('html_attr') }}"
+                                    :records.sync="records"
                                     :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
                                     :depth="{{ tabelize.getGroups() | length }}"
-                                    :groups="{{ tabelize.getGroups() | json_encode | raw | escape('html_attr') }}"
+                                    :groups="groups"
                                     :first="1"
-                                    :ids="[]"
+                                    :ids.sync="ids"
                                     :search="search"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
                                     :paginator="{'perPage':{{ tabelize.getPerPage() }},'page':{{ tabelize.getPage() }},'total':{{ tabelize.getTotal() }}}"
