@@ -35,6 +35,22 @@
                     this.$dispatch('record:' + action, record.id, record);
                     this.$emit('record:' + action, record.id, record);
                     this.$broadcast('record:' + action, record.id, record);
+                },
+                entityAction: function (action) {
+                    console.log('broadcasting and dispatching entity:' + action);
+                    this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
+                    data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
+                },
+                getSelectedRecords: function () {
+                    var selected = [];
+
+                    $.each(this.records, function (i, record) {
+                        if (this.ids.indexOf(record.id) >= 0) {
+                            selected.push(record);
+                        }
+                    }.bind(this));
+
+                    return selected;
                 }
             },
             watch: {
@@ -68,70 +84,5 @@
                                     :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
                                     :recordactionhandler="recordactionhandler">
     </pckg-maestro-table-{{ table }}>
-
-    <script type="text/javascript">
-        if (false) {
-            //console.log('Constructing maestroTable {{ id }}' + ' #' + $('#{{ id }}').closest('[id]').attr('id'));
-            var maestroTable = utils.createVue('{{ id }}', {
-                //el: '#' + $('#{{ id }}').closest('[id]').attr('id'),
-                el: '#{{ id }}',
-                data: function () {
-                    return {
-                        //fields: {{ tabelize.getFields() | json_encode | raw }},
-                        //records: {{ tabelize.transformRecords() | json_encode | raw }},
-                        //groups: {{ tabelize.getGroups() | json_encode | raw }},
-                        //depth: {{ tabelize.getGroups() | length }},
-                        //paginator: {
-                        //    perPage: {{ tabelize.getPerPage() }},
-                        //    page: {{ tabelize.getPage() }},
-                        //    total: {{ tabelize.getTotal() }}
-                        //},
-                        //entityactions: {{ tabelize.getEntityActions() | json_encode | raw }},
-                        //table: {{ tabelize.getTable() | json_encode | raw }},
-                        //ids: [],
-                        //search: null
-                    };
-                },
-                methods: {
-                    entityAction: function (action) {
-                        console.log('broadcasting and dispatching entity:' + action);
-                        this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
-                        data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
-                    },
-                    getSelectedRecords: function () {
-                        var selected = [];
-
-                        $.each(this.records, function (i, record) {
-                            if (this.ids.indexOf(record.id) >= 0) {
-                                selected.push(record);
-                            }
-                        }.bind(this));
-
-                        return selected;
-                    }
-                },
-                watch: {
-                    search: function (newValue) {
-                        if (this.$refs.maestroTable._searchTimeout) {
-                            this.$refs.maestroTable._searchTimeout.abort();
-                        }
-
-                        this.$refs.maestroTable._searchTimeout = http.getJSON('{{ searchUrl }}?search=' + newValue, function (data) {
-                            this.$refs.maestroTable.records = data.records;
-                        }.bind(this));
-                    }
-                }
-            });
-        }
-        /*maestroTable.$on('record:removeFromList', function (record) {
-         console.log('dispatched remove');
-         $.each(this.records, function (i, val) {
-         if (val.id == record.id) {
-         this.records.$delete(i);
-         return false;
-         }
-         }.bind(this));
-         });*/
-    </script>
 
 </div>
