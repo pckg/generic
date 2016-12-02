@@ -18,7 +18,7 @@ class Table extends DatabaseRecord
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where('type', ['entity', 'entity-plugin']);
+                $relation->where('type', ['entity', 'entity-plugin', 'mixed']);
                 $relation->joinPermission();
             }
         );
@@ -40,7 +40,7 @@ class Table extends DatabaseRecord
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where('type', ['record', 'record-plugin']);
+                $relation->where('type', ['record', 'record-plugin', 'mixed']);
                 $relation->joinPermission();
             }
         );

@@ -4,7 +4,7 @@
             Delete record
         {% endblock %}
         {% block body %}
-            <p>Do you really want to delete #${ record.id }?</p>
+            <p>Do you really want to delete #${ recordIds }?</p>
             <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
         {% endblock %}
     {% endembed %}
@@ -14,7 +14,7 @@
             Record deleted
         {% endblock %}
         {% block body %}
-            <p>#${ record.id } was deleted.</p>
+            <p>#${ recordIds } was deleted.</p>
         {% endblock %}
     {% endembed %}
 </script>
@@ -25,27 +25,40 @@
         template: '#pckg-dynamic-delete',
         data: function () {
             return {
-                record: {}
+                records: [],
             };
         },
         methods: {
-            checkDeleteRecord: function (record) {
-                console.log('checkDeleteRecord is called, yeeeey');
-                this.record = record;
+            checkDeleteRecords: function (records) {
+                this.records = records;
 
                 $('#deleteRecordModal').modal('show');
             },
             deleteRecord: function () {
                 $('#deleteRecordModal').modal('hide');
 
-                http.get(this.record.deleteUrl, function () {
-                    $('#recordDeletedModal').modal('show');
+                $.each(this.records, function (i, record) {
+                    http.get(record.deleteUrl);
                 });
+
+                $('#recordDeletedModal').modal('show');
+            }
+        },
+        computed: {
+            recordIds: function () {
+                return this.records.map(function (item) {
+                    return item.id;
+                }).join(', ');
             }
         },
         events: {
             'record:checkDeleteRecord': function (id, record) {
-                this.checkDeleteRecord(record);
+                this.checkDeleteRecords([record]);
+
+                return true;
+            },
+            'entity:checkDeleteRecords': function (ids, records) {
+                this.checkDeleteRecords(records);
 
                 return true;
             }
