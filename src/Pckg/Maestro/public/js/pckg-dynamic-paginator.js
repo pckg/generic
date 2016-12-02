@@ -4,6 +4,7 @@ Vue.component('pckg-dynamic-paginator', {
         perPage: 0,
         page: 0,
         total: 0,
+        url: null,
         setRecords: {
             type: Function
         }
@@ -52,9 +53,11 @@ Vue.component('pckg-dynamic-paginator', {
                 return;
             }
 
-            http.getJSON(window.location.href + '?page=' + page, function (data) {
-                this.$root.$refs.maestroTable.records = data.records;
-                this.$root.$refs.maestroTable.groups = data.groups;
+            http.getJSON(this.url + (this.url.indexOf('?') >= 0 ? '&' : '?') + 'page=' + page, function (data) {
+                this.$root.records = data.records;
+                this.$root.groups = data.groups;
+                this.$root.paginator.total = data.paginator.total;
+                this.$root.paginator.url = data.paginator.url;
 
             }.bind(this));
 

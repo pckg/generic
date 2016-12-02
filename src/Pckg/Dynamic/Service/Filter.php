@@ -218,6 +218,7 @@ class Filter
             $where->setGlue('OR');
             foreach ($tables as $alias => $table) {
                 /**
+                 * @T00D00
                  * Here we need to reduce list of filterable fields!
                  */
                 foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
@@ -229,6 +230,7 @@ class Filter
 
             $newEntity = $this->table->createEntity();
             $newEntity->setQuery($query);
+            $newEntity->limit(null);
 
             $entity->where('id', $newEntity->all()->map('id'));
         }

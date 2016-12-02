@@ -59,7 +59,9 @@
                     }
 
                     this.$refs.maestroTable._searchTimeout = http.getJSON('{{ searchUrl }}?search=' + newValue, function (data) {
-                        this.$refs.maestroTable.records = data.records;
+                        this.records = data.records;
+                        this.paginator.total = data.paginator.total;
+                        this.paginator.url = data.paginator.url;
                     }.bind(this));
                 }
             },
@@ -67,6 +69,12 @@
                 search: null,
                 records: {{ tabelize.transformRecords() | json_encode | raw }},
                 groups: {{ tabelize.getGroups() | json_encode | raw }},
+                paginator: {
+                    perPage: {{ tabelize.getPerPage() }},
+                    page: {{ tabelize.getPage() }},
+                    total: {{ tabelize.getTotal() }},
+                    url: '{{ _router.getUri() }}'
+                },
                 ids: []
             }
         });
@@ -82,7 +90,7 @@
                                     :ids.sync="ids"
                                     :search="search"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
-                                    :paginator="{'perPage':{{ tabelize.getPerPage() }},'page':{{ tabelize.getPage() }},'total':{{ tabelize.getTotal() }}}"
+                                    :paginator.sync="paginator"
                                     :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
                                     :recordactionhandler="recordactionhandler">
     </pckg-maestro-table-{{ table }}>

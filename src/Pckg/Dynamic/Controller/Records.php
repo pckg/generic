@@ -1,6 +1,5 @@
 <?php namespace Pckg\Dynamic\Controller;
 
-use Derive\Orders\Entity\Orders;
 use Derive\Orders\Entity\OrdersUsers;
 use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
@@ -151,12 +150,6 @@ class Records extends Controller
 
         $fieldTransformations = ['tabelizeClass'];
 
-        if (get_class($entity) == Orders::class) {
-            $fieldTransformations['bills_payed'] = function(Order $order) {
-                return $order->getPayedBillsSum();
-            };
-        }
-
         /**
          * Transform field type = php
          */
@@ -201,10 +194,14 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations);
 
-        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || post('search'))) {
+        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || get('search'))) {
             return [
-                'records' => $tabelize->transformRecords(),
-                'groups'  => $groups,
+                'records'   => $tabelize->transformRecords(),
+                'groups'    => $groups,
+                'paginator' => [
+                    'total' => $total,
+                    'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
+                ],
             ];
         }
 

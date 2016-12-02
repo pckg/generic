@@ -106,9 +106,10 @@
             </template>
         </table>
         <div v-if="first">
-            <pckg-dynamic-paginator v-ref:maestro-paginator :per-page="paginator.perPage"
-                                    :page="paginator.page"
-                                    :total="paginator.total"></pckg-dynamic-paginator>
+            <pckg-dynamic-paginator v-ref:maestro-paginator :per-page.sync="paginator.perPage"
+                                    :page.sync="paginator.page"
+                                    :total.sync="paginator.total"
+                                    :url.sync="paginator.url"></pckg-dynamic-paginator>
         </div>
     </div>
 </script>
