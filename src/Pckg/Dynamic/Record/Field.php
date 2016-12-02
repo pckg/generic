@@ -18,6 +18,7 @@ class Field extends DatabaseRecord
         'isTogglable',
         'minTogglable',
         'maxTogglable',
+        'title', // @T00D00 - this should be added to extension
     ];
 
     /**
