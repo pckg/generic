@@ -53,15 +53,18 @@ Vue.component('pckg-dynamic-paginator', {
                 return;
             }
 
-            http.getJSON(this.url + (this.url.indexOf('?') >= 0 ? '&' : '?') + 'page=' + page, function (data) {
+            this.page = page;
+
+            this.$root.resetPaginatorUrl({
+                page: page
+            });
+
+            http.getJSON(this.url, function (data) {
                 this.$root.records = data.records;
                 this.$root.groups = data.groups;
                 this.$root.paginator.total = data.paginator.total;
-                this.$root.paginator.url = data.paginator.url;
 
             }.bind(this));
-
-            this.page = page;
         }
     }
 });

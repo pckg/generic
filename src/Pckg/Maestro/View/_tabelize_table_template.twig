@@ -14,7 +14,9 @@
                                                         :paginator.sync="paginator"
                                                         :entityactions.sync="entityactions"
                                                         :table.sync="table"
-                                                        :recordactionhandler="recordactionhandler"></pckg-maestro-table-{{ table }}>
+                                                        :recordactionhandler="recordactionhandler"
+                                                        :sort.sync="sort"
+                                                        :togglefield="togglefield"></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
@@ -23,13 +25,21 @@
                 <tr>
                     <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''"
                         class="affix-thead-container">
-                        <div class="affix-thead-fixed">
+                        <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
                             <div>
                                 ${ field.title ? field.title : (field.field ? field.field : field) }
+                                <span v-if="sort.field == field.id">
+                                    <i class="fa"
+                                       v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                                </span>
                             </div>
                         </div>
-                        <div class="affix-thead-static">
+                        <div class="affix-thead-static" @click.prevent="togglefield(field.id)">
                             ${ field.title ? field.title : (field.field ? field.field : field) }
+                            <span v-if="sort.field == field.id">
+                                <i class="fa"
+                                   v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                            </span>
                         </div>
                     </th>
                     <th class="text-right affix-thead-container">
