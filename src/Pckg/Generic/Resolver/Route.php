@@ -13,8 +13,8 @@ class Route implements RouteResolver
         ->joinTranslation()
         ->where('routes_i18n.route', $value)// @T00D00 ... what about dynamic routes? /news/[id] ?
         ->oneOrFail(
-                function() {
-                    response()->notFound('Route not found');
+                function() use ($value) {
+                    response()->notFound('Route ' . $value . ' not found in generic routes');
                 }
             );
     }

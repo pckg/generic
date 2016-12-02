@@ -79,7 +79,7 @@ class Generic
                 $actions->getMiddleEntity()->joinPermissionTo('read');
             }
         );
-        
+
         $actions->each(
             function(ActionRecord $action) {
                 $this->addAction(
