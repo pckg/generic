@@ -304,23 +304,27 @@ class Dynamic extends Bootstrap
                 $field->getSetting('pckg.dynamic.field.dir'),
                 $field->getSetting('pckg.dynamic.field.privateUpload')
             );
-            $fullPath = $this->record->{$field->field}
-                ? media($this->record->{$field->field}, null, true, $dir)
-                : null;
+            if ($this->record) {
+                $fullPath = $this->record->{$field->field}
+                    ? media($this->record->{$field->field}, null, true, $dir)
+                    : null;
+            }
 
             if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
                 $element = $this->addDiv();
-                if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
-                    $element->addChild(
-                        '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
-                            $this->record
-                        ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
-                    );
-                }
-                if ($this->record->{$field->field}) {
-                    $element->addChild(
-                        '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
-                    );
+                if ($this->record) {
+                    if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
+                        $element->addChild(
+                            '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
+                                $this->record
+                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
+                        );
+                    }
+                    if ($this->record->{$field->field}) {
+                        $element->addChild(
+                            '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
+                        );
+                    }
                 }
 
             } else {
