@@ -372,6 +372,8 @@ class Records extends Controller
             $tabelizes = [];
             $functionizes = [];
         }
+        
+        $record::$dynamicTable = $table;
 
         /**
          * And build tabs ...
@@ -396,7 +398,6 @@ class Records extends Controller
 
         Tab::$dynamicRecord = $record;
         Tab::$dynamicTable = $table;
-        $record::$dynamicTable = $table;
 
         /**
          * We have to build tabs.
