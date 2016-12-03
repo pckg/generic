@@ -9,12 +9,12 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
     },
     methods: {
         refreshList: function () {
-            http.get(this.refreshUrl, function (data) {
+            http.getJSON(this.refreshUrl, function (data) {
                 var $select = $(this.$el).next().find('select');
                 var value = $select.val();
                 $select.html('');
                 $.each(data.records, function(key, val){
-                    $select.append('<option value="' + key + '">' + val + '</option>');
+                    $select.append('<option value="' + (key === 0 ? '' : key) + '">' + val + '</option>');
                 });
                 $select.val(value);
                 $select.selectpicker('refresh');
