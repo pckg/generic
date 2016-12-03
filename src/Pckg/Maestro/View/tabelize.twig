@@ -8,6 +8,7 @@
 {% set entityActions = tabelize.getEntityActions() %}
 
 {% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
+{% set instance = table %}
 
 <div class="pckg-maestro-tabelize" id="{{ id }}">
 
@@ -28,7 +29,7 @@
 
         utils.pushToVue({
             methods: {
-                recordactionhandler: function (record, action) {
+                recordactionhandler{{ instance }}: function (record, action) {
                     console.log('dispatching record:' + action);
 
                     this.$dispatch('record:' + action, record.id, record);
@@ -36,96 +37,96 @@
                     this.$broadcast('record:' + action, record.id, record);
                 },
                 entityAction: function (action) {
-                    console.log('broadcasting and dispatching entity:' + action, this.ids);
-                    this.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
-                    data.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
+                    console.log('broadcasting and dispatching entity:' + action, this.ids{{ instance }});
+                    this.$broadcast('entity:' + action, this.ids{{ instance }}, this.getSelectedRecords{{ instance }}());
+                    data.$root.$dispatch('entity:' + action, this.ids{{ instance }}, this.getSelectedRecords{{ instance }}());
                 },
-                getSelectedRecords: function () {
+                getSelectedRecords{{ instance }}: function () {
                     var selected = [];
 
-                    $.each(this.records, function (i, record) {
-                        if (this.ids.indexOf(record.id) >= 0) {
+                    $.each(this.records{{ instance }}, function (i, record) {
+                        if (this.ids{{ instance }}.indexOf(record.id) >= 0) {
                             selected.push(record);
                         }
                     }.bind(this));
 
                     return selected;
                 },
-                togglefield: function (fieldId) {
-                    if (this.sort.field != fieldId) {
-                        this.sort.field = fieldId;
+                togglefield{{ instance }}: function (fieldId) {
+                    if (this.sort{{ instance }}.field != fieldId) {
+                        this.sort{{ instance }}.field = fieldId;
                     } else {
-                        this.sort.dir = this.sort.dir == 'up'
+                        this.sort{{ instance }}.dir = this.sort{{ instance }}.dir == 'up'
                                 ? 'down'
                                 : 'up';
                     }
-                    this.makeSort();
+                    this.makeSort{{ instance }}();
                 },
-                makeSort: function () {
-                    var newValue = this.sort;
-                    if (this.$refs.maestroTable._sortTimeout) {
-                        this.$refs.maestroTable._sortTimeout.abort();
+                makeSort{{ instance }}: function () {
+                    var newValue = this.sort{{ instance }};
+                    if (this.$refs.maestroTable._sortTimeout{{ instance }}) {
+                        this.$refs.maestroTable._sortTimeout{{ instance }}.abort();
                     }
 
-                    this.resetPaginatorUrl({
+                    this.resetPaginatorUrl{{ instance }}({
                         field: newValue.field,
                         dir: newValue.dir
                     });
 
-                    this.$refs.maestroTable._sortTimeout = http.getJSON(this.paginator.url, function (data) {
-                        this.records = data.records;
+                    this.$refs.maestroTable._sortTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {
+                        this.records{{ instance }} = data.records;
                     }.bind(this));
                 },
-                getUrlParams: function () {
+                getUrlParams{{ instance }}: function () {
                     var params = {};
-                    if (!params.search && this.search) {
-                        params.search = this.search;
+                    if (!params.search && this.search{{ instance }}) {
+                        params.search = this.search{{ instance }};
                     }
-                    if (!params.sort && this.sort.field) {
-                        params.field = this.sort.field;
-                        params.dir = this.sort.dir;
+                    if (!params.sort && this.sort{{ instance }}.field) {
+                        params.field = this.sort{{ instance }}.field;
+                        params.dir = this.sort{{ instance }}.dir;
                     }
-                    if (!params.page && this.paginator.page) {
-                        params.page = this.paginator.page;
+                    if (!params.page && this.paginator{{ instance }}.page) {
+                        params.page = this.paginator{{ instance }}.page;
                     }
                     if (Object.keys(params).length == 0) {
                         return '';
                     }
                     return '?' + $.param(params);
                 },
-                resetPaginatorUrl: function (preset) {
-                    this.paginator.url = '{{ searchUrl }}' + this.getUrlParams(preset);
-                    console.log(this.paginator.url);
+                resetPaginatorUrl{{ instance }}: function (preset) {
+                    this.paginator{{ instance }}.url = '{{ searchUrl }}' + this.getUrlParams{{ instance }}(preset);
+                    console.log(this.paginator{{ instance }}.url);
                 }
             },
             watch: {
-                search: function (newValue) {
-                    if (this.$refs.maestroTable._searchTimeout) {
-                        this.$refs.maestroTable._searchTimeout.abort();
+                search{{ instance }}: function (newValue) {
+                    if (this.$refs.maestroTable._searchTimeout{{ instance }}) {
+                        this.$refs.maestroTable._searchTimeout{{ instance }}.abort();
                     }
 
-                    this.resetPaginatorUrl({
+                    this.resetPaginatorUrl{{ instance }}({
                         search: newValue
                     });
 
-                    this.$refs.maestroTable._searchTimeout = http.getJSON(this.paginator.url, function (data) {
-                        this.records = data.records;
-                        this.paginator.total = data.paginator.total;
+                    this.$refs.maestroTable._searchTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {
+                        this.records{{ instance }} = data.records;
+                        this.paginator{{ instance }}.total = data.paginator.total;
                     }.bind(this));
                 },
             },
             data: {
-                search: null,
-                records: {{ tabelize.transformRecords() | json_encode | raw }},
-                groups: {{ tabelize.getGroups() | json_encode | raw }},
-                paginator: {
+                search{{ instance }}: null,
+                records{{ instance }}: {{ tabelize.transformRecords() | json_encode | raw }},
+                groups{{ instance }}: {{ tabelize.getGroups() | json_encode | raw }},
+                paginator{{ instance }}: {
                     perPage: {{ tabelize.getPerPage() }},
                     page: {{ tabelize.getPage() }},
                     total: {{ tabelize.getTotal() }},
                     url: '{{ _router.getUri() }}'
                 },
-                ids: [],
-                sort: {
+                ids{{ instance }}: [],
+                sort{{ instance }}: {
                     field: '',
                     dir: 'up'
                 }
@@ -135,19 +136,19 @@
 
     <!-- pckg-maestro-table -->
     <pckg-maestro-table-{{ table }} v-ref:maestro-table
-                                    :records.sync="records"
+                                    :records.sync="records{{ instance }}"
                                     :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
                                     :depth="{{ tabelize.getGroups() | length }}"
-                                    :groups="groups"
+                                    :groups="groups{{ instance }}"
                                     :first="1"
-                                    :ids.sync="ids"
-                                    :search="search"
+                                    :ids.sync="ids{{ instance }}"
+                                    :search="search{{ instance }}"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
-                                    :paginator.sync="paginator"
+                                    :paginator.sync="paginator{{ instance }}"
                                     :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
-                                    :recordactionhandler="recordactionhandler"
-                                    :sort.sync="sort"
-                                    :togglefield="togglefield">
+                                    :recordactionhandler="recordactionhandler{{ instance }}"
+                                    :sort.sync="sort{{ instance }}"
+                                    :togglefield="togglefield{{ instance }}">
     </pckg-maestro-table-{{ table }}>
 
 </div>
