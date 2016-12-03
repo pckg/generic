@@ -52,7 +52,7 @@ class Table extends DatabaseRecord
 
     public function getListTitle()
     {
-        return ($this->title ?? ('List <i>' . $this->table . '</i>'));
+        return $this->title ?? $this->table;
     }
 
     public function getFormTitle($type = 'Add')

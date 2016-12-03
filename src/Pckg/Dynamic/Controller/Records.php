@@ -162,6 +162,10 @@ class Records extends Controller
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
+        /**
+         * @T00D00
+         *  - find out joins / scopes / withs for field type = php
+         */
         $records = $entity->count()->all();
         $total = $records->total();
 
