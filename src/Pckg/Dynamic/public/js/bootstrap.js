@@ -74,15 +74,15 @@ $(document).ready(function () {
 
             //set width when fixed
             $('.affix-dynamic-offset').on('affix.bs.affix', function () {
-                $(this).addClass('col-sm-10');
+                $(this).width($(document).width() - $(".maestro-sidebar").width()).css('left', $(".maestro-sidebar").width());
             })
             //default width when not fixed
             $('.affix-dynamic-offset').on('affixed-top.bs.affix', function () {
-                $(this).removeClass('col-sm-10');
+                $(this).width('auto');
             })
             //on ready set width if fixed
             if ($('.affix-dynamic-offset').hasClass('affix')) {
-                $('.affix-dynamic-offset').addClass('col-sm-10');
+                $(this).width($(document).width() - $(".maestro-sidebar").width()).css('left', $(".maestro-sidebar").width());
             }
         }
     }
