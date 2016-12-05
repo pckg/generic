@@ -6,6 +6,7 @@ use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Parenthesis;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
@@ -52,7 +53,13 @@ class Filter
 
     public function getAvailableFilters()
     {
-        return $this->makeFields($this->table->listableFields);
+        return $this->makeFields(
+            $this->table->listableFields(
+                function(HasMany $fields) {
+                    $fields->where('dynamic_field_type_id', 19, '!=');
+                }
+            )
+        );
     }
 
     public function getAvailableRelationFilters()
@@ -167,7 +174,7 @@ class Filter
                 );
             } else if ($relation->dynamic_relation_type_id == 2) {
                 $entity->join(
-                    'INNER JOIN ' . $relation->showTable->table,
+                    'INNER JOIN ' . $relation->showTable->table . ($relation->showTab),
                     $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' . $relation->onField->field,
                     $relation->showTable->table . '.' . $relationFilter['field'] . ' ' . $signMapper[$relationFilter['options']['method']] . ' ' . $entity->getRepository(
                     )->getConnection()->quote($relationFilter['value'])
@@ -210,7 +217,6 @@ class Filter
                 }
             }
             $tables[$entity->getTable()] = $entity->getTable();
-            $tables = array_unique($tables);
 
             $query->select($query->getTable() . '.id');
 
@@ -231,8 +237,9 @@ class Filter
             $newEntity = $this->table->createEntity();
             $newEntity->setQuery($query);
             $newEntity->limit(null);
+            $newEntity->count(false);
 
-            $entity->where('id', $newEntity->all()->map('id'));
+            $entity->where('id', $newEntity, 'IN');
         }
     }
 
