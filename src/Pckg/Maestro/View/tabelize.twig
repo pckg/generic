@@ -96,7 +96,6 @@
                 },
                 resetPaginatorUrl{{ instance }}: function (preset) {
                     this.paginator{{ instance }}.url = '{{ searchUrl }}' + this.getUrlParams{{ instance }}(preset);
-                    console.log(this.paginator{{ instance }}.url);
                 }
             },
             watch: {
@@ -140,15 +139,15 @@
                                     :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
                                     :depth="{{ tabelize.getGroups() | length }}"
                                     :groups="groups{{ instance }}"
-                                    :first="1"
                                     :ids.sync="ids{{ instance }}"
                                     :search="search{{ instance }}"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
                                     :paginator.sync="paginator{{ instance }}"
                                     :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
                                     :recordactionhandler="recordactionhandler{{ instance }}"
+                                    :resetpaginatorurl="resetPaginatorUrl{{ instance }}"
                                     :sort.sync="sort{{ instance }}"
-                                    :togglefield="togglefield{{ instance }}">
-    </pckg-maestro-table-{{ table }}>
+                                    :togglefield="togglefield{{ instance }}"
+                                    :first="1"></pckg-maestro-table-{{ table }}>
 
 </div>

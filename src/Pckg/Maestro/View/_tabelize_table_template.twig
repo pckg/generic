@@ -6,17 +6,18 @@
                     <td>
                         <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
                         <pckg-maestro-table-{{ table }} :records="record"
-                                                        :depth="depth - 1"
                                                         :fields="fields"
+                                                        :depth="depth - 1"
+                                                        :groups.sync="groups"
                                                         :ids.sync="ids"
                                                         :search.sync="search"
-                                                        :groups.sync="groups"
-                                                        :paginator.sync="paginator"
                                                         :entityactions.sync="entityactions"
+                                                        :paginator.sync="paginator"
                                                         :table.sync="table"
                                                         :recordactionhandler="recordactionhandler"
                                                         :sort.sync="sort"
-                                                        :togglefield="togglefield"></pckg-maestro-table-{{ table }}>
+                                                        :togglefield="togglefield"
+                                                        :resetpaginatorurl="resetpaginatorurl"></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
@@ -116,10 +117,15 @@
             </template>
         </table>
         <div v-if="first">
-            <pckg-dynamic-paginator v-ref:maestro-paginator :per-page.sync="paginator.perPage"
+            <pckg-dynamic-paginator v-ref:maestro-paginator
+                                    :per-page.sync="paginator.perPage"
                                     :page.sync="paginator.page"
                                     :total.sync="paginator.total"
-                                    :url.sync="paginator.url"></pckg-dynamic-paginator>
+                                    :url.sync="paginator.url"
+                                    :resetpaginatorurl="resetpaginatorurl"
+                                    :records.sync="records"
+                                    :groups.sync="groups"
+            ></pckg-dynamic-paginator>
         </div>
     </div>
 </script>

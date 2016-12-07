@@ -5,9 +5,9 @@ Vue.component('pckg-dynamic-paginator', {
         page: 0,
         total: 0,
         url: null,
-        setRecords: {
-            type: Function
-        }
+        resetpaginatorurl: null,
+        records: [],
+        groups: []
     },
     data: function () {
         return {
@@ -55,15 +55,16 @@ Vue.component('pckg-dynamic-paginator', {
 
             this.page = page;
 
-            this.$root.resetPaginatorUrl({
+            this.resetpaginatorurl({
                 page: page
             });
 
-            http.getJSON(this.url, function (data) {
-                this.$root.records = data.records;
-                this.$root.groups = data.groups;
-                this.$root.paginator.total = data.paginator.total;
+            Vue.nextTick(function () {
+                http.getJSON(this.url, function (data) {
+                    this.records = data.records;
+                    this.groups = data.groups;
 
+                }.bind(this));
             }.bind(this));
         }
     }
