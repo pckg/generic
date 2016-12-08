@@ -136,7 +136,7 @@ class Records extends Controller
              * Right table entity is created here.
              */
             $relationEntity = $relation->showTable->createEntity();
-            $alias = $relation->alias ?: $relation->showTable->table;
+            $alias = $relation->alias ?? $relation->showTable->table;
             $relationEntity->setAlias($alias);
             $dynamicService->joinTranslationsIfTranslatable($relationEntity);
 
