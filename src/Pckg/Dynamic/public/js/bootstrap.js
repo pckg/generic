@@ -153,4 +153,8 @@ $(document).ready(function () {
             editors[id] = initTinymce(id);
         }
     });
+
+    $('.pckg-selectpicker').each(function () {
+        $(this).selectpicker();
+    });
 });

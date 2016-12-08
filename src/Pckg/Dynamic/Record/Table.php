@@ -2,6 +2,7 @@
 
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -118,6 +119,15 @@ class Table extends DatabaseRecord
         $entity->setTable($this->table);
 
         return $entity;
+    }
+
+    public function fetchFrameworkRecord(Record $record, DatabaseEntity $entity)
+    {
+        if (!$this->framework_entity) {
+            return $record;
+        }
+
+        return $entity->where('id', $record->id)->oneOrFail();
     }
 
 }

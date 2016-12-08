@@ -373,7 +373,7 @@ class Records extends Controller
          */
         $tabs = $table->tabs;
         try {
-            list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table);
+            list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table, $tableEntity);
         } catch (Throwable $e) {
             $tabelizes = [];
             $functionizes = [];
@@ -506,7 +506,7 @@ class Records extends Controller
         );
     }
 
-    protected function getTabelizesAndFunctionizes($tabs, $record, $table)
+    protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, DatabaseEntity $entity)
     {
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
@@ -545,11 +545,11 @@ class Records extends Controller
         $functions = $table->functions;
         $pluginService = $this->pluginService;
         $functions->each(
-            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record) {
+            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
                 $functionize = $pluginService->make(
                     $function->class,
                     ($this->request()->isGet() ? 'get' : 'post') . ucfirst($function->method),
-                    [$record]
+                    [$record, $table->fetchFrameworkRecord($record, $entity)]
                 );
                 if ($tabs->count()) {
                     $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;
