@@ -188,7 +188,7 @@ class Records extends Controller
             function(Field $field) use (&$fieldTransformations) {
                 if ($field->fieldType->slug == 'php') {
                     $fieldTransformations[$field->field] = function($record) use ($field) {
-                        return $record->{$field->field};
+                        return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
                     };
                 }
             }
