@@ -234,7 +234,6 @@ class Dynamic extends Bootstrap
 
             $type = $field->fieldType->slug;
             $name = $field->field;
-            $label = $field->label;
 
             if ($type == 'php') {
                 /**
@@ -251,12 +250,7 @@ class Dynamic extends Bootstrap
 
                 continue;
             } elseif (!$this->editable/* !$field->hasPermissionTo('edit')*/) {
-                // @T00D00
-                $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
-</label>
-<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
-                );
+                $this->createReadonlyElementByType($type, $name, $field);
 
                 continue;
             } elseif ($field->id == $this->foreignFieldId) {
@@ -266,7 +260,7 @@ class Dynamic extends Bootstrap
 
             $element = $this->createElementByType($type, $name, $field);
 
-            if ($label) {
+            if (($label = $field->label)) {
                 $element->setLabel($label);
             }
 
@@ -281,6 +275,36 @@ class Dynamic extends Bootstrap
         }
 
         return $this;
+    }
+
+    protected function createReadonlyElementByType($type, $name, Field $field)
+    {
+        $label = $field->label;
+        $value = $this->record->{$field->field};
+
+        if ($type == 'select' && $this->record) {
+            $relation = $field->hasOneSelectRelation;
+            if ($relation) {
+                $relatedRecord = $field->getRecordForSelect($this->record, $this->foreignRecord, $value);
+                if ($relatedRecord) {
+                    $relationTitle = $field->eval($relation->value, $relatedRecord, $relation);
+                    $url = url(
+                        'dynamic.record.view',
+                        [
+                            'table'  => $relation->showTable,
+                            'record' => $relatedRecord,
+                        ]
+                    );
+                    $value = '<a href="' . $url . '">' . $relationTitle . '</a>';
+                }
+            }
+        }
+
+        $element = $this->addDiv()->addChild(
+            '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
+</label>
+<div class="col-sm-9">' . $value . '</div></div>'
+        );
     }
 
     protected function createElementByType($type, $name, Field $field)

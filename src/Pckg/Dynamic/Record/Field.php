@@ -41,10 +41,10 @@ class Field extends DatabaseRecord
         return $relation;
     }*/
 
-    public function getRelationForSelect($record = null, $foreignRecord = null)
+    public function getEntityForSelect($record = null, $foreignRecord = null)
     {
         /**
-         * So, $table is users table, $field is user_group_id for which we need to get relation.
+         * So, $table is users table, $field is user_group_id for which we need to get user group title..
          * We need to create entity user_groups (which is found on relation)
          * and select all records.
          */
@@ -75,8 +75,35 @@ class Field extends DatabaseRecord
         /**
          * Now, we have $record->addition->title, editing related orders_users_additions on orders_users.
          * We have to select additions that are added to packets_additions for orders_user.packet_id
+         *
+         * @T00D00
          */
         $relation->applyFilterOnEntity($entity, $foreignRecord);
+
+        return $entity;
+    }
+
+    public function getItemForSelect($record, $foreignRecord, $value)
+    {
+        $relation = $this->hasOneSelectRelation;
+        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value);
+        $value = $this->eval($relation->value, $relatedRecord, $relation);
+
+        return $value;
+    }
+
+    public function getRecordForSelect($record, $foreignRecord, $value)
+    {
+        $entity = $this->getEntityForSelect($record, $foreignRecord);
+        $entity->where('id', $value);
+
+        return $entity->one();
+    }
+
+    public function getRelationForSelect($record = null, $foreignRecord = null)
+    {
+        $entity = $this->getEntityForSelect($record, $foreignRecord);
+        $relation = $this->hasOneSelectRelation;
 
         $values = [];
         $entity->all()->each(
