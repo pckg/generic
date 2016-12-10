@@ -5,9 +5,9 @@
                 <tr v-for="(i,record) in records" track-by="$index">
                     <td>
                         <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
-                        <pckg-maestro-table-{{ table }} :records="record"
+                        <pckg-maestro-table-{{ table }} :records.sync="record"
                                                         :fields="fields"
-                                                        :depth="depth - 1"
+                                                        :depth="depth - 2"
                                                         :groups.sync="groups"
                                                         :ids.sync="ids"
                                                         :search.sync="search"
@@ -15,9 +15,10 @@
                                                         :paginator.sync="paginator"
                                                         :table.sync="table"
                                                         :recordactionhandler="recordactionhandler"
+                                                        :resetpaginatorurl="resetpaginatorurl"
                                                         :sort.sync="sort"
                                                         :togglefield="togglefield"
-                                                        :resetpaginatorurl="resetpaginatorurl"></pckg-maestro-table-{{ table }}>
+                                                        :first=""></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
