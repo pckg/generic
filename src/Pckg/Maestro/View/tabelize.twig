@@ -105,7 +105,8 @@
                     }
 
                     this.resetPaginatorUrl{{ instance }}({
-                        search: newValue
+                        search: newValue,
+                        page: 1
                     });
 
                     this.$refs.maestroTable._searchTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {

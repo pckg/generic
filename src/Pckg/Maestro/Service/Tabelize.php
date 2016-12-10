@@ -380,15 +380,18 @@ class Tabelize
                 /**
                  * @T00D00 - this should be automatic ...
                  */
-                if (in_array($key, ['delete','clone'])) {
+
+                if (is_string($key) && in_array($key, ['delete','clone'])) {
                     $view = $key;
                 }
 
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
+                $wasObject = false;
                 if (is_object($view)) {
                     if ($view instanceof View\Twig) {
                         $view = $view->autoparse();
+                        $wasObject = true;
                     } else {
                         $view = $view->template;
                     }
@@ -397,7 +400,7 @@ class Tabelize
                 if (!is_string($view)) {
                     $string .= $view;
 
-                } elseif (strpos($view, '@')) {
+                } elseif (!$wasObject && strpos($view, '@')) {
                     list($class, $method) = explode('@', $view);
                     if (strpos($method, ':')) {
                         list($method, $view) = explode(':', $method);
@@ -405,12 +408,15 @@ class Tabelize
 
                     $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
 
-                } else {
+                } elseif (!$wasObject && $view) {
                     $string .= view('tabelize/listActions/' . $view)->autoparse();
+
+                } else {
+                    $string .= $view;
 
                 }
 
-                $string .= '<!-- end tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
+                $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
             }
         } catch (Throwable $e) {
             return exception($e);
