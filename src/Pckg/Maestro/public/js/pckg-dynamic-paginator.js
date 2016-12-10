@@ -4,9 +4,10 @@ Vue.component('pckg-dynamic-paginator', {
         perPage: 0,
         page: 0,
         total: 0,
-        setRecords: {
-            type: Function
-        }
+        url: null,
+        resetpaginatorurl: null,
+        records: [],
+        groups: []
     },
     data: function () {
         return {
@@ -52,13 +53,19 @@ Vue.component('pckg-dynamic-paginator', {
                 return;
             }
 
-            http.getJSON(window.location.href + '?page=' + page, function (data) {
-                this.$root.$refs.maestroTable.records = data.records;
-                this.$root.$refs.maestroTable.groups = data.groups;
-
-            }.bind(this));
-
             this.page = page;
+
+            this.resetpaginatorurl({
+                page: page
+            });
+
+            Vue.nextTick(function () {
+                http.getJSON(this.url, function (data) {
+                    this.records = data.records;
+                    this.groups = data.groups;
+
+                }.bind(this));
+            }.bind(this));
         }
     }
 });

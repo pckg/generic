@@ -234,7 +234,6 @@ class Dynamic extends Bootstrap
 
             $type = $field->fieldType->slug;
             $name = $field->field;
-            $label = $field->label;
 
             if ($type == 'php') {
                 /**
@@ -251,12 +250,7 @@ class Dynamic extends Bootstrap
 
                 continue;
             } elseif (!$this->editable/* !$field->hasPermissionTo('edit')*/) {
-                // @T00D00
-                $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
-</label>
-<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
-                );
+                $this->createReadonlyElementByType($type, $name, $field);
 
                 continue;
             } elseif ($field->id == $this->foreignFieldId) {
@@ -266,7 +260,7 @@ class Dynamic extends Bootstrap
 
             $element = $this->createElementByType($type, $name, $field);
 
-            if ($label) {
+            if (($label = $field->label)) {
                 $element->setLabel($label);
             }
 
@@ -281,6 +275,36 @@ class Dynamic extends Bootstrap
         }
 
         return $this;
+    }
+
+    protected function createReadonlyElementByType($type, $name, Field $field)
+    {
+        $label = $field->label;
+        $value = $this->record->{$field->field};
+
+        if ($type == 'select' && $this->record) {
+            $relation = $field->hasOneSelectRelation;
+            if ($relation) {
+                $relatedRecord = $field->getRecordForSelect($this->record, $this->foreignRecord, $value);
+                if ($relatedRecord) {
+                    $relationTitle = $field->eval($relation->value, $relatedRecord, $relation);
+                    $url = url(
+                        'dynamic.record.view',
+                        [
+                            'table'  => $relation->showTable,
+                            'record' => $relatedRecord,
+                        ]
+                    );
+                    $value = '<a href="' . $url . '">' . $relationTitle . '</a>';
+                }
+            }
+        }
+
+        $element = $this->addDiv()->addChild(
+            '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
+</label>
+<div class="col-sm-9">' . $value . '</div></div>'
+        );
     }
 
     protected function createElementByType($type, $name, Field $field)
@@ -304,23 +328,27 @@ class Dynamic extends Bootstrap
                 $field->getSetting('pckg.dynamic.field.dir'),
                 $field->getSetting('pckg.dynamic.field.privateUpload')
             );
-            $fullPath = $this->record->{$field->field}
-                ? media($this->record->{$field->field}, null, true, $dir)
-                : null;
+            if ($this->record) {
+                $fullPath = $this->record->{$field->field}
+                    ? media($this->record->{$field->field}, null, true, $dir)
+                    : null;
+            }
 
             if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
                 $element = $this->addDiv();
-                if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
-                    $element->addChild(
-                        '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
-                            $this->record
-                        ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
-                    );
-                }
-                if ($this->record->{$field->field}) {
-                    $element->addChild(
-                        '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
-                    );
+                if ($this->record) {
+                    if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
+                        $element->addChild(
+                            '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
+                                $this->record
+                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
+                        );
+                    }
+                    if ($this->record->{$field->field}) {
+                        $element->addChild(
+                            '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
+                        );
+                    }
                 }
 
             } else {
@@ -394,9 +422,48 @@ class Dynamic extends Bootstrap
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
                 $element->addOption(null, ' -- select value -- ');
-                foreach ($relation as $id => $value) {
-                    $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                if (count($relation) > 100) {
+                    $element->addOption(
+                        $this->record->{$field->field},
+                        str_replace(
+                            ['<br />', '<br/>', '<br>'],
+                            ' - ',
+                            $field->getItemForSelect(
+                                $this->record,
+                                null,
+                                $this->record->{$field->field}
+                            )
+                        )
+                    );
+                } else {
+                    foreach ($relation as $id => $value) {
+                        $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                    }
                 }
+
+                $element->setAttribute(
+                    'data-url',
+                    url(
+                        'dynamic.record.list',
+                        [
+                            'table' => $this->table,
+                        ]
+                    )
+                );
+
+                $element->setAttribute(
+                    'data-refresh-url',
+                    url(
+                        'dynamic.records.field.selectList',
+                        [
+                            'table'  => $this->table,
+                            'field'  => $field,
+                            'record' => $this->record,
+                        ]
+                    )
+                );
+
+                $element->addClass('ajax');
 
                 return $element;
             } else {

@@ -46,6 +46,26 @@ class Sort
 
     public function applyOnEntity(Entity $entity)
     {
+        if (get('field') && get('dir')) {
+            $field = $this->table->listableFields->first(
+                function(Field $field) {
+                    return $field->id == get('field');
+                }
+            );
+
+            $directionMapper = [
+                'up'   => 'ASC',
+                'down' => 'DESC',
+            ];
+
+            if ($field) {
+                $entity->orderBy(
+                    '`' . $entity->getTable() . '`.`' . $field->field . '` ' . ($directionMapper[get('dir')] ?? 'DESC')
+                );
+
+                return;
+            }
+        }
         $sorts = $this->getAppliedSorts();
 
         if (!$sorts) {

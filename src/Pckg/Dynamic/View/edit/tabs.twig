@@ -40,12 +40,7 @@
         </div>
         {% for tab in tabs %}
             <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                {#% for tabelize in tabelizes[tab.id] %}
-                    {{ tabelize | raw }}
-                {% endfor %}
-                {% for functionize in functionizes[tab.id] %}
-                    {{ functionize | raw }}
-                {% endfor %#}
+                <i class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
             </div>
         {% endfor %}
     </div>

@@ -2,6 +2,7 @@
 
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -18,7 +19,7 @@ class Table extends DatabaseRecord
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where('type', ['entity', 'entity-plugin']);
+                $relation->where('type', ['entity', 'entity-plugin', 'mixed']);
                 $relation->joinPermission();
             }
         );
@@ -40,7 +41,7 @@ class Table extends DatabaseRecord
     {
         $actions = $this->actions(
             function(HasMany $relation) {
-                $relation->where('type', ['record', 'record-plugin']);
+                $relation->where('type', ['record', 'record-plugin', 'mixed']);
                 $relation->joinPermission();
             }
         );
@@ -52,7 +53,7 @@ class Table extends DatabaseRecord
 
     public function getListTitle()
     {
-        return ($this->title ?? ('List <i>' . $this->table . '</i>'));
+        return $this->title ?? $this->table;
     }
 
     public function getFormTitle($type = 'Add')
@@ -118,6 +119,15 @@ class Table extends DatabaseRecord
         $entity->setTable($this->table);
 
         return $entity;
+    }
+
+    public function fetchFrameworkRecord(Record $record, DatabaseEntity $entity)
+    {
+        if (!$this->framework_entity) {
+            return $record;
+        }
+
+        return $entity->where('id', $record->id)->oneOrFail();
     }
 
 }

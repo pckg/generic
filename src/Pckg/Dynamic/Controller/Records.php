@@ -1,9 +1,9 @@
 <?php namespace Pckg\Dynamic\Controller;
 
-use Derive\Orders\Entity\Orders;
 use Derive\Orders\Entity\OrdersUsers;
 use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
@@ -52,6 +52,32 @@ class Records extends Controller
     {
         $this->dynamic = $dynamic;
         $this->pluginService = $pluginService;
+    }
+
+    public function getSelectListAction(
+        Table $table,
+        Field $field,
+        Record $record
+    )
+    {
+        $collection = new Collection();
+        $collection->push(' -- select value --', null);
+        $search = get('search');
+        $this->dynamic->setTable($table);
+        if ($search) {
+            $relation = $field->getFilteredRelationForSelect($record, null, $this->dynamic);
+        } else {
+            $relation = $field->getRelationForSelect($record);
+        }
+        foreach ($relation as $id => $value) {
+            $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
+        }
+
+        return $this->response()->respondWithSuccess(
+            [
+                'records' => $collection->all(),
+            ]
+        );
     }
 
     /**
@@ -116,6 +142,8 @@ class Records extends Controller
              * Right table entity is created here.
              */
             $relationEntity = $relation->showTable->createEntity();
+            $alias = $relation->alias ?? $relation->showTable->table;
+            $relationEntity->setAlias($alias);
             $dynamicService->joinTranslationsIfTranslatable($relationEntity);
 
             /**
@@ -142,6 +170,10 @@ class Records extends Controller
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
+        /**
+         * @T00D00
+         *  - find out joins / scopes / withs for field type = php
+         */
         $records = $entity->count()->all();
         $total = $records->total();
 
@@ -150,12 +182,6 @@ class Records extends Controller
         }
 
         $fieldTransformations = ['tabelizeClass'];
-
-        if (get_class($entity) == Orders::class) {
-            $fieldTransformations['bills_payed'] = function(Order $order) {
-                return $order->getPayedBillsSum();
-            };
-        }
 
         /**
          * Transform field type = php
@@ -168,7 +194,7 @@ class Records extends Controller
             function(Field $field) use (&$fieldTransformations) {
                 if ($field->fieldType->slug == 'php') {
                     $fieldTransformations[$field->field] = function($record) use ($field) {
-                        return $record->{$field->field};
+                        return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
                     };
                 }
             }
@@ -180,16 +206,21 @@ class Records extends Controller
                          ->setEntity($entity)
                          ->setRecords($records)
                          ->setFields(
-                             $tableRecord->listableFields(
-                                 function(HasMany $relation) {
-                                     $relation->withFieldType();
-                                 }
-                             )->reduce(
-                                 function(Field $field) use ($tableRecord) {
-                                     $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
+                             runInLocale(
+                                 function() use ($tableRecord) {
+                                     return $tableRecord->listableFields(
+                                         function(HasMany $relation) {
+                                             $relation->withFieldType();
+                                         }
+                                     )->reduce(
+                                         function(Field $field) use ($tableRecord) {
+                                             $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
 
-                                     return (!$fields && $field->visible) || in_array($field->field, $fields);
-                                 }
+                                             return (!$fields && $field->visible) || in_array($field->field, $fields);
+                                         }
+                                     );
+                                 },
+                                 'en_GB'
                              )
                          )
                          ->setPerPage(50)
@@ -201,10 +232,14 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations);
 
-        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || post('search'))) {
+        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || get('search'))) {
             return [
-                'records' => $tabelize->transformRecords(),
-                'groups'  => $groups,
+                'records'   => $tabelize->transformRecords(),
+                'groups'    => $groups,
+                'paginator' => [
+                    'total' => $total,
+                    'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
+                ],
             ];
         }
 
@@ -349,11 +384,13 @@ class Records extends Controller
          */
         $tabs = $table->tabs;
         try {
-            list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table);
+            list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table, $tableEntity);
         } catch (Throwable $e) {
             $tabelizes = [];
             $functionizes = [];
         }
+
+        $record::$dynamicTable = $table;
 
         /**
          * And build tabs ...
@@ -378,7 +415,6 @@ class Records extends Controller
 
         Tab::$dynamicRecord = $record;
         Tab::$dynamicTable = $table;
-        $record::$dynamicTable = $table;
 
         /**
          * We have to build tabs.
@@ -481,7 +517,7 @@ class Records extends Controller
         );
     }
 
-    protected function getTabelizesAndFunctionizes($tabs, $record, $table)
+    protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, DatabaseEntity $entity)
     {
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
@@ -520,11 +556,11 @@ class Records extends Controller
         $functions = $table->functions;
         $pluginService = $this->pluginService;
         $functions->each(
-            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record) {
+            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
                 $functionize = $pluginService->make(
                     $function->class,
                     ($this->request()->isGet() ? 'get' : 'post') . ucfirst($function->method),
-                    [$record]
+                    [$record, $table->fetchFrameworkRecord($record, $entity)]
                 );
                 if ($tabs->count()) {
                     $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;

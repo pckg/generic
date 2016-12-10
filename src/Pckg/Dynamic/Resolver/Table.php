@@ -7,7 +7,6 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Framework\Request\Data\Session;
 use Pckg\Framework\Response;
 use Pckg\Framework\Router;
 
@@ -15,62 +14,49 @@ class Table implements RouteResolver
 {
 
     /**
-     * @var Router
-     */
-    protected $router;
-
-    /**
-     * @var Tables
-     */
-    protected $tables;
-
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * @var Dynamic
      */
     protected $dynamic;
 
-    public function __construct(Tables $tables, Response $response, Dynamic $dynamic)
+    public function __construct(Dynamic $dynamic)
     {
-        $this->tables = $tables;
-        $this->response = $response;
         $this->dynamic = $dynamic;
     }
 
     public function resolve($value)
     {
-        $this->dynamic->joinTranslationsIfTranslatable($this->tables);
-        $this->dynamic->joinPermissionsIfPermissionable($this->tables);
+        $dynamic = $this->dynamic;
+        $table = runInLocale(
+            function() use ($dynamic, $value) {
+                $tables = new Tables();
+                $dynamic->joinTranslationsIfTranslatable($tables);
+                $dynamic->joinPermissionsIfPermissionable($tables);
 
-        return $this->tables->where('id', $value)
-                            ->withFields(
-                                function(HasMany $fields) {
-                                    $fields->joinTranslation();
-                                    $fields->joinFallbackTranslation();
-                                    $fields->withFieldType();
-                                    $fields->withSettings();
-                                }
-                            )
-                            ->withTabs(
-                                function(HasMany $tabs) {
-                                    $tabs->joinTranslation();
-                                    $tabs->joinFallbackTranslation();
-                                }
-                            )
-                            ->oneOrFail(
-                                function() {
-                                    $this->response->unauthorized('Table not found');
-                                }
-                            );
+                return $tables->where('id', $value)
+                              ->withFields(
+                                  function(HasMany $fields) {
+                                      $fields->joinTranslation();
+                                      $fields->joinFallbackTranslation();
+                                      $fields->withFieldType();
+                                      $fields->withSettings();
+                                  }
+                              )
+                              ->withTabs(
+                                  function(HasMany $tabs) {
+                                      $tabs->joinTranslation();
+                                      $tabs->joinFallbackTranslation();
+                                  }
+                              )
+                              ->oneOrFail(
+                                  function() {
+                                      response()->unauthorized('Table not found');
+                                  }
+                              );
+            },
+            'en_GB'
+        );
+
+        return $table;
     }
 
     public function parametrize($record)

@@ -5,16 +5,20 @@
                 <tr v-for="(i,record) in records" track-by="$index">
                     <td>
                         <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
-                        <pckg-maestro-table-{{ table }} :records="record"
-                                                        :depth="depth - 1"
+                        <pckg-maestro-table-{{ table }} :records.sync="record"
                                                         :fields="fields"
+                                                        :depth="depth - 2"
+                                                        :groups.sync="groups"
                                                         :ids.sync="ids"
                                                         :search.sync="search"
-                                                        :groups.sync="groups"
-                                                        :paginator.sync="paginator"
                                                         :entityactions.sync="entityactions"
+                                                        :paginator.sync="paginator"
                                                         :table.sync="table"
-                                                        :recordactionhandler="recordactionhandler"></pckg-maestro-table-{{ table }}>
+                                                        :recordactionhandler="recordactionhandler"
+                                                        :resetpaginatorurl="resetpaginatorurl"
+                                                        :sort.sync="sort"
+                                                        :togglefield="togglefield"
+                                                        :first=""></pckg-maestro-table-{{ table }}>
                     </td>
                 </tr>
             </template>
@@ -23,13 +27,21 @@
                 <tr>
                     <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''"
                         class="affix-thead-container">
-                        <div class="affix-thead-fixed">
+                        <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
                             <div>
                                 ${ field.title ? field.title : (field.field ? field.field : field) }
+                                <span v-if="sort.field == field.id">
+                                    <i class="fa"
+                                       v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                                </span>
                             </div>
                         </div>
-                        <div class="affix-thead-static">
+                        <div class="affix-thead-static" @click.prevent="togglefield(field.id)">
                             ${ field.title ? field.title : (field.field ? field.field : field) }
+                            <span v-if="sort.field == field.id">
+                                <i class="fa"
+                                   v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                            </span>
                         </div>
                     </th>
                     <th class="text-right affix-thead-container">
@@ -106,9 +118,15 @@
             </template>
         </table>
         <div v-if="first">
-            <pckg-dynamic-paginator v-ref:maestro-paginator :per-page="paginator.perPage"
-                                    :page="paginator.page"
-                                    :total="paginator.total"></pckg-dynamic-paginator>
+            <pckg-dynamic-paginator v-ref:maestro-paginator
+                                    :per-page.sync="paginator.perPage"
+                                    :page.sync="paginator.page"
+                                    :total.sync="paginator.total"
+                                    :url.sync="paginator.url"
+                                    :resetpaginatorurl="resetpaginatorurl"
+                                    :records.sync="records"
+                                    :groups.sync="groups"
+            ></pckg-dynamic-paginator>
         </div>
     </div>
 </script>
