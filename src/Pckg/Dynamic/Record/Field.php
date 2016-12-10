@@ -87,6 +87,11 @@ class Field extends DatabaseRecord
     {
         $relation = $this->hasOneSelectRelation;
         $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value);
+
+        if (!$relatedRecord) {
+            return null;
+        }
+
         $value = $this->eval($relation->value, $relatedRecord, $relation);
 
         return $value;
@@ -95,6 +100,11 @@ class Field extends DatabaseRecord
     public function getRecordForSelect($record, $foreignRecord, $value)
     {
         $entity = $this->getEntityForSelect($record, $foreignRecord);
+
+        if (!$entity) {
+            return null;
+        }
+
         $entity->where('id', $value);
 
         return $entity->one();
@@ -103,6 +113,11 @@ class Field extends DatabaseRecord
     public function getRelationForSelect($record = null, $foreignRecord = null)
     {
         $entity = $this->getEntityForSelect($record, $foreignRecord);
+
+        if (!$entity) {
+            return null;
+        }
+
         $relation = $this->hasOneSelectRelation;
 
         $values = [];
