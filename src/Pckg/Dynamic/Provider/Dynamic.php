@@ -274,6 +274,26 @@ class Dynamic extends Provider
                          ]
                      ) + array_merge_array(
                          [
+                             'controller' => SortBy::class,
+                         ],
+                         [
+                             '/dynamic/tables/actions/[table]'      => [
+                                 'name'      => 'dynamic.record.actions',
+                                 'view'      => 'actionsTable',
+                                 'resolvers' => [
+                                     'table' => TableResolver::class,
+                                 ],
+                             ],
+                             '/dynamic/tables/actions/[table]/save' => [
+                                 'name'      => 'dynamic.record.actions.save',
+                                 'view'      => 'save',
+                                 'resolvers' => [
+                                     'table' => TableResolver::class,
+                                 ],
+                             ],
+                         ]
+                     ) + array_merge_array(
+                         [
                              'controller' => View::class,
                          ],
                          [

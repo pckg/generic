@@ -88,6 +88,7 @@ trait EntityActions
         if (static::$dynamicRecord) {
             $record = static::$dynamicRecord;
             $relation = static::$dynamicRelation;
+
             return url(
                 'dynamic.record.add.related',
                 [
@@ -121,6 +122,16 @@ trait EntityActions
     {
         return url(
             'dynamic.record.sort',
+            [
+                'table' => $this->getDynamicTable(),
+            ]
+        );
+    }
+
+    public function getActionsUrl()
+    {
+        return url(
+            'dynamic.record.actions',
             [
                 'table' => $this->getDynamicTable(),
             ]
