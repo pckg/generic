@@ -104,6 +104,7 @@ class CreateGenericTables extends Migration
 
         $menuItems = $this->table('menu_items');
         $menuItems->orderable();
+        $menuItems->varchar('icon', 64);
         $menuItems->integer('menu_id')->references('menus');
         $menuItems->integer('parent_id')->references('menu_items');
 
