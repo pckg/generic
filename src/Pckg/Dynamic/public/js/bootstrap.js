@@ -50,6 +50,49 @@ $(document).ready(function () {
         $(this).closest('.input-group').find('input.datetime').focus();
     });
 
+    /* --- SIDEBAR AND CONTENT CONTAINER ---- */
+
+    /* ELEMENTS */
+    /* sidebar container */
+    $sidebar = $(".maestro-sidebar");
+    /* sidebar background */
+    $sidebarBg = $(".maestro-sidebar-background");
+    /* content container */
+    $content = $(".maestro-content");
+    /* link for expanding and collapsing */
+    $sidebarCollapse = $(".maestro-sidebar .collapse-sidebar a");
+
+    /* SETTINGS */
+
+    /* FUNCTIONS */
+
+    /* Collapse or expand */
+    function sidebarCollapseExpand() {
+        //sidebar is expanded and needs to be collapsed
+        if(isSidebarCollapsed()) {
+            $sidebar.removeClass('collapsed');
+            $sidebarBg.removeClass('collapsed');
+            $content.removeClass('expanded');
+        }
+        //sidebar is collapsed and needs to be expanded
+        else {
+            $sidebar.addClass('collapsed');
+            $sidebarBg.addClass('collapsed');
+            $content.addClass('expanded');
+        }
+    }
+
+    function isSidebarCollapsed() {
+        return ($sidebar.hasClass('collapsed') ? true : false);
+    }
+
+    /* EVENTS */
+
+    /* when user wants to collapse or expande the menu */
+    $sidebarCollapse.click(function() {
+        sidebarCollapseExpand();
+    });
+
     /* fix search, group actions and table header on lists */
 
     function affixFromTop() {
