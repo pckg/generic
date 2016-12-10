@@ -200,16 +200,21 @@ class Records extends Controller
                          ->setEntity($entity)
                          ->setRecords($records)
                          ->setFields(
-                             $tableRecord->listableFields(
-                                 function(HasMany $relation) {
-                                     $relation->withFieldType();
-                                 }
-                             )->reduce(
-                                 function(Field $field) use ($tableRecord) {
-                                     $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
+                             runInLocale(
+                                 function() use ($tableRecord) {
+                                     return $tableRecord->listableFields(
+                                         function(HasMany $relation) {
+                                             $relation->withFieldType();
+                                         }
+                                     )->reduce(
+                                         function(Field $field) use ($tableRecord) {
+                                             $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
 
-                                     return (!$fields && $field->visible) || in_array($field->field, $fields);
-                                 }
+                                             return (!$fields && $field->visible) || in_array($field->field, $fields);
+                                         }
+                                     );
+                                 },
+                                 'en_GB'
                              )
                          )
                          ->setPerPage(50)
@@ -378,7 +383,7 @@ class Records extends Controller
             $tabelizes = [];
             $functionizes = [];
         }
-        
+
         $record::$dynamicTable = $table;
 
         /**
