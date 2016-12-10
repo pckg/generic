@@ -62,7 +62,13 @@ class Records extends Controller
     {
         $collection = new Collection();
         $collection->push(' -- select value --', null);
-        $relation = $field->getRelationForSelect($record);
+        $search = get('search');
+        $this->dynamic->setTable($table);
+        if ($search) {
+            $relation = $field->getFilteredRelationForSelect($record, null, $this->dynamic);
+        } else {
+            $relation = $field->getRelationForSelect($record);
+        }
         foreach ($relation as $id => $value) {
             $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
         }

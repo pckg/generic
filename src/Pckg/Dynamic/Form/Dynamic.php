@@ -422,8 +422,23 @@ class Dynamic extends Bootstrap
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
                 $element->addOption(null, ' -- select value -- ');
-                foreach ($relation as $id => $value) {
-                    $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                if (count($relation) > 100) {
+                    $element->addOption(
+                        $this->record->{$field->field},
+                        str_replace(
+                            ['<br />', '<br/>', '<br>'],
+                            ' - ',
+                            $field->getItemForSelect(
+                                $this->record,
+                                null,
+                                $this->record->{$field->field}
+                            )
+                        )
+                    );
+                } else {
+                    foreach ($relation as $id => $value) {
+                        $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                    }
                 }
 
                 $element->setAttribute(
@@ -447,6 +462,8 @@ class Dynamic extends Bootstrap
                         ]
                     )
                 );
+
+                $element->addClass('ajax');
 
                 return $element;
             } else {

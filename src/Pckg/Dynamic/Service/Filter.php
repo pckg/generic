@@ -186,7 +186,7 @@ class Filter
 
     public function filterByGet($entity)
     {
-        if ($search = $this->get->get('search')) {
+        if ($search = get('search')) {
             $query = clone $entity->getQuery();
 
             /**

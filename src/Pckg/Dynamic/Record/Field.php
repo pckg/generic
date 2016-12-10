@@ -130,6 +130,28 @@ class Field extends DatabaseRecord
         return $values;
     }
 
+    public function getFilteredRelationForSelect($record = null, $foreignRecord = null, Dynamic $dynamic)
+    {
+        $entity = $this->getEntityForSelect($record, $foreignRecord);
+
+        if (!$entity) {
+            return null;
+        }
+        
+        $dynamic->getFilterService()->filterByGet($entity);
+
+        $relation = $this->hasOneSelectRelation;
+
+        $values = [];
+        $entity->all()->each(
+            function($record) use ($relation, &$values) {
+                $values[$record->id] = $this->eval($relation->value, $record, $relation);
+            }
+        );
+
+        return $values;
+    }
+
     /**
      * @param      $eval
      * @param      $record
