@@ -18,7 +18,7 @@ utils.pushToVue({
     },
     ready: [
         function () {
-            $('#main-row').animate({opacity: 1});
+            // $('#main-row').animate({opacity: 1});
         }
     ],
     on: {}
