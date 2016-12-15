@@ -203,11 +203,11 @@ $(document).ready(function () {
         $select.selectpicker();
         if ($select.hasClass('ajax')) {
             var searchTimeout;
-            $select.parent().find('.bs-searchbox input').on('keydown', function () {
+            $select.parent().find('.bs-searchbox input').on('keydown keyup change', function () {
                 var $input = $(this);
                 clearTimeout(searchTimeout);
                 var val = $input.val();
-                if (val && val.length >= 3) {
+                if (val && val.length >= 2) {
                     searchTimeout = setTimeout(function () {
                         http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
                             var val = $select.val();
