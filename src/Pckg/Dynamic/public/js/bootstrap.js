@@ -69,7 +69,7 @@ $(document).ready(function () {
     /* Collapse or expand */
     function sidebarCollapseExpand() {
         //sidebar is expanded and needs to be collapsed
-        if(isSidebarCollapsed()) {
+        if (isSidebarCollapsed()) {
             $sidebar.removeClass('collapsed');
             $sidebarBg.removeClass('collapsed');
             $content.removeClass('expanded');
@@ -89,7 +89,7 @@ $(document).ready(function () {
     /* EVENTS */
 
     /* when user wants to collapse or expande the menu */
-    $sidebarCollapse.click(function() {
+    $sidebarCollapse.click(function () {
         sidebarCollapseExpand();
     });
 
@@ -206,18 +206,20 @@ $(document).ready(function () {
             $select.parent().find('.bs-searchbox input').on('keydown', function () {
                 var $input = $(this);
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(function () {
-                    var val = $input.val();
-                    http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
-                        var val = $select.val();
-                        $select.find('option').remove();
-                        $.each(data.records, function (key, val) {
-                            $select.append('<option value="' + key + '">' + val + '</option>');
+                var val = $input.val();
+                if (val && val.length >= 3) {
+                    searchTimeout = setTimeout(function () {
+                        http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
+                            var val = $select.val();
+                            $select.find('option').remove();
+                            $.each(data.records, function (key, val) {
+                                $select.append('<option value="' + key + '">' + val + '</option>');
+                            });
+                            $select.val(val);
+                            $select.selectpicker('refresh');
                         });
-                        $select.val(val);
-                        $select.selectpicker('refresh');
-                    });
-                }, 500);
+                    }, 500);
+                }
             });
         }
     });
