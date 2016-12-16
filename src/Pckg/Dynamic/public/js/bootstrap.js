@@ -68,22 +68,59 @@ $(document).ready(function () {
 
     /* Collapse or expand */
     function sidebarCollapseExpand() {
-        //sidebar is expanded and needs to be collapsed
-        if (isSidebarCollapsed()) {
+        //sidebar is collapsed and needs to be expanded
+        if(isSidebarCollapsed()) {
             $sidebar.removeClass('collapsed');
             $sidebarBg.removeClass('collapsed');
             $content.removeClass('expanded');
         }
-        //sidebar is collapsed and needs to be expanded
+        //sidebar is expanded and needs to be collapsed
         else {
             $sidebar.addClass('collapsed');
             $sidebarBg.addClass('collapsed');
             $content.addClass('expanded');
+            $sidebar.find('.collapse.in').removeClass('in');
         }
     }
 
     function isSidebarCollapsed() {
         return ($sidebar.hasClass('collapsed') ? true : false);
+    }
+
+    function collapsedHoverOn() {
+        $('.maestro-sidebar #main-admin-nav').on('mouseenter.collapse.data-api', '[data-toggle=collapse]', function (e) {
+            collapsed = $(".maestro-sidebar").hasClass('collapsed');
+
+            var $this = $(this),
+                href, target = $this.attr('data-target') || e.preventDefault() || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
+
+            if(collapsed) {
+                //show submenu
+                $(target).addClass('in');
+                //add class to parent
+                $(target).parent().addClass('hoveractive');
+                //show submenu background
+                //$('.maestro-sidebar-submenu-background').show();
+            }
+            //when user leaves the submenu with mouse
+            $(target).parent().on('mouseleave', function () {
+                if(collapsed) {
+                    //hide submenu
+                    $(target).removeClass('in');
+                    //remove class from parent
+                    $(target).parent().removeClass('hoveractive');
+                    //hide  submenu background
+                    //$('.maestro-sidebar-submenu-background').hide();
+                }
+            })
+            //prevent click action on menu
+                .on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
+                    if(collapsed) {
+                        e.stopPropagation();
+                        return false;
+                    }
+                })
+        })
     }
 
     /* EVENTS */
@@ -131,6 +168,7 @@ $(document).ready(function () {
     }
 
     affixFromTop();
+    collapsedHoverOn();
 
     function initTinymce(selector) {
         return tinymce.init({
