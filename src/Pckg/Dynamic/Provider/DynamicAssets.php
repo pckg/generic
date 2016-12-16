@@ -47,12 +47,6 @@ class DynamicAssets extends Provider
     {
         return [
             /**
-             * Magnific JS
-             */
-            'js/magnific.js',
-            'css/magnific.css',
-            
-            /**
              * Sort
              */
             'css/actions.css',
