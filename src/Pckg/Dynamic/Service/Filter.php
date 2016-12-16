@@ -14,21 +14,14 @@ use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Request\Data\Get;
 use Throwable;
 
-class Filter
+class Filter extends AbstractService
 {
-
-    protected $table;
 
     protected $get;
 
     public function __construct(Get $get)
     {
         $this->get = $get;
-    }
-
-    public function setTable(Table $table)
-    {
-        $this->table = $table;
     }
 
     public function getSaveFilterUrl()
@@ -43,12 +36,12 @@ class Filter
 
     public function getAppliedFilters()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['filter'] ?? [];
+        return $this->getSession('filter');
     }
 
     public function getAppliedRelationFilters()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['relationFilter'] ?? [];
+        return $this->getSession('relationFilter');
     }
 
     public function getAvailableFilters()

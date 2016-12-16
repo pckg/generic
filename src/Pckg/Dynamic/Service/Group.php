@@ -4,17 +4,9 @@ use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Dynamic\Record\Table;
 
-class Group
+class Group extends AbstractService
 {
-
-    protected $table;
-
-    public function setTable(Table $table)
-    {
-        $this->table = $table;
-    }
 
     public function getSaveGroupUrl()
     {
@@ -28,7 +20,7 @@ class Group
 
     public function getAppliedGroups()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['group'] ?? [];
+        return $this->getSession('group');
     }
 
     public function getAvailableGroups()

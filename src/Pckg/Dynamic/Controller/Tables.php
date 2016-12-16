@@ -25,27 +25,4 @@ class Tables extends Controller
                     ->setRecordActions(['view']);
     }
 
-    public function getAddTableAction(DynamicForm $dynamicForm, TableRecord $tableRecord)
-    {
-        $dynamicForm->populateFromRecord($tableRecord);
-
-        return $this->formalize($dynamicForm, $tableRecord, 'Add dynamic table');
-    }
-
-    public function postAddTableAction(DynamicForm $dynamicForm, TableRecord $tableRecord)
-    {
-        $dynamicForm->populateToRecord($tableRecord);
-
-        $tableRecord->save();
-
-        return $this->response()->respondWithSuccessRedirect($tableRecord->getEditUrl());
-    }
-
-    public function getEditTableAction(DynamicForm $dynamicForm, TableRecord $tableRecord)
-    {
-        $dynamicForm->populateFromRecord($tableRecord);
-
-        return $this->formalize($dynamicForm, $tableRecord, 'Edit dynamic table');
-    }
-
 }

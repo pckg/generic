@@ -19,6 +19,17 @@ class TableView extends DatabaseRecord
         );
     }
 
+    public function getTableViewUrlAttribute()
+    {
+        return url(
+            'dynamic.record.listView',
+            [
+                'table'     => $this->table,
+                'tableView' => $this,
+            ]
+        );
+    }
+
     /**
      * Load settings from database into session:
      *  - filters
@@ -27,7 +38,7 @@ class TableView extends DatabaseRecord
      */
     public function loadToSession()
     {
-        $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id]['view'] = json_decode(
+        $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' . $this->id]['view'] = json_decode(
             $this->settings,
             true
         );
@@ -41,7 +52,9 @@ class TableView extends DatabaseRecord
      */
     public function loadFromSession()
     {
-        $this->settings = json_encode($_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id]['view'] ?? []);
+        $this->settings = json_encode(
+            $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' . $this->id]['view'] ?? []
+        );
 
         $this->save();
     }

@@ -23,6 +23,7 @@ use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
+use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
@@ -78,6 +79,23 @@ class Records extends Controller
                 'records' => $collection->all(),
             ]
         );
+    }
+
+    public function getViewTableViewAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        DatabaseEntity $entity = null,
+        TableView $tableView,
+        $viewType = 'full'
+    )
+    {
+        /**
+         * Set table.
+         */
+        $this->dynamic->setView($tableView);
+        $tableView->loadToSession();
+
+        return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType);
     }
 
     /**
@@ -214,7 +232,7 @@ class Records extends Controller
                                          }
                                      )->reduce(
                                          function(Field $field) use ($tableRecord) {
-                                             $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view']['fields'] ?? [];
+                                             $fields = $this->dynamic->getFilterService()->getSession('fields');
 
                                              return (!$fields && $field->visible) || in_array($field->field, $fields);
                                          }

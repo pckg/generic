@@ -6,7 +6,6 @@ use Pckg\Dynamic\Controller\FilterBy;
 use Pckg\Dynamic\Controller\GroupBy;
 use Pckg\Dynamic\Controller\Records;
 use Pckg\Dynamic\Controller\SortBy;
-use Pckg\Dynamic\Controller\Tables;
 use Pckg\Dynamic\Controller\View;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
 use Pckg\Dynamic\Middleware\SwitchLanguage;
@@ -54,27 +53,6 @@ class Dynamic extends Provider
         return [
             'url' => array_merge_array(
                          [
-                             'controller' => Tables::class,
-                         ],
-                         [
-                             '/dynamic/tables'              => [
-                                 'name' => 'dynamic.table',
-                                 'view' => 'index',
-                             ],
-                             '/dynamic/tables/add'          => [
-                                 'name' => 'dynamic.table.add',
-                                 'view' => 'addTable',
-                             ],
-                             '/dynamic/tables/edit/[table]' => [
-                                 'name'      => 'dynamic.table.edit',
-                                 'view'      => 'editTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
                              'controller' => Records::class,
                          ],
                          [
@@ -83,6 +61,14 @@ class Dynamic extends Provider
                                  'view'      => 'viewTable',
                                  'resolvers' => [
                                      'table' => TableResolver::class,
+                                 ],
+                             ],
+                             '/dynamic/tables/list/[table]/[tableView]'                       => [
+                                 'name'      => 'dynamic.record.listView',
+                                 'view'      => 'viewTableView',
+                                 'resolvers' => [
+                                     'table'     => TableResolver::class,
+                                     'tableView' => ViewResolver::class,
                                  ],
                              ],
                              '/dynamic/records/add/[table]'                                   => [

@@ -15,6 +15,9 @@ class Dynamic
      */
     protected $session;
 
+    /**
+     * @var Filter
+     */
     protected $filterService;
 
     protected $sortService;
@@ -24,6 +27,10 @@ class Dynamic
     protected $paginateService;
 
     protected $fieldsService;
+
+    protected $table;
+
+    protected $view;
 
     public function __construct(
         Session $session,
@@ -95,6 +102,21 @@ class Dynamic
         $this->sortService->setTable($table);
         $this->groupService->setTable($table);
         $this->fieldsService->setTable($table);
+    }
+
+    public function setView($view)
+    {
+        $this->view = $view;
+
+        $this->filterService->setView($view);
+        $this->sortService->setView($view);
+        $this->groupService->setView($view);
+        $this->fieldsService->setView($view);
+    }
+
+    public function getView()
+    {
+        return $this->view;
     }
 
     public function applyOnEntity($entity, $limit = true)

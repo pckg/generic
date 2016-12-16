@@ -75,17 +75,17 @@ class Export extends Controller
          * @T00D00 - hackish ...
          */
         $tabelize = (new Tabelize($entity))
-        ->setRecords($entity->all())
-        ->setEntity($entity)
-        ->setFields(
-            $table->listableFields->reduce(
-                function(Field $field) use ($table) {
-                    $fields = $_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view']['fields'] ?? [];
+            ->setRecords($entity->all())
+            ->setEntity($entity)
+            ->setFields(
+                $table->listableFields->reduce(
+                    function(Field $field) use ($table) {
+                        $fields = $this->dynamic->getFilterService()->getSession('fields');
 
-                    return !$fields || in_array($field->field, $fields);
-                }
-            )
-        );
+                        return !$fields || in_array($field->field, $fields);
+                    }
+                )
+            );
 
         $tabelize->setDataOnly();
         $strategy->setData($tabelize->transformRecords());

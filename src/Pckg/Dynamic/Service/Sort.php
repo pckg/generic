@@ -2,17 +2,9 @@
 
 use Pckg\Database\Entity;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Dynamic\Record\Table;
 
-class Sort
+class Sort extends AbstractService
 {
-
-    protected $table;
-
-    public function setTable(Table $table)
-    {
-        $this->table = $table;
-    }
 
     public function getSaveSortUrl()
     {
@@ -26,7 +18,7 @@ class Sort
 
     public function getAppliedSorts()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['sort'] ?? [];
+        return $this->getSession('sort');
     }
 
     public function getAvailableSorts()

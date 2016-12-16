@@ -10,6 +10,9 @@ class View extends Controller
 
     public function getShareViewAction(Table $table)
     {
+        /**
+         * @T00D00 - fix json encode
+         */
         return url(
                    'dynamic.record.view.share',
                    [
@@ -62,6 +65,9 @@ class View extends Controller
 
     public function getResetViewAction(Table $table)
     {
+        /**
+         * @T00D00
+         */
         $_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] = [];
 
         return $this->response()->redirect(-1);

@@ -5,25 +5,17 @@ use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
-use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Request\Data\Get;
 use Throwable;
 
-class Fields
+class Fields extends AbstractService
 {
-
-    protected $table;
 
     protected $get;
 
     public function __construct(Get $get)
     {
         $this->get = $get;
-    }
-
-    public function setTable(Table $table)
-    {
-        $this->table = $table;
     }
 
     public function getSaveFieldsUrl()
@@ -38,12 +30,12 @@ class Fields
 
     public function getAppliedFields()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['fields'] ?? [];
+        return $this->getSession('fields');
     }
 
     public function getAppliedRelations()
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id]['view']['relations'] ?? [];
+        return $this->getSession('relations');
     }
 
     public function getAvailableFields()
