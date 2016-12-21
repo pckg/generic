@@ -4,6 +4,7 @@ use Pckg\Dynamic\Controller\Export;
 use Pckg\Dynamic\Controller\Fields;
 use Pckg\Dynamic\Controller\FilterBy;
 use Pckg\Dynamic\Controller\GroupBy;
+use Pckg\Dynamic\Controller\Import;
 use Pckg\Dynamic\Controller\Records;
 use Pckg\Dynamic\Controller\SortBy;
 use Pckg\Dynamic\Controller\View;
@@ -331,6 +332,19 @@ class Dynamic extends Provider
                                  'resolvers' => [
                                      'table' => TableResolver::class,
                                      'type'  => ExportStrategy::class,
+                                 ],
+                             ],
+                         ]
+                     ) + array_merge_array(
+                         [
+                             'controller' => Import::class,
+                         ],
+                         [
+                             '/dynamic/tables/import/[table]' => [
+                                 'name'      => 'dynamic.record.import',
+                                 'view'      => 'importTable',
+                                 'resolvers' => [
+                                     'table' => TableResolver::class,
                                  ],
                              ],
                          ]

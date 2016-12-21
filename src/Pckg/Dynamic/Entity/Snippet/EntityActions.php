@@ -118,6 +118,16 @@ trait EntityActions
         );
     }
 
+    public function getImportUrl()
+    {
+        return url(
+            'dynamic.record.import',
+            [
+                'table' => $this->getDynamicTable(),
+            ]
+        );
+    }
+
     public function getSortUrl()
     {
         return url(

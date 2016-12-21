@@ -55,4 +55,9 @@ class Fields extends DatabaseEntity
                     ->where('dynamic_relation_type_id', 1);
     }
 
+    public function realFields()
+    {
+        return $this->where('dynamic_field_type_id', 19, '!=');
+    }
+
 }

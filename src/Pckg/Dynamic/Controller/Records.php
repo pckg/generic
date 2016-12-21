@@ -5,7 +5,6 @@ use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Relation\BelongsTo;
@@ -29,6 +28,7 @@ use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
+use Pckg\Manager\Upload;
 use Throwable;
 
 class Records extends Controller
@@ -729,19 +729,13 @@ class Records extends Controller
 
     public function postUploadAction(Table $table, Record $record, Field $field)
     {
-        $file = $_FILES['file'];
+        $upload = new Upload('file');
+        $success = $upload->validateUpload();
 
-        if ($file['error']) {
+        if ($success !== true) {
             return [
                 'success' => false,
-                'message' => 'Error uploading file ...',
-            ];
-        }
-
-        if (!$file['size']) {
-            return [
-                'success' => false,
-                'message' => 'Empty file size ...',
+                'message' => $success,
             ];
         }
 
@@ -749,19 +743,8 @@ class Records extends Controller
         $record->setEntity($entity);
 
         $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-        $name = Convention::url(substr($file['name'], 0, strrpos($file['name'], '.')));
-        $extension = substr($file['name'], strrpos($file['name'], '.'));
-        $i = 0;
-        do {
-            $filename = $name . ($i ? '_' . $i : '') . $extension;
-            $i++;
-        } while (is_file($dir . $filename));
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        move_uploaded_file($file['tmp_name'], $dir . $filename);
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
 
         $record->{$field->field} = $filename;
         $record->save($entity);

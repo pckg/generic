@@ -28,6 +28,7 @@ class Table extends DatabaseRecord
                 'add',
                 'options',
                 'export',
+                'import',
                 'view',
             ]
         );
