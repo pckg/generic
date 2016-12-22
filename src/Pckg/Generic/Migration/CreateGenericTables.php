@@ -5,6 +5,17 @@ use Pckg\Migration\Migration;
 class CreateGenericTables extends Migration
 {
 
+    /**
+     * Those packets need to be installed before this migration.
+     */
+    public function dependencies()
+    {
+        return [
+            // translatable, permissionable
+            CreateMenuTables::class,
+        ];
+    }
+
     public function up()
     {
         $this->languagesUp();
