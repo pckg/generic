@@ -454,7 +454,7 @@ class Dynamic extends Bootstrap
                 $element->setAttribute(
                     'data-refresh-url',
                     url(
-                        'dynamic.records.field.selectList',
+                        'dynamic.records.field.selectList' . ($this->record->id ? '' : '.none'),
                         [
                             'table'  => $this->table,
                             'field'  => $field,

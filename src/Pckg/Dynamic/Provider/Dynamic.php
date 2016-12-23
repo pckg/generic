@@ -169,6 +169,14 @@ class Dynamic extends Provider
                                      'record' => RecordResolver::class,
                                  ],
                              ],
+                             '/dynamic/records/field/[table]/[field]/none/select-list'        => [
+                                 'name'      => 'dynamic.records.field.selectList.none',
+                                 'view'      => 'selectList',
+                                 'resolvers' => [
+                                     'table' => TableResolver::class,
+                                     'field' => FieldResolver::class,
+                                 ],
+                             ],
                              '/dynamic/records/field/[table]/[field]/[record]/select-list'    => [
                                  'name'      => 'dynamic.records.field.selectList',
                                  'view'      => 'selectList',

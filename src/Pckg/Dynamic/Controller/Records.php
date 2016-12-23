@@ -58,7 +58,7 @@ class Records extends Controller
     public function getSelectListAction(
         Table $table,
         Field $field,
-        Record $record
+        Record $record = null
     )
     {
         $collection = new Collection();
