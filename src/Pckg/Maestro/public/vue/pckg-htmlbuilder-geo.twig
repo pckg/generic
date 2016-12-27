@@ -1,0 +1,24 @@
+<script type="text/x-template" id="pckg-htmlbuilder-geo">
+    <div class="pckg-htmlbuilder-geo">
+        <button type="button" @click.prevent="openMap()" class="btn btn-info btn-md" title="Open map">
+            <i class="fa fa-globe" aria-hidden="true"></i>
+        </button>
+
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pckgHtmlbuilderGeoModal'} %}
+            {% block header %}
+                Change location
+            {% endblock %}
+            {% block body %}
+                <vue-component-gmaps selector="#gmap" id="gmap" theme="creation" :search-model="location_title" v-ref:gmap
+                                     :center="'46.055144,14.512284'"></vue-component-gmaps>
+            {% endblock %}
+        {% endembed %}
+    </div>
+</script>
+
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>

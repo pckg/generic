@@ -10,6 +10,7 @@ class DynamicAssets extends Provider
     {
         vueManager()->addComponent(
             [
+                'vendor/pckg/helpers-js/vue/gmaps',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-dynamic-paginator',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-bootstrap-alert',
@@ -20,11 +21,13 @@ class DynamicAssets extends Provider
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-tabelize-field-editor',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-dropzone',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-select',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-geo',
             ]
         );
 
         assetManager()->addAssets(
             [
+                'vendor/pckg/helpers-js/vue/gmaps.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-dynamic-paginator.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-maestro-table.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-bootstrap-alert.js',
@@ -35,6 +38,7 @@ class DynamicAssets extends Provider
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-tabelize-field-editor.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-htmlbuilder-dropzone.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-htmlbuilder-select.js',
+                'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-htmlbuilder-geo.js',
             ],
             'vue'
         );

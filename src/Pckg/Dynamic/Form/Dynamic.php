@@ -415,6 +415,15 @@ class Dynamic extends Bootstrap
         } elseif ($type == 'boolean') {
             return $this->addCheckbox($name);
 
+        } elseif ($type == 'point') {
+            return $this->addPoint($name);
+
+        } elseif ($type == 'geo') {
+            $element = $this->addGeo($name);
+            $element->setPrefix('<i class="fa fa-map-marker" aria-hidden="true"></i>');
+
+            return $element;
+
         } elseif ($type == 'select') {
             if ($this->record && $relation = $field->getRelationForSelect($this->record, $this->foreignRecord)) {
                 $element = $this->addSelect($name);
