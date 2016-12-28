@@ -3,8 +3,10 @@
 use Impero\Apache\Record\Site;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Query;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record as DatabaseRecord;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
@@ -39,7 +41,8 @@ class Record implements RouteResolver
         Tables $tables,
         Response $response,
         Dynamic $dynamic
-    ) {
+    )
+    {
         $this->router = $router;
         $this->tables = $tables;
         $this->response = $response;
@@ -58,6 +61,24 @@ class Record implements RouteResolver
 
         $this->dynamic->joinTranslationsIfTranslatable($this->tables);
         $this->dynamic->joinPermissionsIfPermissionable($this->tables);
+
+        $listableFields = $table->listableFields(
+            function(HasMany $relation) {
+                $relation->withFieldType();
+            }
+        );
+        $listableFields->each(
+            function(Field $field) {
+                if ($field->fieldType->slug == 'geo') {
+                    $this->tables->addSelect(
+                        [
+                            $field->field . '_x' => 'X(' . $field->field . ')',
+                            $field->field . '_y' => 'Y(' . $field->field . ')',
+                        ]
+                    );
+                }
+            }
+        );
 
         return $this->tables->where('id', $value)
                             ->oneOrFail(

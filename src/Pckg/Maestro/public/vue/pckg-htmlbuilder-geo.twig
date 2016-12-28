@@ -6,18 +6,26 @@
 
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pckgHtmlbuilderGeoModal'} %}
             {% block header %}
-                Change location
+                Select location
             {% endblock %}
             {% block body %}
-                <vue-component-gmaps selector="#gmap" id="gmap" theme="creation" :search-model="location_title" v-ref:gmap
-                                     :center="'46.055144,14.512284'"></vue-component-gmaps>
+                <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search.sync="search" v-ref:gmap
+                                     center="46.055144,14.512284" :zoom="10"
+                                     :locations="[{geo:[30, 40]}]"></vue-component-gmaps>
+
+                {{ _formService.open() | raw }}
+                {{ _formService.addText('search').setAttribute('v-model', 'search').setLabel('Search') | raw }}
+                {{ _formService.close() | raw }}
+            {% endblock %}
+            {% block footer %}
+                <button type="button" class="btn btn-success" data-dismiss="modal" @click.prevent="selectAndClose">Select and close</button>
             {% endblock %}
         {% endembed %}
     </div>
 </script>
 
 <style>
-    #map {
+    #gmap {
         height: 400px;
         width: 100%;
     }

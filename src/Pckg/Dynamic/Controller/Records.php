@@ -188,6 +188,41 @@ class Records extends Controller
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
+        $listableFields = $tableRecord->listableFields(
+            function(HasMany $relation) {
+                $relation->withFieldType();
+            }
+        );
+
+        $fieldTransformations = ['tabelizeClass'];
+
+        /**
+         * Transform field type = php
+         * Add support for point fields.
+         */
+        $listableFields->each(
+            function(Field $field) use (&$fieldTransformations, $entity) {
+                if ($field->fieldType->slug == 'php') {
+                    $fieldTransformations[$field->field] = function($record) use ($field) {
+                        return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
+                    };
+                } elseif ($field->fieldType->slug == 'geo') {
+                    $entity->addSelect(
+                        [
+                            $field->field . '_x' => 'X(' . $field->field . ')',
+                            $field->field . '_y' => 'Y(' . $field->field . ')',
+                        ]
+                    );
+                    $fieldTransformations[$field->field] = function($record) use ($field) {
+                        $value = $record->{$field->field};
+
+                        return $value
+                            ? $record->{$field->field . '_x'} . ';' . $record->{$field->field . '_y'}
+                            : null;
+                    };
+                }
+            }
+        );
         /**
          * @T00D00
          *  - find out joins / scopes / withs for field type = php
@@ -198,25 +233,6 @@ class Records extends Controller
         foreach ($groups as $group) {
             $records = $records->groupBy($group['field']);
         }
-
-        $fieldTransformations = ['tabelizeClass'];
-
-        /**
-         * Transform field type = php
-         */
-        $tableRecord->listableFields(
-            function(HasMany $relation) {
-                $relation->withFieldType();
-            }
-        )->each(
-            function(Field $field) use (&$fieldTransformations) {
-                if ($field->fieldType->slug == 'php') {
-                    $fieldTransformations[$field->field] = function($record) use ($field) {
-                        return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
-                    };
-                }
-            }
-        );
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
@@ -373,7 +389,12 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table)
     {
-        if (!$table->listableFields->count()) {
+        $listableFields = $table->listableFields(
+            function(HasMany $relation) {
+                $relation->withFieldType();
+            }
+        );
+        if (!$listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
         }
 

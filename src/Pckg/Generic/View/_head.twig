@@ -19,14 +19,22 @@
     props.locale = '{{ _localeManager.getCurrent() }}';
 </script>
 
+<!-- libraries and main css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
 
+<!-- vue components -->
 {{ _vueManager.getComponents() | raw }}
+
+<!-- vue filters -->
 {{ _vueManager.getFilters() | raw }}
 
+<!-- google fonts-->
 {{ _assetManager.getGoogleFonts() | raw }}
+
+<!-- external assets-->
 {{ _assetManager.getExternals() | raw }}
 
+<!--  vue css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 
 <script>

@@ -14,6 +14,7 @@
             {% endif %}
             {% if block('footer') or close %}
             <div class="modal-footer">
+                {% block footer %}{% endblock %}
                 {% if close %}<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>{% endif %}
             </div>
             {% endif %}
