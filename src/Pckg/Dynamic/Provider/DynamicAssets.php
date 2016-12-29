@@ -26,10 +26,6 @@ class DynamicAssets extends Provider
         );
 
         assetManager()->addAssets(
-            'https://maps.googleapis.com/maps/api/js?key=AIzaSyBCHbpY1ILUr8UxuXHVILfXbjXQ1fX7-fA&sensor=false&libraries=places'
-        );
-
-        assetManager()->addAssets(
             [
                 'vendor/pckg/helpers-js/vue/gmaps.js',
                 'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-dynamic-paginator.js',
