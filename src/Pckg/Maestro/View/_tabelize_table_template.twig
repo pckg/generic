@@ -25,7 +25,7 @@
             <template v-if="depth < 1">
                 <thead>
                 <tr>
-                    <th v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''"
+                    <th v-for="field in fields" v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''"
                         class="affix-thead-container">
                         <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
                             <div>
@@ -73,22 +73,22 @@
                 <tbody>
                 <tr v-for="record in records | filterBy search"
                     v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
-                    <td v-for="field in fields" v-bind:class="field.fieldType.slug ? field.fieldType.slug : ''">
-                        <template v-if="field.fieldType.slug == 'boolean'">
+                    <td v-for="field in fields" v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
+                        <template v-if="field.fieldType && field.fieldType.slug == 'boolean'">
                             <pckg-tabelize-field-boolean :field="field.id"
                                                          :record="record.id"
                                                          :value="record[field.field ? field.field : field]"
                                                          :table="table"
                                                          :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
                         </template>
-                        <template v-if="field.fieldType.slug == 'order'">
+                        <template v-if="field.fieldType && field.fieldType.slug == 'order'">
                             <pckg-tabelize-field-order :field="field.id"
                                                        :record="record.id"
                                                        :value="record[field.field ? field.field : field]"
                                                        :table="table"
                                                        :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
                         </template>
-                        <template v-if="field.fieldType.slug == 'datetime' && field.isTogglable">
+                        <template v-if="field.fieldType && field.fieldType.slug == 'datetime' && field.isTogglable">
                             <pckg-tabelize-field-datetime :field="field.id"
                                                           :record="record.id"
                                                           :value="record[field.field ? field.field : field]"
@@ -97,12 +97,12 @@
                                                           :max="field.maxTogglable"
                                                           :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
                         </template>
-                        <template v-if="field.fieldType.slug == 'editor'">
+                        <template v-if="field.fieldType && field.fieldType.slug == 'editor'">
                             <pckg-tabelize-field-editor
                                     :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
                         </template>
                         <template
-                                v-if="!field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
+                                v-if="!field.fieldType || !field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
                             !${ record[field.field ? field.field : field] }
                         </template>
                     </td>
