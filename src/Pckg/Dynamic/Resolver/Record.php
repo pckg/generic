@@ -1,12 +1,11 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
-use Impero\Apache\Record\Site;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Query;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Tables;
-use Pckg\Dynamic\Record\Field;
+use Pckg\Dynamic\Record\Field as FieldRecord;
 use Pckg\Dynamic\Record\Record as DatabaseRecord;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
@@ -68,7 +67,7 @@ class Record implements RouteResolver
             }
         );
         $listableFields->each(
-            function(Field $field) {
+            function(FieldRecord $field) {
                 if ($field->fieldType->slug == 'geo') {
                     $this->tables->addSelect(
                         [
