@@ -25,6 +25,7 @@ use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
+use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
@@ -331,10 +332,6 @@ class Records extends Controller
 
     public function postAddAction(Dynamic $form, Record $record, Table $table, Entity $entity)
     {
-        if ($this->post('copy_to_language')) {
-            die('copying to language is not implemented ... yet ;-)');
-        }
-
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->setEntity($entity);
@@ -621,10 +618,6 @@ class Records extends Controller
         Entity $entity
     )
     {
-        if ($this->post('copy_to_language')) {
-            die('copying to language is not implemented ... yet ;-)');
-        }
-
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->setEntity($entity);
@@ -640,6 +633,10 @@ class Records extends Controller
         $form->populateToRecord($record);
         $form->populatePasswords($record);
 
+        if ($record->language_id) {
+            $lang = (new Lang())->setLangId($record->language_id);
+            $entity->setTranslatableLang($lang);
+        }
         $record->save($entity);
 
         if ($this->post()->p17n) {

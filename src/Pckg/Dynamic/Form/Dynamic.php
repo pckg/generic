@@ -123,13 +123,14 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - field language_id could/will interfere with main table fields ...
          */
+        $sessionLanguageId = session()->pckg_dynamic_lang_id ?? 'en';
+        $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')
-             ->setValue($this->record ? $this->record->language_id : null)
+             ->setValue($languageId)
              ->addOptions($languages)
              ->setLabel('Language');
         if ($this->isEditable()) {
             $this->addSubmit('switch_language')->setValue('Switch language');
-            $this->addSubmit('copy_to_language')->setValue('Copy to language');
         }
 
         return $this;
