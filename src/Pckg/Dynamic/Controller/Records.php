@@ -350,6 +350,12 @@ class Records extends Controller
 
         $form->populateFromRequest();
         $form->populateToRecord($record);
+        $form->populatePasswords($record);
+
+        if ($record->language_id) {
+            $lang = (new Lang())->setLangId($record->language_id);
+            $entity->setTranslatableLang($lang);
+        }
 
         $record->save($entity);
 
@@ -623,6 +629,9 @@ class Records extends Controller
         $record->setEntity($entity);
 
         $form->setTable($table);
+
+        // @T00D00 - check if we can uncomment this?
+        // $form->setRecord($record);
         $form->initFields();
 
         if ($entity->isTranslatable()) {
