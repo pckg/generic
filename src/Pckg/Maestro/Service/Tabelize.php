@@ -491,6 +491,10 @@ class Tabelize
             }*/
         }
 
+        if (!isset($transformed['id'])) {
+            $transformed['id'] = $record->id;
+        }
+
         return $transformed;
     }
 
