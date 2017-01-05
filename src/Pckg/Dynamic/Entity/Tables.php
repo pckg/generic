@@ -29,7 +29,6 @@ class Tables extends DatabaseEntity implements MaestroEntity
         return $this->hasMany(
             Fields::class,
             function(HasMany $fields) {
-                $fields->joinTranslation();
                 //$hasMany->joinPermissionTo('view');
             }
         )

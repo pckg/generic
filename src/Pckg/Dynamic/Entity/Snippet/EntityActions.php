@@ -42,11 +42,7 @@ trait EntityActions
 
     public function getSavedViews()
     {
-        return $this->getDynamicTable()->views(
-            function($relation) {
-                $relation->joinTranslations();
-            }
-        );
+        return $this->getDynamicTable()->views;
     }
 
     public function getDynamicTable()

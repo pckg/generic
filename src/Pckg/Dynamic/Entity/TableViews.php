@@ -13,6 +13,11 @@ class TableViews extends DatabaseEntity
 
     protected $record = TableView::class;
 
+    public function boot()
+    {
+        $this->joinTranslations();
+    }
+
     public function table()
     {
         return $this->belongsTo(Tables::class)

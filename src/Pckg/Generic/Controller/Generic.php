@@ -92,12 +92,12 @@ class Generic
         );
     }
 
-    public function getLanguagesAction(Languages $languages)
+    public function getLanguagesAction()
     {
         return view(
             'languages',
             [
-                'languages' => $languages->joinTranslations()->all(),
+                'languages' => (new Languages())->all(),
             ]
         );
     }

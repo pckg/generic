@@ -13,6 +13,11 @@ class MenuItems extends Entity
 
     protected $record = MenuItem::class;
 
+    public function boot()
+    {
+        $this->joinTranslations();
+    }
+
     public function menuItems()
     {
         return $this->hasMany(MenuItems::class)

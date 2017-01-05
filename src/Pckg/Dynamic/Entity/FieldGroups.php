@@ -13,4 +13,10 @@ class FieldGroups extends DatabaseEntity
 
     protected $record = FieldGroup::class;
 
+    public function boot()
+    {
+        $this->joinTranslations();
+        $this->joinFallbackTranslation();
+    }
+
 }

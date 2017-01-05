@@ -4,7 +4,6 @@ namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Translatable;
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphsMany;
 use Pckg\Generic\Record\Route;
@@ -43,22 +42,18 @@ class Routes extends Entity
      */
     public function inExtendedContext()
     {
-        return $this->withLayout(
-            function(BelongsTo $relation) {
-                $relation->joinTranslations();
+        return $this->withLayout()
+                    ->withActions(
+                        function(MorphsMany $relation) {
+                            $relation->getMiddleEntity()->withVariable();
+                            $relation->withContents(
+                                function(HasMany $relation) {
+                                    $relation->joinTranslations();
 
-            }
-        )->withActions(
-            function(MorphsMany $relation) {
-                $relation->getMiddleEntity()->withVariable();
-                $relation->withContents(
-                    function(HasMany $relation) {
-                        $relation->joinTranslations();
-
-                    }
-                );
-            }
-        );
+                                }
+                            );
+                        }
+                    );
     }
 
 }

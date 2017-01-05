@@ -17,6 +17,12 @@ class Fields extends DatabaseEntity
 
     protected $table = 'dynamic_fields';
 
+    public function boot()
+    {
+        $this->joinTranslations();
+        $this->joinFallbackTranslation();
+    }
+
     /**
      * @return \Pckg\Database\Relation\BelongsTo
      */

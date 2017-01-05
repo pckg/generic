@@ -35,8 +35,6 @@ class Table implements RouteResolver
                 return $tables->where('id', $value)
                               ->withFields(
                                   function(HasMany $fields) {
-                                      $fields->joinTranslation();
-                                      $fields->joinFallbackTranslation();
                                       $fields->withFieldType();
                                       $fields->withSettings();
                                   }

@@ -29,7 +29,7 @@ class View extends Controller
         return view(
             'Pckg/Dynamic:view/save',
             [
-                'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->joinTranslation()->all(
+                'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(
                 ),
                 'saveCurrentViewUrl' => url(
                     'dynamic.record.view.save',

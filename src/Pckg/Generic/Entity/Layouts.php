@@ -21,6 +21,11 @@ class Layouts extends Entity
      */
     protected $record = Layout::class;
 
+    public function boot()
+    {
+        $this->joinTranslations();
+    }
+
     public function actions()
     {
         return $this->morphedBy(Actions::class)

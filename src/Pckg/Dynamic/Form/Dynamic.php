@@ -110,8 +110,7 @@ class Dynamic extends Bootstrap
 
     public function initLanguageFields()
     {
-        $languages = (new Languages())->joinTranslation()
-                                      ->all()
+        $languages = (new Languages())->all()
                                       ->keyBy('slug')
                                       ->map('title');
 
@@ -203,7 +202,7 @@ class Dynamic extends Bootstrap
 
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
-                $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
+                $fields->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withFieldType();
                 $fields->withPermissions();
                 $fields->joinFallbackTranslation();
@@ -213,12 +212,7 @@ class Dynamic extends Bootstrap
                         $relation->withShowTable();
                     }
                 );
-                $fields->withFieldGroup(
-                    function(BelongsTo $fieldGroup) {
-                        $fieldGroup->joinTranslation();
-                        $fieldGroup->joinFallbackTranslation();
-                    }
-                );
+                $fields->withFieldGroup();
             }
         );
 
