@@ -69,6 +69,17 @@ trait EntityActions
             : false;
     }
 
+    public function isTranslated()
+    {
+        foreach ($this->getQuery()->getJoin() as $join) {
+            if (is_string($join) && strpos($join, '`' . $this->getTable() . '_i18n`')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isPermissionable()
     {
         return isset($this->permissionableTableSuffix)

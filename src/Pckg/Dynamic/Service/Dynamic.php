@@ -68,6 +68,10 @@ class Dynamic
 
     public function joinTranslationsIfTranslatable($entity)
     {
+        if ($entity->isTranslated()) {
+            return;
+        }
+
         if ($entity->isTranslatable()) {
             $session = $this->session;
             $entity->joinTranslation(
