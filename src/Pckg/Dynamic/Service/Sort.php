@@ -93,8 +93,7 @@ class Sort extends AbstractService
 
             } else if ($cache->tableHasField($entity->getTable(), 'dt_published')) {
                 $entity->orderBy(
-                    'IF(`' . $entity->getTable(
-                    ) . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, id ASC'
+                    'IF(`' . $entity->getTable() . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, `' . $entity->getTable() . '`.id ASC'
                 );
 
             } else {
