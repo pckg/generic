@@ -108,7 +108,7 @@ class Table extends DatabaseRecord
     /**
      * @return Entity
      */
-    public function createEntity()
+    public function createEntity($alias = null)
     {
         $repository = $this->repository
             ? context()->get(Repository::class . '.' . $this->repository)
@@ -116,7 +116,7 @@ class Table extends DatabaseRecord
         $entityClass = $this->framework_entity
             ? $this->framework_entity
             : Entity::class;
-        $entity = new $entityClass($repository);
+        $entity = new $entityClass($repository, $alias);
         $entity->setTable($this->table);
 
         return $entity;

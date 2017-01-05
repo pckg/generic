@@ -160,9 +160,8 @@ class Records extends Controller
             /**
              * Right table entity is created here.
              */
-            $relationEntity = $relation->showTable->createEntity();
             $alias = $relation->alias ?? $relation->showTable->table;
-            $relationEntity->setAlias($alias);
+            $relationEntity = $relation->showTable->createEntity($alias);
             $dynamicService->joinTranslationsIfTranslatable($relationEntity);
 
             /**
@@ -173,7 +172,7 @@ class Records extends Controller
              * as user.relation_user_group_id and user.relation_language_id.
              */
             $entity->with(
-                (new BelongsTo($entity, $relationEntity))
+                (new BelongsTo($entity, $relationEntity, $alias))
                     ->foreignKey($relation->onField->field)
                     ->fill('relation_' . $relation->onField->field)
                     ->after(
