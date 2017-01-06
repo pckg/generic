@@ -6,6 +6,7 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Framework\Inter\Entity\Languages;
 use Pckg\Framework\Provider\RouteResolver;
 use Pckg\Framework\Response;
 use Pckg\Framework\Router;

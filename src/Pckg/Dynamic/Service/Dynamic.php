@@ -68,13 +68,13 @@ class Dynamic
 
     public function joinTranslationsIfTranslatable($entity)
     {
-        if ($entity->isTranslated()) {
-            return;
-        }
-
         if ($entity->isTranslatable()) {
+            if (method_exists($entity, 'isTranslated') && $entity->isTranslated()) {
+                return;
+            }
+
             $session = $this->session;
-            $entity->joinTranslation(
+            $entity->joinTranslations(
                 function(Entity $entity) use ($session) {
                     $entity->setTranslatableLang((new Lang())->setLangId($session->pckg_dynamic_lang_id ?: 'en'));
                 }

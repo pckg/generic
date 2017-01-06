@@ -105,14 +105,28 @@ class Table extends DatabaseRecord
             );
     }
 
+    public function getRepository()
+    {
+        $r = $this->repository;
+
+        // @T00D00 - @T3MP
+        if ($r == 'gnp') {
+            $r = 'default';
+        } elseif ($r == 'derive') {
+            $r = 'dynamic';
+        } elseif (!$r) {
+            $r = 'dynamic';
+        }
+
+        return context()->get(Repository::class . '.' . $r);
+    }
+
     /**
      * @return Entity
      */
     public function createEntity($alias = null)
     {
-        $repository = $this->repository
-            ? context()->get(Repository::class . '.' . $this->repository)
-            : null;
+        $repository = $this->getRepository();
         $entityClass = $this->framework_entity
             ? $this->framework_entity
             : Entity::class;

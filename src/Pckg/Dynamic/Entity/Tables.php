@@ -5,6 +5,7 @@ use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Database\Entity\Extension\Permissionable;
 use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Repository;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
@@ -16,6 +17,8 @@ class Tables extends DatabaseEntity implements MaestroEntity
     protected $record = Table::class;
 
     protected $table = 'dynamic_tables';
+
+    protected $repositoryName = Repository::class . '.dynamic';
 
     public function fields()
     {

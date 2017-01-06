@@ -4,6 +4,7 @@ use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Orderable;
 use Pckg\Database\Entity\Extension\Permissionable;
 use Pckg\Database\Entity\Extension\Translatable;
+use Pckg\Database\Repository;
 use Pckg\Generic\Record\MenuItem;
 
 class MenuItems extends Entity
@@ -12,6 +13,8 @@ class MenuItems extends Entity
     use Translatable, Orderable, Permissionable;
 
     protected $record = MenuItem::class;
+
+    protected $repositoryName = Repository::class . '.dynamic';
 
     public function boot()
     {

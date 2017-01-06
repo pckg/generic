@@ -4,6 +4,7 @@ namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Translatable;
+use Pckg\Database\Repository;
 use Pckg\Generic\Record\Content;
 
 /**
@@ -20,6 +21,8 @@ class Contents extends Entity
      * @var
      */
     protected $record = Content::class;
+
+    protected $repositoryName = Repository::class . '.dynamic';
 
     public function actions()
     {

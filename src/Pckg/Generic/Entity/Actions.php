@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Repository;
 use Pckg\Generic\Record\Action;
 
 /**
@@ -17,6 +18,8 @@ class Actions extends Entity
      * @var
      */
     protected $record = Action::class;
+
+    protected $repositoryName = Repository::class . '.dynamic';
 
     public function layouts()
     {

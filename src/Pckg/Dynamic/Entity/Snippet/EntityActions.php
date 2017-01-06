@@ -58,22 +58,28 @@ trait EntityActions
         return static::$dynamicTable;
     }
 
+    public function isTranslated()
+    {
+        foreach ($this->getQuery()->getJoin() as $join) {
+            if ($this->getAlias()) {
+                if (is_string($join) && strpos($join, '`' . $this->getAlias() . '_i18n`')) {
+                    return true;
+                }
+            } else {
+                if (is_string($join) && strpos($join, '`' . $this->getTable() . '_i18n`')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function isTranslatable()
     {
         return isset($this->translatableTableSuffix)
             ? $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix)
             : false;
-    }
-
-    public function isTranslated()
-    {
-        foreach ($this->getQuery()->getJoin() as $join) {
-            if (is_string($join) && strpos($join, '`' . $this->getTable() . '_i18n`')) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function isPermissionable()

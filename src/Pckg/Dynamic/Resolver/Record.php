@@ -55,7 +55,7 @@ class Record implements RouteResolver
         $this->tables->setRecordClass(DatabaseRecord::class);
 
         if ($table->repository) {
-            $this->tables->setRepository(context()->get(Repository::class . '.' . $table->repository));
+            $this->tables->setRepository($table->getRepository());
         }
 
         $this->dynamic->joinTranslationsIfTranslatable($this->tables);
