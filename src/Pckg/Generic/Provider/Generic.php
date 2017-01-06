@@ -2,7 +2,9 @@
 
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
+use Pckg\Framework\View\Event\RenderingView;
 use Pckg\Generic\Controller\Generic as GenericController;
+use Pckg\Generic\Middleware\RegisterGenericAssets;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
@@ -25,6 +27,15 @@ class Generic extends Provider
             ],
             'method' => [
                 GenericService::class . '::addRoutesFromDb',
+            ],
+        ];
+    }
+
+    public function listeners()
+    {
+        return [
+            RenderingView::class => [
+                RegisterGenericAssets::class,
             ],
         ];
     }

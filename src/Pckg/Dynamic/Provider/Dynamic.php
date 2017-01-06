@@ -37,7 +37,6 @@ class Dynamic extends Provider
         return [
             RenderingView::class => [
                 RegisterDynamicAssets::class,
-                RegisterGenericAssets::class,
             ],
         ];
     }

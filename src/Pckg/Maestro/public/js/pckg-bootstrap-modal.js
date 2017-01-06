@@ -7,7 +7,8 @@ var pckgBootstrapModalComponent = Vue.component('pckg-bootstrap-modal', {
         dismissable: true,
         id: null,
         visible: null,
-        style: null
+        style: null,
+        size: null
     },
     data: function () {
         return {
