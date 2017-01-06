@@ -630,7 +630,7 @@ class Records extends Controller
         $form->setTable($table);
 
         // @T00D00 - check if we can uncomment this?
-        // $form->setRecord($record);
+        $form->setRecord($record);
         $form->initFields();
 
         if ($entity->isTranslatable()) {
