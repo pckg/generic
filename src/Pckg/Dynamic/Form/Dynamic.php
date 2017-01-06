@@ -104,7 +104,7 @@ class Dynamic extends Bootstrap
         $provider = $field->getSetting('pckg.dynamic.field.passwordProvider');
 
         $record->password = $provider
-            ? auth($provider)->makePassword($password)
+            ? auth($provider)->hashPassword($password)
             : $password;
     }
 
