@@ -10,7 +10,6 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
-use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Request\Data\Get;
 use Throwable;
 
@@ -57,25 +56,40 @@ class Filter extends AbstractService
 
     public function getAvailableRelationFilters()
     {
-        return $this->table->relations->eachNew(
+        return $this->table->relations->map(
             function(Relation $relation) {
                 $entity = $relation->showTable->createEntity();
 
-                $options = $relation->onField && $relation->dynamic_relation_type_id == 1 ? $entity->all()->eachNew(
-                    function($record) use ($relation, $entity) {
-                        try {
-                            $eval = eval(' return ' . $relation->value . '; ');
-                        } catch (Throwable $e) {
-                            $eval = exception($e);
-                        }
+                /**
+                 * @T00D00 - load via ajax if possible?
+                 *         - optimize related selects like ($relation->value = '$record->order->user->city->title' ;-))
+                 */
+                $options = $relation->onField && $relation->dynamic_relation_type_id == 1
+                    ? $entity->limit(100)
+                             ->all()
+                             ->map(
+                                 function($record
+                                 ) use (
+                                     $relation,
+                                     $entity
+                                 ) {
+                                     try {
+                                         $eval = eval(' return ' . $relation->value . '; ');
+                                     } catch (Throwable $e) {
+                                         $eval = dev()
+                                             ? exception(
+                                                 $e
+                                             )
+                                             : $record->id;
+                                     }
 
-                        return [
-                            'key'   => $record->id,
-                            'value' => $eval,
-                        ];
-                    },
-                    true
-                ) : [];
+                                     return [
+                                         'key'   => $record->id,
+                                         'value' => $eval,
+                                     ];
+                                 },
+                                 true
+                             ) : [];
 
                 return [
                     'id'      => $relation->id,

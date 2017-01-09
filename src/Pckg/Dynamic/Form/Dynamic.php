@@ -2,7 +2,6 @@
 
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
@@ -140,7 +139,7 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - this should be handled separately, like in different form or even different page/tab.
          */
-        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->eachNew(
+        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->map(
             function($permissions) {
                 return (new Collection($permissions))->keyBy('action');
             }
