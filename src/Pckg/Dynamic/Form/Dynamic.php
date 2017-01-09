@@ -136,6 +136,7 @@ class Dynamic extends Bootstrap
 
     public function initPermissionFields()
     {
+        return;
         /**
          * @T00D00 - this should be handled separately, like in different form or even different page/tab.
          */
