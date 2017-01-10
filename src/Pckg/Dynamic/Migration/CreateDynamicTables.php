@@ -1,9 +1,20 @@
 <?php namespace Pckg\Dynamic\Migration;
 
+use Pckg\Auth\Migration\CreateAuthTables;
+use Pckg\Database\Repository;
 use Pckg\Migration\Migration;
 
 class CreateDynamicTables extends Migration
 {
+
+    protected $repository = Repository::class . '.dynamic';
+
+    public function partials()
+    {
+        return [
+            (new CreateAuthTables())->setRepository($this->repository),
+        ];
+    }
 
     public function up()
     {
