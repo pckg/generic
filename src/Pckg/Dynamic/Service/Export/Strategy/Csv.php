@@ -16,6 +16,16 @@ class Csv extends AbstractStrategy
 
         $fp = fopen($file, 'w');
 
+        /**
+         * Add header.
+         */
+        if ($this->getData()) {
+            fputcsv($fp, array_keys($this->getData()[0]));
+        }
+
+        /**
+         * Add data.
+         */
         foreach ($this->getData() as $line) {
             fputcsv($fp, $line);
         }
