@@ -69,7 +69,7 @@ class Import extends Controller
         }
 
         $csv = Reader::createFromString($upload->getContent());
-        $csv->setDelimiter(';');
+        //$csv->setDelimiter(';');
         $headers = $csv->fetchOne();
         $data = collect($csv->setOffset(1)->fetchAll());
 
@@ -97,33 +97,69 @@ class Import extends Controller
         );
 
         $mapped->each(
-            function($item) use ($uniqueFields, $entity) {
-                $values = [];
-                $uniqueFields->each(
-                    function(Field $field) use ($item, &$values) {
-                        if (array_key_exists($field->field, $item)) {
-                            $values[$field->field] = $item[$field->field];
-                        }
+            function($item) use ($uniqueFields, $availableFields, $entity, $table) {
+                $locales = [];
+                foreach ($item as $field => $value) {
+                    if ($pos = strpos($field, '*')) {
+                        $locale = substr($field, $pos + 1);
+                        $locales[$locale] = $locale;
                     }
-                );
-
-                if ($uniqueFields) {
-                    /**
-                     * Check for existing records.
-                     */
-                    $record = Record::getOrCreate($values, $entity);
-                    $record->set($item);
-                } else {
-                    /**
-                     * Create new record.
-                     */
-                    $record = new Record($item);
                 }
 
-                /**
-                 * Save record.
-                 */
-                $record->save($entity);
+                $prevRecord = null;
+                foreach ($locales as $locale) {
+                    $uniqueValues = [];
+                    $uniqueFields->each(
+                        function(Field $field) use ($item, &$uniqueValues) {
+                            if (array_key_exists($field->field, $item)) {
+                                $uniqueValues[$field->field] = $item[$field->field];
+                            }
+                        }
+                    );
+
+                    $values = [];
+                    $availableFields->each(
+                        function(Field $field) use ($item, &$values, $locale) {
+                            if (array_key_exists($field->field . '*' . $locale, $item)) {
+                                $values[$field->field] = $item[$field->field . '*' . $locale];
+
+                            } elseif (array_key_exists($field->field, $item)) {
+                                $values[$field->field] = $item[$field->field];
+
+                            }
+                        }
+                    );
+
+                    runInLocale(
+                        function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord) {
+                            $entity = $table->createEntity();
+                            if (!$prevRecord && $uniqueFields && $uniqueValues) {
+                                /**
+                                 * Check for existing records.
+                                 */
+                                $record = $prevRecord = Record::getOrCreate($uniqueValues, $entity);
+                            } elseif (!$prevRecord) {
+                                /**
+                                 * Create new record.
+                                 */
+                                $record = $prevRecord = new Record();
+                            } else {
+                                /**
+                                 * Update translation.
+                                 */
+                                $record = $prevRecord;
+                            }
+
+                            $record->set($values);
+
+                            /**
+                             * Save record.
+                             */
+                            $record->save($entity);
+                        },
+                        $locale
+                    );
+                }
             }
         );
 
