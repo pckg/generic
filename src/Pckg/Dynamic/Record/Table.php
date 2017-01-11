@@ -130,7 +130,12 @@ class Table extends DatabaseRecord
         $entityClass = $this->framework_entity
             ? $this->framework_entity
             : Entity::class;
-        $entity = new $entityClass($repository, $alias);
+        $entity = runInLocale(
+            function() use ($entityClass, $repository, $alias) {
+                return new $entityClass($repository, $alias);
+            },
+            session()->pckg_dynamic_lang_id ?? 'en'
+        );
         $entity->setTable($this->table);
 
         return $entity;
