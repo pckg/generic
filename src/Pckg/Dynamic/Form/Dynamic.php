@@ -256,7 +256,10 @@ class Dynamic extends Bootstrap
             $element = $this->createElementByType($type, $name, $field);
 
             if (($label = $field->label)) {
-                $element->setLabel($label);
+                $translatable = $field->isTranslatable($this->record->getEntity())
+                    ? '<span class="label label-info"><i class="fa fa-globe" aria-hidden="true"></i></span>'
+                    : '';
+                $element->setLabel($label . $translatable);
             }
 
             $element->setHelp($field->help);

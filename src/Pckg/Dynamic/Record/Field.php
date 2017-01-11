@@ -137,7 +137,7 @@ class Field extends DatabaseRecord
         if (!$entity) {
             return null;
         }
-        
+
         $dynamic->getFilterService()->filterByGet($entity);
 
         $relation = $this->hasOneSelectRelation;
@@ -255,6 +255,11 @@ class Field extends DatabaseRecord
     public function getLabelAttribute()
     {
         return $this->title ?? $this->field;
+    }
+
+    public function isTranslatable($entity)
+    {
+        return $entity->getRepository()->getCache()->tableHasField($entity->getTable() . '_i18n', $this->field);
     }
 
 }
