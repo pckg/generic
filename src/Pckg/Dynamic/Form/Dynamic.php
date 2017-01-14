@@ -121,7 +121,7 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - field language_id could/will interfere with main table fields ...
          */
-        $sessionLanguageId = session()->pckg_dynamic_lang_id ?? 'en';
+        $sessionLanguageId = session()->pckg_dynamic_lang_id;
         $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')
              ->setValue($languageId)

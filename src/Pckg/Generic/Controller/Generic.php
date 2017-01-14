@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Generic\Controller;
+<?php namespace Pckg\Generic\Controller;
 
 use Pckg\Database\Query;
 use Pckg\Framework\Inter\Entity\Languages;
@@ -35,13 +33,11 @@ class Generic
     protected $route;
 
     public function __construct(
-        AssetManager $assetManager,
         MetaManager $metaManager,
         SeoManager $seoManager,
         GenericService $genericService
     )
     {
-        $assetManager->executeCore();
         $metaManager->addViewport();
         $metaManager->addContentType();
 

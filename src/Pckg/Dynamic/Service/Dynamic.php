@@ -76,7 +76,7 @@ class Dynamic
             $session = $this->session;
             $entity->joinTranslations(
                 function(Entity $entity) use ($session) {
-                    $entity->setTranslatableLang((new Lang())->setLangId($session->pckg_dynamic_lang_id ?? 'en'));
+                    $entity->setTranslatableLang((new Lang())->setLangId($session->pckg_dynamic_lang_id));
                 }
             );
         }

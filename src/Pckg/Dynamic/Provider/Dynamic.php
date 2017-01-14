@@ -9,6 +9,7 @@ use Pckg\Dynamic\Controller\Records;
 use Pckg\Dynamic\Controller\SortBy;
 use Pckg\Dynamic\Controller\View;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
+use Pckg\Dynamic\Middleware\SetContentLanguage;
 use Pckg\Dynamic\Middleware\SwitchLanguage;
 use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
@@ -45,6 +46,13 @@ class Dynamic extends Provider
     {
         return [
             $this->getViewPaths(),
+        ];
+    }
+
+    public function middlewares()
+    {
+        return [
+            SetContentLanguage::class,
         ];
     }
 

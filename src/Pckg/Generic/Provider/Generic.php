@@ -31,15 +31,6 @@ class Generic extends Provider
         ];
     }
 
-    public function listeners()
-    {
-        return [
-            RenderingView::class => [
-                RegisterGenericAssets::class,
-            ],
-        ];
-    }
-
     public function paths()
     {
         return $this->getViewPaths();
