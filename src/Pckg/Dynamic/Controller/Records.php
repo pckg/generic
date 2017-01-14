@@ -25,6 +25,7 @@ use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
+use Pckg\Framework\Inter\Record\Language;
 use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
@@ -706,6 +707,14 @@ class Records extends Controller
     {
         $entity = $table->createEntity();
         $record->delete($entity);
+
+        return $this->response()->respondWithSuccessRedirect();
+    }
+
+    public function getDeleteTranslationAction(Record $record, Table $table, Language $language)
+    {
+        $entity = $table->createEntity();
+        $record->deleteTranslation($entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }

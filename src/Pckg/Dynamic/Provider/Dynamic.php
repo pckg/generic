@@ -13,6 +13,7 @@ use Pckg\Dynamic\Middleware\SetContentLanguage;
 use Pckg\Dynamic\Middleware\SwitchLanguage;
 use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
+use Pckg\Dynamic\Resolver\Language;
 use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
 use Pckg\Dynamic\Resolver\Tab as TabResolver;
@@ -129,6 +130,15 @@ class Dynamic extends Provider
                                  'resolvers' => [
                                      'table'  => TableResolver::class,
                                      'record' => RecordResolver::class,
+                                 ],
+                             ],
+                             '/dynamic/records/delete/[table]/[record]/[language]'            => [
+                                 'name'      => 'dynamic.record.deleteTranslation',
+                                 'view'      => 'deleteTranslation',
+                                 'resolvers' => [
+                                     'table'    => TableResolver::class,
+                                     'record'   => RecordResolver::class,
+                                     'language' => Language::class,
                                  ],
                              ],
                              '/dynamic/records/force-delete/[table]/[record]'                 => [

@@ -9,6 +9,9 @@
         {{ formalize.getTitle() | raw }}
         {% if not formalize.getForm().isEditable() and record.id %}
             <a href="{{ record.editUrl }}" class="btn btn-info pull-right">Edit</a>
+            {% if record.isTranslatable() %}
+                <a href="{{ record.deleteTranslationUrl }}" class="btn btn-danger pull-right">Delete translation</a>
+            {% endif %}
         {% elseif record.id %}
             [record actions from list]
         {% endif %}

@@ -1,6 +1,8 @@
 <?php namespace Pckg\Dynamic\Record\Snippet;
 
+use Pckg\Database\Entity;
 use Pckg\Database\Record\Extension\Deletable;
+use Pckg\Database\Repository;
 
 trait RecordActions
 {
@@ -53,6 +55,18 @@ trait RecordActions
         );
     }
 
+    public function getDeleteTranslationUrlAttribute()
+    {
+        return url(
+            'dynamic.record.deleteTranslation',
+            [
+                'table'    => static::$dynamicTable,
+                'record'   => $this,
+                'language' => session()->pckg_dynamic_lang_id,
+            ]
+        );
+    }
+
     public function getForceDeleteUrl()
     {
         return url(
@@ -72,6 +86,28 @@ trait RecordActions
                 'table' => $this,
             ]
         );
+    }
+
+    public function deleteTranslation($language, Entity $entity = null, Repository $repository = null)
+    {
+        if (!$entity) {
+            $entity = $this->getEntity();
+        }
+
+        if (!$repository) {
+            $repository = $entity->getRepository();
+        }
+
+        $deleted = $repository->deleteTranslation($this, $entity, $language);
+
+        return $deleted;
+    }
+
+    public function isTranslatable()
+    {
+        $entity = $this->getEntity();
+
+        return $entity->getRepository()->getCache()->hasTable($entity->getTable() . '_i18n');
     }
 
 }
