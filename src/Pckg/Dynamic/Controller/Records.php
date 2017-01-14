@@ -266,7 +266,7 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations);
 
-        if ($this->request()->isAjax() && (strpos($_SERVER['REQUEST_URI'], '/tab/') === false || get('search'))) {
+        if (($this->request()->isAjax() && !get('html')) || get('search')) {
             return [
                 'records'   => $tabelize->transformRecords(),
                 'groups'    => $groups,

@@ -58,14 +58,6 @@ Vue.component('pckg-dynamic-paginator', {
             this.resetpaginatorurl({
                 page: page
             });
-
-            Vue.nextTick(function () {
-                http.getJSON(this.url, function (data) {
-                    this.records = data.records;
-                    this.groups = data.groups;
-
-                }.bind(this));
-            }.bind(this));
         }
     }
 });

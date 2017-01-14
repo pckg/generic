@@ -82,6 +82,11 @@ table.table {
   td,
   th {
 
+    &.integer,
+    &.decimal,
+    &.order {
+      text-align: right;
+    }
   }
   td {
     &.num,
@@ -105,12 +110,6 @@ table.table {
     &.php {
       white-space: normal;
       word-break: normal;
-    }
-
-    &.integer,
-    &.decimal,
-    &.order {
-      text-align: right;
     }
 
     &.editor {

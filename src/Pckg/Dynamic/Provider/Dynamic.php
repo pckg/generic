@@ -21,7 +21,6 @@ use Pckg\Dynamic\Resolver\TableView as ViewResolver;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Provider\Frontend as FrontendProvider;
 use Pckg\Framework\View\Event\RenderingView;
-use Pckg\Generic\Middleware\RegisterGenericAssets;
 
 class Dynamic extends Provider
 {

@@ -53,8 +53,8 @@
         },
         methods: {
             loadAjaxTab: function (tabId, url) {
-                http.getJSON(url, function (json) {
-                    var $element = $('#dynamic-tab-' + tabId).html(json._html);
+                http.get(url + '?html=1', function (html) {
+                    var $element = $('#dynamic-tab-' + tabId).html(html);
                     this.$compile($element.get(0));
                 }.bind(this));
             }

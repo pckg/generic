@@ -74,6 +74,7 @@
                     });
 
                     this.$refs.maestroTable._sortTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {
+                        console.log("make sort");
                         this.records{{ instance }} = data.records;
                     }.bind(this));
                 },
@@ -95,7 +96,17 @@
                     return '?' + $.param(params);
                 },
                 resetPaginatorUrl{{ instance }}: function (preset) {
+                    console.log("prereset", this.paginator{{ instance }}.url);
                     this.paginator{{ instance }}.url = '{{ searchUrl }}' + this.getUrlParams{{ instance }}(preset);
+                    console.log("reseted", this.paginator{{ instance }}.url);
+
+                    http.getJSON(this.paginator{{ instance }}.url, function (data) {
+                        console.log("navigate", data.records);
+                        this.records{{ instance }} = data.records;
+                        this.groups{{ instance }} = data.groups;
+                        this.$set('x', true);
+                        this.$delete('x', true);
+                    }.bind(this));
                 }
             },
             watch: {
@@ -110,6 +121,7 @@
                     });
 
                     this.$refs.maestroTable._searchTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {
+                        console.log("search timeout");
                         this.records{{ instance }} = data.records;
                         this.paginator{{ instance }}.total = data.paginator.total;
                     }.bind(this));
