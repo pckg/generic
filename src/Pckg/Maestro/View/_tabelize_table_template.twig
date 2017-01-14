@@ -103,7 +103,8 @@
                         </template>
                         <template
                                 v-if="!field.fieldType || !field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
-                            !${ record[field.field ? field.field : field] }
+                            <template v-if="field.field == 'title' || field.field == 'id'"><a v-bind:href="record.viewUrl">!${ record[field.field ? field.field : field] }</a></template>
+                            <template v-else>!${ record[field.field ? field.field : field] }</template>
                         </template>
                     </td>
                     <td class="actions">
