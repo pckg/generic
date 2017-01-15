@@ -19,29 +19,31 @@ class Relations extends DatabaseEntity
     public function type()
     {
         return $this->belongsTo(RelationTypes::class)
-                    ->foreignKey('relation_type_id')
-                    ->fill('type');
+                    ->foreignKey('relation_type_id');
     }
 
     public function onTable()
     {
         return $this->belongsTo(Tables::class)
-                    ->foreignKey('on_table_id')
-                    ->fill('onTable');
+                    ->foreignKey('on_table_id');
     }
 
     public function onField()
     {
         return $this->belongsTo(Fields::class)
-                    ->foreignKey('on_field_id')
-                    ->fill('onField');
+                    ->foreignKey('on_field_id');
     }
 
     public function showTable()
     {
         return $this->belongsTo(Tables::class)
-                    ->foreignKey('show_table_id')
-                    ->fill('showTable');
+                    ->foreignKey('show_table_id');
+    }
+
+    public function foreignField()
+    {
+        return $this->belongsTo(Fields::class)
+                    ->foreignKey('foreign_field_id');
     }
 
 }

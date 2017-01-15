@@ -119,11 +119,12 @@ class Field extends DatabaseRecord
         }
 
         $relation = $this->hasOneSelectRelation;
+        $foreignField = $relation->foreign_field_id ? $relation->foreignField->field : 'id';
 
         $values = [];
         $entity->all()->each(
-            function($record) use ($relation, &$values) {
-                $values[$record->id] = $this->eval($relation->value, $record, $relation);
+            function($record) use ($relation, &$values, $foreignField) {
+                $values[$record->{$foreignField}] = $this->eval($relation->value, $record, $relation);
             }
         );
 
@@ -141,11 +142,12 @@ class Field extends DatabaseRecord
         $dynamic->getFilterService()->filterByGet($entity);
 
         $relation = $this->hasOneSelectRelation;
+        $foreignField = $relation->foreign_field_id ? $relation->foreignField->field : 'id';
 
         $values = [];
         $entity->all()->each(
-            function($record) use ($relation, &$values) {
-                $values[$record->id] = $this->eval($relation->value, $record, $relation);
+            function($record) use ($relation, &$values, $foreignField) {
+                $values[$record->{$foreignField}] = $this->eval($relation->value, $record, $relation);
             }
         );
 
