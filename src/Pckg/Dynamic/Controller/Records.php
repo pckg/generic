@@ -172,16 +172,15 @@ class Records extends Controller
              * We will fetch all users and related user_group_id and language_id
              * as user.relation_user_group_id and user.relation_language_id.
              */
-            $entity->with(
-                (new BelongsTo($entity, $relationEntity, $alias))
-                    ->foreignKey($relation->onField->field)
-                    ->fill('relation_' . $relation->onField->field)
-                    ->after(
-                        function($record) use ($relation) {
-                            $record->setRelation('select_relation_' . $relation->onField->field, $relation);
-                        }
-                    )
-            );
+            $belongsToRelation = (new BelongsTo($entity, $relationEntity, $alias))
+                ->foreignKey($relation->onField->field)
+                ->fill('relation_' . $relation->onField->field)
+                ->after(
+                    function($record) use ($relation) {
+                        $record->setRelation('select_relation_' . $relation->onField->field, $relation);
+                    }
+                );
+            $entity->with($belongsToRelation);
         }
 
         /**
