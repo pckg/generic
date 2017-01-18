@@ -8,4 +8,6 @@ class ActionsMorph extends Record
 
     protected $entity = ActionsMorphs::class;
 
+    protected $toArray = ['variable'];
+
 }

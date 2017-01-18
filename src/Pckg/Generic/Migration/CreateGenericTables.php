@@ -17,6 +17,8 @@ class CreateGenericTables extends Migration
             // translatable, permissionable
             CreateMenuTables::class,
             CreateLanguagesTable::class,
+            CreateSettingsTable::class,
+            CreateTranslationsTable::class,
         ];
     }
 
@@ -27,9 +29,6 @@ class CreateGenericTables extends Migration
         $this->variablesUp();
         $this->contentsUp();
         $this->actionsUp();
-        $this->menusUp();
-        $this->settingsUp();
-        $this->translationsUp();
 
         $this->save();
     }
@@ -91,58 +90,6 @@ class CreateGenericTables extends Migration
         $actionsMorphs->orderable();
 
         $actionsMorphsP17n = $this->permissiontable('actions_morphs');
-    }
-
-    protected function menusUp()
-    {
-        $menus = $this->table('menus');
-        $menus->slug();
-        $menus->varchar('template');
-
-        $menuItems = $this->table('menu_items');
-        $menuItems->orderable();
-        $menuItems->varchar('icon', 64);
-        $menuItems->integer('menu_id')->references('menus');
-        $menuItems->integer('parent_id')->references('menu_items');
-
-        $menuItemsI18n = $this->translatable('menu_items');
-        $menuItemsI18n->title();
-        $menuItemsI18n->varchar('url');
-
-        $menuItemsP17n = $this->permissiontable('menu_items');
-    }
-
-    protected function settingsUp()
-    {
-        $settingTypes = $this->table('setting_types');
-        $settingTypes->slug();
-
-        $settingTypesI18n = $this->translatable('setting_types');
-        $settingTypesI18n->title();
-
-        $settings = $this->table('settings');
-        $settings->integer('setting_type_id')->references('setting_types');
-
-        $settingsI18n = $this->translatable('settings');
-        $settingsI18n->text('value');
-
-        $settingsMorphs = $this->morphtable('settings', 'setting_id');
-        $settingsMorphs->varchar('value', 512);
-    }
-
-    protected function translationsUp()
-    {
-        $translationTypes = $this->table('translation_types');
-        $translationTypes->slug();
-
-        $translationTypesI18n = $this->translatable('translation_types');
-        $translationTypesI18n->title();
-
-        $translations = $this->table('translations');
-        $translations->slug();
-
-        $translationsI18n = $this->translatable('translations');
-        $translationsI18n->text('value');
     }
 
 }

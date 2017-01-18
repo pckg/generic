@@ -18,4 +18,6 @@ class Action extends Record
      */
     protected $entity = Actions::class;
 
+    protected $toArray = ['pivot'];
+
 }
