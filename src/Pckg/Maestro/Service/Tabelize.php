@@ -4,7 +4,6 @@ use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record as DatabaseRecord;
-use Pckg\Database\Record\RecordInterface;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
@@ -381,7 +380,7 @@ class Tabelize
                  * @T00D00 - this should be automatic ...
                  */
 
-                if (is_string($key) && in_array($key, ['delete','clone'])) {
+                if (is_string($key) && in_array($key, ['delete', 'clone'])) {
                     $view = $key;
                 }
 
@@ -451,7 +450,7 @@ class Tabelize
         return $records;
     }
 
-    protected function transformRecord(RecordInterface $record)
+    protected function transformRecord(DatabaseRecord $record)
     {
         $transformed = [];
 
