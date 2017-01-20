@@ -6,7 +6,6 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
-use Pckg\Framework\Inter\Entity\Languages;
 use Pckg\Framework\Provider\RouteResolver;
 use Pckg\Framework\Response;
 use Pckg\Framework\Router;
@@ -44,6 +43,12 @@ class Table implements RouteResolver
                                   function(HasMany $tabs) {
                                       $tabs->joinTranslation();
                                       $tabs->joinFallbackTranslation();
+                                  }
+                              )
+                              ->withActions()
+                              ->withViews(
+                                  function(HasMany $views) {
+                                      $views->withTable();
                                   }
                               )
                               ->oneOrFail(

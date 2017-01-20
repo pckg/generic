@@ -204,6 +204,7 @@ class Filter extends AbstractService
              */
             foreach ($entity->getWith() as $with) {
                 $with->mergeToQuery($query);
+                $with->getRightEntity()->getQuery()->mergeToQuery($query);
             }
 
             /**

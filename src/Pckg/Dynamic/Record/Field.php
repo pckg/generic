@@ -68,7 +68,11 @@ class Field extends DatabaseRecord
         foreach ($explodedEvals as $partialToExplode) {
             $explodedEval = explode('->', $partialToExplode);
             if (count($explodedEval) == 3) {
-                $entity->{'with' . ucfirst($explodedEval[1])}();
+                $entity->{'with' . ucfirst($explodedEval[1])}(/*function($relation){
+                    if ($relation->getRightEntity()->isTranslatable()) {
+                        $relation->getRightEntity()->joinTranslations();
+                    }
+                }*/);
             }
         }
 
@@ -142,10 +146,12 @@ class Field extends DatabaseRecord
         $dynamic->getFilterService()->filterByGet($entity);
 
         $relation = $this->hasOneSelectRelation;
-        $foreignField = $relation->foreign_field_id ? $relation->foreignField->field : 'id';
+        $foreignField = $relation->foreign_field_id
+            ? $relation->foreignField->field
+            : 'id';
 
         $values = [];
-        $entity->all()->each(
+        $entity->limit(100)->all()->each(
             function($record) use ($relation, &$values, $foreignField) {
                 $values[$record->{$foreignField}] = $this->eval($relation->value, $record, $relation);
             }
@@ -169,7 +175,11 @@ class Field extends DatabaseRecord
         try {
             return eval(' return ' . $eval . '; ');
         } catch (Throwable $e) {
-            throw $e;
+            if (prod()) {
+                return null;
+            }
+
+            return exception($e);
         }
     }
 

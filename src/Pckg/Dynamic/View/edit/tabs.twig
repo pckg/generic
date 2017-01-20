@@ -1,17 +1,34 @@
 {% if flash('dynamic.records.add.success', false) %}
-    <div class="alert alert-success" role="alert">{{ flash('dynamic.records.add.success') }}</div>
+    <pckg-bootstrap-alert style="success" text="{{ flash('dynamic.records.add.success') }}"></pckg-bootstrap-alert>
 {% endif %}
 {% if flash('dynamic.records.edit.success', false) %}
-    <div class="alert alert-success" role="alert">{{ flash('dynamic.records.edit.success') }}</div>
+    <pckg-bootstrap-alert style="success" text="{{ flash('dynamic.records.edit.success') }}"></pckg-bootstrap-alert>
 {% endif %}
 <div class="pckg-dynamic-record-tabs">
     <h2>
         {{ formalize.getTitle() | raw }}
         {% if not formalize.getForm().isEditable() and record.id %}
-            <a href="{{ record.editUrl }}" class="btn btn-info pull-right">Edit</a>
-            {% if record.isTranslatable() %}
-                <a href="{{ record.deleteTranslationUrl }}" class="btn btn-danger pull-right">Delete translation</a>
-            {% endif %}
+
+
+            <!-- Split button -->
+            <div class="btn-group pull-right">
+                <a href="{{ record.editUrl }}" class="btn btn-default">Edit</a>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    {% if record.isTranslatable() %}
+                        <li>
+                            <a href="{{ record.deleteTranslationUrl }}">Delete translation</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+
+
         {% elseif record.id %}
             [record actions from list]
         {% endif %}

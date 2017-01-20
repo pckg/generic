@@ -274,9 +274,9 @@ class Tabelize
                 }
             } elseif ($field->dynamic_field_type_id == 19) {
                 /**
-                 * Mixed type.
+                 * Php / object method
                  */
-                $eval = $this->eval($field->eval, $originalRecord, $originalRecord);
+                $eval = $this->eval('$record->' . $field->field, $originalRecord, $originalRecord);
 
                 return $eval;
 
@@ -492,6 +492,8 @@ class Tabelize
 
         if (!isset($transformed['id'])) {
             $transformed['id'] = $record->id;
+        } else if (!isset($transformed['tabelizeClass'])) {
+            $transformed['tabelizeClass'] = $record->tabelizeClass;
         }
 
         return $transformed;

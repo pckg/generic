@@ -1,6 +1,5 @@
 <?php namespace Pckg\Dynamic\Controller;
 
-use Derive\Orders\Entity\OrdersUsers;
 use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
@@ -153,7 +152,9 @@ class Records extends Controller
         /**
          * Get all relations for fields with type (select).
          */
-        $relations = (new Relations())->where('on_table_id', $tableRecord->id)
+        $relations = (new Relations())->withShowTable()
+                                      ->withOnField()
+                                      ->where('on_table_id', $tableRecord->id)
                                       ->where('dynamic_relation_type_id', 1)
                                       ->all();
 
@@ -194,7 +195,7 @@ class Records extends Controller
             }
         );
 
-        $fieldTransformations = ['tabelizeClass'];
+        $fieldTransformations = [];
 
         /**
          * Transform field type = php
@@ -241,12 +242,8 @@ class Records extends Controller
                          ->setRecords($records)
                          ->setFields(
                              runInLocale(
-                                 function() use ($tableRecord) {
-                                     return $tableRecord->listableFields(
-                                         function(HasMany $relation) {
-                                             $relation->withFieldType();
-                                         }
-                                     )->reduce(
+                                 function() use ($tableRecord, $listableFields) {
+                                     return $listableFields->reduce(
                                          function(Field $field) use ($tableRecord) {
                                              $fields = $this->dynamic->getFilterService()->getSession('fields');
 
@@ -263,7 +260,7 @@ class Records extends Controller
                          ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews($tableRecord->actions()->keyBy('slug'))
+                         ->setViews($tableRecord->actions->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations);
 
         if (($this->request()->isAjax() && !get('html')) || get('search')) {
@@ -302,7 +299,7 @@ class Records extends Controller
         if ($foreign) {
             $record->{$relation->onField->field} = $foreign;
             $form->setForeignFieldId($relation->on_field_id);
-            $form->setForeignRecord((new OrdersUsers())->where('id', $foreign)->one());
+            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
         }
 
         $form->setTable($table);
@@ -329,11 +326,24 @@ class Records extends Controller
         );
     }
 
-    public function postAddAction(Dynamic $form, Record $record, Table $table, Entity $entity)
+    public function postAddAction(
+        Dynamic $form,
+        Table $table,
+        Record $record,
+        Relation $relation = null,
+        $foreign = null
+    )
     {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
+        $record = $entity->transformRecordToEntities($record);
         $record->setEntity($entity);
+
+        if ($foreign) {
+            $record->{$relation->onField->field} = $foreign;
+            $form->setForeignFieldId($relation->on_field_id);
+            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
+        }
 
         $form->setTable($table);
         $form->setRecord($record);
@@ -363,6 +373,7 @@ class Records extends Controller
         }
 
         Record::$dynamicTable = $table;
+        $record::$dynamicTable = $table;
 
         flash('dynamic.records.add.success', __('dynamic.records.add.success'));
 
@@ -400,13 +411,15 @@ class Records extends Controller
             $this->response()->notFound('Missing view field permissions.');
         }
 
+        $tableEntity = $table->createEntity();
+
+        $record = $tableEntity->transformRecordToEntities($record);
+
         $form->setTable($table);
         $form->setRecord($record);
         $form->initFields();
 
         $form->populateFromRecord($record);
-
-        $tableEntity = $table->createEntity();
 
         if ($tableEntity->isTranslatable()) {
             $form->initLanguageFields();
@@ -625,6 +638,7 @@ class Records extends Controller
     {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
+        $record = $entity->transformRecordToEntities($record);
         $record->setEntity($entity);
 
         $form->setTable($table);

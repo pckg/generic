@@ -2,6 +2,7 @@
 
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
@@ -64,7 +65,7 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
-    public function setRecord(Record $record)
+    public function setRecord(DatabaseRecord $record)
     {
         $this->record = $record;
 
@@ -85,7 +86,7 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
-    public function populatePasswords(Record $record)
+    public function populatePasswords(DatabaseRecord $record)
     {
         $data = $this->getData();
         if (!isset($data['password'])) {
@@ -217,9 +218,9 @@ class Dynamic extends Bootstrap
 
         $prevGroup = null;
         foreach ($fields as $field) {
-            if (
-                ($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
-                (!$prevGroup && $field->dynamic_field_group_id)
+            if ($field->fieldGroup && (
+                    ($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
+                    (!$prevGroup && $field->dynamic_field_group_id))
             ) {
                 $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
                 $fieldset->addChild('<hr /><h4>' . $field->fieldGroup->title . '</h4>');
