@@ -4,7 +4,6 @@ use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
-use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
@@ -142,7 +141,7 @@ class Table extends DatabaseRecord
         return $entity;
     }
 
-    public function fetchFrameworkRecord(Record $record, DatabaseEntity $entity)
+    public function fetchFrameworkRecord(DatabaseRecord $record, DatabaseEntity $entity)
     {
         if (!$this->framework_entity) {
             return $record;
