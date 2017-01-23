@@ -4,6 +4,7 @@ use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
