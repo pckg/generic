@@ -17,8 +17,14 @@ class CreateGenericTables extends Migration
             // translatable, permissionable
             CreateMenuTables::class,
             CreateLanguagesTable::class,
-            CreateSettingsTable::class,
             CreateTranslationsTable::class,
+        ];
+    }
+
+    public function partials()
+    {
+        return [
+            (new CreateSettingsTable())->setRepository($this->repository),
         ];
     }
 
