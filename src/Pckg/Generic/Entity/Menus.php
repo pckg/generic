@@ -9,8 +9,6 @@ class Menus extends Entity
 
     protected $record = Menu::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function menuItems()
     {
         return $this->hasMany(MenuItems::class)
