@@ -506,11 +506,15 @@ class Tabelize
             'tabelize' => $this,
         ];
         foreach ($this->getEntityActions() as $action) {
+            $template = null;
             if (isset($action->slug) && isset($action->entityTemplate)) {
-                $html .= view('tabelize/entityActions/' . $action->entityTemplate, $data);
+                $template = 'tabelize/entityActions/' . $action->entityTemplate;
             } else {
-                $html .= view('tabelize/entityActions/' . $action, $data);
+                $template = 'tabelize/entityActions/' . $action;
             }
+
+            $html .= '<!-- entity action template ' . $template . ' -->';
+            $html .= view($template, $data);
         }
 
         return $html;

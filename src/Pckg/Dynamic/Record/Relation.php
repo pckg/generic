@@ -12,7 +12,7 @@ class Relation extends DatabaseRecord
 
     public function applyFilterOnEntity($entity, $foreignRecord)
     {
-        if (!$this->filter || !$foreignRecord) {
+        if (!$this->filter/* || !$foreignRecord*/) {
             return;
         }
 
@@ -30,6 +30,10 @@ class Relation extends DatabaseRecord
         try {
             return eval(' return ' . $eval . '; ');
         } catch (Throwable $e) {
+            if (prod()) {
+                return null;
+            }
+
             throw $e;
         }
     }
