@@ -14,8 +14,6 @@ class MenuItems extends Entity
 
     protected $record = MenuItem::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function boot()
     {
         $this->joinTranslations();
