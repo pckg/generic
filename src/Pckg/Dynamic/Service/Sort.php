@@ -23,7 +23,7 @@ class Sort extends AbstractService
 
     public function getAvailableSorts()
     {
-        return $this->table->listableFields->each(
+        return $this->table->listableFields->map(
             function(Field $field) {
                 return [
                     'field'   => $field->field,
@@ -31,8 +31,7 @@ class Sort extends AbstractService
                     'type'    => $field->fieldType->slug,
                     'options' => [],
                 ];
-            },
-            true
+            }
         )->keyBy('field');
     }
 

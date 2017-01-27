@@ -59,6 +59,11 @@ class Dynamic
         return $this->filterService;
     }
 
+    public function getFieldsService()
+    {
+        return $this->fieldsService;
+    }
+
     public function removeDeletedIfDeletable($entity)
     {
         if ($entity->isDeletable()) {

@@ -423,6 +423,11 @@ class Dynamic extends Bootstrap
             return $element;
 
         } elseif ($type == 'select') {
+
+
+            if ($field->id == 437) {
+                dd($field->getRelationForSelect($this->record, $this->foreignRecord));
+            }
             if ($this->record && $relation = $field->getRelationForSelect($this->record, $this->foreignRecord)) {
                 $element = $this->addSelect($name);
                 /**

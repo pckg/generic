@@ -1,0 +1,30 @@
+<div class="btn-group btn-group-sm" style="display: none;">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Visible</th>
+                    <th>Order</th>
+                    <th>Filter</th>
+                    <th>Group by</th>
+                </tr>
+                {% for field in tabelize.getListableFields() %}
+                <tr>
+                    <td><nobr>{{ field.title }}</nobr></td>
+                    <td><input type="checkbox" value="1" /></td>
+                    <td><input type="number" class="form-control narrow" value="{{ field.order }}" /></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </li>
+    </ul>
+</div>

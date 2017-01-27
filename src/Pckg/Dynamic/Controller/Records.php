@@ -261,7 +261,8 @@ class Records extends Controller
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions->keyBy('slug'))
-                         ->setFieldTransformations($fieldTransformations);
+                         ->setFieldTransformations($fieldTransformations)
+                         ->setListableFields($this->dynamic->getFieldsService()->getAvailableFields());
 
         if (($this->request()->isAjax() && !get('html')) || get('search')) {
             return [

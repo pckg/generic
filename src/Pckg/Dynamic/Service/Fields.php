@@ -49,21 +49,23 @@ class Fields extends AbstractService
             function(Relation $relation) {
                 $entity = $relation->showTable->createEntity();
 
-                $options = $relation->onField && $relation->dynamic_relation_type_id == 1 ? $entity->all()->each(
-                    function($record) use ($relation, $entity) {
-                        try {
-                            $eval = eval(' return ' . $relation->value . '; ');
-                        } catch (Throwable $e) {
-                            $eval = exception($e);
-                        }
+                $options = $relation->onField && $relation->dynamic_relation_type_id == 1
+                    ? $entity->all()->each(
+                        function($record) use ($relation, $entity) {
+                            try {
+                                $eval = eval(' return ' . $relation->value . '; ');
+                            } catch (Throwable $e) {
+                                $eval = exception($e);
+                            }
 
-                        return [
-                            'key'   => $record->id,
-                            'value' => $eval,
-                        ];
-                    },
-                    true
-                ) : [];
+                            return [
+                                'key'   => $record->id,
+                                'value' => $eval,
+                            ];
+                        },
+                        true
+                    )
+                    : [];
 
                 return [
                     'id'      => $relation->id,
@@ -86,10 +88,8 @@ class Fields extends AbstractService
                 return [
                     'field'   => $field->field,
                     'label'   => $field->title ?? $field->field,
-                    'applied' => in_array(
-                        $field->field,
-                        $this->getAppliedFields()
-                    ),
+                    'visible' => in_array($field->field, $this->getAppliedFields()),
+                    'applied' => in_array($field->field, $this->getAppliedFields()), // @deprecated
                 ];
             }
         )->keyBy('field');
