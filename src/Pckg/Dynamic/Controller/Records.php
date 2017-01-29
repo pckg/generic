@@ -728,7 +728,7 @@ class Records extends Controller
     public function getDeleteTranslationAction(Record $record, Table $table, Language $language)
     {
         $entity = $table->createEntity();
-        $record->deleteTranslation($entity);
+        $record->deleteTranslation($language->slug, $entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }
