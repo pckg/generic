@@ -8,27 +8,24 @@ use Pckg\Generic\Entity\Menus;
 class Menu
 {
 
-    /**
-     * @var Menus
-     */
-    protected $menus;
-
-    public function __construct(Menus $menus)
+    public function build($slug, $repository = null, $language = null)
     {
-        $this->menus = $menus;
-    }
+        $menus = new Menus();
 
-    public function build($slug, $repository = null)
-    {
         if ($repository) {
-            $this->menus->setRepository(context()->get(Repository::class . ($repository ? '.' . $repository : '')));
+            $menus->setRepository(context()->get(Repository::class . ($repository ? '.' . $repository : '')));
         }
 
-        $menu = $this->menus->withMenuItems(
-            function(HasMany $relation) {
-                // $relation->joinPermissionTo('read');
-            }
-        )->where('slug', $slug)->one();
+        $menu = runInLocale(
+            function() use ($menus, $slug) {
+                return $menus->withMenuItems(
+                    function(HasMany $relation) {
+                        // $relation->joinPermissionTo('read');
+                    }
+                )->where('slug', $slug)->one();
+            },
+            first($language, config('pckg.locale'))
+        );
 
         if (!$menu) {
             return '<!-- no menu ' . $slug . ' -->';

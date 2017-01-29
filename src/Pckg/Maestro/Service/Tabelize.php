@@ -399,6 +399,7 @@ class Tabelize
                 }
 
                 if (!is_string($view)) {
+                    $string .= "\n" . '<!-- entity view (string) -->';
                     $string .= $view;
 
                 } elseif (!$wasObject && strpos($view, '@')) {
@@ -407,12 +408,15 @@ class Tabelize
                         list($method, $view) = explode(':', $method);
                     }
 
+                    $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
                     $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
 
                 } elseif (!$wasObject && $view) {
+                    $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
                     $string .= view('tabelize/listActions/' . $view)->autoparse();
 
                 } else {
+                    $string .= "\n" . '<!-- entity view (else) -->';
                     $string .= $view;
 
                 }
@@ -515,7 +519,7 @@ class Tabelize
                 $template = 'tabelize/entityActions/' . $action;
             }
 
-            $html .= '<!-- entity action template ' . $template . ' -->';
+            $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
             $html .= view($template, $data);
         }
 

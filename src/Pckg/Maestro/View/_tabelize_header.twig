@@ -6,6 +6,7 @@
         <div class="affix-dynamic-offset">
             <div class="btn-group btn-group-sm pull-right" role="group" aria-label="..."
                  style="text-align: right;">
+                {# print all buttons for mixed, entity-plugin and entity actions #}
                 {{ tabelize.getEntityActionsHtml() | raw }}
             </div>
             {% if viewType == 'full' %}
