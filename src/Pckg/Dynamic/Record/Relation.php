@@ -12,7 +12,11 @@ class Relation extends DatabaseRecord
 
     public function applyFilterOnEntity($entity, $foreignRecord)
     {
-        if (!$this->filter/* || !$foreignRecord*/) {
+        /**
+         * Is this correct? || !$foreignRecord?
+         * http://hi.derive.bob/dynamic/records/edit/23/6751
+         */
+        if (!$this->filter || !$foreignRecord) {
             return;
         }
 
