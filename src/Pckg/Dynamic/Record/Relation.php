@@ -16,7 +16,11 @@ class Relation extends DatabaseRecord
          * Is this correct? || !$foreignRecord?
          * http://hi.derive.bob/dynamic/records/edit/23/6751
          */
-        if (!$this->filter || !$foreignRecord) {
+        if (!$this->filter) {
+            return;
+        }
+
+        if (!$foreignRecord && strpos($this->filter, '$foreignRecord->') >= 0) {
             return;
         }
 
