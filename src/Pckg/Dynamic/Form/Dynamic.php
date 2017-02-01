@@ -424,11 +424,8 @@ class Dynamic extends Bootstrap
 
         } elseif ($type == 'select') {
 
-
-            if ($field->id == 437) {
-                dd($field->getRelationForSelect($this->record, $this->foreignRecord));
-            }
-            if ($this->record && $relation = $field->getRelationForSelect($this->record, $this->foreignRecord)) {
+            if ($this->record) {
+                $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
                 $element = $this->addSelect($name);
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field

@@ -11,7 +11,8 @@ Vue.component('pckg-dynamic-paginator', {
     },
     data: function () {
         return {
-            margin: 5
+            margin: 5,
+            limits: [50, 100, 250, 500, 1000]
         };
     },
     computed: {
@@ -57,6 +58,13 @@ Vue.component('pckg-dynamic-paginator', {
 
             this.resetpaginatorurl({
                 page: page
+            });
+        },
+        setPerPage: function (perPage) {
+            this.perPage = perPage;
+
+            this.resetpaginatorurl({
+                perPage: perPage
             });
         }
     }

@@ -20,7 +20,7 @@ class Relation extends DatabaseRecord
             return;
         }
 
-        if (!$foreignRecord && strpos($this->filter, '$foreignRecord->') >= 0) {
+        if (!$foreignRecord && strpos($this->filter, '$foreignRecord->') !== false) {
             return;
         }
 

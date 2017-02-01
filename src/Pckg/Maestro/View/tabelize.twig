@@ -90,18 +90,18 @@
                     if (!params.page && this.paginator{{ instance }}.page) {
                         params.page = this.paginator{{ instance }}.page;
                     }
+                    if (!params.perPage && this.paginator{{ instance }}.perPage) {
+                        params.perPage = this.paginator{{ instance }}.perPage;
+                    }
                     if (Object.keys(params).length == 0) {
                         return '';
                     }
                     return '?' + $.param(params);
                 },
                 resetPaginatorUrl{{ instance }}: function (preset) {
-                    console.log("prereset", this.paginator{{ instance }}.url);
                     this.paginator{{ instance }}.url = '{{ searchUrl }}' + this.getUrlParams{{ instance }}(preset);
-                    console.log("reseted", this.paginator{{ instance }}.url);
 
                     http.getJSON(this.paginator{{ instance }}.url, function (data) {
-                        console.log("navigate", data.records);
                         this.records{{ instance }} = data.records;
                         this.groups{{ instance }} = data.groups;
                         this.$set('x', true);
@@ -121,7 +121,6 @@
                     });
 
                     this.$refs.maestroTable._searchTimeout{{ instance }} = http.getJSON(this.paginator{{ instance }}.url, function (data) {
-                        console.log("search timeout");
                         this.records{{ instance }} = data.records;
                         this.paginator{{ instance }}.total = data.paginator.total;
                     }.bind(this));

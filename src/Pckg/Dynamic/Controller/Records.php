@@ -254,7 +254,7 @@ class Records extends Controller
                                  'en_GB'
                              )
                          )
-                         ->setPerPage(50)
+                         ->setPerPage(get('perPage', 50))
                          ->setPage(1)
                          ->setTotal($total)
                          ->setGroups($groups ? range(1, count($groups)) : [])
@@ -660,6 +660,7 @@ class Records extends Controller
             $lang = (new Lang())->setLangId($record->language_id);
             $entity->setTranslatableLang($lang);
         }
+        dd($record->toArray());
         $record->save($entity);
 
         if ($this->post()->p17n) {

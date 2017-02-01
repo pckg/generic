@@ -25,9 +25,15 @@ class Paginate
 
     public function applyOnEntity(Entity $entity)
     {
-        $entity->count()
-               ->limit(50)
-               ->page($this->get->get('page') ?? 1);
+        $limit = get('perPage', 50);
+
+        $entity->count();
+
+        if ($limit != 'all') {
+            $entity->limit($limit);
+        }
+
+        $entity->page($this->get->get('page') ?? 1);
 
         return $this;
     }
