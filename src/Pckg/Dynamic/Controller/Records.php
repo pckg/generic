@@ -660,7 +660,6 @@ class Records extends Controller
             $lang = (new Lang())->setLangId($record->language_id);
             $entity->setTranslatableLang($lang);
         }
-        dd($record->toArray());
         $record->save($entity);
 
         if ($this->post()->p17n) {
