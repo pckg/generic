@@ -498,8 +498,14 @@ class Tabelize
 
         if (!isset($transformed['id'])) {
             $transformed['id'] = $record->id;
-        } else if (!isset($transformed['tabelizeClass'])) {
+        }
+
+        if (!isset($transformed['tabelizeClass'])) {
             $transformed['tabelizeClass'] = $record->tabelizeClass;
+        }
+
+        if ($record->hasKey('language_id') && !isset($transformed['language_id'])) {
+            $transformed['language_id'] = $record->language_id;
         }
 
         return $transformed;

@@ -1,6 +1,9 @@
 <script type="text/x-template" id="pckg-maestro-actions">
     <div class="btn-group btn-group-sm">
-        <div type="button" class="btn btn-default">
+        <div class="btn btn-default" v-if="typeof record.language_id != 'undefined' && !record.language_id">
+            &nbsp;&nbsp;&nbsp;<i class="fa fa-globe" title="Not translated" style="color: red;"></i>&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="btn btn-default">
             {% for action in recordActions %}
                 {% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}
             {% endfor %}
