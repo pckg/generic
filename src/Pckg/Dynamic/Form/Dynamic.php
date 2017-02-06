@@ -238,8 +238,7 @@ class Dynamic extends Bootstrap
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
-</label>
+                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3"></label>
 <div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
                 );
 
@@ -296,6 +295,13 @@ class Dynamic extends Bootstrap
                     $value = '<a href="' . $url . '">' . $relationTitle . '</a>';
                 }
             }
+        } elseif ($field->getSetting('pckg.dynamic.field.iframe')) {
+            $tempValue = $value;
+            $value = '<iframe id="iframe-field-' . $field->id . '" style="border: 0; width: 100%;"></iframe>';
+            $value .= '<script type="text/x-template" id="iframe-field-div-' . $field->id . '" style="display: none;">' . $tempValue . '</script>';
+            $value .= '<script type="text/javascript">$(document).ready(function(){
+    $("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
+});</script>';
         }
 
         $element = $this->addDiv()->addChild(
