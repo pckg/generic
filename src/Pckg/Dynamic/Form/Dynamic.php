@@ -313,6 +313,12 @@ class Dynamic extends Bootstrap
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>';
             }
+        } elseif ($type == 'picture') {
+            if ($this->record->{$field->field}) {
+                $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+                $fullPath = img($this->record->{$field->field}, null, true, $dir);
+                $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' . $fullPath . '" /></a>';
+            }
         }
 
         $element = $this->addDiv()->addChild(
