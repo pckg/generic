@@ -302,6 +302,17 @@ class Dynamic extends Bootstrap
             $value .= '<script type="text/javascript">$(document).ready(function(){
     $("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
 });</script>';
+        } elseif (in_array($type, ['file', 'pdf'])) {
+            if ($this->record->{$field->field}) {
+                $dir = $field->getAbsoluteDir(
+                    $field->getSetting('pckg.dynamic.field.dir'),
+                    $field->getSetting('pckg.dynamic.field.privateUpload')
+                );
+                $fullPath = $this->record->{$field->field}
+                    ? media($this->record->{$field->field}, null, true, $dir)
+                    : null;
+                $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>';
+            }
         }
 
         $element = $this->addDiv()->addChild(
