@@ -22,4 +22,11 @@ class SettingsMorph extends Record
         }
     }
 
+    public function registerToConfig()
+    {
+        config()->set($this->setting->slug, $this->value);
+
+        return $this;
+    }
+
 }
