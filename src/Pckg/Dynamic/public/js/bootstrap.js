@@ -73,6 +73,7 @@ $(document).ready(function () {
             $sidebar.removeClass('collapsed');
             $sidebarBg.removeClass('collapsed');
             $content.removeClass('expanded');
+            setCookie('maestro-sidebar-collapsed', false);
         }
         //sidebar is expanded and needs to be collapsed
         else {
@@ -80,6 +81,7 @@ $(document).ready(function () {
             $sidebarBg.addClass('collapsed');
             $content.addClass('expanded');
             $sidebar.find('.collapse.in').removeClass('in');
+            setCookie('maestro-sidebar-collapsed', true);
         }
     }
 
