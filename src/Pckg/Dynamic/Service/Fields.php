@@ -3,6 +3,7 @@
 use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
@@ -45,7 +46,7 @@ class Fields extends AbstractService
 
     public function getAvailableRelations()
     {
-        return $this->table->relations->each(
+        return $this->table->relations->map(
             function(Relation $relation) {
                 $entity = $relation->showTable->createEntity();
 
@@ -68,14 +69,17 @@ class Fields extends AbstractService
                     : [];
 
                 return [
-                    'id'      => $relation->id,
-                    'field'   => $relation->id,
-                    'table'   => $relation->showTable->table,
-                    'fields'  => $this->makeFields($relation->showTable->fields),
-                    'type'    => $relation->dynamic_relation_type_id,
-                    'options' => [
+                    'id'            => $relation->id,
+                    'title'         => $relation->title,
+                    'table'         => $relation->showTable->table,
+                    'fields'        => $this->makeFields(
+                        $relation->showTable->fields
+                    ),
+                    'type'          => $relation->dynamic_relation_type_id,
+                    'options'       => [
                         'options' => $options,
                     ],
+                    'filterOptions' => $options,
                 ];
             }
         );
@@ -83,13 +87,13 @@ class Fields extends AbstractService
 
     protected function makeFields(CollectionInterface $collection)
     {
-        return $collection->each(
+        return $collection->map(
             function(Field $field) {
                 return [
+                    'id'      => $field->id,
                     'field'   => $field->field,
-                    'label'   => $field->title ?? $field->field,
+                    'title'   => $field->title ?? $field->field,
                     'visible' => in_array($field->field, $this->getAppliedFields()),
-                    'applied' => in_array($field->field, $this->getAppliedFields()), // @deprecated
                 ];
             }
         )->keyBy('field');

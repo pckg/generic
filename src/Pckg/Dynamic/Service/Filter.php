@@ -92,14 +92,15 @@ class Filter extends AbstractService
                              ) : [];
 
                 return [
-                    'id'      => $relation->id,
-                    'field'   => $relation->id,
-                    'table'   => $relation->showTable->table,
-                    'fields'  => $this->makeFields($relation->showTable->fields),
-                    'type'    => $relation->dynamic_relation_type_id,
-                    'options' => [
+                    'id'            => $relation->id,
+                    'field'         => $relation->id,
+                    'table'         => $relation->showTable->table,
+                    'fields'        => $this->makeFields($relation->showTable->fields),
+                    'type'          => $relation->dynamic_relation_type_id,
+                    'options'       => [
                         'options' => $options,
                     ],
+                    'filterOptions' => $options,
                 ];
             }
         );

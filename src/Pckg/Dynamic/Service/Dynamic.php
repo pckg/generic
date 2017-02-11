@@ -64,6 +64,11 @@ class Dynamic
         return $this->fieldsService;
     }
 
+    public function getSortService()
+    {
+        return $this->sortService;
+    }
+
     public function removeDeletedIfDeletable($entity)
     {
         if ($entity->isDeletable()) {

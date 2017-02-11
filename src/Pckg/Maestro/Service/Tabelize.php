@@ -76,6 +76,8 @@ class Tabelize
 
     protected $listableFields = [];
 
+    protected $listableRelations = [];
+
     public function __construct(Entity $entity = null, $fields = [])
     {
         $this->entity = $entity;
@@ -542,6 +544,18 @@ class Tabelize
     public function getListableFields()
     {
         return $this->listableFields;
+    }
+
+    public function setListableRelations($listableRelations)
+    {
+        $this->listableRelations = $listableRelations;
+
+        return $this;
+    }
+
+    public function getListableRelations()
+    {
+        return $this->listableRelations;
     }
 
 }

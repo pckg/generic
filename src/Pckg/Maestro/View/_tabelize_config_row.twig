@@ -1,0 +1,80 @@
+<td class="visible">
+    <input type="checkbox" value="1" v-model="{{ type }}.title"/>
+    {% if type == 'relation' and false %}
+        <pre>${ relation | json }</pre>{% endif %}
+</td>
+<td class="position" style="display: none;">
+    {% if type == 'field' %}
+        <input type="number" class="form-control narrow" v-model="field.order"/>
+    {% endif %}
+</td>
+<td class="field">
+    <nobr>${ {{ type }}.title }</nobr>
+</td>
+<td class="filter" style="min-width: 360px;">
+    <div class="form-group">
+        {% if type == 'field' %}
+            <div class="col-sm-4">
+                <select v-model="field.filterMethod" class="form-control">
+                    <option></option>
+                    <option v-for="(key,option) in filterMethods" :value="key">${ option.label }</option>
+                </select>
+            </div>
+            <div class="col-sm-8" v-if="field.filterMethod">
+                <template v-if="field.type == 'select'">
+                    <select v-model="field.filterValue" class="form-control">
+                        <option v-for="(key, option) in filters[filter.field].options.options"
+                                :value="key">${ option }
+                        </option>
+                    </select>
+                </template>
+                <template v-else>
+                    <input type="text" v-model="field.filterValue" class="form-control"/>
+                </template>
+            </div>
+        {% else %}
+            {# belongs to #}
+            <div class="col-sm-4">
+                <select v-model="relation.filterField" class="form-control">
+                    <option></option>
+                    <option v-for="option in relation.fields" :value="option.id">${ option.title }</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <select v-model="relation.filterMethod" class="form-control">
+                    <option></option>
+                    <option v-for="(key,option) in filterMethods" :value="key">${ option.label }</option>
+                </select>
+            </div>
+            <template v-if="relation.filterMethod">
+                <div v-if="!relation.filterField || ['equals', 'greater', 'greaterOrEquals', 'lower', 'lowerOrEquals'].indexOf(relation.filterMethod) !== -1"
+                     class="col-sm-4">
+                    <input type="text" v-model="relation.filterValue" class="form-control"/>
+                </div>
+                <div v-else class="col-sm-4">
+                    <select v-model="relation.filterValue" class="form-control" multiple>
+                        <option v-for="option in relation.filterOptions" :value="option.key">${ option.value }
+                        </option>
+                    </select>
+                </div>
+            </template>
+        {% endif %}
+    </div>
+</td>
+<td class="group">
+    {% if type == 'field' %}
+        <div class="form-group">
+            <input type="checkbox" v-model="field.group" value="1"/>
+        </div>
+    {% endif %}
+</td>
+<td class="sort">
+    {% if type == 'field' %}
+        <div class="form-group">
+            <select v-model="field.sort" class="form-control">
+                <option></option>
+                <option v-for="(key,option) in directions" :value="key">${ option.label }</option>
+            </select>
+        </div>
+    {% endif %}
+</td>

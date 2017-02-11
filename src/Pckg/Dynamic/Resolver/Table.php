@@ -33,6 +33,12 @@ class Table implements RouteResolver
                 $dynamic->joinPermissionsIfPermissionable($tables);
 
                 return $tables->where('id', $value)
+                              ->withRelations(
+                                  function(HasMany $relations) {
+                                      $relations->joinTranslations();
+                                      $relations->joinFallbackTranslation();
+                                  }
+                              )
                               ->withFields(
                                   function(HasMany $fields) {
                                       $fields->withFieldType();

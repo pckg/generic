@@ -1,30 +1,179 @@
-<div class="btn-group btn-group-sm" style="display: none;">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
+<script type="text/x-template" id="pckg-maestro-table-config-{{ table }}">
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pckgMaestroTableConfigModal', 'class': 'modal-lg'} %}
+        {% block header %}
+            Change list view
+        {% endblock %}
+        {% block body %}
+            <table class="table table-condensed table-hover table-striped">
+                <tr>
+                    <th>Visible</th>
+                    <th style="display: none;">Position</th>
+                    <th>Field</th>
+                    <th>Filter</th>
+                    <th>Group by</th>
+                    <th>Order</th>
+                </tr>
+                <tr v-for="field in fields">
+                    {% include '_tabelize_config_row.twig' with {'type': 'field'} %}
+                </tr>
+                <tr>
+                    <th>Visible</th>
+                    <th style="display: none;">Position</th>
+                    <th>Relation</th>
+                    <th>Filter</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr v-for="relation in relations">
+                    {% include '_tabelize_config_row.twig' with {'type': 'relation'} %}
+                </tr>
+            </table>
+        {% endblock %}
+        {% block footer %}
+            <button type="button" class="btn btn-success" @click.prevent="save">Save</button>
+        {% endblock %}
+    {% endembed %}
+    <button type="button" class="btn btn-default" @click.prevent="openModal">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <table>
-                <tr>
-                    <th>Field</th>
-                    <th>Visible</th>
-                    <th>Order</th>
-                    <th>Filter</th>
-                    <th>Group by</th>
-                </tr>
-                {% for field in tabelize.getListableFields() %}
-                <tr>
-                    <td><nobr>{{ field.title }}</nobr></td>
-                    <td><input type="checkbox" value="1" /></td>
-                    <td><input type="number" class="form-control narrow" value="{{ field.order }}" /></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            </table>
-        </li>
-    </ul>
-</div>
+</script>
+
+<script type="text/javascript">
+    // fields
+    data.fields = {{ tabelize.getListableFields() | json_encode | raw }};
+    data.relations = {{ tabelize.getListableRelations() | json_encode | raw }};
+    // sort
+    data.directions = {{ dynamic.getSortService().getDirections() | json_encode | raw }};
+    data.sorts = {{ dynamic.getSortService().getAvailableSorts() | json_encode | raw }};
+    data.appliedSorts = {{ dynamic.getSortService().getAppliedSorts() | json_encode | raw }};
+    // group
+    data.typeMethods = {{ dynamic.getGroupService().getTypeMethods() | json_encode | raw }};
+    data.groups = {{ dynamic.getGroupService().getAvailableGroups() | json_encode | raw }};
+    data.appliedGroups = {{ dynamic.getGroupService().getAppliedGroups() | json_encode | raw }};
+    // filter
+    data.filters = {{ dynamic.getFilterService().getAvailableFilters() | json_encode | raw }};
+    data.relationFilters = {{ dynamic.getFilterService().getAvailableRelationFilters() | json_encode | raw }};
+    data.appliedFilters = {{ dynamic.getFilterService().getAppliedFilters() | json_encode | raw }};
+    data.appliedRelationFilters = {{ dynamic.getFilterService().getAppliedRelationFilters() | json_encode | raw }};
+    data.relationMethods = {{ dynamic.getFilterService().getRelationMethods() | json_encode | raw }};
+    data.filterMethods = {{ dynamic.getFilterService().getTypeMethods() | json_encode | raw }};
+
+    Vue.component('pckg-maestro-table-config-{{ table }}', {
+        name: 'pckg-maestro-table-config-{{ table }}',
+        template: '#pckg-maestro-table-config-{{ table }}',
+        data: function () {
+            return {
+                // fields
+                fields: data.fields,
+                relations: data.relations,
+                // sort
+                directions: data.directions,
+                sorts: data.sorts,
+                appliedSorts: data.appliedSorts,
+                // group
+                typeMethods: data.typeMethods,
+                groups: data.groups,
+                appliedGroups: data.appliedGroups,
+                // filter
+                filterMethods: data.filterMethods,
+                relationMethods: data.relationMethods,
+                filters: data.filters,
+                relationFilters: data.relationFilters,
+                applied: data.appliedFilters,
+                appliedRelations: this.addRelationFilterToAppliedRelations(data.appliedRelationFilters, data.relationFilters)
+            };
+        },
+        methods: {
+            openModal: function () {
+                $("#pckgMaestroTableConfigModal").modal('show');
+            },
+            save: function(){
+                http.post('{{ saveSortUrl }}', function () {
+                    return {
+                        fields: this.buildVisibleFields(),
+                        filters: this.buildAppliedFilters(),
+                        sorts: this.buildAppliedSorts(),
+                        groups: this.buildAppliedGroups()
+                    };
+                }.bind(this), function (json) {
+                    console.log('callback', json);
+                });
+            },
+            // sort
+            addSort: function (sort) {
+                this.appliedSorts.push({
+                    field: sort.field,
+                    options: {
+                        direction: 'ascending'
+                    }
+                });
+            },
+            removeSort: function (sort) {
+                this.appliedSorts.$remove(sort);
+            },
+            buildAppliedSorts: function () {
+                return this.appliedSorts;
+            },
+            save: function () {
+            },
+            // filter
+            addRelationFilterToAppliedRelations: function (applied, filters) {
+                $.each(applied, function (i, appliedFilter) {
+                    $.each(filters, function (j, filter) {
+                        if (filter.id == appliedFilter.id) {
+                            appliedFilter.relationFilter = filter;
+                            return false;
+                        }
+                    })
+                });
+                return applied;
+            },
+            addFilter: function (filter) {
+                this.applied.push({
+                    field: filter.field,
+                    value: null,
+                    options: {
+                        method: 'equals'
+                    }
+                });
+            },
+            addRelationFilter: function (relationFilter) {
+                this.appliedRelations.push({
+                    id: relationFilter.id,
+                    value: null,
+                    options: {
+                        method: 'equals'
+                    },
+                    relationFilter: relationFilter
+                });
+            },
+            removeFilter: function (filter) {
+                this.applied.$remove(filter);
+            },
+            removeRelationFilter: function (relationFilter) {
+                this.appliedRelations.$remove(relationFilter);
+            },
+            /*save: function () {
+             http.post(
+             '{{ saveFilterUrl }}',
+             function () {
+             return {
+             filters: this.applied,
+             relationFilters: this.appliedRelations.map(function (relation) {
+             return {
+             id: relation.id,
+             value: relation.value,
+             field: relation.field,
+             options: {
+             method: relation.options.method
+             }
+             };
+             }),
+             };
+             }.bind(this)
+             );
+             }*/
+        }
+    });
+</script>
