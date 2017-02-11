@@ -263,7 +263,7 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations)
                          ->setListableFields($this->dynamic->getFieldsService()->getAvailableFields())
-                         ->setListableRelations($this->dynamic->getFieldsService()->getAvailableRelations());
+                         ->setListableRelations([]/*$this->dynamic->getFieldsService()->getAvailableRelations()*/);
 
         if (($this->request()->isAjax() && !get('html')) || get('search')) {
             return [
