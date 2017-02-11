@@ -1,5 +1,6 @@
 <?php namespace Pckg\Dynamic\Record;
 
+use Pckg\Database\Entity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Record\Extension\Permissionable;
 use Pckg\Dynamic\Entity\Fields;
@@ -58,23 +59,7 @@ class Field extends DatabaseRecord
         $entity = $showTable->createEntity();
         resolve(Dynamic::class)->joinTranslationsIfTranslatable($entity);
 
-        /**
-         * Append relation if we want to print for example
-         *  - $record->order->num
-         *  - $record->order->num . '<br />' . $record->user->email
-         */
-        $toEval = $relation->value;
-        $explodedEvals = explode(' ', $toEval);
-        foreach ($explodedEvals as $partialToExplode) {
-            $explodedEval = explode('->', $partialToExplode);
-            if (count($explodedEval) == 3) {
-                $entity->{'with' . ucfirst($explodedEval[1])}(/*function($relation){
-                    if ($relation->getRightEntity()->isTranslatable()) {
-                        $relation->getRightEntity()->joinTranslations();
-                    }
-                }*/);
-            }
-        }
+        $this->automaticallyApplyRelation($entity, $relation->value);
 
         /**
          * Now, we have $record->addition->title, editing related orders_users_additions on orders_users.
@@ -85,6 +70,33 @@ class Field extends DatabaseRecord
         $relation->applyFilterOnEntity($entity, $foreignRecord);
 
         return $entity;
+    }
+
+    public static function automaticallyApplyRelation(Entity $entity, $eval)
+    {
+        /**
+         * Append relation if we want to print for example
+         *  - $record->order->num
+         *  - $record->order->num . '<br />' . $record->user->email
+         *
+         * First, split string by spaces so we separate calls.
+         */
+        $explodedEvals = explode(' ', $eval);
+        foreach ($explodedEvals as $partialToExplode) {
+            $explodedEval = explode('->', $partialToExplode);
+            if (count($explodedEval) == 3) {
+                /**
+                 * We're calling something like $record->user->email
+                 */
+                $entity->{'with' . ucfirst($explodedEval[1])}(
+                    function($relation) {
+                        if ($relation->getRightEntity()->isTranslatable()) {
+                            $relation->getRightEntity()->joinTranslations();
+                        }
+                    }
+                );
+            }
+        }
     }
 
     public function getItemForSelect($record, $foreignRecord, $value)

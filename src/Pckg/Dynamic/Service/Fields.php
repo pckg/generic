@@ -3,7 +3,6 @@
 use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
-use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
@@ -46,9 +45,12 @@ class Fields extends AbstractService
 
     public function getAvailableRelations()
     {
+        $field = $this;
+
         return $this->table->relations->map(
-            function(Relation $relation) {
+            function(Relation $relation) use ($field) {
                 $entity = $relation->showTable->createEntity();
+                Field::automaticallyApplyRelation($entity, $relation->value);
 
                 $options = $relation->onField && $relation->dynamic_relation_type_id == 1
                     ? $entity->all()->each(
