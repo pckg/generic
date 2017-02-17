@@ -19,7 +19,7 @@
     {% include '_pckg_maestro_actions.twig' %}
 
     {# customize view logic #}
-    {#% include '_tabelize_config.twig' %#}
+    {% include '_tabelize_config.twig' %}
 
     {# Vue.js table template #}
     {% include '_tabelize_table_template.twig' %}
@@ -164,5 +164,7 @@
                                     :sort.sync="sort{{ instance }}"
                                     :togglefield="togglefield{{ instance }}"
                                     :first="1"></pckg-maestro-table-{{ table }}>
+
+    <pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>
 
 </div>

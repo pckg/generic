@@ -29,6 +29,7 @@ use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
+use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
 use Throwable;
 
@@ -99,23 +100,54 @@ class Records extends Controller
         return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType);
     }
 
-    /**
-     * List table records.
-     *
-     * @param Table  $tableRecord
-     * @param Entity $entity
-     *
-     * @return $this
-     */
-    public function getViewTableAction(
+    public function getConfigureTableViewAction(
         Table $tableRecord,
         DynamicService $dynamicService,
         DatabaseEntity $entity = null,
         $viewType = 'full'
     )
     {
+        $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
+
+        $fields = $this->dynamic->getFieldsService()->getAvailableFields();
+        $relations = $this->dynamic->getFieldsService()->getAvailableRelations();
+
+        return [
+            'fields'                 => $fields,
+            'relations'              => $relations,
+            'directions'             => $this->dynamic->getSortService()->getDirections(),
+            'filterMethods'          => $this->dynamic->getFilterService()->getTypeMethods(),
+        ];
+    }
+
+    public function postConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService)
+    {
+        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view'] = post()->all();
+
+        return [
+            'message' => 'ok',
+            'data'    => post()->all(),
+        ];
+    }
+
+    /**
+     * List table records.
+     *
+     * @param Table  $tableRecord
+     * @param Entity $entity
+     *
+     * @return $this|Tabelize
+     */
+    public function getViewTableAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        DatabaseEntity $entity = null,
+        $viewType = 'full',
+        $returnTabelize = false
+    )
+    {
         /**
-         * Set table.
+         * Set table so sub-services can reuse it later.
          */
         $this->dynamic->setTable($tableRecord);
 
@@ -245,9 +277,13 @@ class Records extends Controller
                                  function() use ($tableRecord, $listableFields) {
                                      return $listableFields->reduce(
                                          function(Field $field) use ($tableRecord) {
-                                             $fields = $this->dynamic->getFilterService()->getSession('fields');
+                                             $fields = $this->dynamic->getFilterService()->getSession(
+                                                 )['fields']['visible'] ?? [];
 
-                                             return (!$fields && $field->visible) || in_array($field->field, $fields);
+                                             return (!$fields && $field->visible) || in_array(
+                                                 $field->id,
+                                                 $fields
+                                             );
                                          }
                                      );
                                  },
@@ -261,9 +297,11 @@ class Records extends Controller
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
-                         ->setFieldTransformations($fieldTransformations)
-                         ->setListableFields($this->dynamic->getFieldsService()->getAvailableFields())
-                         ->setListableRelations([]/*$this->dynamic->getFieldsService()->getAvailableRelations()*/);
+                         ->setFieldTransformations($fieldTransformations);
+
+        if ($returnTabelize) {
+            return $tabelize;
+        }
 
         if (($this->request()->isAjax() && !get('html')) || get('search')) {
             return [

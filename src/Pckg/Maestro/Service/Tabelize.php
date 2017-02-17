@@ -534,28 +534,4 @@ class Tabelize
         return $html;
     }
 
-    public function setListableFields($listableFields)
-    {
-        $this->listableFields = $listableFields;
-
-        return $this;
-    }
-
-    public function getListableFields()
-    {
-        return $this->listableFields;
-    }
-
-    public function setListableRelations($listableRelations)
-    {
-        $this->listableRelations = $listableRelations;
-
-        return $this;
-    }
-
-    public function getListableRelations()
-    {
-        return $this->listableRelations;
-    }
-
 }

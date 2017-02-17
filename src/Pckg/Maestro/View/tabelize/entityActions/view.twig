@@ -13,7 +13,7 @@
             {% endfor %}
         {% endif %}
         <li role="separator" class="divider"></li>
-        <li><a class="popup-iframe" href="{{ tabelize.getEntity().getFieldsUrl() }}"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('customize') }}</a></li>
+        <li><a href="#" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('customize') }}</a></li>
         <li><a href="{{ tabelize.getEntity().getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('save_current_view') }}</a></li>
         <li role="separator" class="divider"></li>
         <li><a href="{{ tabelize.getEntity().getShareViewUrl() }}" class="popup-iframe"><i class="fa fa-share" aria-hidden="true"></i> {{ __('share_current_view') }}</a></li>

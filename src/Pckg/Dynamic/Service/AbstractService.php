@@ -20,9 +20,15 @@ abstract class AbstractService
         $this->view = $view;
     }
 
-    public function getSession($key)
+    public function getSession($key = null)
     {
-        return $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' . ($this->view->id ?? '')]['view'][$key] ?? [];
+        $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' . ($this->view->id ?? '')] ?? [];
+
+        if (!$key) {
+            return $session;
+        }
+
+        return $session[$key] ?? [];
     }
 
 }

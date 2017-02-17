@@ -8,7 +8,7 @@
                 </div>
             {% endif %}
             {% if block('body') %}
-                <div class="modal-body">
+                <div class="modal-body"{% if minHeight %} style="min-height: {{ minHeight }};"{% endif %}>
                     {% block body %}{% endblock %}
                 </div>
             {% endif %}

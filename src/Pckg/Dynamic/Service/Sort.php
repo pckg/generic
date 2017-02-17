@@ -57,7 +57,9 @@ class Sort extends AbstractService
                 return;
             }
         }
-        $sorts = $this->getAppliedSorts();
+
+        $session = $this->getSession();
+        $sorts = $session['fields']['sorts'] ?? [];
 
         if (!$sorts) {
             $this->applyGuessedSorts($entity);
@@ -71,8 +73,13 @@ class Sort extends AbstractService
         ];
 
         foreach ($sorts as $sort) {
+            $field = Field::getOrFail(['id' => $sort['field']]);
+
+            /**
+             * @T00D00 - guess translatable fields
+             */
             $entity->orderBy(
-                $sort['field'] . ' ' . ($directionMapper[$sort['options']['direction'] ?? 'descending'] ?? 'DESC')
+                $entity->getTable() . '.' . $field->field . ' ' . ($directionMapper[$sort['direction'] ?? 'descending'] ?? 'DESC')
             );
         }
     }
@@ -92,7 +99,9 @@ class Sort extends AbstractService
 
             } else if ($cache->tableHasField($entity->getTable(), 'dt_published')) {
                 $entity->orderBy(
-                    'IF(`' . $entity->getTable() . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, `' . $entity->getTable() . '`.id ASC'
+                    'IF(`' . $entity->getTable(
+                    ) . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, `' . $entity->getTable(
+                    ) . '`.id ASC'
                 );
 
             } else {

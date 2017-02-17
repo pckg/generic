@@ -71,6 +71,13 @@ class Dynamic extends Provider
                                      'table' => TableResolver::class,
                                  ],
                              ],
+                             '/dynamic/tables/list/[table]/configure'                         => [
+                                 'name'      => 'dynamic.record.list',
+                                 'view'      => 'configureTableView',
+                                 'resolvers' => [
+                                     'table' => TableResolver::class,
+                                 ],
+                             ],
                              '/dynamic/tables/list/[table]/[tableView]'                       => [
                                  'name'      => 'dynamic.record.listView',
                                  'view'      => 'viewTableView',

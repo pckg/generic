@@ -26,7 +26,6 @@ class Table extends DatabaseRecord
         $defaultActions = new Collection(
             [
                 'add',
-                'options',
                 'export',
                 'import',
                 'view',

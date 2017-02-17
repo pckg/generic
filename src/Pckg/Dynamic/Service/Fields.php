@@ -46,9 +46,10 @@ class Fields extends AbstractService
     public function getAvailableRelations()
     {
         $field = $this;
+        $sessionRelations = $this->getSession()['relations'] ?? [];
 
         return $this->table->relations->map(
-            function(Relation $relation) use ($field) {
+            function(Relation $relation) use ($field, $sessionRelations) {
                 $entity = $relation->showTable->createEntity();
                 Field::automaticallyApplyRelation($entity, $relation->value);
 
@@ -70,6 +71,8 @@ class Fields extends AbstractService
                     )
                     : [];
 
+                $filtered = (new Collection($sessionRelations['filters']))->filter('relation', $relation->id)->first();
+
                 return [
                     'id'            => $relation->id,
                     'title'         => $relation->title,
@@ -82,6 +85,10 @@ class Fields extends AbstractService
                         'options' => $options,
                     ],
                     'filterOptions' => $options,
+                    'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
+                    'filterMethod'  => $filtered ? $filtered['method'] : null,
+                    'filterValue'   => $filtered ? $filtered['value'] : null,
+                    'filterField'   => $filtered ? $filtered['field'] : null,
                 ];
             }
         );
@@ -89,13 +96,23 @@ class Fields extends AbstractService
 
     protected function makeFields(CollectionInterface $collection)
     {
+        $sessionFields = $this->getSession()['fields'] ?? [];
+
         return $collection->map(
-            function(Field $field) {
+            function(Field $field) use ($sessionFields) {
+                $filtered = (new Collection($sessionFields['filters']))->filter('field', $field->id)->first();
+                $sorted = (new Collection($sessionFields['sorts']))->filter('field', $field->id)->first();
+                $options = [];
+
                 return [
-                    'id'      => $field->id,
-                    'field'   => $field->field,
-                    'title'   => $field->title ?? $field->field,
-                    'visible' => in_array($field->field, $this->getAppliedFields()),
+                    'id'           => $field->id,
+                    'field'        => $field->field,
+                    'title'        => $field->title ?? $field->field,
+                    'visible'      => in_array($field->id, $sessionFields['visible'] ?? []),
+                    'filterMethod' => $filtered ? $filtered['method'] : null,
+                    'filterValue'  => $filtered ? $filtered['value'] : null,
+                    'sort'         => $sorted ? $sorted['direction'] : null,
+                    'options' => $options,
                 ];
             }
         )->keyBy('field');
@@ -104,8 +121,6 @@ class Fields extends AbstractService
     public function applyOnEntity(Entity $entity)
     {
         return $this;
-        $fields = $this->getAppliedFields();
-        $relations = $this->getAppliedRelations();
     }
 
 }

@@ -1,7 +1,5 @@
 <td class="visible">
-    <input type="checkbox" value="1" v-model="{{ type }}.title"/>
-    {% if type == 'relation' and false %}
-        <pre>${ relation | json }</pre>{% endif %}
+    <input type="checkbox" value="1" v-model="{{ type }}.visible"/>
 </td>
 <td class="position" style="display: none;">
     {% if type == 'field' %}
@@ -23,7 +21,7 @@
             <div class="col-sm-8" v-if="field.filterMethod">
                 <template v-if="field.type == 'select'">
                     <select v-model="field.filterValue" class="form-control">
-                        <option v-for="(key, option) in filters[filter.field].options.options"
+                        <option v-for="(key, option) in field.options"
                                 :value="key">${ option }
                         </option>
                     </select>
@@ -61,7 +59,7 @@
         {% endif %}
     </div>
 </td>
-<td class="group">
+<td class="group" style="display: none;">
     {% if type == 'field' %}
         <div class="form-group">
             <input type="checkbox" v-model="field.group" value="1"/>

@@ -141,7 +141,7 @@ class Filter extends AbstractService
 
     public function applyOnEntity(Entity $entity)
     {
-        $filters = $this->getAppliedFilters();
+        $session = $this->getSession();
 
         $signMapper = [
             'equals'          => '=',
@@ -155,12 +155,12 @@ class Filter extends AbstractService
             'like'            => 'LIKE',
         ];
 
-        foreach ($filters as $filter) {
-            if (!is_array($filter['value']) && in_array($filter['options']['method'], ['in', 'notIn'])) {
+        foreach ($session['fields']['filters'] ?? [] as $filter) {
+            if (!is_array($filter['value']) && in_array($filter['method'], ['in', 'notIn'])) {
                 $filter['value'] = explode(',', $filter['value']);
             }
 
-            $entity->where($filter['field'], $filter['value'], $signMapper[$filter['options']['method']]);
+            $entity->where($filter['field'], $filter['value'], $signMapper[$filter['method']]);
         }
 
         $signMapper = [
@@ -170,22 +170,25 @@ class Filter extends AbstractService
             'not'    => '!=',
         ];
 
-        $relationFilters = $this->getAppliedRelationFilters();
-        foreach ($relationFilters as $relationFilter) {
-            $relation = (new Relations())->where('id', $relationFilter['id'])->one();
+        foreach ($session['relations']['filters'] as $relationFilter) {
+            $relation = (new Relations())->where('id', $relationFilter['relation'])->one();
 
-            if ($relation->dynamic_relation_type_id == 1) {
+            if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
                 $entity->where(
                     $relation->onField->field,
                     $relationFilter['value'],
-                    $signMapper[$relationFilter['options']['method']]
+                    $signMapper[$relationFilter['method']]
                 );
             } else if ($relation->dynamic_relation_type_id == 2) {
+                $field = Field::getOrFail(['id' => $relationFilter['field']]);
+
+                $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] . ' ' .
+                     $entity->getRepository()->getConnection()->quote($relationFilter['value']);
+
                 $entity->join(
-                    'INNER JOIN ' . $relation->showTable->table . ($relation->showTab),
+                    'INNER JOIN ' . $relation->showTable->table,
                     $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' . $relation->onField->field,
-                    $relation->showTable->table . '.' . $relationFilter['field'] . ' ' . $signMapper[$relationFilter['options']['method']] . ' ' . $entity->getRepository(
-                    )->getConnection()->quote($relationFilter['value'])
+                    $f
                 );
             }
 
