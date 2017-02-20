@@ -46,4 +46,28 @@ class Relation extends DatabaseRecord
         }
     }
 
+    public function getOptions()
+    {
+        $entity = $this->showTable->createEntity();
+        Field::automaticallyApplyRelation($entity, $this->value);
+        $relation = $this;
+
+        return $this->onField && $this->dynamic_relation_type_id == 1
+            ? $entity->all()->limit(100)->map(
+                function($record) use ($relation, $entity) {
+                    try {
+                        $eval = eval(' return ' . $relation->value . '; ');
+                    } catch (Throwable $e) {
+                        $eval = exception($e);
+                    }
+
+                    return [
+                        'key'   => $record->id,
+                        'value' => $eval,
+                    ];
+                }
+            )
+            : [];
+    }
+
 }

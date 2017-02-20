@@ -5,38 +5,6 @@
         {% endblock %}
         {% block body %}
             <p v-if="fetching">Fetching data, please wait</p>
-            <p><b>Filtering:</b></p>
-            <p>All fields can be filtered by arithmetic operators. Examples: price < 300, created_at >= 2017-01-01, ...
-            <ul>
-                <li>&lt; - record value is lower than filter value</li>
-                <li>&lt;= - record value is lower or the same as filter value</li>
-                <li>= - record value is the same as filter value</li>
-                <li>&gt;= - record value is greater or the same as filter value</li>
-                <li>&gt; - record value is greater than filter value</li>
-                <li>NOT - record value doesn't match filter value</li>
-            </ul>
-            <p>Additionally, you can filter fields with collection operators like IN and NOT IN, separated by comma.
-                Examples:
-            <ul>
-                <li>IN - record value is found in one of filter values</li>
-                <li>NOT IN - record value is not found in one of filter values</li>
-            </ul></p>
-            <p>Simple search can be made by using LIKE and NOT LIKE operator, where you replace missing data with %.
-                Example: email LIKE %gmail.com, email NOT LIKE %@gnp.si, email LIKE %gmail%, ...
-            <ul>
-                <li>LIKE - record value matches expression</li>
-                <li>NOT LIKE - record value doesn't match expression</li>
-            </ul>
-            </p>
-            <p>Lists / dropdowns with less than 100 records (like order status, payment status, ...) are preloaded.</p>
-            <p>Larger lists (like orders, users, ...) are loaded on request.</p>
-            <p><b>T00D00:</b>
-            <ul>
-                <li>Between operator (price between 100 and 1000)</li>
-                <li>Advanced group by</li>
-                <li>Multiple filters</li>
-                <li>AND / OR conditions</li>
-            </ul></p>
             <table class="table table-condensed table-hover table-striped">
                 <tr>
                     <th>Visible</th>
@@ -61,6 +29,39 @@
                     {% include '_tabelize_config_row.twig' with {'type': 'relation'} %}
                 </tr>
             </table>
+
+            <p><b>Filtering:</b></p>
+            <p>All fields can be filtered by arithmetic operators. Examples: price < 300, created_at >= 2017-01-01, ...
+            <ul>
+                <li>&lt; - record value is lower than filter value</li>
+                <li>&lt;= - record value is lower or the same as filter value</li>
+                <li>= - record value is the same as filter value</li>
+                <li>&gt;= - record value is greater or the same as filter value</li>
+                <li>&gt; - record value is greater than filter value</li>
+                <li>NOT - record value doesn't match filter value</li>
+            </ul>
+            <p>Additionally, you can filter fields with collection operators like IN and NOT IN, separated by comma.
+                Examples:
+            <ul>
+                <li>IN - record value is found in at least one of filter values</li>
+                <li>NOT IN - record value is not found in neither of filter values</li>
+            </ul></p>
+            <p>Simple search can be made by using LIKE and NOT LIKE operator, where you replace missing data with %.
+                Example: email LIKE %gmail.com, email NOT LIKE %@gnp.si, email LIKE %gmail%, ...
+            <ul>
+                <li>LIKE - record value matches expression</li>
+                <li>NOT LIKE - record value doesn't match expression</li>
+            </ul>
+            </p>
+            <p>Lists / dropdowns with less than 100 records (like order status, payment status, ...) are preloaded.</p>
+            <p>Larger lists (like orders, users, ...) are loaded on request.</p>
+            <p><b>T00D00:</b>
+            <ul>
+                <li>Between operator (price between 100 and 1000)</li>
+                <li>Advanced group by</li>
+                <li>Multiple filters</li>
+                <li>AND / OR conditions</li>
+            </ul></p>
         {% endblock %}
         {% block footer %}
             <button type="button" class="btn btn-success" @click.prevent="save">Save</button>

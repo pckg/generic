@@ -19,10 +19,12 @@
                 </select>
             </div>
             <div class="col-sm-8" v-if="field.filterMethod">
-                <template v-if="field.type == 'select'">
-                    <select v-model="field.filterValue" class="form-control">
-                        <option v-for="(key, option) in field.options"
-                                :value="key">${ option }
+                <template
+                        v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
+                    <select v-model="field.filterValue" class="form-control"
+                            v-bind:multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
+                        <option v-for="option in field.options"
+                                :value="option.key">${ option.value }
                         </option>
                     </select>
                 </template>
@@ -45,12 +47,13 @@
                 </select>
             </div>
             <template v-if="relation.filterMethod">
-                <div v-if="!relation.filterField || ['equals', 'greater', 'greaterOrEquals', 'lower', 'lowerOrEquals'].indexOf(relation.filterMethod) !== -1"
+                <div v-if="relation.filterField || ['equals', 'greater', 'greaterOrEquals', 'lower', 'lowerOrEquals'].indexOf(relation.filterMethod) > -1"
                      class="col-sm-4">
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>
                 <div v-else class="col-sm-4">
-                    <select v-model="relation.filterValue" class="form-control" multiple>
+                    <select v-model="relation.filterValue" class="form-control"
+                            v-bind:multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
                         <option v-for="option in relation.filterOptions" :value="option.key">${ option.value }
                         </option>
                     </select>

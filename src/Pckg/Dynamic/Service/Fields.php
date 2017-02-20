@@ -3,6 +3,7 @@
 use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
+use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
@@ -50,28 +51,9 @@ class Fields extends AbstractService
 
         return $this->table->relations->map(
             function(Relation $relation) use ($field, $sessionRelations) {
-                $entity = $relation->showTable->createEntity();
-                Field::automaticallyApplyRelation($entity, $relation->value);
+                $options = $relation->getOptions();
 
-                $options = $relation->onField && $relation->dynamic_relation_type_id == 1
-                    ? $entity->all()->each(
-                        function($record) use ($relation, $entity) {
-                            try {
-                                $eval = eval(' return ' . $relation->value . '; ');
-                            } catch (Throwable $e) {
-                                $eval = exception($e);
-                            }
-
-                            return [
-                                'key'   => $record->id,
-                                'value' => $eval,
-                            ];
-                        },
-                        true
-                    )
-                    : [];
-
-                $filtered = (new Collection($sessionRelations['filters']))->filter('relation', $relation->id)->first();
+                $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)->first();
 
                 return [
                     'id'            => $relation->id,
@@ -100,19 +82,25 @@ class Fields extends AbstractService
 
         return $collection->map(
             function(Field $field) use ($sessionFields) {
-                $filtered = (new Collection($sessionFields['filters']))->filter('field', $field->id)->first();
-                $sorted = (new Collection($sessionFields['sorts']))->filter('field', $field->id)->first();
+                $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
+                $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
                 $options = [];
+
+                $relation = (new Relations())->where('on_field_id', $field->id)->one();
+                if ($relation) {
+                    $options = $relation->getOptions();
+                }
 
                 return [
                     'id'           => $field->id,
                     'field'        => $field->field,
+                    'type'         => $field->fieldType->slug,
                     'title'        => $field->title ?? $field->field,
                     'visible'      => in_array($field->id, $sessionFields['visible'] ?? []),
-                    'filterMethod' => $filtered ? $filtered['method'] : null,
-                    'filterValue'  => $filtered ? $filtered['value'] : null,
-                    'sort'         => $sorted ? $sorted['direction'] : null,
-                    'options' => $options,
+                    'filterMethod' => $filtered['method'] ?? null,
+                    'filterValue'  => $filtered['value'] ?? null,
+                    'sort'         => $sorted['direction'] ?? null,
+                    'options'      => $options,
                 ];
             }
         )->keyBy('field');

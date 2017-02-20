@@ -170,7 +170,7 @@ class Filter extends AbstractService
             'not'    => '!=',
         ];
 
-        foreach ($session['relations']['filters'] as $relationFilter) {
+        foreach ($session['relations']['filters'] ?? [] as $relationFilter) {
             $relation = (new Relations())->where('id', $relationFilter['relation'])->one();
 
             if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
