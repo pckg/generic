@@ -47,7 +47,7 @@
                 </select>
             </div>
             <template v-if="relation.filterMethod">
-                <div v-if="relation.filterField || ['equals', 'greater', 'greaterOrEquals', 'lower', 'lowerOrEquals'].indexOf(relation.filterMethod) > -1"
+                <div v-if="relation.filterField || ['equals', 'greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like'].indexOf(relation.filterMethod) > -1"
                      class="col-sm-4">
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>
