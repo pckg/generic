@@ -40,6 +40,14 @@
                     <option v-for="option in relation.fields" :value="option.id">${ option.title }</option>
                 </select>
             </div>
+            <template v-if="relationFilterSelectField(relation)">
+                <div class="col-sm-4">
+                    <select v-model="relation.filterSubField" class="form-control">
+                        <option></option>
+                        <option v-for="option in relationFilterSelectField(relation).fields" :value="option.id">${ option.title }</option>
+                    </select>
+                </div>
+            </template>
             <div class="col-sm-4">
                 <select v-model="relation.filterMethod" class="form-control">
                     <option></option>

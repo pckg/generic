@@ -163,13 +163,9 @@ class Filter extends AbstractService
             $entity->where($filter['field'], $filter['value'], $signMapper[$filter['method']]);
         }
 
-        $signMapper = [
-            'equals' => '=',
-            'in'     => 'IN',
-            'notIn'  => 'NOT IN',
-            'not'    => '!=',
-        ];
-
+        /**
+         * @T00D00 - join translations
+         */
         foreach ($session['relations']['filters'] ?? [] as $relationFilter) {
             $relation = (new Relations())->where('id', $relationFilter['relation'])->one();
 
@@ -179,6 +175,19 @@ class Filter extends AbstractService
                     $relationFilter['value'],
                     $signMapper[$relationFilter['method']]
                 );
+
+                if (isset($relationFilter['subfield'])) {
+                    $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
+
+                    $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] . ' ' .
+                         $entity->getRepository()->getConnection()->quote($relationFilter['value']);
+
+                    $entity->join(
+                        'INNER JOIN ' . $relation->showTable->table,
+                        $relation->onTable->table . '.' . $relation->onField->field . ' = ' . $relation->showTable->table . '.id',
+                        $f
+                    );
+                }
             } else if ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 

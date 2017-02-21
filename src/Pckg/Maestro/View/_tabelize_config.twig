@@ -150,7 +150,8 @@
                             relation: relation.id,
                             method: relation.filterMethod,
                             value: relation.filterValue,
-                            field: relation.filterField
+                            field: relation.filterField,
+                            subfield: relation.filterSubField
                         });
                     }
                 });
@@ -195,6 +196,20 @@
             },
             removeRelationFilter: function (relationFilter) {
                 this.appliedRelations.$remove(relationFilter);
+            },
+            relationFilterSelectField: function (relation) {
+                if (!relation.filterField) {
+                    return null;
+                }
+
+                var selectField = null;
+                $.each(relation.fields, function (i, field) {
+                    if (relation.filterField == field.id && field.type == 'select') {
+                        selectField = field;
+                    }
+                });
+
+                return selectField;
             }
         },
         events: {

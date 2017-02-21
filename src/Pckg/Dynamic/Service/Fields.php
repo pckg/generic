@@ -53,15 +53,14 @@ class Fields extends AbstractService
             function(Relation $relation) use ($field, $sessionRelations) {
                 $options = $relation->getOptions();
 
-                $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)->first();
+                $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
+                                                                                ->first();
 
                 return [
                     'id'            => $relation->id,
                     'title'         => $relation->title ?? $relation->showTable->table,
                     'table'         => $relation->showTable->table,
-                    'fields'        => $this->makeFields(
-                        $relation->showTable->fields
-                    ),
+                    'fields'        => $this->makeFields($relation->showTable->fields, true),
                     'type'          => $relation->dynamic_relation_type_id,
                     'options'       => [
                         'options' => $options,
@@ -76,19 +75,24 @@ class Fields extends AbstractService
         );
     }
 
-    protected function makeFields(CollectionInterface $collection)
+    protected function makeFields(CollectionInterface $collection, $deep = false)
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
 
         return $collection->map(
-            function(Field $field) use ($sessionFields) {
+            function(Field $field) use ($sessionFields, $deep) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
                 $options = [];
 
                 $relation = (new Relations())->where('on_field_id', $field->id)->one();
+                $fields = [];
                 if ($relation) {
                     $options = $relation->getOptions();
+                }
+
+                if ($deep && $relation) {
+                    $fields = $this->makeFields($relation->showTable->fields);
                 }
 
                 return [
@@ -101,6 +105,7 @@ class Fields extends AbstractService
                     'filterValue'  => $filtered['value'] ?? null,
                     'sort'         => $sorted['direction'] ?? null,
                     'options'      => $options,
+                    'fields'       => $fields,
                 ];
             }
         )->keyBy('field');
