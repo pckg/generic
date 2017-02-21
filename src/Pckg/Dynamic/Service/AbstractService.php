@@ -22,7 +22,7 @@ abstract class AbstractService
 
     public function getSession($key = null)
     {
-        $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' . ($this->view->id ?? '')] ?? [];
+        $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' . ($this->view->id ?? '')]['view'] ?? [];
 
         if (!$key) {
             return $session;

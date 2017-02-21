@@ -122,7 +122,7 @@ class Records extends Controller
 
     public function postConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService)
     {
-        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id]['view'] = post()->all();
+        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_']['view'] = post()->all();
 
         return [
             'message' => 'ok',

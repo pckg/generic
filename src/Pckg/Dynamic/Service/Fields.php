@@ -57,7 +57,7 @@ class Fields extends AbstractService
 
                 return [
                     'id'            => $relation->id,
-                    'title'         => $relation->title,
+                    'title'         => $relation->title ?? $relation->showTable->table,
                     'table'         => $relation->showTable->table,
                     'fields'        => $this->makeFields(
                         $relation->showTable->fields
@@ -68,9 +68,9 @@ class Fields extends AbstractService
                     ],
                     'filterOptions' => $options,
                     'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
-                    'filterMethod'  => $filtered ? $filtered['method'] : null,
-                    'filterValue'   => $filtered ? $filtered['value'] : null,
-                    'filterField'   => $filtered ? $filtered['field'] : null,
+                    'filterMethod'  => $filtered['method'] ?? null,
+                    'filterValue'   => $filtered['value'] ?? null,
+                    'filterField'   => $filtered['field'] ?? null,
                 ];
             }
         );
