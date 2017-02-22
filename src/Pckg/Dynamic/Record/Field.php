@@ -167,7 +167,11 @@ class Field extends DatabaseRecord
         try {
             return eval(' return ' . $eval . '; ');
         } catch (Throwable $e) {
-            throw $e;
+            if (prod()) {
+                return null;
+            }
+
+            return exception($e);
         }
     }
 
