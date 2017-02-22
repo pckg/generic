@@ -9,6 +9,7 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Service\Filter;
 
 class Table extends DatabaseRecord
 {
@@ -147,6 +148,24 @@ class Table extends DatabaseRecord
         }
 
         return $entity->where('id', $record->id)->oneOrFail();
+    }
+
+    public function getFields($listableFields, Filter $filterService)
+    {
+        $tableRecord = $this;
+
+        return runInLocale(
+            function() use ($tableRecord, $listableFields, $filterService) {
+                return $listableFields->reduce(
+                    function(Field $field) use ($tableRecord, $filterService) {
+                        $fields = $filterService->getSession()['fields']['visible'] ?? [];
+
+                        return (!$fields && $field->visible) || in_array($field->id, $fields);
+                    }
+                );
+            },
+            'en_GB'
+        );
     }
 
 }

@@ -286,4 +286,29 @@ class Field extends DatabaseRecord
         return $entity->getRepository()->getCache()->tableHasField($entity->getTable() . '_i18n', $this->field);
     }
 
+    public function getTransformedValue($entity)
+    {
+        $field = $this;
+        
+        if ($this->fieldType->slug == 'php') {
+            $fieldTransformations[$field->field] = function($record) use ($field) {
+                return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
+            };
+        } elseif ($this->fieldType->slug == 'geo') {
+            $entity->addSelect(
+                [
+                    $this->field . '_x' => 'X(' . $this->field . ')',
+                    $this->field . '_y' => 'Y(' . $this->field . ')',
+                ]
+            );
+            $fieldTransformations[$field->field] = function($record) use ($field) {
+                $value = $record->{$field->field};
+
+                return $value
+                    ? $record->{$field->field . '_x'} . ';' . $record->{$field->field . '_y'}
+                    : null;
+            };
+        }
+    }
+
 }

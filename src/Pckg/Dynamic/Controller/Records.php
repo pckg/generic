@@ -11,6 +11,7 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
 use Pckg\Database\Repository;
+use Pckg\Dynamic\Dataset\Fields;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
@@ -113,10 +114,10 @@ class Records extends Controller
         $relations = $this->dynamic->getFieldsService()->getAvailableRelations();
 
         return [
-            'fields'                 => $fields,
-            'relations'              => $relations,
-            'directions'             => $this->dynamic->getSortService()->getDirections(),
-            'filterMethods'          => $this->dynamic->getFilterService()->getTypeMethods(),
+            'fields'        => $fields,
+            'relations'     => $relations,
+            'directions'    => $this->dynamic->getSortService()->getDirections(),
+            'filterMethods' => $this->dynamic->getFilterService()->getTypeMethods(),
         ];
     }
 
@@ -221,41 +222,10 @@ class Records extends Controller
          */
         $this->dynamic->getFilterService()->filterByGet($entity);
         $groups = $this->dynamic->getGroupService()->getAppliedGroups();
-        $listableFields = $tableRecord->listableFields(
-            function(HasMany $relation) {
-                $relation->withFieldType();
-            }
-        );
+        $fieldsDataset = new Fields();
+        $listableFields = $fieldsDataset->getListableFieldsForTable($tableRecord);
+        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
 
-        $fieldTransformations = [];
-
-        /**
-         * Transform field type = php
-         * Add support for point fields.
-         */
-        $listableFields->each(
-            function(Field $field) use (&$fieldTransformations, $entity) {
-                if ($field->fieldType->slug == 'php') {
-                    $fieldTransformations[$field->field] = function($record) use ($field) {
-                        return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
-                    };
-                } elseif ($field->fieldType->slug == 'geo') {
-                    $entity->addSelect(
-                        [
-                            $field->field . '_x' => 'X(' . $field->field . ')',
-                            $field->field . '_y' => 'Y(' . $field->field . ')',
-                        ]
-                    );
-                    $fieldTransformations[$field->field] = function($record) use ($field) {
-                        $value = $record->{$field->field};
-
-                        return $value
-                            ? $record->{$field->field . '_x'} . ';' . $record->{$field->field . '_y'}
-                            : null;
-                    };
-                }
-            }
-        );
         /**
          * @T00D00
          *  - find out joins / scopes / withs for field type = php
@@ -272,24 +242,7 @@ class Records extends Controller
                          ->setTitle($tableRecord->getListTitle())
                          ->setEntity($entity)
                          ->setRecords($records)
-                         ->setFields(
-                             runInLocale(
-                                 function() use ($tableRecord, $listableFields) {
-                                     return $listableFields->reduce(
-                                         function(Field $field) use ($tableRecord) {
-                                             $fields = $this->dynamic->getFilterService()->getSession(
-                                                 )['fields']['visible'] ?? [];
-
-                                             return (!$fields && $field->visible) || in_array(
-                                                 $field->id,
-                                                 $fields
-                                             );
-                                         }
-                                     );
-                                 },
-                                 'en_GB'
-                             )
-                         )
+                         ->setFields($tableRecord->getFields($listableFields, $this->dynamic->getFilterService()))
                          ->setPerPage(get('perPage', 50))
                          ->setPage(1)
                          ->setTotal($total)
@@ -314,9 +267,13 @@ class Records extends Controller
             ];
         }
 
-        $tabelize->getView()->addData('dynamic', $this->dynamic);
-        $tabelize->getView()->addData('viewType', $viewType);
-        $tabelize->getView()->addData('searchUrl', router()->getUri());
+        $tabelize->getView()->addData(
+            [
+                'dynamic'   => $this->dynamic,
+                'viewType'  => $viewType,
+                'searchUrl' => router()->getUri(),
+            ]
+        );
 
         return $tabelize;
     }
@@ -453,6 +410,15 @@ class Records extends Controller
 
         $tableEntity = $table->createEntity();
 
+        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2))
+               . path('ds') . 'View' . path('ds');
+        Twig::addDir($dir);
+        /**
+         * This is needed for table actions.
+         */
+        Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
+        Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
+
         $record = $tableEntity->transformRecordToEntities($record);
 
         $form->setTable($table);
@@ -471,6 +437,7 @@ class Records extends Controller
 
         $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' .
                  ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
+
         $formalize = $this->formalize($form, $record, $title);
 
         /**
@@ -486,42 +453,33 @@ class Records extends Controller
 
         $record::$dynamicTable = $table;
 
-        /**
-         * And build tabs ...
-         */
-        if (!$tabs->count()) {
-            /**
-             * Return simple html without tabs.
-             */
-            return view(
-                'edit/singular',
-                [
-                    'formalize'    => $formalize,
-                    'tabelizes'    => $tabelizes,
-                    'functionizes' => $functionizes,
-                    'record'       => $record,
-                ]
-            );
-        }
+        Tab::$dynamicRecord = $record;
+        Tab::$dynamicTable = $table;
+
+        $actions = $table->getRecordActions();
 
         ksort($tabelizes);
         ksort($functionizes);
 
-        Tab::$dynamicRecord = $record;
-        Tab::$dynamicTable = $table;
+        $fieldsDataset = new Fields();
+        $listableFields = $fieldsDataset->getListableFieldsForTable($table);
+        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $tableEntity);
 
-        /**
-         * We have to build tabs.
-         */
+        $tabelize = $this->tabelize()
+                         ->setFieldTransformations($fieldTransformations);
+
+        $data = [
+            'formalize'    => $formalize,
+            'tabelize'     => $tabelize,
+            'tabelizes'    => $tabelizes,
+            'functionizes' => $functionizes,
+            'record'       => $record,
+            'actions'      => $actions,
+        ];
+
         return view(
-            'edit/tabs',
-            [
-                'tabs'         => $tabs,
-                'tabelizes'    => $tabelizes,
-                'formalize'    => $formalize,
-                'functionizes' => $functionizes,
-                'record'       => $record,
-            ]
+            $tabs->count() ? 'edit/tabs' : 'edit/singluar',
+            $data
         );
     }
 

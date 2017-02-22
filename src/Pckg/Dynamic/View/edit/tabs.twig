@@ -4,34 +4,39 @@
 {% if flash('dynamic.records.edit.success', false) %}
     <pckg-bootstrap-alert style="success" text="{{ flash('dynamic.records.edit.success') }}"></pckg-bootstrap-alert>
 {% endif %}
+{% include 'Pckg/Maestro/View/_pckg_maestro_actions.twig' with { recordActions: actions } %}
 <div class="pckg-dynamic-record-tabs">
     <h2>
         {{ formalize.getTitle() | raw }}
-        {% if not formalize.getForm().isEditable() and record.id %}
+        <pckg-maestro-actions recordactionhandler="recordactionhandler" record="record"></pckg-maestro-actions>
+        {#
+    {% if not formalize.getForm().isEditable() and record.id %}
 
+        <!-- Split button -->
+        <div class="btn-group pull-right">
+            <a href="{{ record.getEditUrl() }}" class="btn btn-default">Edit</a>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                {% if record.isTranslatable() %}
+                    <li>
+                        <a href="{{ record.deleteTranslationUrl }}">Delete translation ({{ _session.pckg_dynamic_lang_id }})</a>
+                    </li>
+                {% endif %}
 
-            <!-- Split button -->
-            <div class="btn-group pull-right">
-                <a href="{{ record.getEditUrl() }}" class="btn btn-default">Edit</a>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                    {% if record.isTranslatable() %}
-                        <li>
-                            <a href="{{ record.deleteTranslationUrl }}">Delete translation ({{ _session.pckg_dynamic_lang_id }})</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+                {% for action in actions %}
+                    <li>{% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-
-
-        {% elseif record.id %}
-            [record actions from list]
-        {% endif %}
+    {% elseif record.id %}
+        [record actions from list]
+    {% endif %}
+        #}
     </h2>
 
     <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
@@ -69,7 +74,15 @@
 <script>
     utils.pushToVue({
         data: {
-            loadedTabs: {}
+            loadedTabs: {},
+            recordactionhandler: function (record, action) {
+                console.log('dispatching record:' + action);
+
+                this.$dispatch('record:' + action, record.id, record);
+                this.$emit('record:' + action, record.id, record);
+                this.$broadcast('record:' + action, record.id, record);
+            },
+            record: {{ record.toJSON() | raw }}
         },
         methods: {
             loadAjaxTab: function (tabId, url) {
