@@ -21,7 +21,6 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <pre>${ record }</pre>
     </div>
 </script>
 
@@ -41,8 +40,11 @@
         },
         methods: {
             recordAction: function (record, action) {
-                console.log('Caught recordAction ' + action + ', calling handler');
-                this.recordactionhandler(record, action);
+                console.log('Yeeey, caught recordAction ' + action + ', calling handler');
+
+                this.$dispatch('record:' + action, record.id, record);
+                this.$emit('record:' + action, record.id, record);
+                this.$broadcast('record:' + action, record.id, record);
             }
         }
     });

@@ -1,42 +1,9 @@
-{% if flash('dynamic.records.add.success', false) %}
-    <pckg-bootstrap-alert style="success" text="{{ flash('dynamic.records.add.success') }}"></pckg-bootstrap-alert>
-{% endif %}
-{% if flash('dynamic.records.edit.success', false) %}
-    <pckg-bootstrap-alert style="success" text="{{ flash('dynamic.records.edit.success') }}"></pckg-bootstrap-alert>
-{% endif %}
-{% include 'Pckg/Maestro/View/_pckg_maestro_actions.twig' with { recordActions: actions } %}
 <div class="pckg-dynamic-record-tabs">
+    {% include 'Pckg/Maestro/View/_pckg_maestro_actions.twig' with { recordActions: actions } %}
     <h2>
         {{ formalize.getTitle() | raw }}
-        <pckg-maestro-actions recordactionhandler="recordactionhandler" record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions>
-        {#
-    {% if not formalize.getForm().isEditable() and record.id %}
-
-        <!-- Split button -->
-        <div class="btn-group pull-right">
-            <a href="{{ record.getEditUrl() }}" class="btn btn-default">Edit</a>
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu">
-                {% if record.isTranslatable() %}
-                    <li>
-                        <a href="{{ record.deleteTranslationUrl }}">Delete translation ({{ _session.pckg_dynamic_lang_id }})</a>
-                    </li>
-                {% endif %}
-
-                {% for action in actions %}
-                    <li>{% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-    {% elseif record.id %}
-        [record actions from list]
-    {% endif %}
-        #}
+        <pckg-maestro-actions :recordactionhandler="recordactionhandler"
+                              :record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions>
     </h2>
 
     <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
@@ -69,6 +36,8 @@
             </div>
         {% endfor %}
     </div>
+    to string views
+    {{ tabelize.__toStringViews() | raw }}
 </div>
 
 <script>
@@ -76,7 +45,7 @@
         data: {
             loadedTabs: {},
             recordactionhandler: function (record, action) {
-                console.log('dispatching record:' + action);
+                console.log('dispatching2 record:' + action);
 
                 this.$dispatch('record:' + action, record.id, record);
                 this.$emit('record:' + action, record.id, record);
