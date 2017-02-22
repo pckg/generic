@@ -458,7 +458,7 @@ class Tabelize
         return $records;
     }
 
-    protected function transformRecord(DatabaseRecord $record)
+    public function transformRecord(DatabaseRecord $record)
     {
         $transformed = [];
 
@@ -493,9 +493,6 @@ class Tabelize
                 }
             }
             $transformed = array_merge($record->getToArrayValues(), $transformed);
-            /*foreach ($record->getToArrayValues() as $key => $value) {
-                $transformed[$key] = $value;
-            }*/
         }
 
         if (!isset($transformed['id'])) {

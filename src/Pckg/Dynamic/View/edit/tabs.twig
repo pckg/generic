@@ -8,7 +8,7 @@
 <div class="pckg-dynamic-record-tabs">
     <h2>
         {{ formalize.getTitle() | raw }}
-        <pckg-maestro-actions recordactionhandler="recordactionhandler" record="record"></pckg-maestro-actions>
+        <pckg-maestro-actions recordactionhandler="recordactionhandler" record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions>
         {#
     {% if not formalize.getForm().isEditable() and record.id %}
 
@@ -81,8 +81,7 @@
                 this.$dispatch('record:' + action, record.id, record);
                 this.$emit('record:' + action, record.id, record);
                 this.$broadcast('record:' + action, record.id, record);
-            },
-            record: {{ record.toJSON() | raw }}
+            }
         },
         methods: {
             loadAjaxTab: function (tabId, url) {

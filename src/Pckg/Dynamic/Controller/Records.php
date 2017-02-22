@@ -466,6 +466,7 @@ class Records extends Controller
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $tableEntity);
 
         $tabelize = $this->tabelize()
+                         ->setFields($listableFields)
                          ->setFieldTransformations($fieldTransformations);
 
         $data = [
@@ -475,10 +476,11 @@ class Records extends Controller
             'functionizes' => $functionizes,
             'record'       => $record,
             'actions'      => $actions,
+            'tabs'         => $tabs,
         ];
 
         return view(
-            $tabs->count() ? 'edit/tabs' : 'edit/singluar',
+            $tabs->count() ? 'edit/tabs' : 'edit/singular',
             $data
         );
     }
