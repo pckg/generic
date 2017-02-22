@@ -47,10 +47,9 @@
         },
         events: {
             'record:checkCloneRecord': function (id, record) {
-                alert("Checking");
                 this.checkCloneRecord(record);
 
-                return true;
+                return false;
             }
         }
     });

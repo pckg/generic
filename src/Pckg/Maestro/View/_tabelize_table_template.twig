@@ -1,133 +1,134 @@
-<script type="text/x-template" id="pckg-maestro-table-{{ table }}">
-    <div class="pckg-maestro-table-{{ table }}">
-        <table class="table table-condensed table-striped table-hover">
-            <template v-if="depth > 0">
-                <tr v-for="(i,record) in records" track-by="$index">
-                    <td>
-                        <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
-                        <pckg-maestro-table-{{ table }} :records.sync="record"
-                                                        :fields="fields"
-                                                        :depth="depth - 2"
-                                                        :groups.sync="groups"
-                                                        :ids.sync="ids"
-                                                        :search.sync="search"
-                                                        :entityactions.sync="entityactions"
-                                                        :paginator.sync="paginator"
-                                                        :table.sync="table"
-                                                        :recordactionhandler="recordactionhandler"
-                                                        :resetpaginatorurl="resetpaginatorurl"
-                                                        :sort.sync="sort"
-                                                        :togglefield="togglefield"
-                                                        :first=""></pckg-maestro-table-{{ table }}>
-                    </td>
-                </tr>
-            </template>
-            <template v-if="depth < 1">
-                <thead>
-                <tr>
-                    <th v-for="field in fields" v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''"
-                        class="affix-thead-container">
-                        <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
-                            <div>
-                                ${ field.title ? field.title : (field.field ? field.field : field) }
+<div class="pckg-maestro-table-{{ table }}">
+    <table class="table table-condensed table-striped table-hover">
+        <template v-if="depth > 0">
+            <tr v-for="(i,record) in records" track-by="$index">
+                <td>
+                    <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
+                    <pckg-maestro-table-{{ table }} :records.sync="record"
+                                                    :fields="fields"
+                                                    :depth="depth - 2"
+                                                    :groups.sync="groups"
+                                                    :ids.sync="ids"
+                                                    :search.sync="search"
+                                                    :entityactions.sync="entityactions"
+                                                    :paginator.sync="paginator"
+                                                    :table.sync="table"
+                                                    :recordactionhandler="recordactionhandler"
+                                                    :resetpaginatorurl="resetPaginatorUrl"
+                                                    :sort.sync="sort"
+                                                    :togglefield="togglefield"
+                                                    :first=""></pckg-maestro-table-{{ table }}>
+                </td>
+            </tr>
+        </template>
+        <template v-if="depth < 1">
+            <thead>
+            <tr>
+                <th v-for="field in fields"
+                    v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''"
+                    class="affix-thead-container">
+                    <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
+                        <div>
+                            ${ field.title ? field.title : (field.field ? field.field : field) }
                                 <span v-if="sort.field == field.id">
                                     <i class="fa"
                                        v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
                                 </span>
-                            </div>
                         </div>
-                        <div class="affix-thead-static" @click.prevent="togglefield(field.id)">
-                            ${ field.title ? field.title : (field.field ? field.field : field) }
+                    </div>
+                    <div class="affix-thead-static" @click.prevent="togglefield(field.id)">
+                        ${ field.title ? field.title : (field.field ? field.field : field) }
                             <span v-if="sort.field == field.id">
                                 <i class="fa"
                                    v-bind:class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
                             </span>
-                        </div>
-                    </th>
-                    <th class="text-right affix-thead-container">
-                        <div class="affix-thead-fixed">
-                            <div>
-                                {{ __('select_all') }}
-                            </div>
-                        </div>
-                        <div class="affix-thead-static">
+                    </div>
+                </th>
+                <th class="text-right affix-thead-container">
+                    <div class="affix-thead-fixed">
+                        <div>
                             {{ __('select_all') }}
                         </div>
-                    </th>
-                    <th class="affix-thead-container">
-                        <div class="affix-thead-fixed">
-                            <div>
-                                <input type="checkbox" v-on:click="checkAll"
-                                       v-model="allChecked"
-                                       value="1"/>
-                            </div>
-                        </div>
-                        <div class="affix-thead-static">
+                    </div>
+                    <div class="affix-thead-static">
+                        {{ __('select_all') }}
+                    </div>
+                </th>
+                <th class="affix-thead-container">
+                    <div class="affix-thead-fixed">
+                        <div>
                             <input type="checkbox" v-on:click="checkAll"
                                    v-model="allChecked"
                                    value="1"/>
                         </div>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="record in records | filterBy search"
-                    v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
-                    <td v-for="field in fields" v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
-                        <template v-if="field.fieldType && field.fieldType.slug == 'boolean'">
-                            <pckg-tabelize-field-boolean :field="field.id"
-                                                         :record="record.id"
-                                                         :value="record[field.field ? field.field : field]"
-                                                         :table="table"
-                                                         :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
-                        </template>
-                        <template v-if="field.fieldType && field.fieldType.slug == 'order'">
-                            <pckg-tabelize-field-order :field="field.id"
-                                                       :record="record.id"
-                                                       :value="record[field.field ? field.field : field]"
-                                                       :table="table"
-                                                       :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
-                        </template>
-                        <template v-if="field.fieldType && field.fieldType.slug == 'datetime' && field.isTogglable">
-                            <pckg-tabelize-field-datetime :field="field.id"
-                                                          :record="record.id"
-                                                          :value="record[field.field ? field.field : field]"
-                                                          :table="table"
-                                                          :min="field.minTogglable"
-                                                          :max="field.maxTogglable"
-                                                          :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
-                        </template>
-                        <template v-if="field.fieldType && field.fieldType.slug == 'editor'">
-                            <pckg-tabelize-field-editor
-                                    :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
-                        </template>
-                        <template
-                                v-if="!field.fieldType || !field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
-                            <template v-if="field.field == 'title' || field.field == 'id'"><a v-bind:href="record.viewUrl">!${ record[field.field ? field.field : field] }</a></template>
-                            <template v-else>!${ record[field.field ? field.field : field] }</template>
-                        </template>
-                    </td>
-                    <td class="actions">
-                        <pckg-maestro-actions :record="record"
-                                              :recordactionhandler="recordactionhandler"></pckg-maestro-actions>
-                    </td>
-                    <td class="checkboxes">
-                        <input type="checkbox" v-model="ids" v-bind:value="record.id"/>
-                    </td>
-                </tr>
-                </tbody>
-            </template>
-        </table>
-        <div v-if="first">
-            <pckg-dynamic-paginator v-ref:maestro-paginator
-                                    :per-page.sync="paginator.perPage"
-                                    :page.sync="paginator.page"
-                                    :total.sync="paginator.total"
-                                    :url.sync="paginator.url"
-                                    :resetpaginatorurl="resetpaginatorurl"
-                                    :records.sync="records"
-                                    :groups.sync="groups"
-            ></pckg-dynamic-paginator>
-        </div>
+                    </div>
+                    <div class="affix-thead-static">
+                        <input type="checkbox" v-on:click="checkAll"
+                               v-model="allChecked"
+                               value="1"/>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="record in records | filterBy search"
+                v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
+                <td v-for="field in fields"
+                    v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
+                    <template v-if="field.fieldType && field.fieldType.slug == 'boolean'">
+                        <pckg-tabelize-field-boolean :field="field.id"
+                                                     :record="record.id"
+                                                     :value="record[field.field ? field.field : field]"
+                                                     :table="table"
+                                                     :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
+                    </template>
+                    <template v-if="field.fieldType && field.fieldType.slug == 'order'">
+                        <pckg-tabelize-field-order :field="field.id"
+                                                   :record="record.id"
+                                                   :value="record[field.field ? field.field : field]"
+                                                   :table="table"
+                                                   :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
+                    </template>
+                    <template v-if="field.fieldType && field.fieldType.slug == 'datetime' && field.isTogglable">
+                        <pckg-tabelize-field-datetime :field="field.id"
+                                                      :record="record.id"
+                                                      :value="record[field.field ? field.field : field]"
+                                                      :table="table"
+                                                      :min="field.minTogglable"
+                                                      :max="field.maxTogglable"
+                                                      :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
+                    </template>
+                    <template v-if="field.fieldType && field.fieldType.slug == 'editor'">
+                        <pckg-tabelize-field-editor
+                                :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
+                    </template>
+                    <template
+                            v-if="!field.fieldType || !field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
+                        <template v-if="field.field == 'title' || field.field == 'id'"><a v-bind:href="record.viewUrl">!${
+                                record[field.field ? field.field : field] }</a></template>
+                        <template v-else>!${ record[field.field ? field.field : field] }</template>
+                    </template>
+                </td>
+                <td class="actions">
+                    <pckg-maestro-actions :record="record"
+                                          :recordactionhandler="recordactionhandler"></pckg-maestro-actions>
+                </td>
+                <td class="checkboxes">
+                    <input type="checkbox" v-model="ids" v-bind:value="record.id"/>
+                </td>
+            </tr>
+            </tbody>
+        </template>
+    </table>
+    <div v-if="first">
+        <pckg-dynamic-paginator v-ref:maestro-paginator
+                                :per-page.sync="paginator.perPage"
+                                :page.sync="paginator.page"
+                                :total.sync="paginator.total"
+                                :url.sync="paginator.url"
+                                :resetpaginatorurl="resetPaginatorUrl"
+                                :records.sync="records"
+                                :groups.sync="groups"
+        ></pckg-dynamic-paginator>
     </div>
-</script>
+</div>

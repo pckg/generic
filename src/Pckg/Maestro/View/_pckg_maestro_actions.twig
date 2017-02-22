@@ -40,11 +40,11 @@
         },
         methods: {
             recordAction: function (record, action) {
-                console.log('Yeeey, caught recordAction ' + action + ', calling handler');
+                console.log('Yeeey, caught record:' + action + ', dispatching, emiting and broadcasting');
 
-                this.$dispatch('record:' + action, record.id, record);
-                this.$emit('record:' + action, record.id, record);
-                this.$broadcast('record:' + action, record.id, record);
+                //this.$root.$dispatch('record:' + action, record.id, record);
+                //this.$root.$emit('record:' + action, record.id, record);
+                this.$root.$broadcast('record:' + action, record.id, record);
             }
         }
     });

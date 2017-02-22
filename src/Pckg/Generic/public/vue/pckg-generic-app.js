@@ -31,6 +31,7 @@ var vueData = $vue.data;
 $vue.data = function () {
     var data = {};
     $.each(vueData, function (key, val) {
+        console.log('(deprecated) vueData ' + key);
         data[key] = val;
     });
 
@@ -43,6 +44,7 @@ $vue.data = function () {
 var vueReady = $vue.ready;
 $vue.ready = function () {
     $.each(vueReady, function (key, val) {
+        console.log('(deprecated) vueReady ');
         val();
     })
 };
@@ -52,12 +54,12 @@ var on = $vue.on;
 /**
  * Initialize main VueJS app.
  */
-data.$root = utils.createVue('root', $vue);
+data.$vue = new Vue($vue);
 
 /**
  * Attach listeners
  */
 $.each(on, function(event, callback){
-    console.log('registering ' + event);
-    data.$root.$on(event, callback);
+    console.log('(deprecated) registering ' + event);
+    data.$vue.$on(event, callback);
 });
