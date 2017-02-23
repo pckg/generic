@@ -470,6 +470,7 @@ class Records extends Controller
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $tableEntity);
 
         $tabelize = $this->tabelize()
+                         ->setEntity($tableEntity)
                          ->setEntityActions($table->getEntityActions())
                          ->setRecordActions($table->getRecordActions())
                          ->setViews($table->actions()->keyBy('slug'))
@@ -527,7 +528,7 @@ class Records extends Controller
                 $entity->where($relation->onField->field, $record->id);
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),
-                    $dynamicService,
+                    $this->dynamic,
                     $entity,
                     'related'
                 );

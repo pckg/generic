@@ -11,6 +11,7 @@
 {% set instance = table %}
 
 {# Vue.js template and script for record actions #}
+{% include '_pckg_maestro_actions_template.twig' %}
 {% include '_pckg_maestro_actions.twig' %}
 
 {# customize view logic #}
@@ -29,6 +30,11 @@
 </script>
 
 <script type="text/javascript">
+    var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
+        name: 'pckg-maestro-actions-{{ table }}',
+        template: '#pckg-maestro-actions-{{ table }}-template'
+    }));
+
     var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
         name: 'pckg-maestro-table-{{ table }}',
         template: '#pckg-maestro-table-{{ table }}-template',
@@ -68,8 +74,8 @@
             },
             makeSort: function () {
                 var newValue = this.sort;
-                if (this.$refs.maestroTable._sortTimeout) {
-                    this.$refs.maestroTable._sortTimeout.abort();
+                if (this._sortTimeout) {
+                    this._sortTimeout.abort();
                 }
 
                 this.resetPaginatorUrl({
@@ -77,7 +83,7 @@
                     dir: newValue.dir
                 });
 
-                this.$refs.maestroTable._sortTimeout = http.getJSON(this.paginator.url, function (data) {
+                this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
                     console.log("make sort");
                     this.records = data.records;
                 }.bind(this));

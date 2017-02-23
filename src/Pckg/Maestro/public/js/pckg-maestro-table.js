@@ -43,7 +43,8 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
     },
     data: function () {
         return {
-            _searchTimeout: null
+            _searchTimeout: null,
+            _sortTimeout: null
         };
     },
     methods: {

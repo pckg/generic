@@ -1,12 +1,8 @@
 <?php namespace Pckg\Dynamic\Provider;
 
 use Pckg\Dynamic\Controller\Export;
-use Pckg\Dynamic\Controller\Fields;
-use Pckg\Dynamic\Controller\FilterBy;
-use Pckg\Dynamic\Controller\GroupBy;
 use Pckg\Dynamic\Controller\Import;
 use Pckg\Dynamic\Controller\Records;
-use Pckg\Dynamic\Controller\SortBy;
 use Pckg\Dynamic\Controller\View;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
 use Pckg\Dynamic\Middleware\SetContentLanguage;
@@ -207,106 +203,6 @@ class Dynamic extends Provider
                                      'table'  => TableResolver::class,
                                      'field'  => FieldResolver::class,
                                      'record' => RecordResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => GroupBy::class,
-                         ],
-                         [
-                             '/dynamic/tables/group/[table]'      => [
-                                 'name'      => 'dynamic.record.group',
-                                 'view'      => 'groupTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/group/[table]/save' => [
-                                 'name'      => 'dynamic.record.group.save',
-                                 'view'      => 'save',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => FilterBy::class,
-                         ],
-                         [
-                             '/dynamic/tables/filter/[table]'      => [
-                                 'name'      => 'dynamic.record.filter',
-                                 'view'      => 'filterTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/filter/[table]/save' => [
-                                 'name'      => 'dynamic.record.filter.save',
-                                 'view'      => 'save',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => Fields::class,
-                         ],
-                         [
-                             '/dynamic/tables/fields/[table]'      => [
-                                 'name'      => 'dynamic.record.fields',
-                                 'view'      => 'fields',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/fields/[table]/save' => [
-                                 'name'      => 'dynamic.record.fields.save',
-                                 'view'      => 'save',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => SortBy::class,
-                         ],
-                         [
-                             '/dynamic/tables/sort/[table]'      => [
-                                 'name'      => 'dynamic.record.sort',
-                                 'view'      => 'sortTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/sort/[table]/save' => [
-                                 'name'      => 'dynamic.record.sort.save',
-                                 'view'      => 'save',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => SortBy::class,
-                         ],
-                         [
-                             '/dynamic/tables/actions/[table]'      => [
-                                 'name'      => 'dynamic.record.actions',
-                                 'view'      => 'actionsTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/actions/[table]/save' => [
-                                 'name'      => 'dynamic.record.actions.save',
-                                 'view'      => 'save',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
                                  ],
                              ],
                          ]

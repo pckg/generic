@@ -1,11 +1,22 @@
+{% set table = tabelize.getEntity().getTable() %}
+
+{% include 'Pckg/Maestro/View/_pckg_maestro_actions_template.twig' with { recordActions: actions, table: table } %}
+
 {% include 'Pckg/Maestro/View/_pckg_maestro_actions.twig' with { recordActions: actions } %}
+
+<script>
+    var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
+        name: 'pckg-maestro-actions-{{ table }}',
+        template: '#pckg-maestro-actions-{{ table }}-template'
+    }));
+</script>
 
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
         <h2>
             {{ formalize.getTitle() | raw }}
-            <pckg-maestro-actions :recordactionhandler="recordactionhandler"
-                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions>
+            <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
+                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions-{{ table }}>
         </h2>
 
         <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
@@ -60,6 +71,7 @@
             loadAjaxTab: function (tabId, url) {
                 http.get(url + '?html=1', function (html) {
                     var $element = $('#dynamic-tab-' + tabId).html(html);
+                    console.log(html);
                     this.$compile($element.get(0));
                 }.bind(this));
             }

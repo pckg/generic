@@ -1,0 +1,25 @@
+<script type="text/x-template" id="pckg-maestro-actions{{ table ? '-' ~ table ~ '-template' : '' }}">
+    <div class="btn-group btn-group-sm pull-right">
+        <div class="btn btn-default" v-if="typeof record.language_id != 'undefined' && !record.language_id">
+            &nbsp;&nbsp;&nbsp;<i class="fa fa-globe" title="Not translated" style="color: red;"></i>&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="btn btn-default">
+            {% for action in recordActions %}
+                {% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}
+            {% endfor %}
+        </div>
+        {% if recordActions|length > 1 %}
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                {% for action in recordActions %}
+                    <li>{% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</script>
