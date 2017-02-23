@@ -1,0 +1,116 @@
+<script type="text/x-template" id="pckg-maestro-field">
+    <div @dblclick.prevent="toggleEditable">
+        <template v-if="type == 'boolean'">
+            <template v-if="!editable">
+                <pckg-tabelize-field-boolean :field="field.id"
+                                             :record="record.id"
+                                             :value="record[field.field ? field.field : field]"
+                                             :table="table"
+                                             :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
+            </template>
+            <template v-else>
+                <input type="checkbox" v-model="model"/>
+            </template>
+        </template>
+        <template v-if="type == 'order'">
+            <pckg-tabelize-field-order :field="field.id"
+                                       :record="record.id"
+                                       :value="record[field.field ? field.field : field]"
+                                       :table="table"
+                                       :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
+        </template>
+        <template v-if="type == 'datetime' && field.isTogglable">
+            <template v-if="!editable">
+                <pckg-tabelize-field-datetime :field="field.id"
+                                              :record="record.id"
+                                              :value="record[field.field ? field.field : field]"
+                                              :table="table"
+                                              :min="field.minTogglable"
+                                              :max="field.maxTogglable"
+                                              :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
+            </template>
+            <template v-else>
+                <input type="date" v-model="model"/>
+            </template>
+        </template>
+        <template v-if="type == 'editor'">
+            <template v-if="!editable">
+                <pckg-tabelize-field-editor
+                        :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
+            </template>
+            <template v-else>
+                <textarea>${ model | raw }</textarea>
+            </template>
+        </template>
+        <template
+                v-if="!type || !field.id || (type != 'boolean' && type != 'order' && type != 'editor' && (type != 'datetime' || !field.isTogglable))">
+            <template v-if="!editable">
+                <template v-if="field.field == 'title' || field.field == 'id'">
+                    <a v-bind:href="record.viewUrl">!${
+                        record[field.field ? field.field : field] }</a>
+                </template>
+                <template v-else>!${ record[field.field ? field.field : field] }</template>
+            </template>
+            <template v-else>
+                <input type="text" v-model="model"/>
+            </template>
+        </template>
+    </div>
+    <div v-if="editable">
+        <button href="#" class="btn btn-xs btn-danger" title="Cancel changes" @click.prevent="cancelChanges">
+            <i class="fa fa-minus" aria-hidden="true"></i>
+        </button>
+        <button href="#" class="btn btn-xs btn-success" title="Save changes" @click.prevent="saveChanges">
+            <i class="fa fa-check" aria-hidden="true"></i>
+        </button>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var pckgMaestroFieldComponent = Vue.component('pckg-maestro-field', {
+        name: 'pckg-maestro-field',
+        template: '#pckg-maestro-field',
+        props: {
+            field: {
+                type: Object,
+                required: true
+            },
+            record: {
+                type: Object,
+                required: true
+            },
+            model: {
+                required: true
+            }
+        },
+        data: function () {
+            return {
+                editable: false
+            };
+        },
+        methods: {
+            toggleEditable: function () {
+                this.editable = !this.editable;
+            },
+            saveChanges: function () {
+
+            },
+            cancelChanges: function () {
+                
+            }
+        },
+        computed: {
+            type: function () {
+                return this.field.fieldType ? this.field.fieldType.slug : null;
+            }
+        },
+        ready: function () {
+            $(document).on('keyup', function (e) {
+                if (e.keyCode == 27) {
+                    // esc key
+                    this.editable = false;
+                }
+            }.bind(this));
+        }
+    });
+</script>

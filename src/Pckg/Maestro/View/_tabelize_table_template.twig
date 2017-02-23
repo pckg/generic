@@ -75,39 +75,7 @@
                 v-bind:class="record.tabelizeClass ? record.tabelizeClass : ''">
                 <td v-for="field in fields"
                     v-bind:class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
-                    <template v-if="field.fieldType && field.fieldType.slug == 'boolean'">
-                        <pckg-tabelize-field-boolean :field="field.id"
-                                                     :record="record.id"
-                                                     :value="record[field.field ? field.field : field]"
-                                                     :table="table"
-                                                     :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
-                    </template>
-                    <template v-if="field.fieldType && field.fieldType.slug == 'order'">
-                        <pckg-tabelize-field-order :field="field.id"
-                                                   :record="record.id"
-                                                   :value="record[field.field ? field.field : field]"
-                                                   :table="table"
-                                                   :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
-                    </template>
-                    <template v-if="field.fieldType && field.fieldType.slug == 'datetime' && field.isTogglable">
-                        <pckg-tabelize-field-datetime :field="field.id"
-                                                      :record="record.id"
-                                                      :value="record[field.field ? field.field : field]"
-                                                      :table="table"
-                                                      :min="field.minTogglable"
-                                                      :max="field.maxTogglable"
-                                                      :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-datetime>
-                    </template>
-                    <template v-if="field.fieldType && field.fieldType.slug == 'editor'">
-                        <pckg-tabelize-field-editor
-                                :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
-                    </template>
-                    <template
-                            v-if="!field.fieldType || !field.id || (field.fieldType.slug != 'boolean' && field.fieldType.slug != 'order' && field.fieldType.slug != 'editor' && (field.fieldType.slug != 'datetime' || !field.isTogglable))">
-                        <template v-if="field.field == 'title' || field.field == 'id'"><a v-bind:href="record.viewUrl">!${
-                                record[field.field ? field.field : field] }</a></template>
-                        <template v-else>!${ record[field.field ? field.field : field] }</template>
-                    </template>
+                    <pckg-maestro-field :field="field" :record="record" :model="record[field.field ? field.field : field]"></pckg-maestro-field>
                 </td>
                 <td class="actions">
                     <pckg-maestro-actions-{{ table }} :record="record"
