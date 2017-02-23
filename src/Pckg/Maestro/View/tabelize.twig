@@ -108,15 +108,13 @@
                 http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
                     this.groups = data.groups;
-                    this.$set('x', true);
-                    this.$delete('x', true);
                 }.bind(this));
             }
         },
         watch: {
             search: function (newValue) {
-                if (this.$refs.maestroTable._searchTimeout) {
-                    this.$refs.maestroTable._searchTimeout.abort();
+                if (this._searchTimeout) {
+                    this._searchTimeout.abort();
                 }
 
                 this.resetPaginatorUrl({
@@ -124,7 +122,7 @@
                     page: 1
                 });
 
-                this.$refs.maestroTable._searchTimeout = http.getJSON(this.paginator.url, function (data) {
+                this._searchTimeout = http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
                     this.paginator.total = data.paginator.total;
                 }.bind(this));
@@ -145,6 +143,11 @@
                 field: '',
                 dir: 'up'
             }
+        },
+        data: function () {
+            return {
+                _searchTimeout: null
+            };
         }
     }));
 </script>
