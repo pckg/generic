@@ -1,3 +1,18 @@
+{% macro relationTree(relations) %}
+    {% if relations.count() %}
+        <ul>
+            {% for relation in relations %}
+                <li>
+                    {{ relation.title }}
+                    {% if relation.hasManyRelations.count() %}{{ _self.relationTree(relation.hasManyRelations) }}{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as macros %}
+
 <script type="text/x-template" id="pckg-dynamic-clone">
     {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'cloneRecordModal', 'class': 'danger'} %}
         {% block header %}
@@ -5,6 +20,11 @@
         {% endblock %}
         {% block body %}
             <p>Do you really want to clone #${ record.id }?</p>
+
+            {% if relations.count() %}
+                {{ macros.relationTree(relations) }}
+            {% endif %}
+
             <p><a @click.prevent="cloneRecord" href="#" class="btn btn-danger">Yes, clone record</a></p>
         {% endblock %}
     {% endembed %}

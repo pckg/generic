@@ -8,6 +8,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Pckg\Maestro\Service\Tabelize\Cloner;
 use Pckg\Maestro\Service\Tabelize\Delete;
 use Throwable;
 
@@ -415,6 +416,10 @@ class Tabelize
                 if ($view === 'delete') {
                     $delete = new Delete();
                     $string .= $delete->getListAction($this);
+
+                } elseif ($view === 'clone') {
+                    $cloner = new Cloner();
+                    $string .= $cloner->getListAction($this);
 
                 } else {
                     $string .= view('tabelize/listActions/' . $view)->autoparse();

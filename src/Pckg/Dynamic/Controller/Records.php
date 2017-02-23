@@ -470,6 +470,7 @@ class Records extends Controller
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $tableEntity);
 
         $tabelize = $this->tabelize()
+                         ->setTable($table)
                          ->setEntity($tableEntity)
                          ->setEntityActions($table->getEntityActions())
                          ->setRecordActions($table->getRecordActions())
