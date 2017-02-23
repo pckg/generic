@@ -3,7 +3,8 @@
         <ul>
             {% for relation in relations %}
                 <li>
-                    {{ relation.title }}
+                    <input type="checkbox" value="{{ relation.id }}" v-model="relations"
+                           @click="checkParent($event)"/> {{ relation.title }}
                     {% if relation.hasManyRelations.count() %}{{ _self.relationTree(relation.hasManyRelations) }}{% endif %}
                 </li>
             {% endfor %}
@@ -22,6 +23,7 @@
             <p>Do you really want to clone #${ record.id }?</p>
 
             {% if relations.count() %}
+                <p>Do you also want to clone related:</p>
                 {{ macros.relationTree(relations) }}
             {% endif %}
 
@@ -47,7 +49,8 @@
         data: function () {
             return {
                 record: {},
-                clonedUrl: null
+                clonedUrl: null,
+                relations: []
             };
         },
         methods: {
@@ -63,6 +66,32 @@
                     this.clonedUrl = data.clonedUrl;
                     $('#recordClonedModal').modal('show');
                 }.bind(this));
+            },
+            checkParent: function ($event) {
+                Vue.nextTick(function(){
+
+                    if ($($event.target).is(':checked')) {
+                        /**
+                         * Check all parents.
+                         */
+                        var $parent = $($event.target);
+
+                        while ($parent.parent().closest('li').length > 0) {
+                            $parent = $parent.parent().closest('li');
+                            if (!$parent.find('> input').is(':checked')) {
+                                $parent.find('> input').trigger('click');
+                            }
+                        }
+                    } else {
+                        /**
+                         * Uncheck all children.
+                         */
+                        $($event.target).parent().find('input:checked').click();
+                    }
+
+                });
+
+                return true;
             }
         },
         events: {
