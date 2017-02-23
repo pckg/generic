@@ -514,6 +514,7 @@ class Tabelize
                 }
             }
             $transformed = array_merge($record->getToArrayValues(), $transformed);
+            $transformed = array_merge($transformed, $record->getToJsonValues());
         }
 
         if (!isset($transformed['id'])) {
