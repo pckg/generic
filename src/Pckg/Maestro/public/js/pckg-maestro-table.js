@@ -12,11 +12,29 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
         search: null,
         entityactions: [],
         table: null,
-        paginator: {},
+        paginator: {
+            default: function () {
+                return {
+                    perPage: 50,
+                    page: 1,
+                    total: 0,
+                    url: null
+                };
+            },
+            type: Object
+        },
         recordactionhandler: null,
         togglefield: null,
         resetpaginatorurl: null,
-        sort: {}
+        sort: {
+            default: function () {
+                return {
+                    field: '',
+                    dir: 'up'
+                };
+            },
+            type: Object
+        }
     },
     data: function () {
         return {
