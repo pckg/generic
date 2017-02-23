@@ -141,16 +141,20 @@ class Records extends Controller
      */
     public function getViewTableAction(
         Table $tableRecord,
-        DynamicService $dynamicService,
+        DynamicService $dynamicService = null,
         DatabaseEntity $entity = null,
         $viewType = 'full',
         $returnTabelize = false
     )
     {
+        if (!$dynamicService) {
+            $dynamicService = $this->dynamic;
+        }
+
         /**
          * Set table so sub-services can reuse it later.
          */
-        $this->dynamic->setTable($tableRecord);
+        $dynamicService->setTable($tableRecord);
 
         if (!$entity) {
             $entity = $tableRecord->createEntity();
@@ -168,7 +172,7 @@ class Records extends Controller
         /**
          * Apply entity extension.
          */
-        $this->dynamic->applyOnEntity($entity);
+        $dynamicService->applyOnEntity($entity);
 
         /**
          * This is used for URLs.
@@ -220,8 +224,8 @@ class Records extends Controller
         /**
          * Filter records by $_GET['search']
          */
-        $this->dynamic->getFilterService()->filterByGet($entity);
-        $groups = $this->dynamic->getGroupService()->getAppliedGroups();
+        $dynamicService->getFilterService()->filterByGet($entity);
+        $groups = $dynamicService->getGroupService()->getAppliedGroups();
         $fieldsDataset = new Fields();
         $listableFields = $fieldsDataset->getListableFieldsForTable($tableRecord);
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
@@ -242,7 +246,7 @@ class Records extends Controller
                          ->setTitle($tableRecord->getListTitle())
                          ->setEntity($entity)
                          ->setRecords($records)
-                         ->setFields($tableRecord->getFields($listableFields, $this->dynamic->getFilterService()))
+                         ->setFields($tableRecord->getFields($listableFields, $dynamicService->getFilterService()))
                          ->setPerPage(get('perPage', 50))
                          ->setPage(1)
                          ->setTotal($total)
@@ -269,7 +273,7 @@ class Records extends Controller
 
         $tabelize->getView()->addData(
             [
-                'dynamic'   => $this->dynamic,
+                'dynamic'   => $dynamicService,
                 'viewType'  => $viewType,
                 'searchUrl' => router()->getUri(),
             ]
@@ -488,20 +492,16 @@ class Records extends Controller
         );
     }
 
-    public function getTabAction(Record $record, Table $table, Tab $tab)
+    public function getTabAction(Record $record, Table $table, Tab $tab, \Pckg\Dynamic\Service\Dynamic $dynamicService)
     {
         $relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
-                //$relation->withShowTable();
-                //$relation->withOnField();
             }
         );
         $table->morphsManyRelation(
             function(MorphsMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
-                //$relation->withShowTable();
-                //$relation->withOnField();
             }
         )->each(
             function($item) use ($relations) {
@@ -511,8 +511,6 @@ class Records extends Controller
         $table->morphedByRelation(
             function(MorphedBy $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
-                //$relation->withShowTable();
-                //$relation->withOnField();
             }
         )->each(
             function($item) use ($relations) {
@@ -522,14 +520,14 @@ class Records extends Controller
         $tabs = $table->tabs;
         $tabelizes = [];
         $relations->each(
-            function(Relation $relation) use ($tabs, $record, &$tabelizes) {
+            function(Relation $relation) use ($tabs, $record, &$tabelizes, $dynamicService) {
                 $entity = $relation->showTable->createEntity();
                 $entity->setStaticDynamicRecord($record);
                 $entity->setStaticDynamicRelation($relation);
                 $entity->where($relation->onField->field, $record->id);
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $relation->showTable->id)->one(),
-                    $this->dynamic,
+                    $dynamicService,
                     $entity,
                     'related'
                 );

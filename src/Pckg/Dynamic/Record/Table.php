@@ -40,16 +40,12 @@ class Table extends DatabaseRecord
 
     public function getRecordActions()
     {
-        $actions = $this->actions(
+        return $this->actions(
             function(HasMany $relation) {
                 $relation->where('type', ['record', 'record-plugin', 'mixed']);
-                $relation->joinPermission();
+                //$relation->joinPermission();
             }
         );
-
-        return $actions->count()
-            ? $actions
-            : ['edit', 'delete'];
     }
 
     public function getListTitle()

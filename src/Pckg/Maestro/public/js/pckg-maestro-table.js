@@ -7,7 +7,12 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
         records: [],
         groups: [],
         first: false,
-        ids: [],
+        ids: {
+            default: function () {
+                return [];
+            },
+            type: Array
+        },
         allChecked: false,
         search: null,
         entityactions: [],
