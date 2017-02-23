@@ -1,3 +1,18 @@
+{% macro relationTree(relations) %}
+    {% if relations.count() %}
+        <ul>
+            {% for relation in relations %}
+                <li>
+                    {{ relation.title }}
+                    {% if relation.hasManyRelations.count() %}{{ _self.relationTree(relation.hasManyRelations) }}{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as macros %}
+
 <script type="text/x-template" id="pckg-dynamic-delete">
     {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
         {% block header %}
@@ -5,6 +20,11 @@
         {% endblock %}
         {% block body %}
             <p>Do you really want to delete #${ recordIds }?</p>
+            {% if relations.count() %}
+                <p>
+                    Please note that this action will also delete: {{ macros.relationTree(relations) }}
+                </p>
+            {% endif %}
             <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
         {% endblock %}
     {% endembed %}

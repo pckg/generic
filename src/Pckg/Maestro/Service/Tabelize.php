@@ -8,6 +8,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Pckg\Maestro\Service\Tabelize\Delete;
 use Throwable;
 
 class Tabelize
@@ -411,7 +412,13 @@ class Tabelize
 
             } elseif (!$wasObject && $view) {
                 $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                $string .= view('tabelize/listActions/' . $view)->autoparse();
+                if ($view === 'delete') {
+                    $delete = new Delete();
+                    $string .= $delete->getListAction($this);
+
+                } else {
+                    $string .= view('tabelize/listActions/' . $view)->autoparse();
+                }
 
             } else {
                 $string .= "\n" . '<!-- entity view (else) -->';

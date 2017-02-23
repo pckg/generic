@@ -16,6 +16,10 @@ class RelationTypes extends DatabaseEntity
 
     protected $repositoryName = Repository::class . '.dynamic';
 
+    const TYPE_BELONGS_TO = 1;
+
+    const TYPE_HAS_MANY = 2;
+
     public function relations()
     {
         return $this->hasMany(Relations::class)
