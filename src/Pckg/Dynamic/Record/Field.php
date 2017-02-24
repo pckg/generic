@@ -289,7 +289,7 @@ class Field extends DatabaseRecord
     public function getTransformedValue($entity)
     {
         $field = $this;
-        
+
         if ($this->fieldType->slug == 'php') {
             $fieldTransformations[$field->field] = function($record) use ($field) {
                 return $record->{'get' . ucfirst($field->field) . 'Attribute'}();

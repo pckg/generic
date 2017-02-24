@@ -138,7 +138,7 @@
         },
         ready: function () {
             var data = {
-                records: {{ tabelize.transformRecords() | json_encode | raw }},
+                records: {{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | raw }},
                 groups: {{ tabelize.getGroups() | json_encode | raw }},
                 paginator: {
                     perPage: {{ tabelize.getPerPage() }},
