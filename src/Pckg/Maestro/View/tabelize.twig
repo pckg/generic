@@ -11,159 +11,41 @@
 {% set instance = table %}
 
 {# Vue.js template and script for record actions #}
-{% include '_pckg_maestro_actions_template.twig' %}
-{% include '_pckg_maestro_actions.twig' %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', {
+recordActions: recordActions,
+table: table
+}) %}
+{#% include '_pckg_maestro_actions_template.twig' %#}
 
-{% include '_pckg_maestro_field.twig' %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
+{#% include '_pckg_maestro_actions.twig' %#}
+
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
+{#% include '_pckg_maestro_field.twig' %#}
 
 {# customize view logic #}
-{% include '_tabelize_config.twig' %}
+{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', {
+table: table
+}) %}
+{#% include '_tabelize_config.twig' %#}
 
-<script type="text/x-template" id="pckg-maestro-table-{{ table }}-template">
-    <div class="pckg-maestro-tabelize" id="{{ id }}">
-
-        {# Header template and entity actions #}
-        {% include '_tabelize_header.twig' %}
-
-        {# Vue.js table template #}
-        {% include '_tabelize_table_template.twig' %}
-
-    </div>
-</script>
-
-<script type="text/javascript">
-    var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
-        name: 'pckg-maestro-actions-{{ table }}',
-        template: '#pckg-maestro-actions-{{ table }}-template'
-    }));
-
-    var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
-        name: 'pckg-maestro-table-{{ table }}',
-        template: '#pckg-maestro-table-{{ table }}-template',
-        methods: {
-            recordactionhandler: function (record, action) {
-                console.log('dispatching record:' + action);
-
-                this.$dispatch('record:' + action, record.id, record);
-                this.$emit('record:' + action, record.id, record);
-                this.$broadcast('record:' + action, record.id, record);
-            },
-            entityAction: function (action) {
-                console.log('broadcasting and dispatching entity:' + action, this.ids);
-                this.$root.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
-                this.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
-            },
-            getSelectedRecords: function () {
-                var selected = [];
-
-                $.each(this.records, function (i, record) {
-                    if (this.ids.indexOf(record.id) >= 0) {
-                        selected.push(record);
-                    }
-                }.bind(this));
-
-                return selected;
-            },
-            togglefield: function (fieldId) {
-                if (this.sort.field != fieldId) {
-                    this.sort.field = fieldId;
-                } else {
-                    this.sort.dir = this.sort.dir == 'up'
-                            ? 'down'
-                            : 'up';
-                }
-                this.makeSort();
-            },
-            makeSort: function () {
-                var newValue = this.sort;
-                if (this._sortTimeout) {
-                    this._sortTimeout.abort();
-                }
-
-                this.resetPaginatorUrl({
-                    field: newValue.field,
-                    dir: newValue.dir
-                });
-
-                this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
-                    console.log("make sort");
-                    this.records = data.records;
-                }.bind(this));
-            },
-            getUrlParams: function () {
-                var params = {};
-                if (!params.search && this.search) {
-                    params.search = this.search;
-                }
-                if (!params.sort && this.sort.field) {
-                    params.field = this.sort.field;
-                    params.dir = this.sort.dir;
-                }
-                if (!params.page && this.paginator.page) {
-                    params.page = this.paginator.page;
-                }
-                if (!params.perPage && this.paginator.perPage) {
-                    params.perPage = this.paginator.perPage;
-                }
-                if (Object.keys(params).length == 0) {
-                    return '';
-                }
-                return '?' + $.param(params);
-            },
-            resetPaginatorUrl: function (preset) {
-                this.paginator.url = '{{ searchUrl }}' + this.getUrlParams(preset);
-
-                http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                    this.groups = data.groups;
-                }.bind(this));
-            }
-        },
-        watch: {
-            search: function (newValue) {
-                if (this._searchTimeout) {
-                    this._searchTimeout.abort();
-                }
-
-                this.resetPaginatorUrl({
-                    search: newValue,
-                    page: 1
-                });
-
-                this._searchTimeout = http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                    this.paginator.total = data.paginator.total;
-                }.bind(this));
-            }
-        },
-        mounted: function () {
-
-            this.$nextTick(function() {
-                var data = {
-                    records: {{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | raw }},
-                    groups: {{ tabelize.getGroups() | json_encode | raw }},
-                    paginator: {
-                        perPage: {{ tabelize.getPerPage() }},
-                        page: {{ tabelize.getPage() }},
-                        total: {{ tabelize.getTotal() }},
-                        url: '{{ _router.getUri() }}'
-                    }
-                };
-
-                $.each(data, function (key, val) {
-                    this.set(key, val);
-                }.bind(this));
-            }.bind(this));
-        }
-    }));
-</script>
+{% do _vueManager.addView('Pckg/Maestro:_table', {
+table: table,
+searchUrl: searchUrl,
+tabelize: tabelize,
+viewType: viewType
+}) %}
+{#% include '_table.twig' %#}
 
 <!-- pckg-maestro-table -->
-<pckg-maestro-table-{{ table }} v-bind:ref="maestro-table"
-                                :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
+<pckg-maestro-table-{{ table }} :ref="'maestro-table'"
+                                :fields="{{ tabelize.getFields() | json_encode | escape }}"
+                                :records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
+                                :groups="{{ tabelize.getGroups() | json_encode | escape }}"
                                 :depth="{{ tabelize.getGroups() | length }}"
-                                :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
-                                :table="{{ tabelize.getTable() | json_encode | raw | escape('html_attr') }}"
+                                :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"
+                                :table="{{ tabelize.getTable() | json_encode | escape }}"
+                                :paginator="{{ tabelize.getPaginator() | json_encode | escape }}"
                                 :first="1"></pckg-maestro-table-{{ table }}>
 
 <pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>

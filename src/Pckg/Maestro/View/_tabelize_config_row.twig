@@ -22,7 +22,7 @@
                 <template
                         v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
                     <select v-model="field.filterValue" class="form-control"
-                            v-bind:multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
+                            :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
                         <option v-for="option in field.options"
                                 :value="option.key">${ option.value }
                         </option>
@@ -61,7 +61,7 @@
                 </div>
                 <div v-else class="col-sm-4">
                     <select v-model="relation.filterValue" class="form-control"
-                            v-bind:multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
+                            :multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
                         <option v-for="option in relation.filterOptions" :value="option.key">${ option.value }
                         </option>
                     </select>

@@ -3,6 +3,8 @@
  */
 utils.pushToVue({
     el: '#vue-app',
+    delimiters: ['${', '}'],
+    unsafeDelimiters: ['!${', '}'],
     data: {
         alerts: [],
         modals: []
@@ -59,7 +61,7 @@ data.$vue = new Vue($vue);
 /**
  * Attach listeners
  */
-$.each(on, function(event, callback){
+$.each(on, function (event, callback) {
     console.log('(deprecated) registering ' + event);
     data.$vue.$on(event, callback);
 });

@@ -40,15 +40,15 @@
 <!--  vue css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 
+<!-- vue live components -->
+{{ _vueManager.getViews() | raw }}
+
 <script>
     {% if _env.isDev() %}
     Vue.config.debug = true;
     Vue.config.silent = false;
     Vue.config.devtools = true;
     {% endif %}
-
-    Vue.config.delimiters = ['${', '}'];
-    Vue.config.unsafeDelimiters = ['!${', '}'];
 
     Vue.filter('price', function (price, decimals) {
         return locale.price(price, decimals);

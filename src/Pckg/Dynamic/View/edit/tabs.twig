@@ -15,8 +15,8 @@
     <div class="pckg-dynamic-record-tabs">
         <h2>
             {{ formalize.getTitle() | raw }}
-            <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
-                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"></pckg-maestro-actions-{{ table }}>
+            <!--<pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
+                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"></pckg-maestro-actions-{{ table }}>-->
         </h2>
 
         <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
@@ -58,20 +58,20 @@
         name: 'pckg-dynamic-record-tabs',
         data: function(){
             return {
-                recordactionhandler: function (record, action) {
+                /*recordactionhandler: function (record, action) {
                     console.log('dispatching2 record:' + action);
 
                     this.$dispatch('record:' + action, record.id, record);
                     this.$emit('record:' + action, record.id, record);
                     this.$broadcast('record:' + action, record.id, record);
-                }
+                }*/
             };
         },
         methods: {
             loadAjaxTab: function (tabId, url) {
                 http.get(url + '?html=1', function (html) {
                     var $element = $('#dynamic-tab-' + tabId).html(html);
-                    //this.$compile($element.get(0));
+                    Vue.compile($element.get(0));
                 }.bind(this));
             }
         }

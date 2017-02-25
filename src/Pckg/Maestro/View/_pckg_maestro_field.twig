@@ -5,7 +5,7 @@
             <template v-if="!editable">
                 <pckg-tabelize-field-boolean :field="field.id"
                                              :record="record.id"
-                                             :value="record[field.field ? field.field : field]"
+                                             :value="record[field.field]"
                                              :table="table"
                                              :url="'{{ url('dynamic.records.field.toggle') }}'"></pckg-tabelize-field-boolean>
             </template>
@@ -16,7 +16,7 @@
         <template v-if="type == 'order'">
             <pckg-tabelize-field-order :field="field.id"
                                        :record="record.id"
-                                       :value="record[field.field ? field.field : field]"
+                                       :value="record[field.field]"
                                        :table="table"
                                        :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
         </template>
@@ -24,7 +24,7 @@
             <template v-if="!editable">
                 <pckg-tabelize-field-datetime :field="field.id"
                                               :record="record.id"
-                                              :value="record[field.field ? field.field : field]"
+                                              :value="record[field.field]"
                                               :table="table"
                                               :min="field.minTogglable"
                                               :max="field.maxTogglable"
@@ -37,7 +37,7 @@
         <template v-if="type == 'editor'">
             <template v-if="!editable">
                 <pckg-tabelize-field-editor
-                        :value="record[field.field ? field.field : field]"></pckg-tabelize-field-editor>
+                        :value="record[field.field]"></pckg-tabelize-field-editor>
             </template>
             <template v-else>
                 <textarea>${ model | raw }</textarea>
@@ -47,10 +47,10 @@
                 v-if="!type || !field.id || (type != 'boolean' && type != 'order' && type != 'editor' && (type != 'datetime' || !field.isTogglable))">
             <template v-if="!editable">
                 <template v-if="field.field == 'title' || field.field == 'id'">
-                    <a v-bind:href="record.viewUrl">!${
-                        record[field.field ? field.field : field] }</a>
+                    <a :href="record.viewUrl">!${
+                        record[field.field] }</a>
                 </template>
-                <template v-else>!${ record[field.field ? field.field : field] }</template>
+                <template v-else>!${ record[field.field] }</template>
             </template>
             <template v-else>
                 <input type="text" v-model="model"/>
@@ -87,7 +87,8 @@
         },
         data: function () {
             return {
-                editable: false
+                editable: false,
+                table: {}
             };
         },
         methods: {

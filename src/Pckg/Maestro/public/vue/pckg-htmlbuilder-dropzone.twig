@@ -1,10 +1,10 @@
 <script type="text/x-template" id="pckg-htmlbuilder-dropzone">
     <div class="pckg-htmlbuilder-dropzone">
         <div class="row">
-            <div class="preview" v-bind:class="[ current ? 'col-md-3' : '' ]">
-                <img v-bind:src="current" class="img-responsive"/>
+            <div class="preview" :class="[ current ? 'col-md-3' : '' ]">
+                <img :src="current" class="img-responsive"/>
             </div>
-            <div v-bind:class="[ current ? 'col-md-9' : 'col-md-12' ]">
+            <div :class="[ current ? 'col-md-9' : 'col-md-12' ]">
                 <p>
                     <button type="button" class="btn btn-info select-files">Select</button>
                     or drop file for upload.

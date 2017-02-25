@@ -440,12 +440,12 @@ class Tabelize
     public function __toString()
     {
         try {
-            /**
-             * Parse tabelize view.
-             */
-            $string = '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
+            $string = '';
 
-            $string .= $this->__toStringViews();
+            $string .= '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
+
+            //$string .= '<!-- start tabelize views -->' . $this->__toStringViews() . '<!-- end tabelize views-->';
+            //die($string);
         } catch (Throwable $e) {
             return exception($e);
         }
@@ -551,6 +551,16 @@ class Tabelize
         }
 
         return $html;
+    }
+
+    public function getPaginator()
+    {
+        return [
+            'perPage' => $this->getPerPage(),
+            'page'    => $this->getPage(),
+            'total'   => $this->getTotal(),
+            'url'     => router()->getUri(),
+        ];
     }
 
 }

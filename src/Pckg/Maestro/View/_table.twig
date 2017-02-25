@@ -1,0 +1,119 @@
+<script type="text/x-template" id="pckg-maestro-table-{{ table }}-template">
+    <div class="pckg-maestro-tabelize" id="{{ id }}">
+
+        {# Header template and entity actions #}
+        {% include '_tabelize_header.twig' %}
+
+        {# Vue.js table template #}
+        {% include '_tabelize_table_template.twig' %}
+
+    </div>
+</script>
+
+<script type="text/javascript">
+    var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
+        name: 'pckg-maestro-actions-{{ table }}',
+        template: '#pckg-maestro-actions-{{ table }}-template'
+    }));
+
+    var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
+        name: 'pckg-maestro-table-{{ table }}',
+        template: '#pckg-maestro-table-{{ table }}-template',
+        methods: {
+            recordactionhandler: function (record, action) {
+                console.log('dispatching record:' + action);
+
+                this.$dispatch('record:' + action, record.id, record);
+                this.$emit('record:' + action, record.id, record);
+                this.$broadcast('record:' + action, record.id, record);
+            },
+            entityAction: function (action) {
+                console.log('broadcasting and dispatching entity:' + action, this.ids);
+                this.$root.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
+                this.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
+            },
+            getSelectedRecords: function () {
+                var selected = [];
+
+                $.each(this.records, function (i, record) {
+                    if (this.ids.indexOf(record.id) >= 0) {
+                        selected.push(record);
+                    }
+                }.bind(this));
+
+                return selected;
+            },
+            togglefield: function (fieldId) {
+                if (this.sort.field != fieldId) {
+                    this.sort.field = fieldId;
+                } else {
+                    this.sort.dir = this.sort.dir == 'up'
+                            ? 'down'
+                            : 'up';
+                }
+                this.makeSort();
+            },
+            makeSort: function () {
+                var newValue = this.sort;
+                if (this._sortTimeout) {
+                    this._sortTimeout.abort();
+                }
+
+                this.resetPaginatorUrl({
+                    field: newValue.field,
+                    dir: newValue.dir
+                });
+
+                this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
+                    console.log("make sort");
+                    this.records = data.records;
+                }.bind(this));
+            },
+            getUrlParams: function () {
+                var params = {};
+                if (!params.search && this.search) {
+                    params.search = this.search;
+                }
+                if (!params.sort && this.sort.field) {
+                    params.field = this.sort.field;
+                    params.dir = this.sort.dir;
+                }
+                if (!params.page && this.paginator.page) {
+                    params.page = this.paginator.page;
+                }
+                if (!params.perPage && this.paginator.perPage) {
+                    params.perPage = this.paginator.perPage;
+                }
+                if (Object.keys(params).length == 0) {
+                    return '';
+                }
+                return '?' + $.param(params);
+            },
+            resetPaginatorUrl: function (preset) {
+                this.paginator.url = '{{ searchUrl }}' + this.getUrlParams(preset);
+
+                http.getJSON(this.paginator.url, function (data) {
+                    this.records = data.records;
+                    this.groups = data.groups;
+                }.bind(this));
+            }
+        },
+        watch: {
+            search: function (newValue) {
+                if (this._searchTimeout) {
+                    this._searchTimeout.abort();
+                }
+
+                this.resetPaginatorUrl({
+                    search: newValue,
+                    page: 1
+                });
+
+                this._searchTimeout = http.getJSON(this.paginator.url, function (data) {
+                    this.records = data.records;
+                    this.paginator.total = data.paginator.total;
+                }.bind(this));
+            }
+        }
+    }));
+</script>

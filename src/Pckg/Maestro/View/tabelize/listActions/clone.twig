@@ -38,7 +38,7 @@
         {% endblock %}
         {% block body %}
             <p>#${ record.id } was cloned.</p>
-            <p><a v-bind:href="clonedUrl" class="btn btn-success">Open it</a></p>
+            <p><a :href="clonedUrl" class="btn btn-success">Open it</a></p>
         {% endblock %}
     {% endembed %}
     </div>
