@@ -95,10 +95,10 @@
                         'fields', 'relations', 'filterMethods', 'directions'
                     ];
                     $.each(keys, function (i, key) {
-                        this.$set(key, data[key]);
+                        this.set(key, data[key]);
                     }.bind(this));
 
-                    this.$set('appliedRelations', this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters));
+                    this.set('appliedRelations', this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters));
                     this.fetching = false;
                 }.bind(this));
             },

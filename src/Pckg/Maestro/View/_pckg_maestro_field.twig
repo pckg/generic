@@ -1,4 +1,5 @@
 <script type="text/x-template" id="pckg-maestro-field">
+    <div>
     <div @dblclick.prevent="toggleEditable">
         <template v-if="type == 'boolean'">
             <template v-if="!editable">
@@ -64,6 +65,7 @@
             <i class="fa fa-check" aria-hidden="true"></i>
         </button>
     </div>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -104,12 +106,14 @@
                 return this.field.fieldType ? this.field.fieldType.slug : null;
             }
         },
-        ready: function () {
-            $(document).on('keyup', function (e) {
-                if (e.keyCode == 27) {
-                    // esc key
-                    this.editable = false;
-                }
+        mounted: function () {
+            this.$nextTick(function() {
+                $(document).on('keyup', function (e) {
+                    if (e.keyCode == 27) {
+                        // esc key
+                        this.editable = false;
+                    }
+                }.bind(this));
             }.bind(this));
         }
     });

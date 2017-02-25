@@ -15,6 +15,7 @@
 {% import _self as macros %}
 
 <script type="text/x-template" id="pckg-dynamic-clone">
+    <div>
     {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'cloneRecordModal', 'class': 'danger'} %}
         {% block header %}
             clone record
@@ -40,6 +41,7 @@
             <p><a v-bind:href="clonedUrl" class="btn btn-success">Open it</a></p>
         {% endblock %}
     {% endembed %}
+    </div>
 </script>
 
 <script>

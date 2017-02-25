@@ -14,6 +14,7 @@
 {% import _self as macros %}
 
 <script type="text/x-template" id="pckg-dynamic-delete">
+    <div>
     {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
         {% block header %}
             Delete record
@@ -36,6 +37,7 @@
             <p>#${ recordIds } was deleted.</p>
         {% endblock %}
     {% endembed %}
+    </div>
 </script>
 
 <script>

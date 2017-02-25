@@ -1,21 +1,21 @@
 <div class="pckg-maestro-table-{{ table }}">
     <table class="table table-condensed table-striped table-hover">
         <template v-if="depth > 0">
-            <tr v-for="(i,record) in records" track-by="$index">
+            <tr v-for="(record,i) in records" v-bind:key="i">
                 <td>
                     <legend>${ groups[depth - 1][i] ? groups[depth - 1][i] : i }</legend>
-                    <pckg-maestro-table-{{ table }} :records.sync="record"
+                    <pckg-maestro-table-{{ table }} :records"record"
                                                     :fields="fields"
                                                     :depth="depth - 2"
-                                                    :groups.sync="groups"
-                                                    :ids.sync="ids"
-                                                    :search.sync="search"
-                                                    :entityactions.sync="entityactions"
-                                                    :paginator.sync="paginator"
-                                                    :table.sync="table"
+                                                    :groups"groups"
+                                                    :ids"ids"
+                                                    :search"search"
+                                                    :entityactions"entityactions"
+                                                    :paginator"paginator"
+                                                    :table"table"
                                                     :recordactionhandler="recordactionhandler"
                                                     :resetpaginatorurl="resetPaginatorUrl"
-                                                    :sort.sync="sort"
+                                                    :sort"sort"
                                                     :togglefield="togglefield"
                                                     :first=""></pckg-maestro-table-{{ table }}>
                 </td>
@@ -57,13 +57,13 @@
                 <th class="affix-thead-container">
                     <div class="affix-thead-fixed">
                         <div>
-                            <input type="checkbox" v-on:click="checkAll"
+                            <input type="checkbox" @click="checkAll"
                                    v-model="allChecked"
                                    value="1"/>
                         </div>
                     </div>
                     <div class="affix-thead-static">
-                        <input type="checkbox" v-on:click="checkAll"
+                        <input type="checkbox" @click="checkAll"
                                v-model="allChecked"
                                value="1"/>
                     </div>
@@ -89,14 +89,14 @@
         </template>
     </table>
     <div v-if="first">
-        <pckg-dynamic-paginator v-ref:maestro-paginator
-                                :per-page.sync="paginator.perPage"
-                                :page.sync="paginator.page"
-                                :total.sync="paginator.total"
-                                :url.sync="paginator.url"
+        <pckg-dynamic-paginator v-bind:ref="maestro-paginator"
+                                :per-page"paginator.perPage"
+                                :page"paginator.page"
+                                :total"paginator.total"
+                                :url"paginator.url"
                                 :resetpaginatorurl="resetPaginatorUrl"
-                                :records.sync="records"
-                                :groups.sync="groups"
+                                :records"records"
+                                :groups"groups"
         ></pckg-dynamic-paginator>
     </div>
 </div>

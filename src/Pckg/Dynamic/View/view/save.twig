@@ -17,7 +17,7 @@
                     <input v-if="!view.length" type="text" v-model="name" class="form-control col-md-4" />
                 </div>
 
-                <button class="btn btn-success" v-on:click.prevent="saveView">Save</button>
+                <button class="btn btn-success" @click.prevent="saveView">Save</button>
             {% endblock %}
 
         {% endembed %}

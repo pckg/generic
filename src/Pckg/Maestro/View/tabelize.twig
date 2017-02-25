@@ -136,27 +136,30 @@
                 }.bind(this));
             }
         },
-        ready: function () {
-            var data = {
-                records: {{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | raw }},
-                groups: {{ tabelize.getGroups() | json_encode | raw }},
-                paginator: {
-                    perPage: {{ tabelize.getPerPage() }},
-                    page: {{ tabelize.getPage() }},
-                    total: {{ tabelize.getTotal() }},
-                    url: '{{ _router.getUri() }}'
-                }
-            };
+        mounted: function () {
 
-            $.each(data, function (key, val) {
-                this.$set(key, val);
+            this.$nextTick(function() {
+                var data = {
+                    records: {{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | raw }},
+                    groups: {{ tabelize.getGroups() | json_encode | raw }},
+                    paginator: {
+                        perPage: {{ tabelize.getPerPage() }},
+                        page: {{ tabelize.getPage() }},
+                        total: {{ tabelize.getTotal() }},
+                        url: '{{ _router.getUri() }}'
+                    }
+                };
+
+                $.each(data, function (key, val) {
+                    this.set(key, val);
+                }.bind(this));
             }.bind(this));
         }
     }));
 </script>
 
 <!-- pckg-maestro-table -->
-<pckg-maestro-table-{{ table }} v-ref:maestro-table
+<pckg-maestro-table-{{ table }} v-bind:ref="maestro-table"
                                 :fields="{{ tabelize.getFields() | json_encode | raw | escape('html_attr') }}"
                                 :depth="{{ tabelize.getGroups() | length }}"
                                 :entityactions="{{ tabelize.getEntityActions() | json_encode | raw | escape('html_attr') }}"
