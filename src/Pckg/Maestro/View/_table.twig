@@ -19,6 +19,7 @@
     var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
         name: 'pckg-maestro-table-{{ table }}',
         template: '#pckg-maestro-table-{{ table }}-template',
+        mixins: [pckgDelimiters],
         methods: {
             recordactionhandler: function (record, action) {
                 console.log('dispatching record:' + action);

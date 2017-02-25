@@ -10,42 +10,22 @@
 {% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
 {% set instance = table %}
 
-{# Vue.js template and script for record actions #}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', {
-recordActions: recordActions,
-table: table
-}) %}
-{#% include '_pckg_maestro_actions_template.twig' %#}
-
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: recordActions, table: table }) %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
-{#% include '_pckg_maestro_actions.twig' %#}
-
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
-{#% include '_pckg_maestro_field.twig' %#}
+{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table }) %}
+{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType }) %}
 
-{# customize view logic #}
-{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', {
-table: table
-}) %}
-{#% include '_tabelize_config.twig' %#}
+<div>
+    <pckg-maestro-table-{{ table }} :ref="'maestro-table'"
+                                    :fields="{{ tabelize.getFields() | json_encode | escape }}"
+                                    :records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
+                                    :groups="{{ tabelize.getGroups() | json_encode | escape }}"
+                                    :depth="{{ tabelize.getGroups() | length }}"
+                                    :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"
+                                    :table="{{ tabelize.getTable() | json_encode | escape }}"
+                                    :paginator="{{ tabelize.getPaginator() | json_encode | escape }}"
+                                    :first="1"></pckg-maestro-table-{{ table }}>
 
-{% do _vueManager.addView('Pckg/Maestro:_table', {
-table: table,
-searchUrl: searchUrl,
-tabelize: tabelize,
-viewType: viewType
-}) %}
-{#% include '_table.twig' %#}
-
-<!-- pckg-maestro-table -->
-<pckg-maestro-table-{{ table }} :ref="'maestro-table'"
-                                :fields="{{ tabelize.getFields() | json_encode | escape }}"
-                                :records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
-                                :groups="{{ tabelize.getGroups() | json_encode | escape }}"
-                                :depth="{{ tabelize.getGroups() | length }}"
-                                :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"
-                                :table="{{ tabelize.getTable() | json_encode | escape }}"
-                                :paginator="{{ tabelize.getPaginator() | json_encode | escape }}"
-                                :first="1"></pckg-maestro-table-{{ table }}>
-
-<pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>
+    <pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>
+</div>

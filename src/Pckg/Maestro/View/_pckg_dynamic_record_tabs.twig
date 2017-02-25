@@ -1,0 +1,84 @@
+<script type="text/x-template" id="pckg-dynamic-record-tabs">
+    <div class="pckg-dynamic-record-tabs">
+        <h2>
+            {{ formalize.getTitle() | raw }}
+            <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
+                                              :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"></pckg-maestro-actions-{{ table }}>
+        </h2>
+
+        <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
+            <li role="presentation" class="active">
+                <a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ __('pckg.dynamic.tab.home') }}</a>
+            </li>
+            {% for tab in tabs %}
+                <li role="presentation">
+                    <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
+                       data-toggle="tab"
+                       v-on:click.prevent="selectTab({{ tab.id }})">{{ tab.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                {{ formalize | raw }}
+
+                {% for tabelize in tabelizes.0 %}
+                    {{ tabelize | raw }}
+                {% endfor %}
+                {% for functionize in functionizes.0 %}
+                    {{ functionize | raw }}
+                {% endfor %}
+            </div>
+            {% for tab in tabs %}
+                <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
+                    <template v-if="selectedTab == {{ tab.id }}">
+                        <dynamic-tab-{{ tab.id }}></dynamic-tab-{{ tab.id }}>
+                    </template>
+                    <i v-else class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-dynamic-record-tabs', {
+        template: '#pckg-dynamic-record-tabs',
+        name: 'pckg-dynamic-record-tabs',
+        data: function () {
+            return {
+                recordactionhandler: function (record, action) {
+                    console.log('dispatching2 record:' + action);
+
+                    this.$dispatch('record:' + action, record.id, record);
+                    this.$emit('record:' + action, record.id, record);
+                    this.$broadcast('record:' + action, record.id, record);
+                },
+                selectedTab: null
+            };
+        },
+        methods: {
+            selectTab: function (tabId) {
+                this.selectedTab = tabId;
+            }
+        }
+    });
+
+
+    {% for tab in tabs %}
+    Vue.component('dynamic-tab-{{ tab.id }}', function (resolve) {
+        http.getJSON('{{ tab.getUrl() }}?html=1', function (data) {
+            $('body').append(data.vue);
+
+            resolve({
+                template: data.html,
+                mixins: [pckgDelimiters],
+                ready: function () {
+                    console.log('Ready');
+                }
+            });
+        });
+    });
+    {% endfor %}
+</script>

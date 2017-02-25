@@ -21,7 +21,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="record in filteredRecords">
-                    <td v-for="field in fields">!${ record[field.field] }</td>
+                    <td v-for="field in fields" v-html="record[field.field]"></td>
                 </tr>
                 </tbody>
             </template>

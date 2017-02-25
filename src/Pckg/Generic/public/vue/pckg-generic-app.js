@@ -3,8 +3,6 @@
  */
 utils.pushToVue({
     el: '#vue-app',
-    delimiters: ['${', '}'],
-    unsafeDelimiters: ['!${', '}'],
     data: {
         alerts: [],
         modals: []
@@ -56,6 +54,7 @@ var on = $vue.on;
 /**
  * Initialize main VueJS app.
  */
+$vue.mixins = [pckgDelimiters];
 data.$vue = new Vue($vue);
 
 /**

@@ -79,8 +79,8 @@
                     <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"></pckg-maestro-field>
                 </td>
                 <td class="actions">
-                    <!--<pckg-maestro-actions-{{ table }} :record="record"
-                                          :recordactionhandler="recordactionhandler"></pckg-maestro-actions-{{ table }}>-->
+                    <pckg-maestro-actions-{{ table }} :record="record"
+                                          :recordactionhandler="recordactionhandler"></pckg-maestro-actions-{{ table }}>
                 </td>
                 <td class="checkboxes">
                     <input type="checkbox" v-model="ids" :value="record.id"/>
@@ -90,7 +90,7 @@
         </table>
     </template>
     <div v-if="first">
-        <!--<pckg-dynamic-paginator :ref="'maestro-paginator'"
+        <pckg-dynamic-paginator :ref="'maestro-paginator'"
                                 :per-page="paginator.perPage"
                                 :page="paginator.page"
                                 :total="paginator.total"
@@ -98,6 +98,6 @@
                                 :resetpaginatorurl="resetPaginatorUrl"
                                 :records="records"
                                 :groups="groups"
-        ></pckg-dynamic-paginator>-->
+        ></pckg-dynamic-paginator>
     </div>
 </div>

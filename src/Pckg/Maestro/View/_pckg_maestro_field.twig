@@ -47,10 +47,9 @@
                 v-if="!type || !field.id || (type != 'boolean' && type != 'order' && type != 'editor' && (type != 'datetime' || !field.isTogglable))">
             <template v-if="!editable">
                 <template v-if="field.field == 'title' || field.field == 'id'">
-                    <a :href="record.viewUrl">!${
-                        record[field.field] }</a>
+                    <a :href="record.viewUrl" v-html="record[field.field]"></a>
                 </template>
-                <template v-else>!${ record[field.field] }</template>
+                <template v-else><span v-html="record[field.field]"></span></template>
             </template>
             <template v-else>
                 <input type="text" v-model="model"/>
@@ -72,6 +71,7 @@
     var pckgMaestroFieldComponent = Vue.component('pckg-maestro-field', {
         name: 'pckg-maestro-field',
         template: '#pckg-maestro-field',
+        mixins: [pckgDelimiters],
         props: {
             field: {
                 type: Object,

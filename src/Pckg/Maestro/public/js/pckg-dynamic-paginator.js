@@ -6,8 +6,16 @@ Vue.component('pckg-dynamic-paginator', {
         total: 0,
         url: null,
         resetpaginatorurl: null,
-        records: [],
-        groups: []
+        records: {
+            default: function(){
+                return [];
+            }
+        },
+        groups: {
+            default: function(){
+                return [];
+            }
+        }
     },
     data: function () {
         return {
