@@ -65,6 +65,7 @@
 
 <script type="text/javascript">
     Vue.component('pckg-maestro-table-config-{{ table }}', {
+        mixins: [pckgDelimiters],
         name: 'pckg-maestro-table-config-{{ table }}',
         template: '#pckg-maestro-table-config-{{ table }}',
         data: function () {
@@ -208,10 +209,11 @@
                 return selectField;
             }
         },
-        events: {
-            'entity:openConfigureViewModal': function () {
-                this.openModal();
-            }
+        created: function(){
+            $dispatcher.$on('record:openConfigureViewModal', this.openConfigureViewModal);
+        },
+        beforeDestroy: function(){
+            $dispatcher.$off('record:openConfigureViewModal', this.openConfigureViewModal);
         }
     });
 </script>

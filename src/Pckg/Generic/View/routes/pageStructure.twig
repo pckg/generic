@@ -112,6 +112,7 @@
         data.actions = {{ actions.toJSON() | raw }};
 
         Vue.component('pckg-generic-page-structure', {
+            mixins: [pckgDelimiters],
             template: '#pckg-generic-page-structure',
             props: {
                 variable: {

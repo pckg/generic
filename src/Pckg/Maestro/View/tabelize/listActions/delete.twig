@@ -42,6 +42,7 @@
 
 <script>
     var pckgDynamicDelete = Vue.component('pckg-dynamic-delete', {
+        mixins: [pckgDelimiters],
         name: 'pckg-dynamic-delete',
         template: '#pckg-dynamic-delete',
         data: function () {
@@ -72,17 +73,13 @@
                 }).join(', ');
             }
         },
-        events: {
-            'record:checkDeleteRecord': function (id, record) {
-                this.checkDeleteRecords([record]);
-
-                return true;
-            },
-            'entity:checkDeleteRecords': function (ids, records) {
-                this.checkDeleteRecords(records);
-
-                return true;
-            }
+        created: function(){
+            $dispatcher.$on('record:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$on('entity:checkDeleteRecord', this.checkDeleteRecords);
+        },
+        beforeDestroy: function(){
+            $dispatcher.$off('record:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$off('entity:checkDeleteRecord', this.checkDeleteRecords);
         }
     });
 </script>

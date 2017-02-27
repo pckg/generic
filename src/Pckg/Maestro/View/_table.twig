@@ -12,6 +12,7 @@
 
 <script type="text/javascript">
     var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
+        mixins: [pckgDelimiters],
         name: 'pckg-maestro-actions-{{ table }}',
         template: '#pckg-maestro-actions-{{ table }}-template'
     }));
@@ -22,14 +23,12 @@
         mixins: [pckgDelimiters],
         methods: {
             recordactionhandler: function (record, action) {
-                console.log('Yeeey, caught table action record:' + action + ', dispatching');
-
+                console.log('Caught record:' + action);
                 $dispatcher.$emit('record:' + action, record, record.id);
             },
             entityAction: function (action) {
-                console.log('broadcasting and dispatching entity:' + action, this.ids);
-                this.$root.$broadcast('entity:' + action, this.ids, this.getSelectedRecords());
-                this.$root.$dispatch('entity:' + action, this.ids, this.getSelectedRecords());
+                console.log('Caught entity:' + action);
+                $dispatcher.$emit('entity:' + action, this.getSelectedRecords());
             },
             getSelectedRecords: function () {
                 var selected = [];

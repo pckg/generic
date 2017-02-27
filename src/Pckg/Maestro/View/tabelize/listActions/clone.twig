@@ -46,6 +46,7 @@
 
 <script>
     var pckgDynamicClone = Vue.component('pckg-dynamic-clone', {
+        mixins: [pckgDelimiters],
         name: 'pckg-dynamic-clone',
         template: '#pckg-dynamic-clone',
         data: function () {
@@ -56,7 +57,7 @@
             };
         },
         methods: {
-            checkCloneRecord: function (id, record) {
+            checkCloneRecord: function (record) {
                 this.record = record;
 
                 $('#cloneRecordModal').modal('show');

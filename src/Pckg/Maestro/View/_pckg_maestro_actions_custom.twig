@@ -1,6 +1,7 @@
 <script>
     var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
         name: 'pckg-maestro-actions-{{ table }}',
-        template: '#pckg-maestro-actions-{{ table }}-template'
+        template: '#pckg-maestro-actions-{{ table }}-template',
+        mixins: [pckgDelimiters]
     }));
 </script>
