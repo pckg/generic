@@ -1,5 +1,6 @@
 Vue.component('pckg-dynamic-paginator', {
     template: '#pckg-dynamic-paginator',
+    mixins: [pckgDelimiters],
     props: {
         perPage: 0,
         page: 0,

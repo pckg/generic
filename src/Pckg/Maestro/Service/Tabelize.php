@@ -444,8 +444,26 @@ class Tabelize
 
             $string .= '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
 
-            //$string .= '<!-- start tabelize views -->' . $this->__toStringViews() . '<!-- end tabelize views-->';
-            //die($string);
+            /**
+             * @T00D00 ... scripts should be added to vue manager
+             *         ... component usages should be added to template
+             */
+            $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews(
+                ) . '<!-- end tabelize views-->';
+            $vueTemplate = '';
+            $pattern = "#<\s*?script\b[^>]*>(.*?)</script\b[^>]*>#s";
+
+            /**
+             * Add all scripts to vue header.
+             */
+            preg_match_all($pattern, $actionsTemplate, $matches);
+            foreach ($matches[0] ?? [] as $match) {
+                $actionsTemplate = str_replace($match, '', $actionsTemplate);
+                $vueTemplate .= $match;
+            }
+            $string .= $actionsTemplate;
+
+            vueManager()->addStringView($vueTemplate);
         } catch (Throwable $e) {
             return exception($e);
         }

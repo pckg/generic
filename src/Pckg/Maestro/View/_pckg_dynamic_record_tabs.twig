@@ -49,11 +49,9 @@
         data: function () {
             return {
                 recordactionhandler: function (record, action) {
-                    console.log('dispatching2 record:' + action);
+                    console.log('Yeeey, caught tab action record:' + action + ', dispatching');
 
-                    this.$dispatch('record:' + action, record.id, record);
-                    this.$emit('record:' + action, record.id, record);
-                    this.$broadcast('record:' + action, record.id, record);
+                    $dispatcher.$emit('record:' + action, record, record.id);
                 },
                 selectedTab: null
             };
@@ -70,6 +68,8 @@
     Vue.component('dynamic-tab-{{ tab.id }}', function (resolve) {
         http.getJSON('{{ tab.getUrl() }}?html=1', function (data) {
             $('body').append(data.vue);
+
+            console.log(data.html);
 
             resolve({
                 template: data.html,

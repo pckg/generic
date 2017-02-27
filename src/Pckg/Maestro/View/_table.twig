@@ -22,11 +22,9 @@
         mixins: [pckgDelimiters],
         methods: {
             recordactionhandler: function (record, action) {
-                console.log('dispatching record:' + action);
+                console.log('Yeeey, caught table action record:' + action + ', dispatching');
 
-                this.$dispatch('record:' + action, record.id, record);
-                this.$emit('record:' + action, record.id, record);
-                this.$broadcast('record:' + action, record.id, record);
+                $dispatcher.$emit('record:' + action, record, record.id);
             },
             entityAction: function (action) {
                 console.log('broadcasting and dispatching entity:' + action, this.ids);
