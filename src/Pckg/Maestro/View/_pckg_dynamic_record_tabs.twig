@@ -14,7 +14,7 @@
                 <li role="presentation">
                     <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
                        data-toggle="tab"
-                       v-on:click.prevent="selectTab({{ tab.id }})">{{ tab.name }}</a>
+                       @click.prevent="selectTab({{ tab.id }})">{{ tab.name }}</a>
                 </li>
             {% endfor %}
         </ul>

@@ -6,8 +6,6 @@ $dispatcher = new Vue();
 
 var data = data || {};
 
-var $vue = $vue || {};
-
 var props = props || {};
 
 var pckgDelimiters = {

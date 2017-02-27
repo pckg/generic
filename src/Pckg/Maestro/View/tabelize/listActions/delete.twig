@@ -15,28 +15,28 @@
 
 <script type="text/x-template" id="pckg-dynamic-delete">
     <div>
-    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
-        {% block header %}
-            Delete record
-        {% endblock %}
-        {% block body %}
-            <p>Do you really want to delete #${ recordIds }?</p>
-            {% if relations.count() %}
-                <p>Please note that this action will also delete:</p>
-                {{ macros.relationTree(relations) }}
-            {% endif %}
-            <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
-        {% endblock %}
-    {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordModal', 'class': 'danger'} %}
+            {% block header %}
+                Delete record
+            {% endblock %}
+            {% block body %}
+                <p>Do you really want to delete #${ recordIds }?</p>
+                {% if relations.count() %}
+                    <p>Please note that this action will also delete:</p>
+                    {{ macros.relationTree(relations) }}
+                {% endif %}
+                <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
+            {% endblock %}
+        {% endembed %}
 
-    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordDeletedModal'} %}
-        {% block header %}
-            Record deleted
-        {% endblock %}
-        {% block body %}
-            <p>#${ recordIds } was deleted.</p>
-        {% endblock %}
-    {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordDeletedModal'} %}
+            {% block header %}
+                Record deleted
+            {% endblock %}
+            {% block body %}
+                <p>#${ recordIds } was deleted.</p>
+            {% endblock %}
+        {% endembed %}
     </div>
 </script>
 
@@ -52,7 +52,7 @@
         },
         methods: {
             checkDeleteRecords: function (records) {
-                this.records = records;
+                this.records = utils.collect(records);
 
                 $('#deleteRecordModal').modal('show');
             },
@@ -73,11 +73,11 @@
                 }).join(', ');
             }
         },
-        created: function(){
+        created: function () {
             $dispatcher.$on('record:checkDeleteRecord', this.checkDeleteRecords);
             $dispatcher.$on('entity:checkDeleteRecord', this.checkDeleteRecords);
         },
-        beforeDestroy: function(){
+        beforeDestroy: function () {
             $dispatcher.$off('record:checkDeleteRecord', this.checkDeleteRecords);
             $dispatcher.$off('entity:checkDeleteRecord', this.checkDeleteRecords);
         }
