@@ -62,10 +62,7 @@ class Fields extends AbstractService
                     'table'         => $relation->showTable->table,
                     'fields'        => $this->makeFields($relation->showTable->fields, true),
                     'type'          => $relation->dynamic_relation_type_id,
-                    'options'       => [
-                        'options' => $options,
-                    ],
-                    'filterOptions' => $options,
+                    'filterOptions' => [],//$options,
                     'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
                     'filterMethod'  => $filtered['method'] ?? null,
                     'filterValue'   => $filtered['value'] ?? null,
@@ -75,11 +72,11 @@ class Fields extends AbstractService
         );
     }
 
-    protected function makeFields(CollectionInterface $collection, $deep = false)
+    protected function makeFields(CollectionInterface $fields, $deep = false)
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
 
-        return $collection->map(
+        return $fields->map(
             function(Field $field) use ($sessionFields, $deep) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();

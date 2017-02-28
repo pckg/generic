@@ -210,10 +210,10 @@
             }
         },
         created: function(){
-            $dispatcher.$on('record:openConfigureViewModal', this.openConfigureViewModal);
+            $dispatcher.$on('entity:openConfigureViewModal', this.openModal);
         },
         beforeDestroy: function(){
-            $dispatcher.$off('record:openConfigureViewModal', this.openConfigureViewModal);
+            $dispatcher.$off('entity:openConfigureViewModal', this.openModal);
         }
     });
 </script>
