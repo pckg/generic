@@ -70,10 +70,8 @@
         http.getJSON('{{ tab.getUrl() }}?html=1', function (data) {
             $('body').append(data.vue);
 
-            console.log(data.html);
-
             resolve({
-                template: data.html,
+                template: '<div>' + data.html + '</div>',
                 mixins: [pckgDelimiters],
                 ready: function () {
                     console.log('Ready');
