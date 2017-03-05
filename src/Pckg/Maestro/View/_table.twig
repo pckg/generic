@@ -20,7 +20,7 @@
     var pckgMaestroTable{{ table }} = Vue.component('pckg-maestro-table-{{ table }}', pckgMaestroTableComponent.extend({
         name: 'pckg-maestro-table-{{ table }}',
         template: '#pckg-maestro-table-{{ table }}-template',
-        mixins: [pckgDelimiters],
+        mixins: [pckgDelimiters, pckgTimeout],
         methods: {
             recordactionhandler: function (record, action) {
                 console.log('Caught record:' + action);
@@ -90,27 +90,24 @@
             resetPaginatorUrl: function (preset) {
                 this.paginator.url = '{{ searchUrl }}' + this.getUrlParams(preset);
 
-                http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                    this.groups = data.groups;
-                }.bind(this));
+                this.delaySearch();
+            },
+            delaySearch: function () {
+                this.timeout('search', function () {
+                    http.getJSON(this.paginator.url, function (data) {
+                        this.records = data.records;
+                        this.groups = data.groups;
+                        $vue.$set(this.paginator, 'total', data.paginator.total);
+                    }.bind(this));
+                }.bind(this), 500);
             }
         },
         watch: {
             search: function (newValue) {
-                if (this._searchTimeout) {
-                    this._searchTimeout.abort();
-                }
-
                 this.resetPaginatorUrl({
                     search: newValue,
                     page: 1
                 });
-
-                this._searchTimeout = http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                    this.paginator.total = data.paginator.total;
-                }.bind(this));
             }
         }
     }));
