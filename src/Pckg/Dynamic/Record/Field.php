@@ -299,6 +299,7 @@ class Field extends DatabaseRecord
                 [
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',
+                    $this->field        => 'CONCAT(Y(' . $this->field . '), \';\', X(' . $this->field . '))',
                 ]
             );
             $fieldTransformations[$field->field] = function($record) use ($field) {

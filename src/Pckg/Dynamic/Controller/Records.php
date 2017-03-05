@@ -52,8 +52,7 @@ class Records extends Controller
     public function __construct(
         DynamicService $dynamic,
         Plugin $pluginService
-    )
-    {
+    ) {
         $this->dynamic = $dynamic;
         $this->pluginService = $pluginService;
     }
@@ -62,8 +61,7 @@ class Records extends Controller
         Table $table,
         Field $field,
         Record $record = null
-    )
-    {
+    ) {
         $collection = new Collection();
         $collection->push(' -- select value --', null);
         $search = get('search');
@@ -90,8 +88,7 @@ class Records extends Controller
         DatabaseEntity $entity = null,
         TableView $tableView,
         $viewType = 'full'
-    )
-    {
+    ) {
         /**
          * Set table.
          */
@@ -106,8 +103,7 @@ class Records extends Controller
         DynamicService $dynamicService,
         DatabaseEntity $entity = null,
         $viewType = 'full'
-    )
-    {
+    ) {
         $this->dynamic->setTable($tableRecord);
         $dynamicService->setTable($tableRecord);
         $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
@@ -147,8 +143,7 @@ class Records extends Controller
         DatabaseEntity $entity = null,
         $viewType = 'full',
         $returnTabelize = false
-    )
-    {
+    ) {
         if (!$dynamicService) {
             $dynamicService = $this->dynamic;
         }
@@ -290,8 +285,7 @@ class Records extends Controller
         Record $record,
         Relation $relation = null,
         $foreign = null
-    )
-    {
+    ) {
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
         }
@@ -335,8 +329,7 @@ class Records extends Controller
         Record $record,
         Relation $relation = null,
         $foreign = null
-    )
-    {
+    ) {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);
@@ -603,10 +596,8 @@ class Records extends Controller
 
                 if ($tabs->count()) {
                     $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = (string)$tabelize;
-
                 } else {
                     $tabelizes[] = (string)$tabelize;
-
                 }
             }
         );
@@ -623,10 +614,8 @@ class Records extends Controller
                 );
                 if ($tabs->count()) {
                     $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;
-
                 } else {
                     $functionizes[] = (string)$functionize;
-
                 }
             }
         );
@@ -639,8 +628,7 @@ class Records extends Controller
         Record $record,
         Table $table,
         Entity $entity
-    )
-    {
+    ) {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);
@@ -752,12 +740,10 @@ class Records extends Controller
             $record->{$field->field} = $state
                 ? 1
                 : null;
-
         } elseif ($field->fieldType->slug == 'datetime') {
             $record->{$field->field} = $state
                 ? $field->getMaxTogglableAttribute()
                 : $field->getMinTogglableAttribute();
-
         }
 
         /**
