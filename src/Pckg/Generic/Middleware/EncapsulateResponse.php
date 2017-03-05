@@ -27,7 +27,17 @@ class EncapsulateResponse
                                                                                  substr($output, 0, 9)
                                                                              ) != '<!doctype'
             ) {
-                $template = router()->get()['pckg']['generic']['template'] ?? 'Pckg\Generic:generic';
+                $tags = router()->get('tags', []);
+                $template = config('pckg.generic.layouts.default', 'Pckg\Generic:generic');
+                foreach ($tags as $tag) {
+                    if (strpos($tag, 'layout:') !== 0) {
+                        continue;
+                    }
+
+                    $key = substr($tag, strlen('layout:'));
+                    $template = config('pckg.generic.layouts.' . $key, 'Pckg\Generic:generic');
+                }
+                
                 $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
                 $this->response->setOutput($output);
             }
