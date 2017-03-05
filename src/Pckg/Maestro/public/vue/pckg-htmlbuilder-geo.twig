@@ -9,7 +9,7 @@
                 Select location
             {% endblock %}
             {% block body %}
-                <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search.sync="search" v-ref:gmap
+                <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search="search" :ref="'gmap'"
                                      center="46.055144;14.512284" :zoom="10"
                                      :locations="[{geo:[30, 40]}]"></vue-component-gmaps>
 

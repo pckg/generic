@@ -15,14 +15,14 @@
             <div class="col-sm-4">
                 <select v-model="field.filterMethod" class="form-control">
                     <option></option>
-                    <option v-for="(key,option) in filterMethods" :value="key">${ option.label }</option>
+                    <option v-for="(option,key) in filterMethods" :value="key">${ option.label }</option>
                 </select>
             </div>
             <div class="col-sm-8" v-if="field.filterMethod">
                 <template
                         v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
                     <select v-model="field.filterValue" class="form-control"
-                            v-bind:multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
+                            :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
                         <option v-for="option in field.options"
                                 :value="option.key">${ option.value }
                         </option>
@@ -51,7 +51,7 @@
             <div class="col-sm-4">
                 <select v-model="relation.filterMethod" class="form-control">
                     <option></option>
-                    <option v-for="(key,option) in filterMethods" :value="key">${ option.label }</option>
+                    <option v-for="(option,key) in filterMethods" :value="key">${ option.label }</option>
                 </select>
             </div>
             <template v-if="relation.filterMethod">
@@ -61,7 +61,7 @@
                 </div>
                 <div v-else class="col-sm-4">
                     <select v-model="relation.filterValue" class="form-control"
-                            v-bind:multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
+                            :multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
                         <option v-for="option in relation.filterOptions" :value="option.key">${ option.value }
                         </option>
                     </select>
@@ -82,7 +82,7 @@
         <div class="form-group">
             <select v-model="field.sort" class="form-control">
                 <option></option>
-                <option v-for="(key,option) in directions" :value="key">${ option.label }</option>
+                <option v-for="(option,key) in directions" :value="key">${ option.label }</option>
             </select>
         </div>
     {% endif %}

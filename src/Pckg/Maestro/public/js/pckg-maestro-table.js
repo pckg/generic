@@ -2,20 +2,32 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
     name: 'pckg-maestro-table', // recursive
     template: '#pckg-maestro-table',
     props: {
-        fields: [],
+        fields: {
+            default: function () {
+                return [];
+            }
+        },
         depth: 0,
-        records: [],
-        groups: [],
+        records: {
+            default: function () {
+                return [];
+            }
+        },
+        groups: {
+            default: function () {
+                return [];
+            }
+        },
         first: false,
         ids: {
             default: function () {
                 return [];
-            },
-            type: Array
+            }/*,
+             type: Array*/
         },
         allChecked: false,
         search: null,
-        entityactions: [],
+        entityactions: {},
         table: null,
         paginator: {
             default: function () {
@@ -25,11 +37,16 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
                     total: 0,
                     url: null
                 };
-            },
-            type: Object
+            }/*,
+             type: Object*/
         },
-        recordactionhandler: null,
-        togglefield: null,
+        /*recordactionhandler: {
+            default: function () {
+                console.log("No record action handler");
+            },
+            type: Function
+        },
+        togglefield: null,*/
         resetpaginatorurl: null,
         sort: {
             default: function () {
@@ -37,8 +54,8 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
                     field: '',
                     dir: 'up'
                 };
-            },
-            type: Object
+            }/*,
+             type: Object*/
         }
     },
     data: function () {
@@ -61,6 +78,22 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             } else {
                 this.ids = [];
             }
+        }
+    },
+    computed: {
+        filteredRecords: function () {
+            var self = this;
+            var searchRegex = new RegExp(self.search, 'i');
+
+            if (!self.search || self.search.length < 1 || true) {
+                return self.records;
+            }
+
+            return self.records.filter(function (record) {
+                return record.filter(function (value) {
+                    return searchRegex.test(value);
+                });
+            });
         }
     }
 });

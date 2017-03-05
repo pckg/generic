@@ -1,13 +1,22 @@
 Vue.component('pckg-dynamic-paginator', {
     template: '#pckg-dynamic-paginator',
+    mixins: [pckgDelimiters],
     props: {
         perPage: 0,
         page: 0,
         total: 0,
         url: null,
         resetpaginatorurl: null,
-        records: [],
-        groups: []
+        records: {
+            default: function(){
+                return [];
+            }
+        },
+        groups: {
+            default: function(){
+                return [];
+            }
+        }
     },
     data: function () {
         return {

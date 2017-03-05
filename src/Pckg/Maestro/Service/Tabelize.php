@@ -440,12 +440,30 @@ class Tabelize
     public function __toString()
     {
         try {
-            /**
-             * Parse tabelize view.
-             */
-            $string = '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
+            $string = '';
 
-            $string .= $this->__toStringViews();
+            $string .= '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
+
+            /**
+             * @T00D00 ... scripts should be added to vue manager
+             *         ... component usages should be added to template
+             */
+            $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews(
+                ) . '<!-- end tabelize views-->';
+            $vueTemplate = '';
+            $pattern = "#<\s*?script\b[^>]*>(.*?)</script\b[^>]*>#s";
+
+            /**
+             * Add all scripts to vue header.
+             */
+            preg_match_all($pattern, $actionsTemplate, $matches);
+            foreach ($matches[0] ?? [] as $match) {
+                $actionsTemplate = str_replace($match, '', $actionsTemplate);
+                $vueTemplate .= $match;
+            }
+            $string .= $actionsTemplate;
+
+            vueManager()->addStringView($vueTemplate);
         } catch (Throwable $e) {
             return exception($e);
         }
@@ -551,6 +569,16 @@ class Tabelize
         }
 
         return $html;
+    }
+
+    public function getPaginator()
+    {
+        return [
+            'perPage' => $this->getPerPage(),
+            'page'    => $this->getPage(),
+            'total'   => $this->getTotal(),
+            'url'     => router()->getUri(),
+        ];
     }
 
 }

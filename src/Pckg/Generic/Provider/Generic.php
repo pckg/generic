@@ -33,7 +33,7 @@ class Generic extends Provider
     {
         $paths = $this->getViewPaths();
         $paths[] = str_replace('Generic', 'Maestro', $paths[0]);
-        
+
         return $paths;
     }
 
@@ -48,8 +48,11 @@ class Generic extends Provider
     public function assets()
     {
         return [
-            'footer' => [
+            'footer'    => [
                 'vue/pckg-generic-app.js',
+            ],
+            'libraries' => [
+                'vue/pckg-generic-app-top.js',
             ],
         ];
     }

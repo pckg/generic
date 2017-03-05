@@ -6,21 +6,12 @@
 
 {{ _metaManager.getMeta('header') | raw }}
 
-<script type="text/javascript">
-    {# Classic JS data #}
-    var data = data || {};
-
-    {# Data prepared for magic creation of main Vue object #}
-    var $vue = $vue || {};
-
-    {# Some properties needed on different parts #}
-    var props = props || {};
-
-    props.locale = '{{ _localeManager.getCurrent() }}';
-</script>
-
 <!-- libraries css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries']) | raw }}
+
+<script>
+    props.locale = '{{ _localeManager.getCurrent() }}';
+</script>
 
 <!-- main css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['main']) | raw }}
@@ -40,15 +31,15 @@
 <!--  vue css, less and js -->
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 
+<!-- vue live components -->
+{{ _vueManager.getViews() | raw }}
+
 <script>
     {% if _env.isDev() %}
     Vue.config.debug = true;
     Vue.config.silent = false;
     Vue.config.devtools = true;
     {% endif %}
-
-    Vue.config.delimiters = ['${', '}'];
-    Vue.config.unsafeDelimiters = ['!${', '}'];
 
     Vue.filter('price', function (price, decimals) {
         return locale.price(price, decimals);

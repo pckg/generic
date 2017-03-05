@@ -56,226 +56,231 @@ class Dynamic extends Provider
     {
         return [
             'url' => array_merge_array(
-                         [
-                             'controller' => Records::class,
-                         ],
-                         [
-                             '/dynamic/tables/list/[table]'                                   => [
-                                 'name'      => 'dynamic.record.list',
-                                 'view'      => 'viewTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/list/[table]/configure'                         => [
-                                 'name'      => 'dynamic.record.list',
-                                 'view'      => 'configureTableView',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/list/[table]/[tableView]'                       => [
-                                 'name'      => 'dynamic.record.listView',
-                                 'view'      => 'viewTableView',
-                                 'resolvers' => [
-                                     'table'     => TableResolver::class,
-                                     'tableView' => ViewResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/add/[table]'                                   => [
-                                 'name'      => 'dynamic.record.add',
-                                 'view'      => 'add',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/add/[table]/[relation]/[foreign]'              => [
-                                 'name'      => 'dynamic.record.add.related',
-                                 'view'      => 'add',
-                                 'resolvers' => [
-                                     'table'    => TableResolver::class,
-                                     'relation' => Relation::class,
-                                 ],
-                             ],
-                             '/dynamic/records/view/[table]/[record]'                         => [
-                                 'name'      => 'dynamic.record.view',
-                                 'view'      => 'view',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/edit/[table]/[record]'                         => [
-                                 'name'        => 'dynamic.record.edit',
-                                 'view'        => 'edit',
-                                 'resolvers'   => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                                 'middlewares' => [
-                                     SwitchLanguage::class,
-                                 ],
-                             ],
-                             '/dynamic/records/clone/[table]/[record]'                        => [
-                                 'name'        => 'dynamic.record.clone',
-                                 'view'        => 'clone',
-                                 'resolvers'   => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                                 'middlewares' => [
-                                     SwitchLanguage::class,
-                                 ],
-                             ],
-                             '/dynamic/records/delete/[table]/[record]'                       => [
-                                 'name'      => 'dynamic.record.delete',
-                                 'view'      => 'delete',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/delete/[table]/[record]/[language]'            => [
-                                 'name'      => 'dynamic.record.deleteTranslation',
-                                 'view'      => 'deleteTranslation',
-                                 'resolvers' => [
-                                     'table'    => TableResolver::class,
-                                     'record'   => RecordResolver::class,
-                                     'language' => Language::class,
-                                 ],
-                             ],
-                             '/dynamic/records/force-delete/[table]/[record]'                 => [
-                                 'name'      => 'dynamic.record.forceDelete',
-                                 'view'      => 'forceDelete',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/tab/[table]/[record]/[tab]'                    => [
-                                 'name'      => 'dynamic.record.tab',
-                                 'view'      => 'tab',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'record' => RecordResolver::class,
-                                     'tab'    => TabResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]' => [
-                                 'name'      => 'dynamic.records.field.toggle',
-                                 'view'      => 'toggleField',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'field'  => FieldResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/field/[table]/[field]/[record]/order/[order]'  => [
-                                 'name'      => 'dynamic.records.field.order',
-                                 'view'      => 'orderField',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'field'  => FieldResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/field/[table]/[field]/[record]/upload'         => [
-                                 'name'      => 'dynamic.records.field.upload',
-                                 'view'      => 'upload',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'field'  => FieldResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/field/[table]/[field]/none/select-list'        => [
-                                 'name'      => 'dynamic.records.field.selectList.none',
-                                 'view'      => 'selectList',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                     'field' => FieldResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/records/field/[table]/[field]/[record]/select-list'    => [
-                                 'name'      => 'dynamic.records.field.selectList',
-                                 'view'      => 'selectList',
-                                 'resolvers' => [
-                                     'table'  => TableResolver::class,
-                                     'field'  => FieldResolver::class,
-                                     'record' => RecordResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => View::class,
-                         ],
-                         [
-                             '/dynamic/tables/view/[table]'                  => [
-                                 'name'      => 'dynamic.record.view',
-                                 'view'      => 'viewTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/view/[table]/save'             => [
-                                 'name'      => 'dynamic.record.view.save',
-                                 'view'      => 'saveView',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/view/[table]/reset'            => [
-                                 'name'      => 'dynamic.record.view.reset',
-                                 'view'      => 'resetView',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/view/[table]/share'            => [
-                                 'name'      => 'dynamic.record.view.share',
-                                 'view'      => 'shareView',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                             '/dynamic/tables/view/[table]/load/[tableView]' => [
-                                 'name'      => 'dynamic.record.view.load',
-                                 'view'      => 'loadView',
-                                 'resolvers' => [
-                                     'table'     => TableResolver::class,
-                                     'tableView' => ViewResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => Export::class,
-                         ],
-                         [
-                             '/dynamic/tables/export/[table]/[type]' => [
-                                 'name'      => 'dynamic.record.export',
-                                 'view'      => 'exportTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                     'type'  => ExportStrategy::class,
-                                 ],
-                             ],
-                         ]
-                     ) + array_merge_array(
-                         [
-                             'controller' => Import::class,
-                         ],
-                         [
-                             '/dynamic/tables/import/[table]' => [
-                                 'name'      => 'dynamic.record.import',
-                                 'view'      => 'importTable',
-                                 'resolvers' => [
-                                     'table' => TableResolver::class,
-                                 ],
-                             ],
-                         ]
-                     ),
+                [
+                    'tags' => ['group:admin'],
+                ],
+                array_merge_array(
+                    [
+                        'controller' => Records::class,
+                    ],
+                    [
+                        '/dynamic/tables/list/[table]'                                   => [
+                            'name'      => 'dynamic.record.list',
+                            'view'      => 'viewTable',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/list/[table]/configure'                         => [
+                            'name'      => 'dynamic.record.list',
+                            'view'      => 'configureTableView',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/list/[table]/[tableView]'                       => [
+                            'name'      => 'dynamic.record.listView',
+                            'view'      => 'viewTableView',
+                            'resolvers' => [
+                                'table'     => TableResolver::class,
+                                'tableView' => ViewResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/add/[table]'                                   => [
+                            'name'      => 'dynamic.record.add',
+                            'view'      => 'add',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/add/[table]/[relation]/[foreign]'              => [
+                            'name'      => 'dynamic.record.add.related',
+                            'view'      => 'add',
+                            'resolvers' => [
+                                'table'    => TableResolver::class,
+                                'relation' => Relation::class,
+                            ],
+                        ],
+                        '/dynamic/records/view/[table]/[record]'                         => [
+                            'name'      => 'dynamic.record.view',
+                            'view'      => 'view',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/edit/[table]/[record]'                         => [
+                            'name'        => 'dynamic.record.edit',
+                            'view'        => 'edit',
+                            'resolvers'   => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                            'middlewares' => [
+                                SwitchLanguage::class,
+                            ],
+                        ],
+                        '/dynamic/records/clone/[table]/[record]'                        => [
+                            'name'        => 'dynamic.record.clone',
+                            'view'        => 'clone',
+                            'resolvers'   => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                            'middlewares' => [
+                                SwitchLanguage::class,
+                            ],
+                        ],
+                        '/dynamic/records/delete/[table]/[record]'                       => [
+                            'name'      => 'dynamic.record.delete',
+                            'view'      => 'delete',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/delete/[table]/[record]/[language]'            => [
+                            'name'      => 'dynamic.record.deleteTranslation',
+                            'view'      => 'deleteTranslation',
+                            'resolvers' => [
+                                'table'    => TableResolver::class,
+                                'record'   => RecordResolver::class,
+                                'language' => Language::class,
+                            ],
+                        ],
+                        '/dynamic/records/force-delete/[table]/[record]'                 => [
+                            'name'      => 'dynamic.record.forceDelete',
+                            'view'      => 'forceDelete',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/tab/[table]/[record]/[tab]'                    => [
+                            'name'      => 'dynamic.record.tab',
+                            'view'      => 'tab',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'record' => RecordResolver::class,
+                                'tab'    => TabResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]' => [
+                            'name'      => 'dynamic.records.field.toggle',
+                            'view'      => 'toggleField',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'field'  => FieldResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/field/[table]/[field]/[record]/order/[order]'  => [
+                            'name'      => 'dynamic.records.field.order',
+                            'view'      => 'orderField',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'field'  => FieldResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/field/[table]/[field]/[record]/upload'         => [
+                            'name'      => 'dynamic.records.field.upload',
+                            'view'      => 'upload',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'field'  => FieldResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/field/[table]/[field]/none/select-list'        => [
+                            'name'      => 'dynamic.records.field.selectList.none',
+                            'view'      => 'selectList',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                                'field' => FieldResolver::class,
+                            ],
+                        ],
+                        '/dynamic/records/field/[table]/[field]/[record]/select-list'    => [
+                            'name'      => 'dynamic.records.field.selectList',
+                            'view'      => 'selectList',
+                            'resolvers' => [
+                                'table'  => TableResolver::class,
+                                'field'  => FieldResolver::class,
+                                'record' => RecordResolver::class,
+                            ],
+                        ],
+                    ]
+                ) + array_merge_array(
+                    [
+                        'controller' => View::class,
+                    ],
+                    [
+                        '/dynamic/tables/view/[table]'                  => [
+                            'name'      => 'dynamic.record.view',
+                            'view'      => 'viewTable',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/view/[table]/save'             => [
+                            'name'      => 'dynamic.record.view.save',
+                            'view'      => 'saveView',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/view/[table]/reset'            => [
+                            'name'      => 'dynamic.record.view.reset',
+                            'view'      => 'resetView',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/view/[table]/share'            => [
+                            'name'      => 'dynamic.record.view.share',
+                            'view'      => 'shareView',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/view/[table]/load/[tableView]' => [
+                            'name'      => 'dynamic.record.view.load',
+                            'view'      => 'loadView',
+                            'resolvers' => [
+                                'table'     => TableResolver::class,
+                                'tableView' => ViewResolver::class,
+                            ],
+                        ],
+                    ]
+                ) + array_merge_array(
+                    [
+                        'controller' => Export::class,
+                    ],
+                    [
+                        '/dynamic/tables/export/[table]/[type]' => [
+                            'name'      => 'dynamic.record.export',
+                            'view'      => 'exportTable',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                                'type'  => ExportStrategy::class,
+                            ],
+                        ],
+                    ]
+                ) + array_merge_array(
+                    [
+                        'controller' => Import::class,
+                    ],
+                    [
+                        '/dynamic/tables/import/[table]' => [
+                            'name'      => 'dynamic.record.import',
+                            'view'      => 'importTable',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                    ]
+                )
+            ),
         ];
     }
 
