@@ -40,8 +40,7 @@ class Record implements RouteResolver
         Tables $tables,
         Response $response,
         Dynamic $dynamic
-    )
-    {
+    ) {
         $this->router = $router;
         $this->tables = $tables;
         $this->response = $response;
@@ -73,6 +72,7 @@ class Record implements RouteResolver
                         [
                             $field->field . '_x' => 'X(' . $field->field . ')',
                             $field->field . '_y' => 'Y(' . $field->field . ')',
+                            $field->field        => 'CONCAT(Y(' . $field->field . '), \';\', X(' . $field->field . '))',
                         ]
                     );
                 }
