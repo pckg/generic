@@ -61,7 +61,7 @@ class Fields extends DatabaseEntity
     {
         return $this->hasOne(Relations::class)
                     ->foreignKey('on_field_id')
-                    ->where('dynamic_relation_type_id', 1);
+                    ->where('dynamic_relation_type_id', [1]);
     }
 
     public function realFields()

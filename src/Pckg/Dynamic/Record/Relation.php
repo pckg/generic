@@ -1,6 +1,8 @@
 <?php namespace Pckg\Dynamic\Record;
 
+use Pckg\Database\Entity;
 use Pckg\Database\Query\Raw;
+use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Relations;
 use Throwable;
@@ -31,6 +33,15 @@ class Relation extends DatabaseRecord
         }
 
         $entity->where(Raw::raw($evalResult));
+    }
+
+    public function applyRecordFilterOnEntity(Record $record, Entity $entity)
+    {
+        if ($this->left_foreign_key_id) {
+            $entity->where($this->leftForeignKey->field, $record->id);
+        } elseif ($this->on_field_id) {
+            $entity->where($this->onField->field, $record->id);
+        }
     }
 
     public function eval($eval, $foreignRecord)

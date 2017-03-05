@@ -46,4 +46,16 @@ class Relations extends DatabaseEntity
                     ->foreignKey('foreign_field_id');
     }
 
+    public function overTable()
+    {
+        return $this->belongsTo(Tables::class)
+                    ->foreignKey('over_table_id');
+    }
+
+    public function leftForeignKey()
+    {
+        return $this->belongsTo(Fields::class)
+                    ->foreignKey('left_foreign_key_id');
+    }
+
 }

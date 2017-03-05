@@ -7,6 +7,7 @@ use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Relation\BelongsTo;
+use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
@@ -293,7 +294,7 @@ class Records extends Controller
         $tableEntity = $table->createEntity();
         $record->setEntity($tableEntity);
 
-        if ($foreign) {
+        if ($foreign && $relation->on_field_id) {
             $record->{$relation->onField->field} = $foreign;
             $form->setForeignFieldId($relation->on_field_id);
             $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
@@ -335,7 +336,7 @@ class Records extends Controller
         $record = $entity->transformRecordToEntities($record);
         $record->setEntity($entity);
 
-        if ($foreign) {
+        if ($foreign && $relation->on_field_id) {
             $record->{$relation->onField->field} = $foreign;
             $form->setForeignFieldId($relation->on_field_id);
             $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
@@ -496,6 +497,15 @@ class Records extends Controller
                 $relation->where('dynamic_table_tab_id', $tab->id);
             }
         );
+        $table->hasAndBelongsToRelation(
+            function(HasAndBelongsTo $relation) use ($tab) {
+                $relation->where('dynamic_table_tab_id', $tab->id);
+            }
+        )->each(
+            function($item) use ($relations) {
+                $relations->push($item);
+            }
+        );
         $table->morphsManyRelation(
             function(MorphsMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
@@ -518,12 +528,19 @@ class Records extends Controller
         $tabelizes = [];
         $relations->each(
             function(Relation $relation) use ($tabs, $record, &$tabelizes, $dynamicService) {
-                $entity = $relation->showTable->createEntity();
+                $entity = null;
+                $tableId = $relation->over_table_id ?? $relation->show_table_id;
+                if ($relation->over_table_id) {
+                    $entity = $relation->overTable->createEntity();
+                } else {
+                    $entity = $relation->showTable->createEntity();
+                }
+
                 $entity->setStaticDynamicRecord($record);
                 $entity->setStaticDynamicRelation($relation);
-                $entity->where($relation->onField->field, $record->id);
+                $relation->applyRecordFilterOnEntity($record, $entity);
                 $tabelize = $this->getViewTableAction(
-                    (new Tables())->where('id', $relation->showTable->id)->one(),
+                    (new Tables())->where('id', $tableId)->one(),
                     $this->dynamic,
                     $entity,
                     'related'

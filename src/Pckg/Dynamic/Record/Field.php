@@ -131,7 +131,7 @@ class Field extends DatabaseRecord
         $entity = $this->getEntityForSelect($record, $foreignRecord);
 
         if (!$entity) {
-            return null;
+            return [];
         }
 
         $relation = $this->hasOneSelectRelation;
