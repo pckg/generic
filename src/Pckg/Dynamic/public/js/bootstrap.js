@@ -172,6 +172,8 @@ $(document).ready(function () {
     affixFromTop();
     collapsedHoverOn();
 
+    tinymce.baseURL = '/bower_components/tinymce/';
+
     function initTinymce(selector) {
         return tinymce.init({
             selector: '#' + selector, height: 500,
@@ -213,18 +215,6 @@ $(document).ready(function () {
             $(this).attr('id', selector);
 
         }
-
-        /*var val = $(this).val();
-         if (val.indexOf('{% ') < 0 && val.indexOf('{{ ') < 0 && val.indexOf('<') == 0 && val.split("\n").length > 1) {
-         initTinymce(selector);
-         } else {
-         var changeEvent = $(this).on('focus', function () {
-         if (confirm('Do you want to enable editor?')) {
-         initTinymce(selector);
-         }
-         changeEvent.off();
-         })
-         }*/
     });
 
     var editors = {};
