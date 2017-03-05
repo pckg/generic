@@ -108,6 +108,8 @@ class Records extends Controller
         $viewType = 'full'
     )
     {
+        $this->dynamic->setTable($tableRecord);
+        $dynamicService->setTable($tableRecord);
         $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
 
         $fields = $this->dynamic->getFieldsService()->getAvailableFields();

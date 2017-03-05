@@ -53,7 +53,7 @@ class Relation extends DatabaseRecord
         $relation = $this;
 
         return $this->onField && $this->dynamic_relation_type_id == 1
-            ? $entity->all()->limit(100)->map(
+            ? $entity->limit(100)->all()->map(
                 function($record) use ($relation, $entity) {
                     try {
                         $eval = eval(' return ' . $relation->value . '; ');

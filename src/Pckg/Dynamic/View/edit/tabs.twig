@@ -1,114 +1,13 @@
 {% set table = tabelize.getEntity().getTable() %}
 
-{% include 'Pckg/Maestro/View/_pckg_maestro_actions_template.twig' with { recordActions: actions, table: table } %}
-
-{% include 'Pckg/Maestro/View/_pckg_maestro_actions.twig' with { recordActions: actions } %}
-
-<script>
-    var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
-        name: 'pckg-maestro-actions-{{ table }}',
-        template: '#pckg-maestro-actions-{{ table }}-template'
-    }));
-</script>
-
-<script type="text/x-template" id="pckg-dynamic-record-tabs">
-    <div class="pckg-dynamic-record-tabs">
-        <h2>
-            {{ formalize.getTitle() | raw }}
-            <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
-                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape('html_attr') }}"></pckg-maestro-actions-{{ table }}>
-        </h2>
-
-        <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
-            <li role="presentation" class="active">
-                <a href="#home" aria-controls="home" role="tab" data-toggle="tab">{{ __('pckg.dynamic.tab.home') }}</a>
-            </li>
-            {% for tab in tabs %}
-                <li role="presentation">
-                    <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
-                       data-toggle="tab"
-                       @click.prevent="loadAjaxTab({{ tab.id }}, '{{ tab.getUrl() }}')">{{ tab.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="home">
-                {{ formalize | raw }}
-
-                {% for tabelize in tabelizes.0 %}
-                    {{ tabelize | raw }}
-                {% endfor %}
-                {% for functionize in functionizes.0 %}
-                    {{ functionize | raw }}
-                {% endfor %}
-            </div>
-            {% for tab in tabs %}
-                <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                    <i class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</script>
-
-<script type="text/javascript">
-    Vue.component('pckg-dynamic-record-tabs', {
-        template: '#pckg-dynamic-record-tabs',
-        name: 'pckg-dynamic-record-tabs',
-        data: function(){
-            return {
-                recordactionhandler: function (record, action) {
-                    console.log('dispatching2 record:' + action);
-
-                    this.$dispatch('record:' + action, record.id, record);
-                    this.$emit('record:' + action, record.id, record);
-                    this.$broadcast('record:' + action, record.id, record);
-                }
-            };
-        },
-        methods: {
-            loadAjaxTab: function (tabId, url) {
-                http.get(url + '?html=1', function (html) {
-                    var $element = $('#dynamic-tab-' + tabId).html(html);
-                    console.log(html);
-                    this.$compile($element.get(0));
-                }.bind(this));
-            }
-        }
-    });
-</script>
+{% do _vueManager.addView('Pckg/Maestro:_pckg_chart') %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: actions, table: table }) %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions', { recordActions: actions }) %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_custom', { table: table }) %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_dynamic_record_tabs', { tabelize: tabelize, formalize: formalize, tabs: tabs, table: table, tabelizes: tabelizes, functionizes: functionizes, record: record }) %}
 
 <!-- start tabelize to string views -->
-{{ tabelize.__toStringViews() | raw }}
+{#{ tabelize.__toStringViews() | raw }#}
 <!-- end tabelize to string views -->
-
-<script type="text/x-template" id="pckg-chart">
-    <canvas class="pckg-chart" id="pckg-chart-1" width="5" height="1"></canvas>
-</script>
-
-<script>
-    Vue.component('pckg-chart', {
-        template: '#pckg-chart',
-        props: {
-            data: null,
-            type: null
-        },
-        ready: function () {
-            new Chart($(this.$el).get()[0], {
-                type: this.type,
-                data: this.data,
-                options: {
-                    hover: {
-                        mode: 'x-axis'
-                    },
-                    tooltips: {
-                        mode: 'x-axis'
-                    }
-                }
-            });
-        }
-    });
-</script>
 
 <pckg-dynamic-record-tabs></pckg-dynamic-record-tabs>

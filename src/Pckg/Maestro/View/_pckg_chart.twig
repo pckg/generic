@@ -1,0 +1,31 @@
+<script type="text/x-template" id="pckg-chart">
+    <canvas class="pckg-chart" id="pckg-chart-1" width="5" height="1"></canvas>
+</script>
+
+<script>
+    Vue.component('pckg-chart', {
+        mixins: [pckgDelimiters],
+        template: '#pckg-chart',
+        props: {
+            data: null,
+            type: null
+        },
+        mounted: function () {
+
+            this.$nextTick(function() {
+                new Chart($(this.$el).get()[0], {
+                    type: this.type,
+                    data: this.data,
+                    options: {
+                        hover: {
+                            mode: 'x-axis'
+                        },
+                        tooltips: {
+                            mode: 'x-axis'
+                        }
+                    }
+                });
+            }.bind(this));
+        }
+    });
+</script>

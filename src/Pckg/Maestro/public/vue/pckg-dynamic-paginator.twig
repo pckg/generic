@@ -4,18 +4,18 @@
             <nav style="display: table; margin: 0 auto;" v-if="perPage != 'all' && total > perPage">
                 <ul class="pagination">
                     <li>
-                        <a v-bind:class="{ disabled: page == 1 }" href="#" aria-label="Previous"
-                           v-on:click.prevent="prev">
+                        <a :class="{ disabled: page == 1 }" href="#" aria-label="Previous"
+                           @click.prevent="prev">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
-                    <li v-for="(i,p) in pages" track-by="$index" v-bind:class="{ active: p == page }">
-                        <a v-bind:class="{ disabled: page == '...' }" href="#" v-on:click.prevent="navigate(p)">${ p
+                    <li v-for="(p,i) in pages" :key="i" :class="{ active: p == page }">
+                        <a :class="{ disabled: page == '...' }" href="#" @click.prevent="navigate(p)">${ p
                             }</a>
                     </li>
                     <li>
-                        <a v-bind:class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next"
-                           v-on:click.prevent="next">
+                        <a :class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next"
+                           @click.prevent="next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

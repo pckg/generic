@@ -22,6 +22,7 @@
         </div>
     </div>
     <script type="text/x-template" id="pckg-generic-page-structure">
+        <div>
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pageStructureModal'} %}
             {% block header %}
                 Add action
@@ -99,6 +100,7 @@
                 </table>
             {% endblock %}
         {% endembed %}
+        </div>
     </script>
     <script type="text/javascript">
         data.variables = {{ variables.toJSON() | raw }};
@@ -110,6 +112,7 @@
         data.actions = {{ actions.toJSON() | raw }};
 
         Vue.component('pckg-generic-page-structure', {
+            mixins: [pckgDelimiters],
             template: '#pckg-generic-page-structure',
             props: {
                 variable: {

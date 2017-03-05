@@ -64,12 +64,8 @@
 </script>
 
 <script type="text/javascript">
-    data.fields = [];
-    data.relations = [];
-    data.directions = [];
-    data.filterMethods = [];
-
     Vue.component('pckg-maestro-table-config-{{ table }}', {
+        mixins: [pckgDelimiters],
         name: 'pckg-maestro-table-config-{{ table }}',
         template: '#pckg-maestro-table-config-{{ table }}',
         data: function () {
@@ -91,14 +87,15 @@
             fetchData: function () {
                 this.fetching = true;
                 http.getJSON(window.location.href + '/configure', function (data) {
+                    var self = this;
                     var keys = [
                         'fields', 'relations', 'filterMethods', 'directions'
                     ];
                     $.each(keys, function (i, key) {
-                        this.$set(key, data[key]);
+                        self[key] = data[key];
                     }.bind(this));
 
-                    this.$set('appliedRelations', this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters));
+                    this.appliedRelations = this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters);
                     this.fetching = false;
                 }.bind(this));
             },
@@ -212,10 +209,11 @@
                 return selectField;
             }
         },
-        events: {
-            'entity:openConfigureViewModal': function () {
-                this.openModal();
-            }
+        created: function(){
+            $dispatcher.$on('entity:openConfigureViewModal', this.openModal);
+        },
+        beforeDestroy: function(){
+            $dispatcher.$off('entity:openConfigureViewModal', this.openModal);
         }
     });
 </script>
