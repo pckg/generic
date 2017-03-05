@@ -1,4 +1,5 @@
 var pckgBootstrapAlertComponent = Vue.component('pckg-bootstrap-alert', {
+    mixins: [pckgDelimiters],
     name: 'pckg-bootstrap-alert',
     template: '#pckg-bootstrap-alert',
     props: {
