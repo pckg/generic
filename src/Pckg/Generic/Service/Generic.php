@@ -12,6 +12,7 @@ use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
+use Throwable;
 
 /**
  * Class Generic
@@ -32,10 +33,8 @@ class Generic
     {
         try {
             $route = (new RouteResolver())->resolve(router()->getUri());
-
         } catch (NotFound $e) {
             return true;
-
         }
 
         return $route->hasPermissionToView();
@@ -76,7 +75,7 @@ class Generic
         $this->route = $route;
         $actions = $route->actions(
             function(MorphedBy $actions) {
-                $actions->getMiddleEntity()->joinPermissionTo('read');
+                //$actions->getMiddleEntity()->joinPermissionTo('read');
             }
         );
 
@@ -169,21 +168,33 @@ class Generic
     private function getVariablesFromOrder($order)
     {
         $variables = [];
-        foreach ($order as $order => $blocks) {
+        foreach ($order as $blocks) {
             foreach ($blocks as $block => $actions) {
                 foreach ($actions as $action) {
                     startMeasure(
-                        'Getting output: ' . $action->getClass() . ' ' . $action->getMethod(
-                        ) . ' ' . $block . ' ' . $order
+                        'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
+                        $order
                     );
-                    $variables[$block][] = $action->getHtml();
+                    try {
+                        $html = $action->getHtml();
+                        if (!is_string($html)) {
+                            dd("not string", $html);
+                        }
+                        $variables[$block][] = '<!-- start ' . $action->getClass() . ' ' . $action->getMethod() .
+                                               ' -->' .
+                                               $html .
+                                               '<!-- end ' . $action->getClass() . ' ' . $action->getMethod() . ' -->';
+                    } catch (Throwable $e) {
+                        if (dev()) {
+                            throw $e;
+                        }
+                    }
                     stopMeasure(
-                        'Getting output: ' . $action->getClass() . ' ' . $action->getMethod(
-                        ) . ' ' . $block . ' ' . $order
+                        'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
+                        $order
                     );
                 }
             }
-
         }
 
         return $variables;

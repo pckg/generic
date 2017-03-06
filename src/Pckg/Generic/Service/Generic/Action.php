@@ -4,6 +4,7 @@ namespace Pckg\Generic\Service\Generic;
 
 use Exception;
 use Pckg\Concept\Reflect;
+use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Record\Setting;
 use Throwable;
 
@@ -70,10 +71,10 @@ class Action
     public function getHtml()
     {
         if ($this->class && $this->method) {
-            $prefix = strtolower(request()->getMethod());
+
+            $prefix = strtolower(request()->method());
 
             $args = array_merge($this->args, ['action' => $this]);
-            $controller = Reflect::create($this->class, $args);
             $method = ($prefix ? $prefix . ucfirst($this->method) : $this->method) . 'Action';
 
             if (isset($args['settings'])) {
@@ -87,26 +88,15 @@ class Action
                 );
             }
 
-            $result = null;
-            $e = null;
-            try {
-                $result = Reflect::method($controller, $method, $args);
-            } catch (Throwable $e) {
-                if (prod()) {
-                    return null;
-                }
-
-                throw $e;
-            }
+            $pluginService = new Plugin();
+            $result = $pluginService->make($this->class, $this->method, $args, true);
 
             if (is_array($result)) {
                 return $result;
-
             } else {
-                return '<!-- ' . $this->class . '::' . $method . ' start -->' . ($e ? 'Exception: ' . exception(
-                        $e
-                    ) : $result) . '<!-- ' . $this->class . '::' . $method . ' end -->';
-
+                return '<!-- start action ' . $this->class . '::' . $method . ' -->' .
+                       $result .
+                       '<!-- end action ' . $this->class . '::' . $method . ' -->';
             }
         }
     }
