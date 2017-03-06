@@ -10,6 +10,13 @@ use Pckg\Generic\Service\Menu;
 class Generic extends Provider
 {
 
+    public function providers()
+    {
+        return [
+            PageStructure::class,
+        ];
+    }
+
     public function routes()
     {
         return [
