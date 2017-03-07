@@ -35,7 +35,7 @@ class EncapsulateResponse
                     }
 
                     $key = substr($tag, strlen('layout:'));
-                    $template = config('pckg.generic.layouts.' . $key, 'Pckg\Generic:generic');
+                    $template = config('pckg.generic.layouts.' . $key, $template);
                 }
                 
                 $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);

@@ -169,12 +169,12 @@ class Generic
     private function getVariablesFromOrder($order)
     {
         $variables = [];
-        foreach ($order as $blocks) {
+        foreach ($order as $ord => $blocks) {
             foreach ($blocks as $block => $actions) {
                 foreach ($actions as $action) {
                     startMeasure(
                         'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
-                        $order
+                        $ord
                     );
                     try {
                         $html = $action->getHtml();
@@ -192,7 +192,7 @@ class Generic
                     }
                     stopMeasure(
                         'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
-                        $order
+                        $ord
                     );
                 }
             }
