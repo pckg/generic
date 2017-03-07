@@ -13,31 +13,46 @@
                 Change content
             {% endblock %}
             {% block body %}
-                <div class="form-group">
-                    <label class="col-md-3">Bind</label>
-                    <div class="col-md-9">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3">Actions</label>
+                        <div class="col-md-9">
+                            <select class="form-control" v-model="actionsMorph.action_id">
+                                <option v-for="action in availableActions" :value="action.id">${ action.class } @ ${
+                                    action.method }
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3">Bind</label>
+                        <div class="col-md-9">
+                            Some objects
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3">Template</label>
+                        <div class="col-md-9">
+                            <select class="form-control">
+                                <option value="default">Default</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3">Wrapping method</label>
+                        <div class="col-md-9">
+                            <select class="form-control">
+                                <option value="none">None</option>
+                                <option value="column">Column</option>
+                                <option value="row">Row</option>
+                                <option value="row">Container</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-md-3">Template</label>
-                    <div class="col-md-9">
-                        <select>
-                            <option value="default">Default</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-3">Wrapping method</label>
-                    <div class="col-md-9">
-                        <select>
-                            <option value="none">None</option>
-                            <option value="column">Column</option>
-                            <option value="row">Row</option>
-                            <option value="row">Container</option>
-                        </select>
-                    </div>
-                </div>
-                <p>Other settings</p>
+            {% endblock %}
+            {% block footer %}
+                <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
             {% endblock %}
         {% endembed %}
 
@@ -104,14 +119,12 @@
                                             <li><a href="#" @click.prevent="openSetPermissionsModal(action)">Set
                                                     permissions</a></li>
                                             <li><a href="#" @click.prevent="openChangeActionModal(action)">Change
-                                                    content</a>
-                                            </li>
+                                                    content</a></li>
                                             <li><a href="#" @click.prevent="openDeleteActionModal(action)">Delete
                                                     action</a></li>
-
                                         </template>
                                         <template v-else>
-                                            <li><a href="#">Edit layout</a>/li>
+                                            <li><a href="#">Edit layout</a></li>
                                         </template>
                                     </ul>
                                 </div>
@@ -129,7 +142,8 @@
         mixins: [pckgDelimiters],
         template: '#pckg-generic-page-structure-variable',
         props: {
-            actions: Array
+            actions: Array,
+            availableActions: Array
         },
         data: function () {
             return {
@@ -148,6 +162,7 @@
                     }
                 ],
                 action: {},
+                actionsMorph: {},
                 form: {}
             };
         },
@@ -160,7 +175,10 @@
 
                 $('#deleteActionModal').modal('show');
             },
-            openChangeActionModal: function () {
+            openChangeActionModal: function (action) {
+                this.action = action;
+                this.actionsMorph = action.pivot;
+
                 $('#changeContentModal').modal('show');
             },
             openSetPermissionsModal: function (action) {
@@ -189,6 +207,20 @@
                         $('#deleteActionModal').modal('hide');
                     }
                 });
+            },
+            saveActionsMorph: function () {
+                console.log(thic.action);
+                return;
+                http.postJSON(
+                        utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
+                        {
+                            action_id: this.action.pivot.action_id,
+                        },
+                        function (data) {
+                            if (data.success) {
+                                $('#deleteActionModal').modal('hide');
+                            }
+                        });
             }
         }
     });
@@ -209,7 +241,8 @@
         <div v-for="variable in variables" v-if="route.id">
             <h3>${ variable.slug }</h3>
             <pckg-generic-page-structure-variable
-                    :actions="getActionsForVariable(variable)"></pckg-generic-page-structure-variable>
+                    :actions="getActionsForVariable(variable)"
+                    :available-actions="actions"></pckg-generic-page-structure-variable>
         </div>
     </div>
 </script>
@@ -220,6 +253,7 @@
         template: '#pckg-generic-page-structure',
         data: function () {
             return {
+                actions: [],
                 routes: [],
                 selectedRoute: null,
                 route: {},
@@ -238,6 +272,11 @@
             fetchVariables: function () {
                 http.getJSON('{{ url('pckg.generic.pageStructure.getVariables') }}', function (data) {
                     this.variables = data.variables;
+                }.bind(this));
+            },
+            fetchActions: function () {
+                http.getJSON('{{ url('pckg.generic.pageStructure.getActions') }}', function (data) {
+                    this.actions = data.actions;
                 }.bind(this));
             },
             fetchRoute: function () {
@@ -279,6 +318,7 @@
         },
         created: function () {
             this.fetchRoutes();
+            this.fetchActions();
             this.fetchVariables();
         },
         watch: {

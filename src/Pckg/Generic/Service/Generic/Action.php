@@ -89,14 +89,14 @@ class Action
             }
 
             $pluginService = new Plugin();
-            $result = $pluginService->make($this->class, $this->method, $args, true);
+            $result = $pluginService->make($this->class, $this->method, $args);
 
             if (is_array($result)) {
                 return $result;
             } else {
-                return '<!-- start action ' . $this->class . '::' . $method . ' -->' .
-                       $result .
-                       '<!-- end action ' . $this->class . '::' . $method . ' -->';
+                return '<!-- start action ' . $this->class . '::' . $method . ' -->' . "\n" .
+                       $result . "\n" .
+                       '<!-- end action ' . $this->class . '::' . $method . ' -->' .  "\n";
             }
         }
     }

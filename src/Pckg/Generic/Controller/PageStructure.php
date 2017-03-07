@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Controller;
 
 use Pckg\Database\Relation\MorphedBy;
+use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
@@ -35,6 +36,13 @@ class PageStructure
     {
         return [
             'variables' => (new Variables())->all(),
+        ];
+    }
+
+    public function getActionsAction()
+    {
+        return [
+            'actions' => (new Actions())->all(),
         ];
     }
 
@@ -91,6 +99,8 @@ class PageStructure
 
     public function deleteActionsMorphAction($actionsMorph)
     {
+        (new ActionsMorphs())->where('id', $actionsMorph)->delete();
+
         return response()->respondWithAjaxSuccess();
     }
 

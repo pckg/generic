@@ -566,7 +566,7 @@ class Records extends Controller
             function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $args) {
                 $functionize = $pluginService->make(
                     $function->class,
-                    ($this->request()->isGet() ? 'get' : 'post') . ucfirst($function->method),
+                    $function->method,
                     $args
                 );
 
@@ -626,7 +626,7 @@ class Records extends Controller
             function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
                 $functionize = $pluginService->make(
                     $function->class,
-                    ($this->request()->isGet() ? 'get' : 'post') . ucfirst($function->method),
+                    $function->method,
                     [$record, $table->fetchFrameworkRecord($record, $entity)]
                 );
                 if ($tabs->count()) {

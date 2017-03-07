@@ -178,13 +178,11 @@ class Generic
                     );
                     try {
                         $html = $action->getHtml();
-                        if (!is_string($html)) {
-                            dd("not string", $html);
-                        }
                         $variables[$block][] = '<!-- start ' . $action->getClass() . ' ' . $action->getMethod() .
-                                               ' -->' .
-                                               $html .
-                                               '<!-- end ' . $action->getClass() . ' ' . $action->getMethod() . ' -->';
+                                               ' -->' . "\n" .
+                                               $html . "\n" .
+                                               '<!-- end ' . $action->getClass() . ' ' . $action->getMethod() . ' -->' .
+                                               "\n";
                     } catch (Throwable $e) {
                         if (dev()) {
                             throw $e;
