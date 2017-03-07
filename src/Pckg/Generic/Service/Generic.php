@@ -2,6 +2,7 @@
 
 namespace Pckg\Generic\Service;
 
+use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
@@ -245,6 +246,7 @@ class Generic
                     'resolvers'  => [
                         'route' => RouteResolver::class,
                     ],
+                    'tags'       => explode(',', $route->tags),
                 ],
                 $route->slug
             );

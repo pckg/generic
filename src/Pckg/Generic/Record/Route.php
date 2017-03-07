@@ -35,9 +35,9 @@ class Route extends Record
     public function hasPermissionToView()
     {
         /**
-         * @T00D00 - check for permissions!
+         * @T00D00 - use permissions on route level!
+         *         Currently user has permissions if there are contents defined.
          */
-        return true;
     }
 
 }
