@@ -178,11 +178,7 @@ class Generic
                     );
                     try {
                         $html = $action->getHtml();
-                        $variables[$block][] = '<!-- start ' . $action->getClass() . ' ' . $action->getMethod() .
-                                               ' -->' . "\n" .
-                                               $html . "\n" .
-                                               '<!-- end ' . $action->getClass() . ' ' . $action->getMethod() . ' -->' .
-                                               "\n";
+                        $variables[$block][] = $html;
                     } catch (Throwable $e) {
                         if (dev()) {
                             throw $e;
