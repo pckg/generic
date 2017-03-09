@@ -12,6 +12,4 @@ class Settings extends Entity
 
     protected $record = Setting::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
 }
