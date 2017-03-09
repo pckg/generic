@@ -36,8 +36,7 @@ class Generic
         MetaManager $metaManager,
         SeoManager $seoManager,
         GenericService $genericService
-    )
-    {
+    ) {
         $metaManager->addViewport();
         $metaManager->addContentType();
 
@@ -50,8 +49,10 @@ class Generic
 
         $vars = $this->genericService->getVariables();
 
+        $route->layout->template = 'Pckg/Generic:frontend';
+
         return $route->layout
-            ? view($route->layout->template ?: 'Pckg\Generic:generic', $vars)
+            ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
             : $vars;
     }
 
@@ -64,7 +65,7 @@ class Generic
         return $vars;
     }
 
-    public function wrapIntoGeneric($view, $template = 'Pckg\Generic:generic')
+    public function wrapIntoGeneric($view, $template = 'Pckg/Generic:backend')
     {
         $center = $this->genericService->touchBlock('content');
 

@@ -28,7 +28,7 @@ class EncapsulateResponse
                                                                              ) != '<!doctype'
             ) {
                 $tags = router()->get('tags', []);
-                $template = config('pckg.generic.layouts.default', 'Pckg\Generic:generic');
+                $template = config('pckg.generic.layouts.default', 'Pckg/Generic:backend');
                 foreach ($tags as $tag) {
                     if (strpos($tag, 'layout:') !== 0) {
                         continue;
