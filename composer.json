@@ -1,6 +1,6 @@
 {
   "name": "pckg/generic",
-  "description": "Generic frontend",
+  "description": "Building admin interface and generic frontend made simple",
   "homepage": "https://github.com/pckg/generic",
   "license": "MIT",
   "authors": [
