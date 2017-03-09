@@ -24,8 +24,6 @@ class Routes extends Entity
      */
     protected $record = Route::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function layout()
     {
         return $this->belongsTo(Layouts::class)
@@ -52,7 +50,6 @@ class Routes extends Entity
                             $relation->withContents(
                                 function(HasMany $relation) {
                                     $relation->joinTranslations();
-
                                 }
                             );
                         }

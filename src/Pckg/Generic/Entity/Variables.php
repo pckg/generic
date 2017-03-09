@@ -11,8 +11,6 @@ class Variables extends Entity
 
     protected $record = Variable::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function actions()
     {
         return $this->morphsMany(Actions::class)

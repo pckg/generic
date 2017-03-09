@@ -19,8 +19,6 @@ class Actions extends Entity
      */
     protected $record = Action::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function layouts()
     {
         return $this->morphedBy(Layouts::class)

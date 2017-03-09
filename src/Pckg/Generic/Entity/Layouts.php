@@ -22,8 +22,6 @@ class Layouts extends Entity
      */
     protected $record = Layout::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function boot()
     {
         $this->joinTranslations();

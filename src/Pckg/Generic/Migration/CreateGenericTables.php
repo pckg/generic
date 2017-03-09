@@ -6,8 +6,6 @@ use Pckg\Migration\Migration;
 class CreateGenericTables extends Migration
 {
 
-    protected $repository = Repository::class . '.dynamic';
-
     /**
      * Those packets need to be installed before this migration.
      */

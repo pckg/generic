@@ -12,8 +12,6 @@ class ActionsMorphs extends Entity
 
     protected $record = ActionsMorph::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function action()
     {
         return $this->belongsTo(Actions::class)

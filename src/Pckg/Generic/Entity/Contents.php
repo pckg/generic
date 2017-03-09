@@ -22,8 +22,6 @@ class Contents extends Entity
      */
     protected $record = Content::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function actions()
     {
         return $this->morphedBy(Actions::class);

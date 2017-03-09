@@ -76,7 +76,7 @@ class Generic
         $this->route = $route;
         $actions = $route->actions(
             function(MorphedBy $actions) {
-                //$actions->getMiddleEntity()->joinPermissionTo('read');
+                $actions->getMiddleEntity()->joinPermissionTo('read');
             }
         );
 
