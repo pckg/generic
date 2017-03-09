@@ -19,7 +19,9 @@ var pckgHtmlbuilderGeo = Vue.component('pckg-htmlbuilder-geo', {
             $(this.$el).parent().find('input.geo').val(this.$refs.gmap.getLocation().geo.join(';'));
         }
     },
-    ready: function () {
-        $(this.$el).parent().find('input.geo').on('focus', this.openMap);
+    created: function () {
+        this.$nextTick(function () {
+            $(this.$el).parent().find('input.geo').on('focus', this.openMap);
+        });
     }
 });

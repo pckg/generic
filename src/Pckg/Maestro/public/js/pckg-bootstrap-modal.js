@@ -15,11 +15,13 @@ var pckgBootstrapModalComponent = Vue.component('pckg-bootstrap-modal', {
             _modal: null
         };
     },
-    ready: function () {
-        this._modal = $(this.$el).modal();
+    create: function () {
+        this.$nextTick(function () {
+            this._modal = $(this.$el).modal();
 
-        if (this.visible) {
-            this._modal.modal('show');
-        }
+            if (this.visible) {
+                this._modal.modal('show');
+            }
+        });
     }
 });
