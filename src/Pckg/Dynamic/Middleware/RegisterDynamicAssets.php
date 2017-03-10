@@ -15,7 +15,7 @@ class RegisterDynamicAssets
 
     public function handle($view)
     {
-        if (strpos($view, 'generic')) {
+        if (strpos($view, 'backend') !== false) {
             $this->provider->register();
         }
 
