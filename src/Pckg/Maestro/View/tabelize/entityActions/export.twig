@@ -1,5 +1,5 @@
 <div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getEntity().getExportUrl('html') }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
+    <a href="{{ tabelize.getEntityUrl('export', 'html') }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
         <i class="fa fa-download" aria-hidden="true"></i> .html
     </a>
 
@@ -11,17 +11,17 @@
 
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a href="{{ tabelize.getEntity().getExportUrl('xlsx') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'xlsx') }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .xlsx
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntity().getExportUrl('csv') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'csv') }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .csv
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntity().getExportUrl('docx') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'docx') }}">
                 <i class="fa fa-file-text-o" aria-hidden="true"></i> .docx
             </a>
         </li>
