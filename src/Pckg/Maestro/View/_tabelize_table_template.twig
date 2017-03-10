@@ -76,7 +76,7 @@
                 :class="record.tabelizeClass ? record.tabelizeClass : ''">
                 <td v-for="field in fields"
                     :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
-                    <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"></pckg-maestro-field>
+                    <pckg-maestro-field :field="field" :record="record" :model="record[field.field]" :table="table"></pckg-maestro-field>
                 </td>
                 <td class="actions">
                     <pckg-maestro-actions-{{ table }} :record="record"

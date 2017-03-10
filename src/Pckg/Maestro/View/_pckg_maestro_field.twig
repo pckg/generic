@@ -81,14 +81,17 @@
                 type: Object,
                 required: true
             },
+            table: {
+                type: Object,
+                required: true
+            },
             model: {
                 required: true
             }
         },
         data: function () {
             return {
-                editable: false,
-                table: {}
+                editable: false
             };
         },
         methods: {

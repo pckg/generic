@@ -1,15 +1,16 @@
 var pckgTabelizeFieldOrder = Vue.component('pckg-tabelize-field-order', {
     template: '#pckg-tabelize-field-order',
     data: function () {
-        return {};
+        return {
+            _changeTimeout: null
+        };
     },
     props: {
         field: null,
         record: null,
         value: null,
         table: null,
-        url: null,
-        _changeTimeout: null
+        url: null
     },
     watch: {
         value: function () {
