@@ -49,8 +49,6 @@ class Generic
 
         $vars = $this->genericService->getVariables();
 
-        $route->layout->template = 'Pckg/Generic:frontend';
-
         return $route->layout
             ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
             : $vars;
