@@ -71,7 +71,6 @@ class Action
     public function getHtml()
     {
         if ($this->class && $this->method) {
-
             $prefix = strtolower(request()->method());
 
             $args = array_merge($this->args, ['action' => $this]);
@@ -96,7 +95,7 @@ class Action
             } else {
                 return '<!-- start action ' . $this->class . '::' . $method . ' -->' . "\n" .
                        $result . "\n" .
-                       '<!-- end action ' . $this->class . '::' . $method . ' -->' .  "\n";
+                       '<!-- end action ' . $this->class . '::' . $method . ' -->' . "\n";
             }
         }
     }
