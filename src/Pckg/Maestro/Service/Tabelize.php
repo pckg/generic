@@ -3,7 +3,6 @@
 use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
-use Pckg\Database\Object;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
@@ -102,6 +101,10 @@ class Tabelize
 
     public function getTable()
     {
+        if (!$this->table) {
+            return new Record(['title' => $this->title]);
+        }
+        
         return $this->table;
     }
 
@@ -210,9 +213,9 @@ class Tabelize
             }
 
             return new DatabaseRecord([
-                                  'title' => $item,
-                                  'field' => $item,
-                              ]);
+                                          'title' => $item,
+                                          'field' => $item,
+                                      ]);
         });
     }
 
