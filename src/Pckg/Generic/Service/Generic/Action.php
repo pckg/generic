@@ -5,6 +5,7 @@ namespace Pckg\Generic\Service\Generic;
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Framework\Service\Plugin;
+use Pckg\Framework\View;
 use Pckg\Generic\Record\Setting;
 use Throwable;
 
@@ -37,16 +38,22 @@ class Action
     protected $order;
 
     /**
+     * @var
+     */
+    protected $template;
+
+    /**
      * @param      $class
      * @param      $method
      * @param null $order
      */
-    public function __construct($class, $method, $args = [], $order = null)
+    public function __construct($class, $method, $args = [], $order = null, $template = null)
     {
         $this->class = $class;
         $this->method = $method;
         $this->order = $order;
         $this->args = $args;
+        $this->template = $template;
     }
 
     public function getOrder()
@@ -87,16 +94,45 @@ class Action
                 );
             }
 
+            /**
+             * Get plugin output.
+             */
             $pluginService = new Plugin();
-            $result = $pluginService->make($this->class, $this->method, $args);
+            $result = $pluginService->make($this->class, $this->method, $args, true, false);
 
+            /**
+             * Array should be returned directly.
+             */
             if (is_array($result)) {
                 return $result;
-            } else {
-                return '<!-- start action ' . $this->class . '::' . $method . ' -->' . "\n" .
-                       $result . "\n" .
-                       '<!-- end action ' . $this->class . '::' . $method . ' -->' . "\n";
             }
+
+            /**
+             * Allow custom template.
+             */
+            if ($this->template && $result instanceof View\Twig) {
+                $result->setFile($this->template);
+            }
+
+            /**
+             * Parse view to string in all cases.
+             */
+            $result = (string)$result;
+
+            /**
+             * Prepare comments for dev environment.
+             */
+            $devPrefix = null;
+            $devSuffix = null;
+            if (dev() || implicitDev()) {
+                $devPrefix = '<!-- start action ' . $this->class . '::' . $method . ' -->' . "\n";
+                $devSuffix = '<!-- end action ' . $this->class . '::' . $method . ' -->' . "\n";
+            }
+
+            /**
+             * Return built output.
+             */
+            return $devPrefix . $result . $devSuffix;
         }
     }
 

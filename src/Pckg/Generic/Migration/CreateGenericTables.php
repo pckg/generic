@@ -92,6 +92,7 @@ class CreateGenericTables extends Migration
         $actionsMorphs->integer('content_id')->references('contents');
         $actionsMorphs->integer('variable_id')->references('variables');
         $actionsMorphs->orderable();
+        $actionsMorphs->varchar('template');
 
         $actionsMorphsP17n = $this->permissiontable('actions_morphs');
     }

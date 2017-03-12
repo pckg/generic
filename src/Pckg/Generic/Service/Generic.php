@@ -91,7 +91,8 @@ class Generic
                         'settings' => $action->pivot->settings,
                         'route'    => $this->route,
                     ],
-                    $action->pivot->order
+                    $action->pivot->order,
+                    $action->pivot->template
                 );
             }
         );
@@ -127,11 +128,11 @@ class Generic
      *
      * @return Action
      */
-    public function addAction($variable, $class, $method, $args = [], $order = null)
+    public function addAction($variable, $class, $method, $args = [], $order = null, $template = null)
     {
         $block = $this->touchBlock($variable);
 
-        $block->addAction($action = new Action($class, $method, $args, $order));
+        $block->addAction($action = new Action($class, $method, $args, $order, $template));
 
         return $action;
     }
