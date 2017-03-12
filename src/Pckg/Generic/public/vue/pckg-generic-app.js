@@ -1,8 +1,13 @@
 /**
  * Initialize main VueJS app.
  */
+
+/*var $router = new VueRouter({
+    routes: []
+});*/
+
 var $vue = new Vue({
-    el: '#vue-app',
+    // router: $router,
     data: {
         alerts: [],
         modals: []
@@ -18,3 +23,5 @@ var $vue = new Vue({
         }
     }
 });
+
+$vue.$mount('#vue-app');
