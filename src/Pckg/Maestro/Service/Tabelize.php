@@ -101,6 +101,10 @@ class Tabelize
 
     public function getTable()
     {
+        if (!$this->table) {
+            return new Record(['title' => $this->title]);
+        }
+        
         return $this->table;
     }
 
@@ -199,7 +203,20 @@ class Tabelize
 
     public function getFields()
     {
-        return $this->fields;
+        if (!$this->fields instanceof Collection) {
+            $this->fields = new Collection($this->fields);
+        }
+
+        return $this->fields->map(function($item) {
+            if (is_object($item)) {
+                return $item;
+            }
+
+            return new DatabaseRecord([
+                                          'title' => $item,
+                                          'field' => $item,
+                                      ]);
+        });
     }
 
     public function getFieldTransformations()
@@ -244,10 +261,8 @@ class Tabelize
         try {
             if (is_string($field)) {
                 return $originalRecord->{$field};
-
             } else if (is_callable($field)) {
                 return $field($originalRecord);
-
             }
 
             /**
@@ -285,14 +300,11 @@ class Tabelize
                 $eval = $this->eval('$record->' . $field->field, $originalRecord, $originalRecord);
 
                 return $eval;
-
             }
 
             return $originalRecord->{$field->field};
-
         } catch (Throwable $e) {
             return '-- ' . exception($e) . ' --';
-
         }
     }
 
@@ -401,7 +413,6 @@ class Tabelize
             if (!is_string($view)) {
                 $string .= "\n" . '<!-- entity view (string) -->';
                 $string .= $view;
-
             } elseif (!$wasObject && strpos($view, '@')) {
                 list($class, $method) = explode('@', $view);
                 if (strpos($method, ':')) {
@@ -410,25 +421,20 @@ class Tabelize
 
                 $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
                 $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
-
             } elseif (!$wasObject && $view) {
                 $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
                 if ($view === 'delete') {
                     $delete = new Delete();
                     $string .= $delete->getListAction($this);
-
                 } elseif ($view === 'clone') {
                     $cloner = new Cloner();
                     $string .= $cloner->getListAction($this);
-
                 } else {
                     $string .= view('tabelize/listActions/' . $view)->autoparse();
                 }
-
             } else {
                 $string .= "\n" . '<!-- entity view (else) -->';
                 $string .= $view;
-
             }
 
             $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
@@ -448,8 +454,8 @@ class Tabelize
              * @T00D00 ... scripts should be added to vue manager
              *         ... component usages should be added to template
              */
-            $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews(
-                ) . '<!-- end tabelize views-->';
+            $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews() .
+                               '<!-- end tabelize views-->';
             $vueTemplate = '';
             $pattern = "#<\s*?script\b[^>]*>(.*?)</script\b[^>]*>#s";
 
@@ -579,6 +585,18 @@ class Tabelize
             'total'   => $this->getTotal(),
             'url'     => router()->getUri(),
         ];
+    }
+
+    public function getEntityUrl($slug, ...$params)
+    {
+        if (!$this->entity) {
+            return null;
+        }
+
+        try {
+            return $this->getEntity()->{'get' . ucfirst($slug) . 'Url'}(...$params);
+        } catch (Throwable $e) {
+        }
     }
 
 }

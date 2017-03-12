@@ -52,6 +52,10 @@
     Vue.filter('date', function (date, format) {
         return locale.date(date, format);
     });
+
+    Vue.filter('datetime', function (date, format) {
+        return locale.datetime(date, format);
+    });
 </script>
 
 {{ _metaManager.getMeta('headerLast') | raw }}

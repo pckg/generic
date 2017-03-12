@@ -128,7 +128,7 @@ class Generic
      *
      * @return Action
      */
-    public function addAction($variable, $class, $method, $args = [], $order = null, $template = null)
+    public function addAction($variable, $class, $method = null, $args = [], $order = null, $template = null)
     {
         $block = $this->touchBlock($variable);
 

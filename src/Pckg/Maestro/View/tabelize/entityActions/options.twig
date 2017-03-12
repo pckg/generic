@@ -1,5 +1,5 @@
 <div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getEntity().getFilterUrl() }}" class="btn btn-info popup-iframe" title="{{ __('Filter table') }}">
+    <a href="{{ tabelize.getEntityUrl('filter') }}" class="btn btn-info popup-iframe" title="{{ __('Filter table') }}">
         <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
     </a>
 
@@ -11,17 +11,17 @@
 
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntity().getGroupUrl() }}">
+            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('group') }}">
                 <i class="fa fa-object-group" aria-hidden="true"></i> {{ __('group_by') }}
             </a>
         </li>
         <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntity().getSortUrl() }}">
+            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('sort') }}">
                 <i class="fa fa-sort" aria-hidden="true"></i> {{ __('sort_by') }}
             </a>
         </li>
         <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntity().getActionsUrl() }}">
+            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('actions') }}">
                 <i class="fa fa-sort" aria-hidden="true"></i> {{ __('selec_actions') }}
             </a>
         </li>
