@@ -67,8 +67,8 @@
                     this.records = data.records;
                 }.bind(this));
             },
-            getUrlParams: function () {
-                var params = {};
+            getUrlParams: function (params) {
+                params = params || {};
                 if (!params.search && this.search) {
                     params.search = this.search;
                 }
