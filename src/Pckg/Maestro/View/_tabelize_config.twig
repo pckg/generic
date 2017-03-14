@@ -189,10 +189,10 @@
                 });
             },
             removeFilter: function (filter) {
-                this.applied.$remove(filter);
+                this.applied.splice(filter, 1);
             },
             removeRelationFilter: function (relationFilter) {
-                this.appliedRelations.$remove(relationFilter);
+                this.appliedRelations.splice(relationFilter, 1);
             },
             relationFilterSelectField: function (relation) {
                 if (!relation.filterField) {
