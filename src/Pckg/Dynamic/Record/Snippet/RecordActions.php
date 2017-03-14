@@ -55,7 +55,7 @@ trait RecordActions
         );
     }
 
-    public function getDeleteTranslationUrlAttribute()
+    public function getDeleteTranslationUrl()
     {
         return url(
             'dynamic.record.deleteTranslation',

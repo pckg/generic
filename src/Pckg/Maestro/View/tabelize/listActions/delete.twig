@@ -37,6 +37,26 @@
                 <p>#${ recordIds } was deleted.</p>
             {% endblock %}
         {% endembed %}
+
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'deleteRecordTranslationModal', 'class': 'danger'} %}
+            {% block header %}
+                Delete translation
+            {% endblock %}
+            {% block body %}
+                <p>Do you really want to delete translation for record #${ recordIds }?</p>
+                <p><a @click.prevent="deleteRecordTranslation" href="#" class="btn btn-danger">Yes, delete
+                        translation</a></p>
+            {% endblock %}
+        {% endembed %}
+
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'recordTranslationDeletedModal'} %}
+            {% block header %}
+                Record translation deleted
+            {% endblock %}
+            {% block body %}
+                <p>Translation for record #${ recordIds } was deleted.</p>
+            {% endblock %}
+        {% endembed %}
     </div>
 </script>
 
@@ -56,6 +76,11 @@
 
                 $('#deleteRecordModal').modal('show');
             },
+            checkDeleteRecordTranslation: function (records) {
+                this.records = utils.collect(records);
+
+                $('#deleteRecordTranslationModal').modal('show');
+            },
             deleteRecord: function () {
                 $('#deleteRecordModal').modal('hide');
 
@@ -64,6 +89,15 @@
                 });
 
                 $('#recordDeletedModal').modal('show');
+            },
+            deleteRecordTranslation: function () {
+                $('#deleteRecordTranslationModal').modal('hide');
+
+                $.each(this.records, function (i, record) {
+                    http.get(record.deleteTranslationUrl);
+                });
+
+                $('#recordTranslationDeletedModal').modal('show');
             }
         },
         computed: {
@@ -75,10 +109,12 @@
         },
         created: function () {
             $dispatcher.$on('record:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$on('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
             $dispatcher.$on('entity:checkDeleteRecord', this.checkDeleteRecords);
         },
         beforeDestroy: function () {
             $dispatcher.$off('record:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$off('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
             $dispatcher.$off('entity:checkDeleteRecord', this.checkDeleteRecords);
         }
     });

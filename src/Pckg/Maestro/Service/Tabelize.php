@@ -536,6 +536,9 @@ class Tabelize
                 if ($method && method_exists($record, 'get' . Convention::toPascal($method) . 'Url')) {
                     $transformed[$method . 'Url'] = $record->{'get' . Convention::toPascal($method) . 'Url'}();
                 }
+                if ($method && method_exists($record, 'get' . Convention::toPascal($method) . 'TranslationUrl')) {
+                    $transformed[$method . 'TranslationUrl'] = $record->{'get' . Convention::toPascal($method) . 'TranslationUrl'}();
+                }
             }
             $transformed = array_merge($record->getToArrayValues(), $transformed);
             $transformed = array_merge($transformed, $record->getToJsonValues());
