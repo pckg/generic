@@ -3,16 +3,16 @@ Vue.component('pckg-dynamic-paginator', {
     mixins: [pckgDelimiters],
     props: {
         perPage: 0,
-        page: 0,
+        initialPage: 0,
         total: 0,
         url: null,
         resetpaginatorurl: null,
-        records: {
+        initialRecords: {
             default: function(){
                 return [];
             }
         },
-        groups: {
+        initialGroups: {
             default: function(){
                 return [];
             }
@@ -21,7 +21,10 @@ Vue.component('pckg-dynamic-paginator', {
     data: function () {
         return {
             margin: 5,
-            limits: [50, 100, 250, 500, 1000]
+            limits: [50, 100, 250, 500, 1000],
+            page: this.initialPage,
+            groups: this.initialGroups,
+            records: this.initialRecords
         };
     },
     computed: {

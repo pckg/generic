@@ -78,6 +78,9 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             } else {
                 this.ids = [];
             }
+        },
+        computed: function(val){
+            return val;
         }
     },
     computed: {

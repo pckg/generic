@@ -92,12 +92,12 @@
     <div v-if="first">
         <pckg-dynamic-paginator :ref="'maestro-paginator'"
                                 :per-page="paginator.perPage"
-                                :page="paginator.page"
+                                :initial-page="computed(paginator.page)"
                                 :total="paginator.total"
                                 :url="paginator.url"
                                 :resetpaginatorurl="resetPaginatorUrl"
-                                :records="records"
-                                :groups="groups"
+                                :initial-records="records"
+                                :initial-groups="groups"
         ></pckg-dynamic-paginator>
     </div>
 </div>
