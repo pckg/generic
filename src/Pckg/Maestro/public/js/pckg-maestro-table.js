@@ -8,7 +8,7 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             }
         },
         depth: 0,
-        records: {
+        initialRecords: {
             default: function () {
                 return [];
             }
@@ -42,7 +42,6 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
         },
         /*recordactionhandler: {
             default: function () {
-                console.log("No record action handler");
             },
             type: Function
         },
@@ -61,7 +60,9 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
     data: function () {
         return {
             _searchTimeout: null,
-            _sortTimeout: null
+            _sortTimeout: null,
+            records: this.initialRecords,
+            emitted: 0
         };
     },
     methods: {

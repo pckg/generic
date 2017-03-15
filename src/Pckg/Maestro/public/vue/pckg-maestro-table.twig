@@ -8,7 +8,7 @@
                 <tr v-for="(record,i) in records">
                     <td>
                         <legend>${ i }</legend>
-                        <pckg-maestro-table :records="record" :depth="depth - 1"
+                        <pckg-maestro-table :initial-records="record" :depth="depth - 1"
                                             :fields="fields" :ids="ids" :search="search"></pckg-maestro-table>
                     </td>
                 </tr>

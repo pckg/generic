@@ -1,17 +1,14 @@
 <?php namespace Pckg\Dynamic\Controller;
 
-use Derive\Orders\Record\Order;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
-use Pckg\Database\Repository;
 use Pckg\Dynamic\Dataset\Fields;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
@@ -143,7 +140,8 @@ class Records extends Controller
         DynamicService $dynamicService = null,
         DatabaseEntity $entity = null,
         $viewType = 'full',
-        $returnTabelize = false
+        $returnTabelize = false,
+        Tab $tab = null
     ) {
         if (!$dynamicService) {
             $dynamicService = $this->dynamic;
@@ -274,6 +272,7 @@ class Records extends Controller
                 'dynamic'   => $dynamicService,
                 'viewType'  => $viewType,
                 'searchUrl' => router()->getUri(),
+                'tab'       => $tab,
             ]
         );
 
@@ -524,10 +523,9 @@ class Records extends Controller
                 $relations->push($item);
             }
         );
-        $tabs = $table->tabs;
         $tabelizes = [];
         $relations->each(
-            function(Relation $relation) use ($tabs, $record, &$tabelizes, $dynamicService) {
+            function(Relation $relation) use ($record, &$tabelizes, $dynamicService, $tab) {
                 $entity = null;
                 $tableId = $relation->over_table_id ?? $relation->show_table_id;
                 if ($relation->over_table_id) {
@@ -543,7 +541,9 @@ class Records extends Controller
                     (new Tables())->where('id', $tableId)->one(),
                     $this->dynamic,
                     $entity,
-                    'related'
+                    'related',
+                    false,
+                    $tab
                 );
 
                 $tabelizes[] = is_array($tabelize) ? \json_encode($tabelize) : (string)$tabelize;
@@ -563,7 +563,7 @@ class Records extends Controller
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
         $functions->each(
-            function(Func $function) use ($tabs, &$functionizes, $pluginService, $record, $args) {
+            function(Func $function) use (&$functionizes, $pluginService, $record, $args) {
                 $functionize = $pluginService->make(
                     $function->class,
                     $function->method,

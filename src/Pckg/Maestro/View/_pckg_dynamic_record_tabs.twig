@@ -32,10 +32,12 @@
             </div>
             {% for tab in tabs %}
                 <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                    <template v-if="selectedTab == {{ tab.id }}">
-                        <dynamic-tab-{{ tab.id }}></dynamic-tab-{{ tab.id }}>
-                    </template>
-                    <i v-else class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
+                    <keep-alive>
+                        <template v-if="selectedTab == {{ tab.id }}">
+                            <dynamic-tab-{{ tab.id }}></dynamic-tab-{{ tab.id }}>
+                        </template>
+                        <i v-else class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
+                    </keep-alive>
                 </div>
             {% endfor %}
         </div>
@@ -50,8 +52,6 @@
         data: function () {
             return {
                 recordactionhandler: function (record, action) {
-                    console.log('Yeeey, caught tab action record:' + action + ', dispatching');
-
                     $dispatcher.$emit('record:' + action, record, record.id);
                 },
                 selectedTab: null
@@ -60,6 +60,10 @@
         methods: {
             selectTab: function (tabId) {
                 this.selectedTab = tabId;
+                /**
+                 * Destroy and re-init component?
+                 */
+                $dispatcher.$emit('dynamic-tab-' + tabId + ':refresh', {tabId: tabId});
             }
         }
     });
@@ -71,10 +75,7 @@
 
             resolve({
                 template: '<div>' + data.html + '</div>',
-                mixins: [pckgDelimiters],
-                ready: function () {
-                    console.log('Ready');
-                }
+                mixins: [pckgDelimiters]
             });
         });
     });

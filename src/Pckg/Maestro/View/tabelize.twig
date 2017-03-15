@@ -14,12 +14,12 @@
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
 {% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table }) %}
-{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType }) %}
+{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }) %}
 
 <div>
     <pckg-maestro-table-{{ table }} :ref="'maestro-table'"
                                     :fields="{{ tabelize.getFields() | json_encode | escape }}"
-                                    :records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
+                                    :initial-records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
                                     :groups="{{ tabelize.getGroups() | json_encode | escape }}"
                                     :depth="{{ tabelize.getGroups() | length }}"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"

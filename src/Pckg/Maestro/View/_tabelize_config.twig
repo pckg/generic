@@ -154,7 +154,7 @@
                 });
 
                 http.post(window.location.href + '/configure', data, function (json) {
-                    console.log("ok, saved!");
+                    $dispatcher.$emit('notification:success', 'Ok, saved');
                 });
             },
             // filter

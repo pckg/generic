@@ -23,11 +23,9 @@
         mixins: [pckgDelimiters, pckgTimeout],
         methods: {
             recordactionhandler: function (record, action) {
-                console.log('Caught record:' + action);
                 $dispatcher.$emit('record:' + action, record, record.id);
             },
             entityAction: function (action) {
-                console.log('Caught entity:' + action);
                 $dispatcher.$emit('entity:' + action, this.getSelectedRecords());
             },
             getSelectedRecords: function () {
@@ -46,8 +44,8 @@
                     this.sort.field = fieldId;
                 } else {
                     this.sort.dir = this.sort.dir == 'up'
-                            ? 'down'
-                            : 'up';
+                        ? 'down'
+                        : 'up';
                 }
                 this.makeSort();
             },
@@ -63,7 +61,6 @@
                 });
 
                 this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
-                    console.log("make sort");
                     this.records = data.records;
                 }.bind(this));
             },
@@ -100,6 +97,8 @@
                         $vue.$set(this.paginator, 'total', data.paginator.total);
                     }.bind(this));
                 }.bind(this), 500);
+            },
+            refreshData: function (config) {
             }
         },
         watch: {
@@ -109,6 +108,11 @@
                     page: 1
                 });
             }
+        },
+        {% if tab %}
+        mounted: function () {
+            $dispatcher.$once('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
         }
+        {% endif %}
     }));
 </script>

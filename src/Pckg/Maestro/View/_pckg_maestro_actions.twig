@@ -15,8 +15,6 @@
         },
         methods: {
             recordAction: function (record, action) {
-                console.log('Yeeey, caught maestro action record:' + action + ', dispatching');
-
                 $dispatcher.$emit('record:' + action, record, record.id);
             }
         }
