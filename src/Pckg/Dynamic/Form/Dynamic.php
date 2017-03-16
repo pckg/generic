@@ -172,7 +172,9 @@ class Dynamic extends Bootstrap
             $child .= '<tr>';
             $child .= '<td>' . $permissionTitle . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
             foreach ($authGroups as $group) {
-                $child .= '<td><input type="checkbox" name="p17n[table][' . $group->id . '][' . $permissionKey . ']" value="1" ' . (isset($allPermissions[$group->id][$permissionKey]) ? 'checked = checked ' : '') . ' /></td>';
+                $child .= '<td><input type="checkbox" name="p17n[table][' . $group->id . '][' . $permissionKey .
+                          ']" value="1" ' .
+                          (isset($allPermissions[$group->id][$permissionKey]) ? 'checked = checked ' : '') . ' /></td>';
             }
             $child .= '</tr>';
         }
@@ -188,7 +190,10 @@ class Dynamic extends Bootstrap
                 }
             )->toArray();
             foreach ($authGroups as $group) {
-                $child .= '<td><input type="checkbox" name="p17n[action][' . $group->id . '][' . $action->id . ']" value="1" ' . (isset($allActionPermissions[$group->id][$action->id]) ? 'checked = checked ' : '') . '/></td>';
+                $child .= '<td><input type="checkbox" name="p17n[action][' . $group->id . '][' . $action->id .
+                          ']" value="1" ' .
+                          (isset($allActionPermissions[$group->id][$action->id]) ? 'checked = checked ' : '') .
+                          '/></td>';
             }
             $child .= '</tr>';
         }
@@ -203,7 +208,7 @@ class Dynamic extends Bootstrap
 
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
-                $fields->orderBy('dynamic_field_group_id ASC, `order` ASC');
+                $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withFieldType();
                 $fields->withPermissions();
                 $fields->withHasOneSelectRelation(
@@ -218,9 +223,8 @@ class Dynamic extends Bootstrap
 
         $prevGroup = null;
         foreach ($fields as $field) {
-            if ($field->fieldGroup && (
-                    ($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
-                    (!$prevGroup && $field->dynamic_field_group_id))
+            if (($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
+                (!$prevGroup && $field->dynamic_field_group_id)
             ) {
                 $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
                 $fieldset->addChild('<hr /><h4>' . $field->fieldGroup->title . '</h4>');
@@ -235,6 +239,11 @@ class Dynamic extends Bootstrap
                  * PHP field is not editable.
                  * Should we display content?
                  */
+                $element = $this->addDiv()->addChild(
+                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' .
+                    $field->title . '</label>
+<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
+                );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->addDiv()->addChild(
@@ -298,7 +307,8 @@ class Dynamic extends Bootstrap
         } elseif ($field->getSetting('pckg.dynamic.field.iframe')) {
             $tempValue = $value;
             $value = '<iframe id="iframe-field-' . $field->id . '" style="border: 0; width: 100%;"></iframe>';
-            $value .= '<script type="text/x-template" id="iframe-field-div-' . $field->id . '" style="display: none;">' . $tempValue . '</script>';
+            $value .= '<script type="text/x-template" id="iframe-field-div-' . $field->id .
+                      '" style="display: none;">' . $tempValue . '</script>';
             $value .= '<script type="text/javascript">$(document).ready(function(){
     $("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
 });</script>';
@@ -311,13 +321,16 @@ class Dynamic extends Bootstrap
                 $fullPath = $this->record->{$field->field}
                     ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
-                $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>';
+                $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
+                         '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
+                         $this->record->{$field->field} . '</a>';
             }
         } elseif ($type == 'picture') {
             if ($this->record->{$field->field}) {
                 $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
                 $fullPath = img($this->record->{$field->field}, null, true, $dir);
-                $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' . $fullPath . '" /></a>';
+                $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
+                         $fullPath . '" /></a>';
             }
         }
 
@@ -343,7 +356,6 @@ class Dynamic extends Bootstrap
         ];
         if (in_array($type, $auto)) {
             return $this->{'add' . ucfirst($type)}($name);
-
         } elseif (in_array($type, ['file', 'pdf'])) {
             $dir = $field->getAbsoluteDir(
                 $field->getSetting('pckg.dynamic.field.dir'),
@@ -360,18 +372,20 @@ class Dynamic extends Bootstrap
                 if ($this->record) {
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                         $element->addChild(
-                            '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' . $field->getGenerateFileUrlAttribute(
+                            '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' .
+                            $field->getGenerateFileUrlAttribute(
                                 $this->record
                             ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
                         );
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild(
-                            '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} . '</a>'
+                            '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' .
+                            $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
+                            $this->record->{$field->field} . '</a>'
                         );
                     }
                 }
-
             } else {
                 $element = $this->addFile($name);
                 $element->setPrefix(
@@ -385,7 +399,6 @@ class Dynamic extends Bootstrap
             }
 
             return $element;
-
         } elseif ($type == 'picture') {
             $element = $this->addPicture($name);
             $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
@@ -408,43 +421,34 @@ class Dynamic extends Bootstrap
             $element->setAttribute('data-type', 'picture');
 
             return $element;
-
         } elseif ($type == 'datetime') {
             $element = $this->addDatetime($name);
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
 
             return $element;
-
         } elseif ($type == 'date') {
             $element = $this->addDate($name);
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
 
             return $element;
-
         } elseif ($type == 'time') {
             $element = $this->addTime($name);
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
 
             return $element;
-
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
             return $this->addText($name);
-
         } elseif (in_array($type, ['json'])) {
             return $this->addTextarea($name);
-
         } elseif ($type == 'boolean') {
             return $this->addCheckbox($name);
-
         } elseif ($type == 'point') {
             return $this->addPoint($name);
-
         } elseif ($type == 'geo') {
             $element = $this->addGeo($name);
             $element->setPrefix('<i class="fa fa-map-marker" aria-hidden="true"></i>');
 
             return $element;
-
         } elseif ($type == 'select') {
 
             if ($this->record) {
@@ -501,10 +505,8 @@ class Dynamic extends Bootstrap
             } else {
                 return $this->{'addText'}($name);
             }
-
         } else {
             dd('Unknown dynamic form type: ' . $type);
-
         }
     }
 
