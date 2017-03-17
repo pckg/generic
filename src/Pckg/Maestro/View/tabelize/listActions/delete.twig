@@ -110,12 +110,12 @@
         created: function () {
             $dispatcher.$on('record:checkDeleteRecord', this.checkDeleteRecords);
             $dispatcher.$on('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
-            $dispatcher.$on('entity:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$on('entity:checkDeleteRecords', this.checkDeleteRecords);
         },
         beforeDestroy: function () {
             $dispatcher.$off('record:checkDeleteRecord', this.checkDeleteRecords);
             $dispatcher.$off('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
-            $dispatcher.$off('entity:checkDeleteRecord', this.checkDeleteRecords);
+            $dispatcher.$off('entity:checkDeleteRecords', this.checkDeleteRecords);
         }
     });
 </script>
