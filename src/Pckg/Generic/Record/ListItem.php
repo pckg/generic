@@ -8,4 +8,9 @@ class ListItem extends Record
 
     protected $entity = ListItems::class;
 
+    public function getTitleAttribute()
+    {
+        return $this->value;
+    }
+
 }
