@@ -434,3 +434,39 @@ button[type=button] {
     z-index: 1000;
   }
 }
+
+#vue-app .maestro-sidebar div#main-admin-user-nav {
+  color: #FFF;
+  margin-bottom: 0;
+  padding: 0;
+  ul > li.startmaestro {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    font-weight: bold;
+  }
+  ul > li.user {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    > span {
+      //font-size: 10px;
+    }
+  }
+  ul > li.multiple {
+    > a {
+      display: inline-block;
+      padding-left: 0;
+      padding-right: 0;
+      text-align: center;
+      &:first-child {
+        margin-left: 16px;
+      }
+    }
+  }
+}
+#vue-app .maestro-sidebar.collapsed div#main-admin-user-nav ul li > a {
+  width: 0;
+  overflow: hidden;
+}
+#vue-app .maestro-sidebar {
+  overflow: hidden;
+}

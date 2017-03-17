@@ -239,15 +239,15 @@ class Dynamic extends Bootstrap
                  * PHP field is not editable.
                  * Should we display content?
                  */
-                $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' .
+                $element = $this->getFieldset()->addDiv()->addChild(
+                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-sm-3">' .
                     $field->title . '</label>
 <div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
-                $element = $this->addDiv()->addChild(
-                    '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3"></label>
+                $element = $this->getFieldset()->addDiv()->addChild(
+                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label class="col-sm-3"></label>
 <div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
                 );
 
@@ -334,7 +334,7 @@ class Dynamic extends Bootstrap
             }
         }
 
-        $element = $this->addDiv()->addChild(
+        $element = $this->getFieldset()->addDiv()->addChild(
             '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
 </label>
 <div class="col-sm-9">' . $value . '</div></div>'

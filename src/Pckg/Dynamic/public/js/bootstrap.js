@@ -90,7 +90,7 @@ $(document).ready(function () {
     }
 
     function collapsedHoverOn() {
-        $('.maestro-sidebar #main-admin-nav').on('mouseenter.collapse.data-api', '[data-toggle=collapse]', function (e) {
+        $('.maestro-sidebar #main-admin-nav, .maestro-sidebar #main-admin-user-nav').on('mouseenter.collapse.data-api', '[data-toggle=collapse]', function (e) {
             collapsed = $(".maestro-sidebar").hasClass('collapsed');
 
             var $this = $(this),
