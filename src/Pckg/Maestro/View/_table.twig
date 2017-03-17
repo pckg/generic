@@ -90,15 +90,14 @@
                 this.delaySearch();
             },
             delaySearch: function () {
-                this.timeout('search', function () {
-                    http.getJSON(this.paginator.url, function (data) {
-                        this.records = data.records;
-                        this.groups = data.groups;
-                        $vue.$set(this.paginator, 'total', data.paginator.total);
-                    }.bind(this));
-                }.bind(this), 500);
+                this.timeout('search', this.refreshData, 500);
             },
             refreshData: function (config) {
+                http.getJSON(this.paginator.url, function (data) {
+                    this.records = data.records;
+                    this.groups = data.groups;
+                    $vue.$set(this.paginator, 'total', data.paginator.total);
+                }.bind(this));
             }
         },
         watch: {
@@ -111,6 +110,9 @@
         },
         {% if tab %}
         mounted: function () {
+            /**
+             * @T00D00 - what if we have multiple tables in tab?
+             */
             $dispatcher.$once('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
         }
         {% endif %}
