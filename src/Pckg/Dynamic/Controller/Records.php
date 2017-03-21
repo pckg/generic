@@ -811,4 +811,25 @@ class Records extends Controller
         ];
     }
 
+    public function postEditorUploadAction() {$upload = new Upload('file');
+        $success = $upload->validateUpload();
+
+        if ($success !== true) {
+            return [
+                'success' => false,
+                'message' => $success,
+            ];
+        }
+        $dir = path('app_uploads') . 'editor' . path('ds');
+
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
+
+        return [
+            'success' => true,
+            'url'     => img($filename, null, true, $dir),
+        ];
+
+    }
+
 }

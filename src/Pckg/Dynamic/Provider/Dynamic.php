@@ -192,6 +192,10 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
+                        '/dynamic/uploader'         => [
+                            'name'      => 'dynamic.records.editor.upload',
+                            'view'      => 'editorUpload',
+                        ],
                         '/dynamic/records/field/[table]/[field]/none/select-list'        => [
                             'name'      => 'dynamic.records.field.selectList.none',
                             'view'      => 'selectList',

@@ -175,8 +175,11 @@ $(document).ready(function () {
     tinymce.baseURL = '/bower_components/tinymce/';
 
     function initTinymce(selector) {
+        $('#' + selector).append('<div class="manual-dropzone"></div>');
+        var manualDropzone = $('#' + selector).parent().find('.manual-dropzone');
         return tinymce.init({
             selector: '#' + selector, height: 500,
+            relative_urls: false,
             theme: 'modern',
             plugins: [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
@@ -198,11 +201,59 @@ $(document).ready(function () {
             templates: [
                 /*{title: 'Test template 1', content: 'Test 1'},
                  {title: 'Test template 2', content: 'Test 2'}*/
-            ]/*,
-             content_css: [
-             '/css/bootstrap.css',
-             '/css/default.css',
-             ]*/
+            ],
+            image_class_list: [
+                {title: 'None', value: ''},
+                {title: 'Default (.editor-img)', value: 'editor-img'}
+            ],
+            images_upload_url: '/dynamic/uploader',
+            automatic_uploads: false,
+            file_picker_callback: function(cb, value, meta){
+                console.log(cb, value, meta);
+
+                manualDropzone.dropzone({
+                    url: '/dynamic/uploader',
+                    previewsContainer: null,
+                    previewTemplate: '<div></div>',
+                    maxFilesize: 8,
+                    success: function (file, data) {
+                        data = $.parseJSON(data);
+                        console.log(file, data);
+
+                        cb(data.url, { title: null, class: 'pckg-img' });
+                    }
+                });
+
+                manualDropzone.click();
+
+                // Note: In modern browsers input[type="file"] is functional without
+                // even adding it to the DOM, but that might not be the case in some older
+                // or quirky browsers like IE, so you might want to add it to the DOM
+                // just in case, and visually hide it. And do not forget do remove it
+                // once you do not need it anymore.
+
+                /*input.onchange = function() {
+                    var file = this.files[0];
+
+                    console.log("changed", file, this);
+                    return;
+
+                    // Note: Now we need to register the blob in TinyMCEs image blob
+                    // registry. In the next release this part hopefully won't be
+                    // necessary, as we are looking to handle it internally.
+                    var id = 'blobid' + (new Date()).getTime();
+                    var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                    var blobInfo = blobCache.create(id, file);
+                    blobCache.add(blobInfo);
+
+                    // call the callback and populate the Title field with the file name
+                    cb(blobInfo.blobUri(), { title: file.name });
+                };
+
+                input.click();*/
+                /*
+                console.log(callback, value, meta);*/
+            }
         });
     }
 
