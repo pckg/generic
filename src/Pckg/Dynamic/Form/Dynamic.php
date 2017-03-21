@@ -413,7 +413,7 @@ class Dynamic extends Bootstrap
                     [
                         'table'  => $this->table,
                         'field'  => $field,
-                        'record' => $this->record,
+                        'record' => $this->foreignRecord ?? $this->record,
                     ]
                 )
             );
