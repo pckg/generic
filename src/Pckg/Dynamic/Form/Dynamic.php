@@ -239,6 +239,10 @@ class Dynamic extends Bootstrap
                  * PHP field is not editable.
                  * Should we display content?
                  */
+                if (!$this->record->id) {
+                    continue;
+                }
+
                 $element = $this->getFieldset()->addDiv()->addChild(
                     '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-sm-3">' .
                     $field->title . '</label>
