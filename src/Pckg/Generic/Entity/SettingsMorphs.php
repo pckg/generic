@@ -9,8 +9,6 @@ class SettingsMorphs extends Entity
 
     protected $record = SettingsMorph::class;
 
-    protected $repository = Repository::class . '.dynamic';
-
     public function setting()
     {
         return $this->belongsTo(Settings::class)
