@@ -293,6 +293,8 @@ class Records extends Controller
         $tableEntity = $table->createEntity();
         $record->setEntity($tableEntity);
 
+        $form->setRelation($relation);
+
         if ($foreign && $relation->on_field_id) {
             $record->{$relation->onField->field} = $foreign;
             $form->setForeignFieldId($relation->on_field_id);
@@ -362,10 +364,23 @@ class Records extends Controller
             $entity->setTranslatableLang($lang);
         }
 
-        $record->save($entity);
+        $newRecord = null;
+        foreach ($_SESSION[Records::class]['upload'] ?? [] as $i => $uploadedData) {
+            if ($uploadedData['_relation'] != $relation->id) {
+                continue;
+            }
+            $data = array_merge($uploadedData, $record->data());
+            $newRecord = new $record($data);
+            $newRecord->save($entity);
+            unset($_SESSION[Records::class]['upload'][$i]);
+        }
 
-        if ($this->post()->p17n) {
-            $this->saveP17n($record, $entity);
+        if (!$newRecord) {
+            $record->save($entity);
+
+            if ($this->post()->p17n) {
+                $this->saveP17n($record, $entity);
+            }
         }
 
         Record::$dynamicTable = $table;
@@ -783,7 +798,58 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function postUploadAction(Table $table, Record $record, Field $field)
+    public function postUploadAction(Table $table, Record $record = null, Field $field)
+    {
+        return $this->processUpload($table, $record, $field);
+    }
+
+    public function postUploadNewAction(Table $table, Field $field)
+    {
+        return $this->processUpload($table, null, $field);
+    }
+
+    public function postUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
+    {
+        return $this->processUpload($table, null, $field, $relation, $record);
+    }
+
+    protected function processUpload(
+        Table $table, Record $record = null, Field $field, Relation $relation = null, Record $foreignRecord = null
+    ) {
+        $upload = new Upload('file');
+        $success = $upload->validateUpload();
+
+        if ($success !== true) {
+            return [
+                'success' => false,
+                'message' => $success,
+            ];
+        }
+
+        $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
+
+        $entity = $table->createEntity();
+        if (!$record && $foreignRecord && $relation) {
+            $_SESSION[Records::class]['upload'][] = [
+                '_relation'               => $relation->id,
+                $relation->onField->field => $foreignRecord->id,
+                $field->field             => $filename,
+            ];
+        } else {
+            $record->setEntity($entity);
+            $record->{$field->field} = $filename;
+            $record->save($entity);
+        }
+
+        return [
+            'success' => true,
+            'url'     => img($filename, null, true, $dir),
+        ];
+    }
+
+    public function postEditorUploadAction()
     {
         $upload = new Upload('file');
         $success = $upload->validateUpload();
@@ -795,33 +861,7 @@ class Records extends Controller
             ];
         }
 
-        $entity = $table->createEntity();
-        $record->setEntity($entity);
-
-        $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-        $upload->save($dir);
-        $filename = $upload->getUploadedFilename();
-
-        $record->{$field->field} = $filename;
-        $record->save($entity);
-
-        return [
-            'success' => 'true',
-            'url'     => img($record->{$field->field}, null, true, $dir),
-        ];
-    }
-
-    public function postEditorUploadAction() {$upload = new Upload('file');
-        $success = $upload->validateUpload();
-
-        if ($success !== true) {
-            return [
-                'success' => false,
-                'message' => $success,
-            ];
-        }
         $dir = path('app_uploads') . 'editor' . path('ds');
-
         $upload->save($dir);
         $filename = $upload->getUploadedFilename();
 
@@ -829,7 +869,6 @@ class Records extends Controller
             'success' => true,
             'url'     => img($filename, null, true, $dir),
         ];
-
     }
 
 }

@@ -9,6 +9,7 @@ use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
+use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Framework\Inter\Entity\Languages;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
@@ -31,6 +32,11 @@ class Dynamic extends Bootstrap
      * @var Record
      */
     protected $foreignRecord;
+
+    /**
+     * @var Relation
+     */
+    protected $relation;
 
     /**
      * @var string
@@ -82,6 +88,13 @@ class Dynamic extends Bootstrap
     public function setForeignRecord($foreign)
     {
         $this->foreignRecord = $foreign;
+
+        return $this;
+    }
+
+    public function setRelation($relation)
+    {
+        $this->relation = $relation;
 
         return $this;
     }
@@ -408,14 +421,32 @@ class Dynamic extends Bootstrap
             $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
-                url(
+                $this->record->id
+                    ? url(
                     'dynamic.records.field.upload',
                     [
                         'table'  => $this->table,
                         'field'  => $field,
-                        'record' => $this->foreignRecord ?? $this->record,
+                        'record' => $this->record,
                     ]
                 )
+                    : ($this->relation && $this->foreignRecord
+                    ? url(
+                        'dynamic.records.field.upload.newForeign',
+                        [
+                            'table'    => $this->table,
+                            'field'    => $field,
+                            'relation' => $this->relation,
+                            'record'   => $this->foreignRecord,
+                        ]
+                    )
+                    : url(
+                        'dynamic.records.field.upload.new',
+                        [
+                            'table' => $this->table,
+                            'field' => $field,
+                        ]
+                    ))
             );
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
             $element->setAttribute(

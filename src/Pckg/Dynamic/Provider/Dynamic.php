@@ -9,6 +9,7 @@ use Pckg\Dynamic\Middleware\SetContentLanguage;
 use Pckg\Dynamic\Middleware\SwitchLanguage;
 use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
+use Pckg\Dynamic\Resolver\ForeignRecord;
 use Pckg\Dynamic\Resolver\Language;
 use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
@@ -64,21 +65,21 @@ class Dynamic extends Provider
                         'controller' => Records::class,
                     ],
                     [
-                        '/dynamic/tables/list/[table]'                                   => [
+                        '/dynamic/tables/list/[table]'                                                  => [
                             'name'      => 'dynamic.record.list',
                             'view'      => 'viewTable',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/list/[table]/configure'                         => [
+                        '/dynamic/tables/list/[table]/configure'                                        => [
                             'name'      => 'dynamic.record.list',
                             'view'      => 'configureTableView',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/list/[table]/[tableView]'                       => [
+                        '/dynamic/tables/list/[table]/[tableView]'                                      => [
                             'name'      => 'dynamic.record.listView',
                             'view'      => 'viewTableView',
                             'resolvers' => [
@@ -86,14 +87,14 @@ class Dynamic extends Provider
                                 'tableView' => ViewResolver::class,
                             ],
                         ],
-                        '/dynamic/records/add/[table]'                                   => [
+                        '/dynamic/records/add/[table]'                                                  => [
                             'name'      => 'dynamic.record.add',
                             'view'      => 'add',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/records/add/[table]/[relation]/[foreign]'              => [
+                        '/dynamic/records/add/[table]/[relation]/[foreign]'                             => [
                             'name'      => 'dynamic.record.add.related',
                             'view'      => 'add',
                             'resolvers' => [
@@ -101,7 +102,7 @@ class Dynamic extends Provider
                                 'relation' => Relation::class,
                             ],
                         ],
-                        '/dynamic/records/view/[table]/[record]'                         => [
+                        '/dynamic/records/view/[table]/[record]'                                        => [
                             'name'      => 'dynamic.record.view',
                             'view'      => 'view',
                             'resolvers' => [
@@ -109,7 +110,7 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/records/edit/[table]/[record]'                         => [
+                        '/dynamic/records/edit/[table]/[record]'                                        => [
                             'name'        => 'dynamic.record.edit',
                             'view'        => 'edit',
                             'resolvers'   => [
@@ -120,7 +121,7 @@ class Dynamic extends Provider
                                 SwitchLanguage::class,
                             ],
                         ],
-                        '/dynamic/records/clone/[table]/[record]'                        => [
+                        '/dynamic/records/clone/[table]/[record]'                                       => [
                             'name'        => 'dynamic.record.clone',
                             'view'        => 'clone',
                             'resolvers'   => [
@@ -131,7 +132,7 @@ class Dynamic extends Provider
                                 SwitchLanguage::class,
                             ],
                         ],
-                        '/dynamic/records/delete/[table]/[record]'                       => [
+                        '/dynamic/records/delete/[table]/[record]'                                      => [
                             'name'      => 'dynamic.record.delete',
                             'view'      => 'delete',
                             'resolvers' => [
@@ -139,7 +140,7 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/records/delete/[table]/[record]/[language]'            => [
+                        '/dynamic/records/delete/[table]/[record]/[language]'                           => [
                             'name'      => 'dynamic.record.deleteTranslation',
                             'view'      => 'deleteTranslation',
                             'resolvers' => [
@@ -148,7 +149,7 @@ class Dynamic extends Provider
                                 'language' => Language::class,
                             ],
                         ],
-                        '/dynamic/records/force-delete/[table]/[record]'                 => [
+                        '/dynamic/records/force-delete/[table]/[record]'                                => [
                             'name'      => 'dynamic.record.forceDelete',
                             'view'      => 'forceDelete',
                             'resolvers' => [
@@ -156,7 +157,7 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/records/tab/[table]/[record]/[tab]'                    => [
+                        '/dynamic/records/tab/[table]/[record]/[tab]'                                   => [
                             'name'      => 'dynamic.record.tab',
                             'view'      => 'tab',
                             'resolvers' => [
@@ -165,7 +166,7 @@ class Dynamic extends Provider
                                 'tab'    => TabResolver::class,
                             ],
                         ],
-                        '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]' => [
+                        '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]'                => [
                             'name'      => 'dynamic.records.field.toggle',
                             'view'      => 'toggleField',
                             'resolvers' => [
@@ -174,7 +175,7 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/records/field/[table]/[field]/[record]/order/[order]'  => [
+                        '/dynamic/records/field/[table]/[field]/[record]/order/[order]'                 => [
                             'name'      => 'dynamic.records.field.order',
                             'view'      => 'orderField',
                             'resolvers' => [
@@ -183,7 +184,7 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/records/field/[table]/[field]/[record]/upload'         => [
+                        '/dynamic/records/field/[table]/[field]/[record]/upload'                        => [
                             'name'      => 'dynamic.records.field.upload',
                             'view'      => 'upload',
                             'resolvers' => [
@@ -192,11 +193,29 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
-                        '/dynamic/uploader'         => [
-                            'name'      => 'dynamic.records.editor.upload',
-                            'view'      => 'editorUpload',
+                        '/dynamic/records/field/[table]/[field]/upload-new'                             => [
+                            'name'      => 'dynamic.records.field.upload.new',
+                            'view'      => 'uploadNew',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                                'field' => FieldResolver::class,
+                            ],
                         ],
-                        '/dynamic/records/field/[table]/[field]/none/select-list'        => [
+                        '/dynamic/records/field/[table]/[field]/[relation]/[record]/upload-new-foreign' => [
+                            'name'      => 'dynamic.records.field.upload.newForeign',
+                            'view'      => 'uploadNewForeign',
+                            'resolvers' => [
+                                'table'    => TableResolver::class,
+                                'field'    => FieldResolver::class,
+                                'relation' => Relation::class,
+                                'record'   => ForeignRecord::class,
+                            ],
+                        ],
+                        '/dynamic/uploader'                                                             => [
+                            'name' => 'dynamic.records.editor.upload',
+                            'view' => 'editorUpload',
+                        ],
+                        '/dynamic/records/field/[table]/[field]/none/select-list'                       => [
                             'name'      => 'dynamic.records.field.selectList.none',
                             'view'      => 'selectList',
                             'resolvers' => [
@@ -204,7 +223,7 @@ class Dynamic extends Provider
                                 'field' => FieldResolver::class,
                             ],
                         ],
-                        '/dynamic/records/field/[table]/[field]/[record]/select-list'    => [
+                        '/dynamic/records/field/[table]/[field]/[record]/select-list'                   => [
                             'name'      => 'dynamic.records.field.selectList',
                             'view'      => 'selectList',
                             'resolvers' => [

@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Record;
 
 use Pckg\Collection;
-use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
@@ -135,6 +134,11 @@ class Table extends DatabaseRecord
         $entity->setTable($this->table);
 
         return $entity;
+    }
+
+    public function createRecord()
+    {
+        return $this->createEntity()->getRecord();
     }
 
     public function fetchFrameworkRecord(DatabaseRecord $record, DatabaseEntity $entity)
