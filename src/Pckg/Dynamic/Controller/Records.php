@@ -388,7 +388,7 @@ class Records extends Controller
 
         flash('dynamic.records.add.success', __('dynamic.records.add.success'));
 
-        return $this->response()->respondWithSuccessRedirect($record->getEditUrl());
+        return $this->response()->respondWithSuccessRedirect($newRecord ? $newRecord->getEditUrl() : $record->getEditUrl());
     }
 
     public function postCloneAction(Record $record, Table $table)
