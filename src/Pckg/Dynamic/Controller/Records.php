@@ -381,6 +381,8 @@ class Records extends Controller
             if ($this->post()->p17n) {
                 $this->saveP17n($record, $entity);
             }
+        } else {
+            flash('dynamic.records.upload.success', __('dynamic.records.upload.success'));
         }
 
         Record::$dynamicTable = $table;
