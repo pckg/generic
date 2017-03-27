@@ -35,6 +35,17 @@
 {{ _vueManager.getViews() | raw }}
 
 <script>
+    var Pckg = Pckg || {};
+    Pckg.config = {};
+    Pckg.config.locale = {
+        format: {
+            dateMoment: 'LL',
+            timeMoment: 'LT'
+        },
+        currency: 'EUR',
+        currencySign: '€'
+    };
+
     {% if _env.isDev() %}
     Vue.config.debug = true;
     Vue.config.silent = false;
