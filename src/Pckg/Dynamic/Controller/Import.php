@@ -106,6 +106,10 @@ class Import extends Controller
                     }
                 }
 
+                if (!$locales) {
+                    $locales['all'] = 'all';
+                }
+
                 $prevRecord = null;
                 foreach ($locales as $locale) {
                     $uniqueValues = [];
