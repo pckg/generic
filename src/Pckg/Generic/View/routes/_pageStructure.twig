@@ -104,7 +104,8 @@
                             ${ action.class } @ ${ action.method }
                         </td>
                         <td>
-                            <input type="number" class="form-control narrow" v-model="action.pivot.order"/>
+                            <input type="number" class="form-control narrow" v-model="action.pivot.order"
+                                   @change="timeoutUpdateActionOrder(action)"/>
                         </td>
                         <td>
                             <div class="btn-group pull-right" role="group" aria-label="...">
@@ -139,7 +140,7 @@
 <script type="text/javascript">
 
     Vue.component('pckg-generic-page-structure-variable', {
-        mixins: [pckgDelimiters],
+        mixins: [pckgDelimiters, pckgTimeout],
         template: '#pckg-generic-page-structure-variable',
         props: {
             actions: Array,
@@ -226,7 +227,7 @@
             saveActionsMorph: function () {
                 console.log(thic.action);
                 return;
-                http.postJSON(
+                http.post(
                     utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
                     {
                         action_id: this.action.pivot.action_id,
@@ -236,6 +237,18 @@
                             $('#deleteActionModal').modal('hide');
                         }
                     });
+            },
+            updateActionOrder: function (action) {
+                http.post(
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}),
+                    {
+                        order: action.pivot.order
+                    });
+            },
+            timeoutUpdateActionOrder: function (action) {
+                this.timeout('updateActionOrder' + action.pivot.id, function () {
+                    this.updateActionOrder(action);
+                }.bind(this), 333);
             }
         }
     });
@@ -339,13 +352,11 @@
             this.fetchVariables();
 
             $dispatcher.$on('record:actionsMorph:remove:action', function (action) {
-                console.log("handling record:actionsMorph:remove:action", action);
-                this.actions.splice(action, 1);
+                this.routeActions.splice(action, 1);
             }.bind(this));
 
             $dispatcher.$on('record:actionsMorph:add:action', function (action) {
-                console.log("record:actionsMorph:add:action");
-                this.actions.push(action);
+                this.routeActions.push(action);
             }.bind(this));
         },
         watch: {

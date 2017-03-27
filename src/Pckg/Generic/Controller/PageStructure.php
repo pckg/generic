@@ -129,4 +129,26 @@ class PageStructure
                                               ]);
     }
 
+    public function postActionsMorphAction(ActionsMorph $actionsMorph)
+    {
+        /**
+         * Collect posted data.
+         */
+        $data = [];
+        foreach (['order'] as $key) {
+            if (post()->has($key)) {
+                $data[$key] = post($key, null);
+            }
+        }
+
+        /**
+         * Save only if something was received.
+         */
+        if ($data) {
+            $actionsMorph->setAndSave($data);
+        }
+
+        return response()->respondWithSuccess();
+    }
+
 }
