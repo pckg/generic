@@ -143,7 +143,9 @@
         template: '#pckg-generic-page-structure-variable',
         props: {
             actions: Array,
-            availableActions: Array
+            availableActions: Array,
+            route: Object,
+            variable: Object
         },
         data: function () {
             return {
@@ -163,7 +165,11 @@
                 ],
                 action: {},
                 actionsMorph: {},
-                form: {}
+                form: {
+                    action_id: null,
+                    content_id: null,
+                    template: null
+                }
             };
         },
         methods: {
@@ -187,24 +193,33 @@
                 $('#setPermissionsModal').modal('show');
             },
             onSubmit: function () {
-                console.log("on submit");
+                var postData = this.form;
+                postData.route_id = this.route.id;
+                postData.variable_id = this.variable.id;
+                http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
+                    $dispatcher.$emit('notification:success', 'Action successfully added');
+                    $('#pageStructureModal').modal('hide');
+                    $dispatcher.$emit('record:actionsMorph:add:action', data.action);
+                });
             },
             savePermissions: function () {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.setActionsMorphPermissions') }}',
-                        {actionsMorph: this.action.pivot.id}),
-                        {
-                            read: this.action.pivot.permissions
-                        },
-                        function (data) {
-                            if (data.success) {
-                                $('#setPermissionsModal').modal('hide');
-                            }
-                        });
+                    {actionsMorph: this.action.pivot.id}),
+                    {
+                        read: this.action.pivot.permissions
+                    },
+                    function (data) {
+                        if (data.success) {
+                            $('#setPermissionsModal').modal('hide');
+                        }
+                    });
             },
             deleteActionsMorph: function () {
-                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}), function (data) {
+                var action = this.action;
+                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}), function (data) {
                     if (data.success) {
                         $('#deleteActionModal').modal('hide');
+                        $dispatcher.$emit('record:actionsMorph:remove:action', action);
                     }
                 });
             },
@@ -212,15 +227,15 @@
                 console.log(thic.action);
                 return;
                 http.postJSON(
-                        utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
-                        {
-                            action_id: this.action.pivot.action_id,
-                        },
-                        function (data) {
-                            if (data.success) {
-                                $('#deleteActionModal').modal('hide');
-                            }
-                        });
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
+                    {
+                        action_id: this.action.pivot.action_id,
+                    },
+                    function (data) {
+                        if (data.success) {
+                            $('#deleteActionModal').modal('hide');
+                        }
+                    });
             }
         }
     });
@@ -242,7 +257,9 @@
             <h3>${ variable.slug }</h3>
             <pckg-generic-page-structure-variable
                     :actions="getActionsForVariable(variable)"
-                    :available-actions="actions"></pckg-generic-page-structure-variable>
+                    :available-actions="actions"
+                    :route="route"
+                    :variable="variable"></pckg-generic-page-structure-variable>
         </div>
     </div>
 </script>
@@ -320,6 +337,16 @@
             this.fetchRoutes();
             this.fetchActions();
             this.fetchVariables();
+
+            $dispatcher.$on('record:actionsMorph:remove:action', function (action) {
+                console.log("handling record:actionsMorph:remove:action", action);
+                this.actions.splice(action, 1);
+            }.bind(this));
+
+            $dispatcher.$on('record:actionsMorph:add:action', function (action) {
+                console.log("record:actionsMorph:add:action");
+                this.actions.push(action);
+            }.bind(this));
         },
         watch: {
             selectedRoute: function () {

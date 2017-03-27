@@ -26,6 +26,8 @@ class PageStructure extends Provider
                                                                                   'layoutActions'),
                                        '.setActionsMorphPermissions' => new Route('/actionsMorph/[actionsMorph]/permissions',
                                                                                   'actionsMorphPermissions'),
+                                       '.addActionsMorph'            => new Route('/actionsMorph/add',
+                                                                                  'addActionsMorph'),
                                        '.actionsMorph'               => new Route('/actionsMorph/[actionsMorph]',
                                                                                   'actionsMorph'),
                                    ]),

@@ -26,6 +26,10 @@ class ActionMorph extends Bootstrap
              ->setLabel('Content')
              ->addOptions((new Contents())->all()->getListID());
 
+        $this->addText('template')
+             ->setAttribute('v-model', 'form.template')
+             ->setLabel('Custom template');
+
         $submit = $this->addSubmit();
         $submit->setAttribute('@click.prevent', 'onSubmit');
         $this->setAttribute('@submit.prevent', 'onSubmit');

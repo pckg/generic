@@ -59,3 +59,43 @@
 </script>
 
 {{ _metaManager.getMeta('headerLast') | raw }}
+
+<script type="text/x-template" id="pckg-dispatcher-notifications-template">
+    <div>
+        <div class="alert alert-success alert-dismissible alert-fixed" role="alert"
+             v-for="notification in notifications">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true" @click="removeNotification(notification)">&times;</span></button>
+            <div v-html="notification.content"></div>
+        </div>
+    </div>
+</script>
+
+<script>
+    Vue.component('pckg-dispatcher-notifications', {
+        name: 'pckg-dispatcher-notifications',
+        template: '#pckg-dispatcher-notifications-template',
+        mixins: [pckgTimeout, pckgDelimiters],
+        data: function () {
+            return {
+                notifications: []
+            };
+        },
+        methods: {
+            removeNotification: function (notification) {
+                this.notifications.splice(this.notifications.indexOf(notification), 1);
+            }
+        },
+        created: function () {
+            $dispatcher.$on('notification:success', function (msg) {
+                var notification = {
+                    content: msg
+                };
+                this.notifications.push(notification);
+                this.timeout('autoclose', function () {
+                    this.removeNotification(notification);
+                }.bind(this), 2500, notification);
+            }.bind(this));
+        }
+    });
+</script>

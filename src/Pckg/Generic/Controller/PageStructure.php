@@ -8,6 +8,7 @@ use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
+use Pckg\Generic\Record\ActionsMorph;
 
 class PageStructure
 {
@@ -99,9 +100,33 @@ class PageStructure
 
     public function deleteActionsMorphAction($actionsMorph)
     {
-        (new ActionsMorphs())->where('id', $actionsMorph)->delete();
+        //(new ActionsMorphs())->where('id', $actionsMorph)->delete();
 
         return response()->respondWithAjaxSuccess();
+    }
+
+    public function postAddActionsMorphAction()
+    {
+        /**
+         * Collect data.
+         */
+        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id']);
+        $data['morph_id'] = Routes::class;
+
+        /**
+         * Create record.
+         */
+        $actionsMorph = ActionsMorph::create($data);
+
+        /**
+         * Fetch action.
+         */
+        $action = (new Actions())->where('id', $data['action_id'])->one();
+        $action->pivot = $actionsMorph;
+
+        return response()->respondWithSuccess([
+                                                  'action' => $action,
+                                              ]);
     }
 
 }
