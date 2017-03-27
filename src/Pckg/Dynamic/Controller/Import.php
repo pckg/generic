@@ -146,7 +146,7 @@ class Import extends Controller
                                 /**
                                  * Create new record.
                                  */
-                                $record = $prevRecord = new Record();
+                                $record = $prevRecord = new Record([], $entity);
                             } else {
                                 /**
                                  * Update translation.
