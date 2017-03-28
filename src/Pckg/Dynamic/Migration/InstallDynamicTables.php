@@ -1292,7 +1292,7 @@ class InstallDynamicTables extends Migration
                         'type'  => 'integer',
                     ],
                     [
-                        'field' => 'hidden_on_listing',
+                        'field' => 'private',
                         'type'  => 'boolean',
                     ],
                     [
