@@ -76,6 +76,8 @@ class CreateGenericTables extends Migration
         $contentsI18n->subtitle();
         $contentsI18n->description();
         $contentsI18n->content();
+        $contentsI18n->varchar('picture');
+        $contentsI18n->varchar('video');
     }
 
     protected function actionsUp()

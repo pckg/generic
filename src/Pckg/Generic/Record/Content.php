@@ -18,4 +18,13 @@ class Content extends Record
      */
     protected $entity = Contents::class;
 
+    public function getImageAttribute()
+    {
+        if (!$this->picture) {
+            return null;
+        }
+
+        return img($this->picture, 'contents');
+    }
+
 }

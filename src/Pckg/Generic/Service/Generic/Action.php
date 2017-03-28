@@ -3,11 +3,10 @@
 namespace Pckg\Generic\Service\Generic;
 
 use Exception;
-use Pckg\Concept\Reflect;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Setting;
-use Throwable;
 
 /**
  * Class Action
@@ -72,6 +71,14 @@ class Action
     }
 
     /**
+     * @return mixed|null|Content
+     */
+    public function getContent()
+    {
+        return $this->args['content'] ?? null;
+    }
+
+    /**
      * @return string
      * @throws Exception
      */
@@ -80,7 +87,7 @@ class Action
         if ($this->class && $this->method) {
             $prefix = strtolower(request()->method());
 
-            $args = array_merge($this->args, ['action' => $this]);
+            $args = array_merge($this->args, ['action' => $this, 'content' => $this->getContent()]);
             $method = ($prefix ? $prefix . ucfirst($this->method) : $this->method) . 'Action';
 
             if (isset($args['settings'])) {
