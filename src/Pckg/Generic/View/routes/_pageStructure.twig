@@ -1,5 +1,16 @@
-<script type="text/x-template" id="pckg-generic-page-structure-variable">
-    <div>
+<script type="text/x-template" id="pckg-generic-page-structure">
+    <div class="pageStructure">
+        <div class="form-group">
+            <label class="col-md-3">Route</label>
+            <div class="col-md-9">
+                <select class="form-control" v-model="selectedRoute">
+                    <option v-for="route in routes" :value="route.id">${ route.route } - ${ route.title } - ${
+                        route.slug }
+                    </option>
+                </select>
+            </div>
+        </div>
+
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pageStructureModal'} %}
             {% block header %}
                 Add action
@@ -18,7 +29,7 @@
                         <label class="col-md-3">Actions</label>
                         <div class="col-md-9">
                             <select class="form-control" v-model="actionsMorph.action_id">
-                                <option v-for="action in availableActions" :value="action.id">${ action.class } @ ${
+                                <option v-for="action in actions" :value="action.id">${ action.class } @ ${
                                     action.method }
                                 </option>
                             </select>
@@ -70,7 +81,7 @@
 
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'setPermissionsModal'} %}
             {% block header %}
-                Set permissions
+                Set permissions for ${ action.class } @ ${ action.method }
             {% endblock %}
             {% block body %}
                 <table v-if="action.id">
@@ -85,71 +96,82 @@
                     </tr>
                     </tbody>
                 </table>
-                Set read permissions for different user groups ...
+                ${ action }
             {% endblock %}
             {% block footer %}
                 <button class="btn btn-success" @click="savePermissions">Save permissions</button>
             {% endblock %}
         {% endembed %}
+        <div v-for="variable in variables" v-if="route.id">
+            <h3>${ variable.slug }</h3>
 
-        {% embed 'Pckg/Generic/View/panel.twig' %}
-            {% block content %}
-                <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction">
-                    <i class="fa fa-plus"></i>
-                </a>
-                <table class="table table-condensed">
-                    <tr v-for="action in actions">
-                        <td>
-                            <i v-if="action.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
-                            ${ action.class } @ ${ action.method }
-                        </td>
-                        <td>
-                            <input type="number" class="form-control narrow" v-model="action.pivot.order"
-                                   @change="timeoutUpdateActionOrder(action)"/>
-                        </td>
-                        <td>
-                            <div class="btn-group pull-right" role="group" aria-label="...">
-                                <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Options
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <template v-if="action.pivot.morph_id == 'Pckg\\Generic\\Entity\\Routes'">
-                                            <li><a href="#" @click.prevent="openSetPermissionsModal(action)">Set
-                                                    permissions</a></li>
-                                            <li><a href="#" @click.prevent="openChangeActionModal(action)">Change
-                                                    content</a></li>
-                                            <li><a href="#" @click.prevent="openDeleteActionModal(action)">Delete
-                                                    action</a></li>
-                                        </template>
-                                        <template v-else>
-                                            <li><a href="#">Edit layout</a></li>
-                                        </template>
-                                    </ul>
+            {% embed 'Pckg/Generic/View/panel.twig' %}
+                {% block content %}
+                    <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                    <table class="table table-condensed">
+                        <tr v-for="act in getActionsForVariable(variable)">
+                            <td>
+                                <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
+                                ${ act.class } @ ${ act.method }
+                            </td>
+                            <td>
+                                <input type="number" class="form-control narrow" v-model="act.pivot.order"
+                                       @change="timeoutUpdateActionOrder(act)"/>
+                            </td>
+                            <td>
+                                <div class="btn-group pull-right" role="group" aria-label="...">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Options
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <template v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Routes'">
+                                                <li>
+                                                    <a href="#" @click.prevent="openSetPermissionsModal(act)">Set
+                                                        permissions</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" @click.prevent="openChangeActionModal(act)">Change
+                                                        content</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" @click.prevent="openDeleteActionModal(act)">Delete
+                                                        action</a>
+                                                </li>
+                                            </template>
+                                            <template v-else>
+                                                <li><a href="#">Edit layout</a></li>
+                                            </template>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            {% endblock %}
-        {% endembed %}
+                            </td>
+                        </tr>
+                    </table>
+                {% endblock %}
+            {% endembed %}
+        </div>
     </div>
 </script>
-<script type="text/javascript">
 
-    Vue.component('pckg-generic-page-structure-variable', {
+<script>
+    Vue.component('pckg-generic-page-structure', {
         mixins: [pckgDelimiters, pckgTimeout],
-        template: '#pckg-generic-page-structure-variable',
-        props: {
-            actions: Array,
-            availableActions: Array,
-            route: Object,
-            variable: Object
-        },
+        template: '#pckg-generic-page-structure',
         data: function () {
             return {
+                actions: [],
+                routes: [],
+                selectedRoute: null,
+                route: {},
+                routeActions: [],
+                layout: {},
+                layoutActions: [],
+                variables: [],
                 userGroups: [
                     {
                         id: 1,
@@ -175,126 +197,6 @@
                     content_id: null,
                     template: null
                 }
-            };
-        },
-        methods: {
-            addAction: function () {
-                $('#pageStructureModal').modal('show');
-            },
-            openDeleteActionModal: function (action) {
-                this.action = action;
-
-                $('#deleteActionModal').modal('show');
-            },
-            openChangeActionModal: function (action) {
-                this.action = action;
-                this.actionsMorph = action.pivot;
-
-                $('#changeContentModal').modal('show');
-            },
-            openSetPermissionsModal: function (action) {
-                this.action = action;
-
-                $('#setPermissionsModal').modal('show');
-            },
-            onSubmit: function () {
-                var postData = this.form;
-                postData.route_id = this.route.id;
-                postData.variable_id = this.variable.id;
-                http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
-                    $dispatcher.$emit('notification:success', 'Action successfully added');
-                    $('#pageStructureModal').modal('hide');
-                    $dispatcher.$emit('record:actionsMorph:add:action', data.action);
-                });
-            },
-            savePermissions: function () {
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.setActionsMorphPermissions') }}',
-                    {actionsMorph: this.action.pivot.id}),
-                    {
-                        read: this.action.pivot.permissions
-                    },
-                    function (data) {
-                        if (data.success) {
-                            $('#setPermissionsModal').modal('hide');
-                        }
-                    });
-            },
-            deleteActionsMorph: function () {
-                var action = this.action;
-                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}), function (data) {
-                    if (data.success) {
-                        $('#deleteActionModal').modal('hide');
-                        $dispatcher.$emit('record:actionsMorph:remove:action', action);
-                    }
-                });
-            },
-            saveActionsMorph: function () {
-                console.log(thic.action);
-                return;
-                http.post(
-                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
-                    {
-                        action_id: this.action.pivot.action_id,
-                    },
-                    function (data) {
-                        if (data.success) {
-                            $('#deleteActionModal').modal('hide');
-                        }
-                    });
-            },
-            updateActionOrder: function (action) {
-                http.post(
-                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}),
-                    {
-                        order: action.pivot.order
-                    });
-            },
-            timeoutUpdateActionOrder: function (action) {
-                this.timeout('updateActionOrder' + action.pivot.id, function () {
-                    this.updateActionOrder(action);
-                }.bind(this), 333);
-            }
-        }
-    });
-</script>
-
-<script type="text/x-template" id="pckg-generic-page-structure">
-    <div class="pageStructure">
-        <div class="form-group">
-            <label class="col-md-3">Route</label>
-            <div class="col-md-9">
-                <select class="form-control" v-model="selectedRoute">
-                    <option v-for="route in routes" :value="route.id">${ route.route } - ${ route.title } - ${
-                        route.slug }
-                    </option>
-                </select>
-            </div>
-        </div>
-        <div v-for="variable in variables" v-if="route.id">
-            <h3>${ variable.slug }</h3>
-            <pckg-generic-page-structure-variable
-                    :actions="getActionsForVariable(variable)"
-                    :available-actions="actions"
-                    :route="route"
-                    :variable="variable"></pckg-generic-page-structure-variable>
-        </div>
-    </div>
-</script>
-
-<script>
-    Vue.component('pckg-generic-page-structure', {
-        mixins: [pckgDelimiters],
-        template: '#pckg-generic-page-structure',
-        data: function () {
-            return {
-                actions: [],
-                routes: [],
-                selectedRoute: null,
-                route: {},
-                routeActions: [],
-                layout: {},
-                layoutActions: [],
-                variables: []
             };
         },
         methods: {
@@ -348,6 +250,87 @@
                 return actions.sort(function (action) {
                     return action.pivot.order;
                 })
+            },
+
+            addAction: function () {
+                $('#pageStructureModal').modal('show');
+            },
+            openDeleteActionModal: function (action) {
+                this.action = action;
+
+                $('#deleteActionModal').modal('show');
+            },
+            openChangeActionModal: function (action) {
+                this.action = action;
+                this.actionsMorph = action.pivot;
+
+                $('#changeContentModal').modal('show');
+            },
+            openSetPermissionsModal: function (action) {
+                console.log(this.action);
+                this.action = action;
+                console.log(this.action);
+
+                Vue.nextTick(function () {
+                    $('#setPermissionsModal').modal('show');
+                });
+            },
+            onSubmit: function () {
+                var postData = this.form;
+                postData.route_id = this.route.id;
+                postData.variable_id = this.variable.id;
+                http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
+                    $dispatcher.$emit('notification:success', 'Action successfully added');
+                    $('#pageStructureModal').modal('hide');
+                    $dispatcher.$emit('record:actionsMorph:add:action', data.action);
+                });
+            },
+            savePermissions: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.setActionsMorphPermissions') }}',
+                    {actionsMorph: this.action.pivot.id}),
+                    {
+                        read: this.action.pivot.permissions
+                    },
+                    function (data) {
+                        if (data.success) {
+                            $('#setPermissionsModal').modal('hide');
+                        }
+                    }.bind(this));
+            },
+            deleteActionsMorph: function () {
+                var action = this.action;
+                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}), function (data) {
+                    if (data.success) {
+                        $('#deleteActionModal').modal('hide');
+                        $dispatcher.$emit('record:actionsMorph:remove:action', action);
+                    }
+                });
+            },
+            saveActionsMorph: function () {
+                console.log(thic.action);
+                return;
+                http.post(
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
+                    {
+                        action_id: this.action.pivot.action_id,
+                    },
+                    function (data) {
+                        if (data.success) {
+                            $('#deleteActionModal').modal('hide');
+                        }
+                    });
+            },
+            updateActionOrder: function (action) {
+                http.post(
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}),
+                    {
+                        order: action.pivot.order
+                    });
+            },
+            timeoutUpdateActionOrder: function (action) {
+                this.timeout('updateActionOrder' + action.pivot.id, function () {
+                    this.updateActionOrder(action);
+                }.bind(this), 333);
             }
         },
         created: function () {
