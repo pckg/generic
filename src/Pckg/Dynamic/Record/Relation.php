@@ -63,6 +63,10 @@ class Relation extends DatabaseRecord
         Field::automaticallyApplyRelation($entity, $this->value);
         $relation = $this;
 
+        if ($relation->filter) {
+            $entity->whereRaw(substr($relation->filter, 1, -1)); // remove "
+        }
+
         return $this->onField && $this->dynamic_relation_type_id == 1
             ? $entity->limit(100)->all()->map(
                 function($record) use ($relation, $entity) {
