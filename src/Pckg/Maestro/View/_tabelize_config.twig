@@ -120,10 +120,20 @@
                     }
 
                     if (field.filterMethod) {
-                        data.fields.filters.push({
-                            method: field.filterMethod,
-                            value: field.filterValue
-                        });
+                        if (field.type == 'select' && (field.filterMethod == 'equals' || field.filterMethod == 'in')) {
+                            data.fields.filters.push({
+                                field: field.id,
+                                method: field.filterMethod,
+                                value: field.filterValue,
+                                relation: true
+                            });
+                        } else {
+                            data.fields.filters.push({
+                                field: field.id,
+                                method: field.filterMethod,
+                                value: field.filterValue
+                            });
+                        }
                     }
 
                     if (field.group) {
@@ -139,7 +149,7 @@
                 });
                 $.each(this.relations, function (i, relation) {
                     if (relation.visible) {
-                        data.visible.push(field.id);
+                        data.relations.visible.push(relation.id);
                     }
 
                     if (relation.filterMethod) {
@@ -209,10 +219,10 @@
                 return selectField;
             }
         },
-        created: function(){
+        created: function () {
             $dispatcher.$on('entity:openConfigureViewModal', this.openModal);
         },
-        beforeDestroy: function(){
+        beforeDestroy: function () {
             $dispatcher.$off('entity:openConfigureViewModal', this.openModal);
         }
     });

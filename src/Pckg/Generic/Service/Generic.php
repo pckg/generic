@@ -75,25 +75,37 @@ class Generic
     public function readRoute(Route $route)
     {
         $this->route = $route;
+
+        /**
+         * Custom resolvers.
+         */
+        $resolvers = [];
+        if ($route->resolvers) {
+            foreach (json_decode($route->resolvers) as $key => $resolver) {
+                $resolvers[$key] = $resolver;
+            }
+        }
+
         $actions = $route->actions(
             function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content){
+                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->joinTranslations();
                 });
             }
         );
 
         $actions->each(
-            function(ActionRecord $action) {
+            function(ActionRecord $action) use ($resolvers) {
                 $this->addAction(
                     $action->pivot->variable->slug,
                     $action->class,
                     $action->method,
                     [
-                        'content'  => $action->pivot->content,
-                        'settings' => $action->pivot->settings,
-                        'route'    => $this->route,
+                        'content'   => $action->pivot->content,
+                        'settings'  => $action->pivot->settings,
+                        'route'     => $this->route,
+                        'resolvers' => $resolvers,
                     ],
                     $action->pivot->order,
                     $action->pivot->template
@@ -105,23 +117,25 @@ class Generic
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
                     $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content){
+                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                         $content->joinTranslations();
                     });
                 }
             );
             $layoutActions->each(
-                function(ActionRecord $action) {
+                function(ActionRecord $action) use ($resolvers) {
                     $this->addAction(
                         $action->pivot->variable->slug,
                         $action->class,
                         $action->method,
                         [
-                            'content'  => $action->pivot->content,
-                            'settings' => $action->pivot->settings,
-                            'route'    => $this->route,
+                            'content'   => $action->pivot->content,
+                            'settings'  => $action->pivot->settings,
+                            'route'     => $this->route,
+                            'resolvers' => $resolvers,
                         ],
-                        $action->pivot->order
+                        $action->pivot->order,
+                        $action->pivot->template
                     );
                 }
             );
@@ -240,18 +254,34 @@ class Generic
         $arrRoutes = $routes->joinTranslation()->all();
 
         foreach ($arrRoutes AS $route) {
-            $router->add(
-                $route->getRoute(false),
-                [
+            /**
+             * Add route to router.
+             */
+            $url = $route->getRoute(false);
+            $existingRoute = router()->getRoute($url);
+            if ($existingRoute) {
+                $router->replace($url, [
                     "controller" => GenericController::class,
                     "view"       => "generic",
                     'resolvers'  => [
                         'route' => RouteResolver::class,
                     ],
                     'tags'       => explode(',', $route->tags),
-                ],
-                $route->slug
-            );
+                ]);
+            } else {
+                $router->add(
+                    $url,
+                    [
+                        "controller" => GenericController::class,
+                        "view"       => "generic",
+                        'resolvers'  => [
+                            'route' => RouteResolver::class,
+                        ],
+                        'tags'       => explode(',', $route->tags),
+                    ],
+                    $route->slug
+                );
+            }
         }
     }
 

@@ -20,7 +20,7 @@ class Generic extends Provider
     public function routes()
     {
         return [
-            'url'    => [
+            /*'url'    => [
                 '/generic' => [
                     'view'       => 'generic',
                     'controller' => GenericController::class,
@@ -29,7 +29,7 @@ class Generic extends Provider
                         'route' => RouteResolver::class,
                     ],
                 ],
-            ],
+            ],*/
             'method' => [
                 GenericService::class . '::addRoutesFromDb',
             ],

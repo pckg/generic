@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service\Generic;
 
 use Exception;
+use Pckg\Framework\Router\Command\ResolveDependencies;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
 use Pckg\Generic\Record\Content;
@@ -99,6 +100,13 @@ class Action
                         $setting->pivot->resolve($args);
                     }
                 );
+            }
+
+            if (isset($args['resolvers'])) {
+                $resolved = (new ResolveDependencies(router(), $args['resolvers']))->execute();
+                foreach ($resolved as $key => $val) {
+                    $args[$key] = $val;
+                }
             }
 
             /**

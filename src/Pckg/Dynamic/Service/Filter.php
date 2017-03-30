@@ -7,6 +7,7 @@ use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
@@ -156,11 +157,8 @@ class Filter extends AbstractService
         ];
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
-            if (!is_array($filter['value']) && in_array($filter['method'], ['in', 'notIn'])) {
-                $filter['value'] = explode(',', $filter['value']);
-            }
-
-            $entity->where($filter['field'], $filter['value'], $signMapper[$filter['method']]);
+            $field = (new Fields())->where('id', $filter['field'])->oneOrFail();
+            $entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
         }
 
         /**

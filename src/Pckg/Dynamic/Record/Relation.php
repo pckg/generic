@@ -73,7 +73,7 @@ class Relation extends DatabaseRecord
                     }
 
                     return [
-                        'key'   => $record->id,
+                        'key'   => $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'},
                         'value' => $eval,
                     ];
                 }
