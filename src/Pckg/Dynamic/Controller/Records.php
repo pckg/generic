@@ -29,7 +29,6 @@ use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
-use Pckg\Manager\Cache;
 use Pckg\Manager\Upload;
 use Throwable;
 
@@ -391,12 +390,18 @@ class Records extends Controller
 
         flash('dynamic.records.add.success', __('dynamic.records.add.success'));
 
-        return $this->response()->respondWithSuccessRedirect($newRecord ? $newRecord->getEditUrl() : $record->getEditUrl());
+        return $this->response()
+                    ->respondWithSuccessRedirect($newRecord ? $newRecord->getEditUrl() : $record->getEditUrl());
     }
 
     public function postCloneAction(Record $record, Table $table)
     {
-        $clonedRecord = $record->duplicate($table->createEntity());
+        $clones = between(post('clones'), 1, 99);
+
+        while ($clones > 0) {
+            $clonedRecord = $record->duplicate($table->createEntity());
+            $clones--;
+        }
 
         $clonedRecord::$dynamicTable = $table;
 

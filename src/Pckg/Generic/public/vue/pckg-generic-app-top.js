@@ -33,3 +33,15 @@ var pckgTimeout = {
         }
     }
 };
+
+var pckgCleanRequest = {
+    methods: {
+        cleanRequest: function(callback, name){
+            if (this['_pckgCleanRequest' + name]) {
+                this['_pckgCleanRequest' + name].abort();
+            }
+
+            this['_pckgCleanRequest' + name] = callback();
+        }
+    }
+};
