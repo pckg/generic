@@ -9,22 +9,22 @@
 <td class="field">
     <nobr>${ {{ type }}.title }</nobr>
 </td>
-<td class="filter" style="min-width: 360px;">
+<td class="filter {{ type }}" :class="['field-' + {{ type }}.id]" style="min-width: 360px;">
     <div class="form-group">
         {% if type == 'field' %}
-            <div class="col-sm-4">
+            <div class="col-sm-4 filter-method">
                 <select v-model="field.filterMethod" class="form-control">
                     <option></option>
                     <option v-for="(option,key) in filterMethods" :value="key">${ option.label }</option>
                 </select>
             </div>
-            <div class="col-sm-8" v-if="field.filterMethod">
+            <div class="col-sm-8 filter-value" v-if="field.filterMethod">
                 <template
                         v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
                     <select v-model="field.filterValue" class="form-control"
                             :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
-                        <option v-for="option in field.options"
-                                :value="option.key">${ option.value }
+                        <option v-for="(option,key) in field.options"
+                                :value="key">${ option }
                         </option>
                     </select>
                 </template>
@@ -34,14 +34,14 @@
             </div>
         {% else %}
             {# belongs to #}
-            <div class="col-sm-4">
+            <div class="col-sm-4 filter-field">
                 <select v-model="relation.filterField" class="form-control">
                     <option></option>
                     <option v-for="option in relation.fields" :value="option.id">${ option.title }</option>
                 </select>
             </div>
             <template v-if="relationFilterSelectField(relation)">
-                <div class="col-sm-4">
+                <div class="col-sm-4 filter-subfield">
                     <select v-model="relation.filterSubField" class="form-control">
                         <option></option>
                         <option v-for="option in relationFilterSelectField(relation).fields" :value="option.id">${ option.title }</option>
@@ -62,7 +62,7 @@
                 <div v-else class="col-sm-4">
                     <select v-model="relation.filterValue" class="form-control"
                             :multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
-                        <option v-for="option in relation.filterOptions" :value="option.key">${ option.value }
+                        <option v-for="(option,key) in relation.filterOptions" :value="key">${ option }
                         </option>
                     </select>
                 </div>

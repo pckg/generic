@@ -6,28 +6,30 @@
         {% block body %}
             <p v-if="fetching">Fetching data, please wait</p>
             <table class="table table-condensed table-hover table-striped">
-                <tr>
-                    <th>Visible</th>
-                    <th style="display: none;">Position</th>
-                    <th>Field</th>
-                    <th>Filter</th>
-                    <th style="display: none;">Group by</th>
-                    <th>Order</th>
-                </tr>
-                <tr v-for="field in fields">
-                    {% include '_tabelize_config_row.twig' with {'type': 'field'} %}
-                </tr>
-                <tr>
-                    <th>Visible</th>
-                    <th style="display: none;">Position</th>
-                    <th>Relation</th>
-                    <th>Filter</th>
-                    <th style="display: none;"></th>
-                    <th></th>
-                </tr>
-                <tr v-for="relation in relations">
-                    {% include '_tabelize_config_row.twig' with {'type': 'relation'} %}
-                </tr>
+                <tbody>
+                    <tr>
+                        <th>Visible</th>
+                        <th style="display: none;">Position</th>
+                        <th>Field</th>
+                        <th>Filter</th>
+                        <th style="display: none;">Group by</th>
+                        <th>Order</th>
+                    </tr>
+                    <tr v-for="field in fields" :class="'field field-' + field.id">
+                        {% include '_tabelize_config_row.twig' with {'type': 'field'} %}
+                    </tr>
+                    <tr>
+                        <th>Visible</th>
+                        <th style="display: none;">Position</th>
+                        <th>Relation</th>
+                        <th>Filter</th>
+                        <th style="display: none;"></th>
+                        <th></th>
+                    </tr>
+                    <tr v-for="relation in relations" :class="'relation relation-' + relation.id">
+                        {% include '_tabelize_config_row.twig' with {'type': 'relation'} %}
+                    </tr>
+                </tbody>
             </table>
 
             <p><b>Filtering:</b></p>
@@ -88,6 +90,7 @@
                 this.fetching = true;
                 http.getJSON(window.location.href + '/configure', function (data) {
                     var self = this;
+                    this.fetching = false;
                     var keys = [
                         'fields', 'relations', 'filterMethods', 'directions'
                     ];
@@ -96,7 +99,6 @@
                     }.bind(this));
 
                     this.appliedRelations = this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters);
-                    this.fetching = false;
                 }.bind(this));
             },
             save: function () {

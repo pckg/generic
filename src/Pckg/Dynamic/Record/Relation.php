@@ -67,22 +67,26 @@ class Relation extends DatabaseRecord
             $entity->whereRaw(substr($relation->filter, 1, -1)); // remove "
         }
 
-        return $this->onField && $this->dynamic_relation_type_id == 1
-            ? $entity->limit(100)->all()->map(
-                function($record) use ($relation, $entity) {
-                    try {
-                        $eval = eval(' return ' . $relation->value . '; ');
-                    } catch (Throwable $e) {
-                        $eval = exception($e);
-                    }
+        $data = $this->onField && $this->dynamic_relation_type_id == 1
+            ? $entity->limit(100)
+                     ->all()
+                     ->keyBy(function($record) use ($relation) {
+                         return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
+                     })
+                     ->map(
+                         function($record) use ($relation, $entity) {
+                             try {
+                                 $eval = eval(' return ' . $relation->value . '; ');
+                             } catch (Throwable $e) {
+                                 $eval = exception($e);
+                             }
 
-                    return [
-                        'key'   => $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'},
-                        'value' => $eval,
-                    ];
-                }
-            )
+                             return $eval;
+                         }
+                     )
             : [];
+
+        return $data;
     }
 
 }

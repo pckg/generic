@@ -133,6 +133,10 @@ class Table extends DatabaseRecord
         );
         $entity->setTable($this->table);
 
+        if ($entity->isTranslatable()) {
+            $entity->joinTranslations();
+        }
+
         return $entity;
     }
 

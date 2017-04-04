@@ -29,6 +29,7 @@ use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
+use Pckg\Manager\Cache;
 use Pckg\Manager\Upload;
 use Throwable;
 

@@ -3,11 +3,12 @@
 use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
+use Pckg\Database\Relation\BelongsTo;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
-use Throwable;
 
 class Fields extends AbstractService
 {
@@ -41,49 +42,63 @@ class Fields extends AbstractService
 
     public function getAvailableFields()
     {
-        return $this->makeFields($this->table->listableFields);
+        return cache('availableFields#' . $this->table->id, function() {
+            return $this->makeFields($this->table->listableFields);
+        }, 'session', 60);
     }
 
     public function getAvailableRelations()
     {
-        $field = $this;
         $sessionRelations = $this->getSession()['relations'] ?? [];
 
-        return $this->table->relations->map(
-            function(Relation $relation) use ($field, $sessionRelations) {
-                $options = $relation->getOptions();
+        return cache('availableRelations', function() use ($sessionRelations) {
+            return $this->table->relations->map(
+                function(Relation $relation) use ($sessionRelations) {
+                    $options = $relation->getOptions();
 
-                $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
-                                                                                ->first();
+                    $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
+                                                                                    ->first();
 
-                return [
-                    'id'            => $relation->id,
-                    'title'         => $relation->title ?? $relation->showTable->table,
-                    'table'         => $relation->showTable->table,
-                    'fields'        => $this->makeFields($relation->showTable->fields, true),
-                    'type'          => $relation->dynamic_relation_type_id,
-                    'filterOptions' => [],//$options,
-                    'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
-                    'filterMethod'  => $filtered['method'] ?? null,
-                    'filterValue'   => $filtered['value'] ?? null,
-                    'filterField'   => $filtered['field'] ?? null,
-                ];
-            }
-        );
+                    return [
+                        'id'            => $relation->id,
+                        'title'         => $relation->title ?? $relation->showTable->table,
+                        'table'         => $relation->showTable->table,
+                        'fields'        => $this->makeFields($relation->showTable->fields),
+                        'type'          => $relation->dynamic_relation_type_id,
+                        'filterOptions' => $options,
+                        'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
+                        'filterMethod'  => $filtered['method'] ?? null,
+                        'filterValue'   => $filtered['value'] ?? null,
+                        'filterField'   => $filtered['field'] ?? null,
+                    ];
+                }
+            );
+        });
     }
 
     protected function makeFields(CollectionInterface $fields, $deep = false)
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
+        $relations = (new Relations())->where('on_field_id', $fields->map('id'))
+                                      ->withOnField()
+                                      ->withForeignField()
+                                      ->withShowTable(function(BelongsTo $showTable) {
+                                          $showTable->joinTranslations();
+                                          $showTable->withFields(function(HasMany $fields) {
+                                              $fields->withFieldType();
+                                          });
+                                      })
+                                      ->all()
+                                      ->keyBy('on_field_id');
 
         return $fields->map(
-            function(Field $field) use ($sessionFields, $deep) {
+            function(Field $field) use ($sessionFields, $deep, $relations) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
                 $options = [];
-
-                $relation = (new Relations())->where('on_field_id', $field->id)->one();
                 $fields = [];
+
+                $relation = $relations[$field->id] ?? null;
                 if ($relation) {
                     $options = $relation->getOptions();
                 }

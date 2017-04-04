@@ -2,7 +2,6 @@
 
 use Foolz\SphinxQL\Connection;
 use Foolz\SphinxQL\SphinxQL;
-use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Parenthesis;
@@ -12,7 +11,6 @@ use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
-use Throwable;
 
 class Filter extends AbstractService
 {
@@ -59,38 +57,11 @@ class Filter extends AbstractService
     {
         return $this->table->relations->map(
             function(Relation $relation) {
-                $entity = $relation->showTable->createEntity();
-
                 /**
                  * @T00D00 - load via ajax if possible?
                  *         - optimize related selects like ($relation->value = '$record->order->user->city->title' ;-))
                  */
-                $options = $relation->onField && $relation->dynamic_relation_type_id == 1
-                    ? $entity->limit(100)
-                             ->all()
-                             ->map(
-                                 function($record
-                                 ) use (
-                                     $relation,
-                                     $entity
-                                 ) {
-                                     try {
-                                         $eval = eval(' return ' . $relation->value . '; ');
-                                     } catch (Throwable $e) {
-                                         $eval = dev()
-                                             ? exception(
-                                                 $e
-                                             )
-                                             : $record->id;
-                                     }
-
-                                     return [
-                                         'key'   => $record->id,
-                                         'value' => $eval,
-                                     ];
-                                 },
-                                 true
-                             ) : [];
+                $options = $relation->getOptions();
 
                 return [
                     'id'            => $relation->id,
@@ -116,7 +87,8 @@ class Filter extends AbstractService
                 $options = [];
                 if ($type == 'select') {
                     $relation = $field->hasOneSelectRelation;
-                    if (false && $relation) {
+                    if ($relation) {
+                        $options = $relation->getOptions();/*
                         $options = $relation->showTable()
                                             ->createEntity()
                                             ->limit(100)
@@ -126,7 +98,7 @@ class Filter extends AbstractService
                                                 function($record) {
                                                     return $record->id;
                                                 }
-                                            )->toArray();
+                                            )->toArray();*/
                     }
                 }
 
@@ -177,28 +149,31 @@ class Filter extends AbstractService
                 if (isset($relationFilter['subfield'])) {
                     $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
 
-                    $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] . ' ' .
+                    $f = $relation->showTable->table . '.' . $field->field . ' ' .
+                         $signMapper[$relationFilter['method']] . ' ' .
                          $entity->getRepository()->getConnection()->quote($relationFilter['value']);
 
                     $entity->join(
                         'INNER JOIN ' . $relation->showTable->table,
-                        $relation->onTable->table . '.' . $relation->onField->field . ' = ' . $relation->showTable->table . '.id',
+                        $relation->onTable->table . '.' . $relation->onField->field . ' = ' .
+                        $relation->showTable->table . '.id',
                         $f
                     );
                 }
             } else if ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
-                $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] . ' ' .
+                $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] .
+                     ' ' .
                      $entity->getRepository()->getConnection()->quote($relationFilter['value']);
 
                 $entity->join(
                     'INNER JOIN ' . $relation->showTable->table,
-                    $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' . $relation->onField->field,
+                    $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
+                    $relation->onField->field,
                     $f
                 );
             }
-
         }
     }
 
