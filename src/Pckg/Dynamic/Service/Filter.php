@@ -146,7 +146,7 @@ class Filter extends AbstractService
                     $signMapper[$relationFilter['method']]
                 );
 
-                if (isset($relationFilter['subfield'])) {
+                if ($relationFilter['subfield']) {
                     $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
 
                     $f = $relation->showTable->table . '.' . $field->field . ' ' .
