@@ -28,7 +28,7 @@
                     {{ macros.relationTree(relations) }}
                 {% endif %}
 
-                <p><b>Number of clones: <input type="number" min="1" max="99" step="1" v-model="clones"/></b></p>
+                <p><b>Number of clones: <input type="number" min="1" max="99" step="1" v-model="clones" class="form-control narrow"/></b></p>
 
                 <p><a @click.prevent="cloneRecord" href="#" class="btn btn-danger">Yes, clone record</a></p>
             {% endblock %}
