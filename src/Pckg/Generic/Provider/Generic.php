@@ -2,8 +2,6 @@
 
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
-use Pckg\Generic\Controller\Generic as GenericController;
-use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
 
@@ -14,6 +12,7 @@ class Generic extends Provider
     {
         return [
             PageStructure::class,
+            GenericPaths::class,
         ];
     }
 
@@ -34,14 +33,6 @@ class Generic extends Provider
                 GenericService::class . '::addRoutesFromDb',
             ],
         ];
-    }
-
-    public function paths()
-    {
-        $paths = $this->getViewPaths();
-        $paths[] = str_replace('Generic', 'Maestro', $paths[0]);
-
-        return $paths;
     }
 
     public function viewObjects()
