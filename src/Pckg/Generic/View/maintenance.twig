@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html >
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GoNParty</title>
+    <link rel="stylesheet" href="http://gonparty.xyz/css/style.css">
+</head>
+
+<body>
+
+<!-- particles.js container -->
+<div id="text">
+    <div class="text"><img src="http://gonparty.xyz/img/logo.png" class="logo">
+        <br>
+        <p>We are temporarily offline because we are updating our website and booking system. Don't worry, we'll be back online even before you recover from the New Years celebration :)
+            <br><br>
+            <span class="seethrough">Stay tuned, we will launch our new website soon!</span>
+        </p>
+        <p class="footer">©2017 powered by <a href="http://slashmaestro.com">/maestro</a></p>
+    </div>
+</div>
+<div id="particles-js"></div>
+
+<!-- particles.js lib - https://github.com/VincentGarreau/particles.js -->
+<script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    var scriptSrc = 'js/index.js';
+    if (screen.width <= 480)
+        scriptSrc = 'js/index-480.js';
+    var script = document.createElement('script');
+    script.src = scriptSrc;
+    var head = document.getElementsByTagName('head')[0];
+    head.appendChild(script);
+</script>
+
+
+
+
+</body>
+</html>
