@@ -13,6 +13,7 @@ class Generic extends Provider
         return [
             PageStructure::class,
             GenericPaths::class,
+            GenericAssets::class,
         ];
     }
 
@@ -40,18 +41,6 @@ class Generic extends Provider
         return [
             '_menuService'   => Menu::class,
             '_pluginService' => Plugin::class,
-        ];
-    }
-
-    public function assets()
-    {
-        return [
-            'footer'    => [
-                'vue/pckg-generic-app.js',
-            ],
-            'libraries' => [
-                'vue/pckg-generic-app-top.js',
-            ],
         ];
     }
 
