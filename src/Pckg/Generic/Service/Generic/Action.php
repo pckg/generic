@@ -42,18 +42,25 @@ class Action
      */
     protected $template;
 
+    protected $width;
+
+    protected $background;
+
     /**
      * @param      $class
      * @param      $method
      * @param null $order
      */
-    public function __construct($class, $method, $args = [], $order = null, $template = null)
-    {
+    public function __construct(
+        $class, $method, $args = [], $order = null, $template = null, $width = null, $background = null
+    ) {
         $this->class = $class;
         $this->method = $method;
         $this->order = $order;
         $this->args = $args;
         $this->template = $template;
+        $this->width = $width;
+        $this->background = $background;
     }
 
     public function getOrder()
@@ -125,7 +132,7 @@ class Action
             /**
              * Allow custom template.
              */
-            if ($this->template && $result instanceof View\Twig) {
+            if ($result instanceof View\Twig && $this->template) {
                 $result->setFile($this->template);
             }
 
@@ -133,6 +140,22 @@ class Action
              * Parse view to string in all cases.
              */
             $result = (string)$result;
+
+            /**
+             * Add some width and background classes.
+             */
+            $classes = [];
+            if ($this->width) {
+                $classes[] = 'width-' . $this->width;
+            }
+
+            if ($this->background) {
+                $classes[] = 'background-' . $this->background;
+            }
+
+            if ($classes) {
+                $result = '<div class="generic-action ' . implode(' ', $classes) . '">' . $result . '</div>';
+            }
 
             /**
              * Prepare comments for dev environment.

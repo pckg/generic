@@ -4,6 +4,7 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
+use Pckg\Generic\Entity\ListItems;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
@@ -19,6 +20,8 @@ class PageStructure
 
         vueManager()->addView('Pckg/Generic:routes/_pageStructure', [
             'actionMorphForm' => $actionMorphForm,
+            'backgrounds'     => (new ListItems())->where('list_id', 'actionsMorphs.backgrounds')->all(),
+            'widths'          => (new ListItems())->where('list_id', 'actionsMorphs.widths')->all(),
         ]);
 
         return view('routes\pageStructure');
@@ -135,7 +138,7 @@ class PageStructure
          * Collect posted data.
          */
         $data = [];
-        foreach (['order'] as $key) {
+        foreach (['order', 'background', 'template', 'width', 'action_id'] as $key) {
             if (post()->has($key)) {
                 $data[$key] = post($key, null);
             }

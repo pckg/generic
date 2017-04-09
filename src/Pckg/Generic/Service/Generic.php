@@ -108,7 +108,9 @@ class Generic
                         'resolvers' => $resolvers,
                     ],
                     $action->pivot->order,
-                    $action->pivot->template
+                    $action->pivot->template,
+                    $action->pivot->width,
+                    $action->pivot->background
                 );
             }
         );
@@ -135,7 +137,9 @@ class Generic
                             'resolvers' => $resolvers,
                         ],
                         $action->pivot->order,
-                        $action->pivot->template
+                        $action->pivot->template,
+                        $action->pivot->width,
+                        $action->pivot->background
                     );
                 }
             );
@@ -149,11 +153,13 @@ class Generic
      *
      * @return Action
      */
-    public function addAction($variable, $class, $method = null, $args = [], $order = null, $template = null)
-    {
+    public function addAction(
+        $variable, $class, $method = null, $args = [], $order = null, $template = null, $width = null,
+        $background = null
+    ) {
         $block = $this->touchBlock($variable);
 
-        $block->addAction($action = new Action($class, $method, $args, $order, $template));
+        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background));
 
         return $action;
     }
