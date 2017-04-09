@@ -92,9 +92,11 @@ class CreateGenericTables extends Migration
 
         $actionsMorphs = $this->morphtable('actions', 'action_id');
         $actionsMorphs->integer('content_id')->references('contents');
-        $actionsMorphs->integer('variable_id')->references('variables');
+        $actionsMorphs->integer('variable_id')->references('variables'); // @T00D00 - move this to list_items
         $actionsMorphs->orderable();
         $actionsMorphs->varchar('template');
+        $actionsMorphs->varchar('background');
+        $actionsMorphs->varchar('width');
 
         $actionsMorphsP17n = $this->permissiontable('actions_morphs');
     }
