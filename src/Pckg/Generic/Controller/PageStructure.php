@@ -24,7 +24,7 @@ class PageStructure
             'widths'          => (new ListItems())->where('list_id', 'actionsMorphs.widths')->all(),
         ]);
 
-        return view('routes\pageStructure');
+        return view('routes/pageStructure');
     }
 
     public function getRoutesAction()
