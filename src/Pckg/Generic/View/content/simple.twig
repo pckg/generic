@@ -1,5 +1,6 @@
 <div class="pckg-generic-content-simple">
     {% if content %}
+        <h2>{{ content.title | raw }}</h2>
         {{ content.content | raw }}
     {% endif %}
 </div>
