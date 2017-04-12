@@ -29,8 +29,7 @@
                         <label class="col-md-3">Actions</label>
                         <div class="col-md-9">
                             <select class="form-control" v-model="actionsMorph.action_id">
-                                <option v-for="action in actions" :value="action.id">${ action.class } @ ${
-                                    action.method }
+                                <option v-for="action in actions" :value="action.id">${ niceActionName(action) }
                                 </option>
                             </select>
                         </div>
@@ -41,11 +40,11 @@
                             Some objects
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
                         <label class="col-md-3">Template</label>
                         <div class="col-md-9">
-                            <select class="form-control">
-                                <option value="default">Default</option>
+                            <select class="form-control" v-model="actionsMorph.template">
+                                <option v-for="template in getActionTemplates(actionsMorph.action_id)" :value="template">${ template }</option>
                             </select>
                         </div>
                     </div>
@@ -88,7 +87,7 @@
 
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'setPermissionsModal'} %}
             {% block header %}
-                Set permissions for ${ action.class } @ ${ action.method }
+                Set permissions for ${ niceActionName(action) }
             {% endblock %}
             {% block body %}
                 <table v-if="action.id">
@@ -120,8 +119,9 @@
                         <tr v-for="act in getActionsForVariable(variable)">
                             <td>
                                 <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
-                                ${ act.class } @ ${ act.method }
+                                ${ niceActionName(act) }
                             </td>
+                            <td>${ act.pivot.content_id ? act.pivot.content.title : '' }</td>
                             <td>
                                 <input type="number" class="form-control narrow" v-model="act.pivot.order"
                                        @change="timeoutUpdateActionOrder(act)"/>
@@ -200,6 +200,7 @@
                 actionsMorph: {},
                 backgrounds: {{ backgrounds.toJSON() | raw }},
                 widths: {{ widths.toJSON() | raw }},
+                templates: {{ config('pckg.generic.templates') | json_encode | raw }},
                 form: {
                     action_id: null,
                     content_id: null,
@@ -255,9 +256,9 @@
                     actions.push(action);
                 });
 
-                return actions.sort(function (action) {
-                    return action.pivot.order;
-                })
+                return actions.sort(function (a, b) {
+                    return utils.sortInt(a.pivot.order, b.pivot.order);
+                });
             },
 
             addAction: function () {
@@ -340,6 +341,31 @@
                 this.timeout('updateActionOrder' + action.pivot.id, function () {
                     this.updateActionOrder(action);
                 }.bind(this), 333);
+            },
+            niceActionName: function (action) {
+                return (action.class ? utils.last(action.class.split('\\')) + ' @ ' : '') + action.method;
+            },
+            getActionTemplates: function (actionId) {
+                var action = null;
+
+                $.each(this.actions, function(i, act){
+                    if (act.id == actionId) {
+                        action = act;
+                        return false;
+                    }
+                });
+
+                console.log(action);
+
+                if (!action) {
+                    return [];
+                }
+
+                if (!this.templates[action.class] || !this.templates[action.class][action.method]) {
+                    return [];
+                }
+
+                return this.templates[action.class][action.method];
             }
         },
         created: function () {

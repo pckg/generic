@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
@@ -64,12 +65,20 @@ class PageStructure
         return [
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-            })->map(function(Action $action) {
-                $array = $action->toArray();
-                $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                    $content->joinTranslations();
+                });
+            })
+                                    ->sortBy(function(Action $action) {
+                                        return $action->pivot->order;
+                                    })
+                                    ->map(function(Action $action) {
+                                        $array = $action->toArray();
+                                        $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                                        $array['pivot']['content'] = $action->pivot->content;
 
-                return $array;
-            }),
+                                        return $array;
+                                    }),
         ];
     }
 
