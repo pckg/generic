@@ -133,7 +133,7 @@ class Action
              * Allow custom template.
              */
             if ($result instanceof View\Twig && $this->template) {
-                $result->setFile($this->template);
+                $result->setFile(str_replace(':', '/View/', $this->template));
             }
 
             /**
