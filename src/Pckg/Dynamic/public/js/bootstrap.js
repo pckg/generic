@@ -288,19 +288,17 @@ $(document).ready(function () {
                 var $input = $(this);
                 clearTimeout(searchTimeout);
                 var val = $input.val();
-                if (val && val.length >= 2) {
-                    searchTimeout = setTimeout(function () {
-                        http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
-                            var val = $select.val();
-                            $select.find('option').remove();
-                            $.each(data.records, function (key, val) {
-                                $select.append('<option value="' + key + '">' + val + '</option>');
-                            });
-                            $select.val(val);
-                            $select.selectpicker('refresh');
+                searchTimeout = setTimeout(function () {
+                    http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
+                        var val = $select.val();
+                        $select.find('option').remove();
+                        $.each(data.records, function (key, val) {
+                            $select.append('<option value="' + key + '">' + val + '</option>');
                         });
-                    }, 500);
-                }
+                        $select.val(val);
+                        $select.selectpicker('refresh');
+                    });
+                }, 500);
             });
         }
     });
