@@ -169,7 +169,7 @@ $(document).ready(function () {
         }
     }
 
-    affixFromTop();
+    //affixFromTop();
     collapsedHoverOn();
 
     tinymce.baseURL = '/bower_components/tinymce/';

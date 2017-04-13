@@ -26,18 +26,8 @@
             <thead>
             <tr>
                 <th v-for="field in fields"
-                    :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''"
-                    class="affix-thead-container">
-                    <div class="affix-thead-fixed" @click.prevent="togglefield(field.id)">
-                        <div>
-                            ${ field.title }
-                                <span v-if="sort.field == field.id">
-                                    <i class="fa"
-                                       :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-                                </span>
-                        </div>
-                    </div>
-                    <div class="affix-thead-static" @click.prevent="togglefield(field.id)">
+                    :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
+                    <div @click.prevent="togglefield(field.id)">
                         ${ field.title }
                             <span v-if="sort.field == field.id">
                                 <i class="fa"
@@ -45,25 +35,22 @@
                             </span>
                     </div>
                 </th>
-                <th class="text-right affix-thead-container">
-                    <div class="affix-thead-fixed">
+                <th class="text-right">
+                    <div>
                         <div>
                             {{ __('select_all') }}
                         </div>
                     </div>
-                    <div class="affix-thead-static">
-                        {{ __('select_all') }}
-                    </div>
                 </th>
-                <th class="affix-thead-container">
-                    <div class="affix-thead-fixed">
+                <th>
+                    <div>
                         <div>
                             <input type="checkbox" @click="checkAll"
                                    v-model="allChecked"
                                    value="1"/>
                         </div>
                     </div>
-                    <div class="affix-thead-static">
+                    <div>
                         <input type="checkbox" @click="checkAll"
                                v-model="allChecked"
                                value="1"/>
