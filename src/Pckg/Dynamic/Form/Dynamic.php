@@ -364,7 +364,6 @@ class Dynamic extends Bootstrap
             'id',
             'hidden',
             'email',
-            'password',
             'text',
             'textarea',
             'editor',
@@ -471,6 +470,16 @@ class Dynamic extends Bootstrap
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
 
             return $element;
+        } elseif (in_array($type, ['password'])) {
+            $element = $this->addPassword($name);
+
+            $element->setAttribute('autocomplete', 'off');
+            $element->readonly();
+            $element->setAttribute(
+                'onfocus',
+                "if (this.hasAttribute('readonly')) { this.removeAttribute('readonly'); this.blur(); this.focus(); }"
+            );
+
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
             return $this->addText($name);
         } elseif (in_array($type, ['json'])) {
