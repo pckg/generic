@@ -480,6 +480,7 @@ class Dynamic extends Bootstrap
                 "if (this.hasAttribute('readonly')) { this.removeAttribute('readonly'); this.blur(); this.focus(); }"
             );
 
+            return $element;
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
             return $this->addText($name);
         } elseif (in_array($type, ['json'])) {
