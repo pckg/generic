@@ -102,7 +102,8 @@ class Dynamic extends Bootstrap
     public function populatePasswords(DatabaseRecord $record)
     {
         $data = $this->getData();
-        if (!isset($data['password'])) {
+
+        if (!isset($data['password']) || empty($data['password'])) {
             return;
         }
 
@@ -135,7 +136,7 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - field language_id could/will interfere with main table fields ...
          */
-        $sessionLanguageId = session()->pckg_dynamic_lang_id;
+        $sessionLanguageId = $_SESSION['pckg_dynamic_lang_id'];
         $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')
              ->setValue($languageId)
@@ -222,7 +223,6 @@ class Dynamic extends Bootstrap
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
-                $fields->withFieldType();
                 $fields->withPermissions();
                 $fields->withHasOneSelectRelation(
                     function(HasOne $relation) {

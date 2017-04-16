@@ -129,7 +129,7 @@ class Table extends DatabaseRecord
             function() use ($entityClass, $repository, $alias) {
                 return new $entityClass($repository, $alias);
             },
-            session()->pckg_dynamic_lang_id
+            $_SESSION['pckg_dynamic_lang_id']
         );
         $entity->setTable($this->table);
 

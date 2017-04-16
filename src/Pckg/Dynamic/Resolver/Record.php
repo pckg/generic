@@ -35,11 +35,7 @@ class Record implements RouteResolver
         $this->dynamic->joinTranslationsIfTranslatable($tablesEntity);
         $this->dynamic->joinPermissionsIfPermissionable($tablesEntity);
 
-        $listableFields = $table->listableFields(
-            function(HasMany $relation) {
-                $relation->withFieldType();
-            }
-        );
+        $listableFields = $table->listableFields;
         $listableFields->each(
             function(FieldRecord $field) use ($tablesEntity) {
                 if ($field->fieldType->slug == 'geo') {

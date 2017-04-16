@@ -2,15 +2,12 @@
 
 use Pckg\Database\Entity;
 use Pckg\Database\Record as DatabaseRecord;
-use Pckg\Database\Record\Extension\Permissionable;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
 
 class Field extends DatabaseRecord
 {
-
-    use Permissionable;
 
     protected $entity = Fields::class;
 

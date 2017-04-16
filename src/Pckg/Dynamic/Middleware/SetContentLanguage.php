@@ -5,8 +5,8 @@ class SetContentLanguage
 
     public function execute(callable $next)
     {
-        if (!session()->pckg_dynamic_lang_id) {
-            session()->pckg_dynamic_lang_id = config('pckg.locale.language');
+        if (!isset($_SESSION['pckg_dynamic_lang_id'])) {
+            $_SESSION['pckg_dynamic_lang_id'] = config('pckg.locale.language');
         }
 
         return $next();

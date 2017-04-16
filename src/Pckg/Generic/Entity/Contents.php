@@ -3,8 +3,6 @@
 namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Translatable;
-use Pckg\Database\Repository;
 use Pckg\Generic\Record\Content;
 
 /**
@@ -14,8 +12,6 @@ use Pckg\Generic\Record\Content;
  */
 class Contents extends Entity
 {
-
-    use Translatable;
 
     /**
      * @var

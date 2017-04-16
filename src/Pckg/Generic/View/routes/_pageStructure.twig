@@ -112,7 +112,7 @@
 
             {% embed 'Pckg/Generic/View/panel.twig' %}
                 {% block content %}
-                    <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction">
+                    <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction(variable)">
                         <i class="fa fa-plus"></i>
                     </a>
                     <table class="table table-condensed">
@@ -178,6 +178,7 @@
                 layout: {},
                 layoutActions: [],
                 variables: [],
+                variable: {},
                 userGroups: [
                     {
                         id: 1,
@@ -261,7 +262,8 @@
                 });
             },
 
-            addAction: function () {
+            addAction: function (variable) {
+                this.variable = variable;
                 $('#pageStructureModal').modal('show');
             },
             openDeleteActionModal: function (action) {

@@ -1,14 +1,11 @@
 <?php namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Record\Relation;
 
 class Relations extends DatabaseEntity
 {
-
-    use Translatable;
 
     protected $record = Relation::class;
 

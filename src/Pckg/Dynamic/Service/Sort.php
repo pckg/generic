@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Service;
 
 use Pckg\Database\Entity;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Field;
 
 class Sort extends AbstractService
@@ -38,11 +39,7 @@ class Sort extends AbstractService
     public function applyOnEntity(Entity $entity)
     {
         if (get('field') && get('dir')) {
-            $field = $this->table->listableFields->first(
-                function(Field $field) {
-                    return $field->id == get('field');
-                }
-            );
+            $field = Field::getOrFail(['id' => get('field')]);
 
             $directionMapper = [
                 'up'   => 'ASC',

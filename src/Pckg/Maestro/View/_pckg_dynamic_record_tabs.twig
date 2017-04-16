@@ -70,7 +70,7 @@
 
     {% for tab in tabs %}
     Vue.component('dynamic-tab-{{ tab.id }}', function (resolve) {
-        http.getJSON('{{ tab.getUrl() }}?html=1', function (data) {
+        http.getJSON('{{ tabelize.getTabUrl(tab) }}?html=1', function (data) {
             $('body').append(data.vue);
 
             resolve({

@@ -2,8 +2,6 @@
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Orderable;
-use Pckg\Database\Entity\Extension\Permissionable;
-use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Generic\Entity\Settings;
@@ -12,7 +10,7 @@ use Pckg\Generic\Entity\SettingsMorphs;
 class Fields extends DatabaseEntity
 {
 
-    use Translatable, Orderable, Permissionable;
+    use Orderable;
 
     protected $record = Field::class;
 
@@ -24,6 +22,8 @@ class Fields extends DatabaseEntity
     {
         $this->joinTranslations();
         $this->joinFallbackTranslation();
+        $this->withFieldType();
+        $this->withSettings();
     }
 
     /**

@@ -42,16 +42,16 @@ class Fields extends AbstractService
 
     public function getAvailableFields()
     {
-        return cache('availableFields#' . $this->table->id, function() {
+        //return cache('availableFields#' . $this->table->id, function() {
             return $this->makeFields($this->table->listableFields);
-        }, 'session', 60);
+        //}, 'app', 60);
     }
 
     public function getAvailableRelations()
     {
         $sessionRelations = $this->getSession()['relations'] ?? [];
 
-        return cache('availableRelations', function() use ($sessionRelations) {
+        //return cache('availableRelations', function() use ($sessionRelations) {
             return $this->table->relations->map(
                 function(Relation $relation) use ($sessionRelations) {
                     $options = $relation->getOptions();
@@ -73,7 +73,7 @@ class Fields extends AbstractService
                     ];
                 }
             );
-        });
+        //});
     }
 
     protected function makeFields(CollectionInterface $fields, $deep = false)
@@ -84,9 +84,7 @@ class Fields extends AbstractService
                                       ->withForeignField()
                                       ->withShowTable(function(BelongsTo $showTable) {
                                           $showTable->joinTranslations();
-                                          $showTable->withFields(function(HasMany $fields) {
-                                              $fields->withFieldType();
-                                          });
+                                          $showTable->withFields();
                                       })
                                       ->all()
                                       ->keyBy('on_field_id');

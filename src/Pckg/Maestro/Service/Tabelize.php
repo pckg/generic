@@ -2,8 +2,8 @@
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record as DatabaseRecord;
+use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Service\Plugin;
@@ -76,6 +76,12 @@ class Tabelize
 
     protected $table;
 
+    protected $dynamicTable;
+
+    protected $dynamicRecord;
+
+    protected $dynamicRelation;
+
     protected $listableFields = [];
 
     protected $listableRelations = [];
@@ -99,12 +105,26 @@ class Tabelize
         return $this;
     }
 
+    public function setDynamicRecord($record)
+    {
+        $this->dynamicRecord = $record;
+
+        return $this;
+    }
+
+    public function setDynamicRelation($relation)
+    {
+        $this->dynamicRelation = $relation;
+
+        return $this;
+    }
+
     public function getTable()
     {
         if (!$this->table) {
             return new Record(['title' => $this->title]);
         }
-        
+
         return $this->table;
     }
 
@@ -533,11 +553,20 @@ class Tabelize
                 $method = is_string($recordAction)
                     ? $recordAction
                     : $recordAction->slug;
-                if ($method && method_exists($record, 'get' . Convention::toPascal($method) . 'Url')) {
-                    $transformed[$method . 'Url'] = $record->{'get' . Convention::toPascal($method) . 'Url'}();
+
+                if (router()->hasUrl('dynamic.record.' . $method)) {
+                    $transformed[$method . 'Url'] = url('dynamic.record.' . $method, [
+                        'record' => $record,
+                        'table'  => $this->table,
+                    ]);
                 }
-                if ($method && method_exists($record, 'get' . Convention::toPascal($method) . 'TranslationUrl')) {
-                    $transformed[$method . 'TranslationUrl'] = $record->{'get' . Convention::toPascal($method) . 'TranslationUrl'}();
+
+                if (router()->hasUrl('dynamic.record.' . $method . 'Translation')) {
+                    $transformed[$method . 'Url'] = url('dynamic.record.' . $method . 'Translation', [
+                        'record'   => $record,
+                        'table'    => $this->table,
+                        'language' => $_SESSION['pckg_dynamic_lang_id'],
+                    ]);
                 }
             }
             $transformed = array_merge($record->getToArrayValues(), $transformed);
@@ -597,9 +626,111 @@ class Tabelize
         }
 
         try {
-            return $this->getEntity()->{'get' . ucfirst($slug) . 'Url'}(...$params);
+            return $this->{'get' . ucfirst($slug) . 'Url'}(...$params);
         } catch (Throwable $e) {
         }
+    }
+
+    public function getResetViewUrl()
+    {
+        return url(
+            'dynamic.record.view.reset',
+            [
+                'table' => $this->table,
+            ]
+        );
+    }
+
+    public function getShareViewUrl()
+    {
+        return url(
+            'dynamic.record.view.share',
+            [
+                'table' => $this->table,
+            ]
+        );
+    }
+
+    public function getSaveViewUrl()
+    {
+        return url(
+            'dynamic.record.view.save',
+            [
+                'table' => $this->table,
+            ]
+        );
+    }
+
+    public function getImportUrl()
+    {
+        return url(
+            'dynamic.record.import',
+            [
+                'table' => $this->table,
+            ]
+        );
+    }
+
+    public function getExportUrl($type)
+    {
+        return url(
+            'dynamic.record.export',
+            [
+                'table' => $this->table,
+                'type'  => $type,
+            ]
+        );
+    }
+
+    public function getAddUrl()
+    {
+        if ($this->dynamicRelation && $this->dynamicRecord) {
+            return url(
+                'dynamic.record.add.related',
+                [
+                    'table'    => $this->table,
+                    'relation' => $this->dynamicRelation,
+                    'foreign'  => $this->dynamicRecord,
+                ]
+            );
+        }
+
+        return url(
+            'dynamic.record.add',
+            [
+                'table' => $this->table,
+            ]
+        );
+    }
+
+    public function getSavedViews()
+    {
+        return $this->getDynamicTable()->views;
+    }
+
+    public function getDynamicTable()
+    {
+        if (!$this->table) {
+            $this->table = (new Tables())->where('framework_entity', get_class($this->entity))->oneOrFail(
+                function() {
+                    response()->notFound('Dynamic table is missing');
+                }
+            );
+        }
+
+        return $this->table;
+    }
+
+    public function getTabUrl($tab)
+    {
+        return url(
+            'dynamic.record.tab',
+            [
+                'tab'    => $tab,
+                'table'  => $this->table,
+                'record' => $this->dynamicRecord,
+            ]
+        );
     }
 
 }

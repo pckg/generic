@@ -11,6 +11,7 @@ use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
 use Pckg\Dynamic\Resolver\ForeignRecord;
 use Pckg\Dynamic\Resolver\Language;
+use Pckg\Dynamic\Resolver\Record;
 use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
 use Pckg\Dynamic\Resolver\Tab as TabResolver;
@@ -100,6 +101,7 @@ class Dynamic extends Provider
                             'resolvers' => [
                                 'table'    => TableResolver::class,
                                 'relation' => Relation::class,
+                                'foreign'  => Record::class,
                             ],
                         ],
                         '/dynamic/records/view/[table]/[record]'                                        => [

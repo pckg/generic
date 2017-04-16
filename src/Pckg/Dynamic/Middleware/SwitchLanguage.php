@@ -6,7 +6,7 @@ class SwitchLanguage
     public function execute(callable $next)
     {
         if (request()->isPost() && post()->switch_language) {
-            session()->pckg_dynamic_lang_id = post()->language_id;
+            $_SESSION['pckg_dynamic_lang_id'] = post()->language_id;
             redirect();
         }
 

@@ -39,12 +39,7 @@ class Table implements RouteResolver
                                       $relations->joinFallbackTranslation();
                                   }
                               )
-                              ->withFields(
-                                  function(HasMany $fields) {
-                                      $fields->withFieldType();
-                                      $fields->withSettings();
-                                  }
-                              )
+                              ->withFields()
                               ->withTabs(
                                   function(HasMany $tabs) {
                                       $tabs->joinTranslation();

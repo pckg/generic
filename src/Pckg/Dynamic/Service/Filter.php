@@ -137,7 +137,10 @@ class Filter extends AbstractService
          * @T00D00 - join translations
          */
         foreach ($session['relations']['filters'] ?? [] as $relationFilter) {
-            $relation = (new Relations())->where('id', $relationFilter['relation'])->one();
+            $relation = (new Relations())->withOnField()
+                                         ->withShowTable()
+                                         ->withOnTable()
+                                         ->where('id', $relationFilter['relation'])->one();
 
             if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
                 $entity->where(

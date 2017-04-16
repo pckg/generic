@@ -79,7 +79,7 @@ class Dynamic
     public function joinTranslationsIfTranslatable($entity)
     {
         if ($entity->isTranslatable()) {
-            if (method_exists($entity, 'isTranslated') && $entity->isTranslated()) {
+            if ($entity->isTranslated()) {
                 return;
             }
 

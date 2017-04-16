@@ -3,10 +3,8 @@
 namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphsMany;
-use Pckg\Database\Repository;
 use Pckg\Generic\Record\Route;
 
 /**
@@ -16,8 +14,6 @@ use Pckg\Generic\Record\Route;
  */
 class Routes extends Entity
 {
-
-    use Translatable;
 
     /**
      * @var

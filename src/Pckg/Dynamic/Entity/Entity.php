@@ -1,11 +1,6 @@
 <?php namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Database\Entity\Extension\Paginatable;
-use Pckg\Database\Entity\Extension\Permissionable;
-use Pckg\Database\Entity\Extension\Deletable;
-use Pckg\Database\Entity\Extension\Translatable;
-use Pckg\Dynamic\Entity\Snippet\EntityActions;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
@@ -18,8 +13,6 @@ use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
  */
 class Entity extends DatabaseEntity implements MaestroEntity
 {
-
-    use EntityActions, Translatable, Permissionable;
 
     protected $record = Record::class;
 

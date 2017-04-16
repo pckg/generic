@@ -4,18 +4,18 @@
         <i class="fa fa-bars" aria-hidden="true"></i> {{ __('view') }}
     </a>
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a href="{{ tabelize.getEntity().getResetViewUrl() }}">{{ __('default_view') }}</a></li>
-        {% if tabelize.getEntity.getSavedViews() %}
+        <li><a href="{{ tabelize.getResetViewUrl() }}">{{ __('default_view') }}</a></li>
+        {% if tabelize.getSavedViews() %}
             <li role="separator" class="divider"></li>
-            {% for view in tabelize.getEntity().getSavedViews() %}
+            {% for view in tabelize.getSavedViews() %}
                 <li><a href="{{ view.tableViewUrl }}">{{ view.title ? view.title : ('Saved view #' ~ view.id) }}</a>
                 </li>
             {% endfor %}
         {% endif %}
         <li role="separator" class="divider"></li>
         <li><a href="#" class="customizeView" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('customize') }}</a></li>
-        <li><a href="{{ tabelize.getEntity().getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('save_current_view') }}</a></li>
+        <li><a href="{{ tabelize.getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('save_current_view') }}</a></li>
         <li role="separator" class="divider"></li>
-        <li><a href="{{ tabelize.getEntity().getShareViewUrl() }}" class="popup-iframe"><i class="fa fa-share" aria-hidden="true"></i> {{ __('share_current_view') }}</a></li>
+        <li><a href="{{ tabelize.getShareViewUrl() }}" class="popup-iframe"><i class="fa fa-share" aria-hidden="true"></i> {{ __('share_current_view') }}</a></li>
     </ul>
 </div>

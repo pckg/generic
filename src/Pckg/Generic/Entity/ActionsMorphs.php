@@ -1,14 +1,10 @@
 <?php namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Permissionable;
-use Pckg\Database\Repository;
 use Pckg\Generic\Record\ActionsMorph;
 
 class ActionsMorphs extends Entity
 {
-
-    use Permissionable;
 
     protected $record = ActionsMorph::class;
 

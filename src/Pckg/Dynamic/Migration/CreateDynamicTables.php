@@ -71,8 +71,9 @@ class CreateDynamicTables extends Migration
         $dynamicFields->integer('dynamic_table_id')->references('dynamic_tables');
         $dynamicFields->integer('dynamic_field_group_id')->references('dynamic_field_groups');
         $dynamicFields->integer('order');
-        $dynamicFields->boolean('visible');
-        $dynamicFields->boolean('searchable');
+        $dynamicFields->boolean('visible'); // visible by default on listings
+        $dynamicFields->boolean('searchable'); // searchable in quick search
+        $dynamicFields->boolean('customizable'); // group by, order by, filter by, ...?
         $dynamicFields->orderable();
 
         $dynamicFieldsI18n = $this->translatable('dynamic_fields');

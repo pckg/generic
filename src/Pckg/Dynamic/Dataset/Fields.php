@@ -12,11 +12,7 @@ class Fields
 
     public function getListableFieldsForTable(Table $table)
     {
-        return $table->listableFields(
-            function(HasMany $relation) {
-                $relation->withFieldType();
-            }
-        );
+        return $table->listableFields;
     }
 
     public function getFieldsTransformations(Collection $fields, Entity $entity)

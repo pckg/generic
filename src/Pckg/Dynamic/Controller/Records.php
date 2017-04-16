@@ -141,7 +141,9 @@ class Records extends Controller
         DatabaseEntity $entity = null,
         $viewType = 'full',
         $returnTabelize = false,
-        Tab $tab = null
+        Tab $tab = null,
+        $dynamicRecord = null,
+        $dynamicRelation = null
     ) {
         if (!$dynamicService) {
             $dynamicService = $this->dynamic;
@@ -171,11 +173,6 @@ class Records extends Controller
         $dynamicService->applyOnEntity($entity);
 
         /**
-         * This is used for URLs.
-         */
-        $entity->setStaticDynamicTable($tableRecord);
-
-        /**
          * Join extensions.
          */
         $dynamicService->joinTranslationsIfTranslatable($entity);
@@ -185,10 +182,14 @@ class Records extends Controller
         /**
          * Get all relations for fields with type (select).
          */
+        $fieldsDataset = new Fields();
+        $listableFields = $fieldsDataset->getListableFieldsForTable($tableRecord);
+        $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
         $relations = (new Relations())->withShowTable()
                                       ->withOnField()
                                       ->where('on_table_id', $tableRecord->id)
                                       ->where('dynamic_relation_type_id', 1)
+                                      ->where('on_field_id', $listedFields->map('id'))
                                       ->all();
 
         foreach ($relations as $relation) {
@@ -222,13 +223,11 @@ class Records extends Controller
          */
         $dynamicService->getFilterService()->filterByGet($entity);
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        $fieldsDataset = new Fields();
-        $listableFields = $fieldsDataset->getListableFieldsForTable($tableRecord);
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
 
         /**
          * @T00D00
-         *  - find out joins / scopes / withs for field type = php
+         *  - find out joins / scopes / withs for field type = php and mysql
          */
         $records = $entity->count()->all();
         $total = $records->total();
@@ -242,7 +241,7 @@ class Records extends Controller
                          ->setTitle($tableRecord->getListTitle())
                          ->setEntity($entity)
                          ->setRecords($records)
-                         ->setFields($tableRecord->getFields($listableFields, $dynamicService->getFilterService()))
+                         ->setFields($listedFields)
                          ->setPerPage(get('perPage', 50))
                          ->setPage(1)
                          ->setTotal($total)
@@ -250,7 +249,9 @@ class Records extends Controller
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
-                         ->setFieldTransformations($fieldTransformations);
+                         ->setFieldTransformations($fieldTransformations)
+                         ->setDynamicRecord($dynamicRecord)
+                         ->setDynamicRelation($dynamicRelation);
 
         if ($returnTabelize) {
             return $tabelize;
@@ -385,13 +386,13 @@ class Records extends Controller
             flash('dynamic.records.upload.success', __('dynamic.records.upload.success'));
         }
 
-        Record::$dynamicTable = $table;
-        $record::$dynamicTable = $table;
-
         flash('dynamic.records.add.success', __('dynamic.records.add.success'));
 
         return $this->response()
-                    ->respondWithSuccessRedirect($newRecord ? $newRecord->getEditUrl() : $record->getEditUrl());
+                    ->respondWithSuccessRedirect(url('dynamic.record.edit', [
+                        'record' => $newRecord ?? $record,
+                        'table'  => $table,
+                    ]));
     }
 
     public function postCloneAction(Record $record, Table $table)
@@ -421,11 +422,7 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table)
     {
-        $listableFields = $table->listableFields(
-            function(HasMany $relation) {
-                $relation->withFieldType();
-            }
-        );
+        $listableFields = $table->listableFields;
         if (!$listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
         }
@@ -473,11 +470,6 @@ class Records extends Controller
             $functionizes = [];
         }
 
-        $record::$dynamicTable = $table;
-
-        Tab::$dynamicRecord = $record;
-        Tab::$dynamicTable = $table;
-
         $actions = $table->getRecordActions();
 
         ksort($tabelizes);
@@ -494,7 +486,8 @@ class Records extends Controller
                          ->setRecordActions($table->getRecordActions())
                          ->setViews($table->actions()->keyBy('slug'))
                          ->setFields($listableFields)
-                         ->setFieldTransformations($fieldTransformations);
+                         ->setFieldTransformations($fieldTransformations)
+                         ->setDynamicRecord($record);
 
         $data = [
             'formalize'    => $formalize,
@@ -557,8 +550,6 @@ class Records extends Controller
                     $entity = $relation->showTable->createEntity();
                 }
 
-                $entity->setStaticDynamicRecord($record);
-                $entity->setStaticDynamicRelation($relation);
                 $relation->applyRecordFilterOnEntity($record, $entity);
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $tableId)->one(),
@@ -566,7 +557,9 @@ class Records extends Controller
                     $entity,
                     'related',
                     false,
-                    $tab
+                    $tab,
+                    $record,
+                    $relation
                 );
 
                 $tabelizes[] = is_array($tabelize) ? \json_encode($tabelize) : (string)$tabelize;

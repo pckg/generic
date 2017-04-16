@@ -110,10 +110,10 @@ class PageStructure
         return response()->respondWithAjaxSuccess();
     }
 
-    public function deleteActionsMorphAction($actionsMorph)
+    public function deleteActionsMorphAction(ActionsMorph $actionsMorph)
     {
-        //(new ActionsMorphs())->where('id', $actionsMorph)->delete();
-
+        $actionsMorph->delete();
+        
         return response()->respondWithAjaxSuccess();
     }
 

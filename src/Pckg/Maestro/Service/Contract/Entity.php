@@ -3,6 +3,4 @@
 interface Entity
 {
 
-    public function getAddUrl();
-
 }
