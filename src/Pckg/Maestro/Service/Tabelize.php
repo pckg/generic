@@ -562,7 +562,7 @@ class Tabelize
                 }
 
                 if (router()->hasUrl('dynamic.record.' . $method . 'Translation')) {
-                    $transformed[$method . 'Url'] = url('dynamic.record.' . $method . 'Translation', [
+                    $transformed[$method . 'TranslationUrl'] = url('dynamic.record.' . $method . 'Translation', [
                         'record'   => $record,
                         'table'    => $this->table,
                         'language' => $_SESSION['pckg_dynamic_lang_id'],
