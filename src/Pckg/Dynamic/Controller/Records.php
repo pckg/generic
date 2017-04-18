@@ -404,11 +404,12 @@ class Records extends Controller
             $clones--;
         }
 
-        $clonedRecord::$dynamicTable = $table;
-
         return $this->response()->respondWithSuccess(
             [
-                'clonedUrl' => $clonedRecord->getViewUrl(),
+                'clonedUrl' => url('dynamic.record.edit', [
+                    'table'  => $table,
+                    'record' => $clonedRecord,
+                ]),
             ]
         );
     }
