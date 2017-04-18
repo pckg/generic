@@ -8,9 +8,8 @@
     <h2>
         {{ formalize.getTitle() | raw }}
         {% if not formalize.getForm().isEditable() and record.id %}
-            <a href="{{ record.editUrl }}" class="btn btn-info pull-right">Edit</a>
+            <a href="{{ formalize.getEditUrl() }}" class="btn btn-info pull-right">Edit</a>
         {% elseif record.id %}
-            [record actions from list
         {% endif %}
     </h2>
 

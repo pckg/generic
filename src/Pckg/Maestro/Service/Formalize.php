@@ -21,6 +21,8 @@ class Formalize
      */
     protected $title;
 
+    protected $table;
+
     /**
      * Formalize constructor.
      *
@@ -45,6 +47,13 @@ class Formalize
         return $this->title;
     }
 
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
     public function getForm()
     {
         return $this->form;
@@ -60,6 +69,14 @@ class Formalize
                 'formalize' => $this,
             ]
         );
+    }
+
+    public function getEditUrl()
+    {
+        return url('dynamic.record.edit', [
+            'table'  => $this->table,
+            'record' => $this->record,
+        ]);
     }
 
 }

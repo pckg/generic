@@ -1,9 +1,1 @@
-{% set table = tabelize.getEntity().getTable() %}
-
-{% do _vueManager.addView('Pckg/Maestro:_pckg_chart') %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: actions, table: table }) %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions', { recordActions: actions }) %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_custom', { table: table }) %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_dynamic_record_tabs', { tabelize: tabelize, formalize: formalize, tabs: tabs, table: table, tabelizes: tabelizes, functionizes: functionizes, record: record }) %}
-
 <pckg-dynamic-record-tabs></pckg-dynamic-record-tabs>

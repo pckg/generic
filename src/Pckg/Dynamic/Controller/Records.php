@@ -457,7 +457,8 @@ class Records extends Controller
         $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' .
                  ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
 
-        $formalize = $this->formalize($form, $record, $title);
+        $formalize = $this->formalize($form, $record, $title)
+                          ->setTable($table);
 
         /**
          * We also have to return related tables.
@@ -499,14 +500,31 @@ class Records extends Controller
             'tabs'         => $tabs,
         ];
 
+        $this->vueManager()->addView('Pckg/Maestro:_pckg_chart')
+             ->addView('_pckg_maestro_actions_template', [
+                 'recordActions' => $actions,
+             ])
+             ->addView('Pckg/Maestro:_pckg_maestro_actions', ['recordActions' => $actions])
+             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom', ['table' => $table->table])
+             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
+                 'tabelize'     => $tabelize,
+                 'formalize'    => $formalize,
+                 'tabs'         => $tabs,
+                 'table'        => $table->table,
+                 'tabelizes'    => $tabelizes,
+                 'functionizes' => $functionizes,
+                 'record'       => $record,
+             ]);
+
         return view(
             $tabs->count() ? 'edit/tabs' : 'edit/singular',
             $data
         );
     }
 
-    public function getTabAction(Record $record, Table $table, Tab $tab, \Pckg\Dynamic\Service\Dynamic $dynamicService)
-    {
+    public function getTabAction(
+        Record $record, Table $table, Tab $tab, \Pckg\Dynamic\Service\Dynamic $dynamicService
+    ) {
         $relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
@@ -602,8 +620,9 @@ class Records extends Controller
         );
     }
 
-    protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, DatabaseEntity $entity)
-    {
+    protected function getTabelizesAndFunctionizes(
+        $tabs, $record, Table $table, DatabaseEntity $entity
+    ) {
         $relations = $table->hasManyRelation(
             function(HasMany $query) {
                 $query->where('dynamic_relation_type_id', 2);
@@ -696,8 +715,9 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    protected function saveP17n(Record $record, Entity $entity)
-    {
+    protected function saveP17n(
+        Record $record, Entity $entity
+    ) {
         $p17n = $this->post()->p17n;
 
         if (isset($p17n['table'])) {
@@ -742,24 +762,27 @@ class Records extends Controller
         }
     }
 
-    public function getDeleteAction(Record $record, Table $table)
-    {
+    public function getDeleteAction(
+        Record $record, Table $table
+    ) {
         $entity = $table->createEntity();
         $record->delete($entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getDeleteTranslationAction(Record $record, Table $table, Language $language)
-    {
+    public function getDeleteTranslationAction(
+        Record $record, Table $table, Language $language
+    ) {
         $entity = $table->createEntity();
         $record->deleteTranslation($language->slug, $entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getForceDeleteAction(Record $record)
-    {
+    public function getForceDeleteAction(
+        Record $record
+    ) {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->forceDelete($entity);
@@ -767,8 +790,9 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getToggleFieldAction(Table $table, Field $field, Record $record, $state)
-    {
+    public function getToggleFieldAction(
+        Table $table, Field $field, Record $record, $state
+    ) {
         if ($field->fieldType->slug == 'boolean') {
             $record->{$field->field} = $state
                 ? 1
@@ -790,8 +814,9 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getOrderFieldAction(Table $table, Field $field, Record $record, $order)
-    {
+    public function getOrderFieldAction(
+        Table $table, Field $field, Record $record, $order
+    ) {
         $record->{$field->field} = $order;
 
         $record->save($table->createEntity());
@@ -799,18 +824,21 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function postUploadAction(Table $table, Record $record = null, Field $field)
-    {
+    public function postUploadAction(
+        Table $table, Record $record = null, Field $field
+    ) {
         return $this->processUpload($table, $record, $field);
     }
 
-    public function postUploadNewAction(Table $table, Field $field)
-    {
+    public function postUploadNewAction(
+        Table $table, Field $field
+    ) {
         return $this->processUpload($table, null, $field);
     }
 
-    public function postUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
-    {
+    public function postUploadNewForeignAction(
+        Table $table, Field $field, Record $record, Relation $relation
+    ) {
         return $this->processUpload($table, null, $field, $relation, $record);
     }
 
@@ -871,5 +899,4 @@ class Records extends Controller
             'url'     => img($filename, null, true, $dir),
         ];
     }
-
 }
