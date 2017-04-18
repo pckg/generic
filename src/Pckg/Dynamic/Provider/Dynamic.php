@@ -101,7 +101,7 @@ class Dynamic extends Provider
                             'resolvers' => [
                                 'table'    => TableResolver::class,
                                 'relation' => Relation::class,
-                                'foreign'  => Record::class,
+                                'foreign'  => ForeignRecord::class,
                             ],
                         ],
                         '/dynamic/records/view/[table]/[record]'                                        => [

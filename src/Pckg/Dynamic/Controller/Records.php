@@ -4,6 +4,7 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -285,7 +286,7 @@ class Records extends Controller
         Table $table,
         Record $record,
         Relation $relation = null,
-        $foreign = null
+        DatabaseRecord $foreign = null
     ) {
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
@@ -297,9 +298,9 @@ class Records extends Controller
         $form->setRelation($relation);
 
         if ($foreign && $relation->on_field_id) {
-            $record->{$relation->onField->field} = $foreign;
+            $record->{$relation->onField->field} = $foreign->id;
             $form->setForeignFieldId($relation->on_field_id);
-            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
+            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign->id)->one());
         }
 
         $form->setTable($table);
@@ -331,7 +332,7 @@ class Records extends Controller
         Table $table,
         Record $record,
         Relation $relation = null,
-        $foreign = null
+        DatabaseRecord $foreign = null
     ) {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
@@ -339,9 +340,9 @@ class Records extends Controller
         $record->setEntity($entity);
 
         if ($foreign && $relation->on_field_id) {
-            $record->{$relation->onField->field} = $foreign;
+            $record->{$relation->onField->field} = $foreign->id;
             $form->setForeignFieldId($relation->on_field_id);
-            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign)->one());
+            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign->id)->one());
         }
 
         $form->setTable($table);
@@ -390,8 +391,8 @@ class Records extends Controller
 
         return $this->response()
                     ->respondWithSuccessRedirect(url('dynamic.record.edit', [
-                        'record' => $newRecord ?? $record,
                         'table'  => $table,
+                        'record' => $newRecord ?? $record,
                     ]));
     }
 
