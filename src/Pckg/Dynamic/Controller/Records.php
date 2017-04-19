@@ -220,6 +220,13 @@ class Records extends Controller
         }
 
         /**
+         * Filter records by $_GET['search']
+         */
+        $dynamicService->getFilterService()->filterByGet($entity);
+        $groups = $dynamicService->getGroupService()->getAppliedGroups();
+        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
+        
+        /**
          * Also, try optimizing php fields. ;-)
          */
         $listedFields->each(function(Field $field) use ($entity) {
@@ -229,13 +236,6 @@ class Records extends Controller
                 $entity->{'select' . ucfirst($field->field) . 'Field'}();
             }
         });
-
-        /**
-         * Filter records by $_GET['search']
-         */
-        $dynamicService->getFilterService()->filterByGet($entity);
-        $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
 
         /**
          * @T00D00
