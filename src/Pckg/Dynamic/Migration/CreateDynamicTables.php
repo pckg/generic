@@ -75,6 +75,7 @@ class CreateDynamicTables extends Migration
         $dynamicFields->boolean('searchable'); // searchable in quick search
         $dynamicFields->boolean('customizable'); // group by, order by, filter by, ...?
         $dynamicFields->orderable();
+        $dynamicFields->boolean('preload');
 
         $dynamicFieldsI18n = $this->translatable('dynamic_fields');
         $dynamicFieldsI18n->title();
@@ -106,6 +107,7 @@ class CreateDynamicTables extends Migration
         $dynamicRelations->integer('over_table_id')->references('dynamic_tables')->nullable();
         $dynamicRelations->integer('left_foreign_key_id')->references('dynamic_fields')->nullable();
         $dynamicRelations->integer('right_foreign_key_')->references('dynamic_fields')->nullable();
+        $dynamicRelations->boolean('preload');
 
         $dynamicRelationsI18n = $this->translatable('dynamic_relations');
         $dynamicRelationsI18n->title();
