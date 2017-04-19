@@ -220,6 +220,17 @@ class Records extends Controller
         }
 
         /**
+         * Also, try optimizing php fields. ;-)
+         */
+        $listedFields->each(function(Field $field) use ($entity) {
+            if ($field->fieldType->slug == 'php' &&
+                method_exists($entity, 'select' . ucfirst($field->field) . 'Field')
+            ) {
+                $entity->{'select' . ucfirst($field->field) . 'Field'}();
+            }
+        });
+
+        /**
          * Filter records by $_GET['search']
          */
         $dynamicService->getFilterService()->filterByGet($entity);
