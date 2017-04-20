@@ -225,7 +225,7 @@ class Records extends Controller
         $dynamicService->getFilterService()->filterByGet($entity);
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
         $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
-        
+
         /**
          * Also, try optimizing php fields. ;-)
          */
