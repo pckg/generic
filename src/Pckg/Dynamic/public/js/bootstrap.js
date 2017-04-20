@@ -178,8 +178,9 @@ $(document).ready(function () {
         $('#' + selector).append('<div class="manual-dropzone"></div>');
         var manualDropzone = $('#' + selector).parent().find('.manual-dropzone');
         return tinymce.init({
-            selector: '#' + selector, height: 500,
-            relative_urls: false,
+            selector: '#' + selector,
+            height: 500,
+            convert_urls: false,
             theme: 'modern',
             plugins: [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
