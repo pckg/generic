@@ -373,7 +373,7 @@ class Records extends Controller
         $form->populatePasswords($record);
 
         if ($record->language_id) {
-            $lang = (new Lang())->setLangId($record->language_id);
+            $lang = (new Lang($record->language_id));
             $entity->setTranslatableLang($lang);
         }
 
@@ -383,6 +383,7 @@ class Records extends Controller
                 continue;
             }
             $data = array_merge($uploadedData, $record->data());
+            unset($data['id']);
             $newRecord = new $record($data);
             $newRecord->save($entity);
             unset($_SESSION[Records::class]['upload'][$i]);

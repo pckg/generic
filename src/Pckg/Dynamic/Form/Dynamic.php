@@ -420,16 +420,7 @@ class Dynamic extends Bootstrap
             $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
-                $this->record->id
-                    ? url(
-                    'dynamic.records.field.upload',
-                    [
-                        'table'  => $this->table,
-                        'field'  => $field,
-                        'record' => $this->record,
-                    ]
-                )
-                    : ($this->relation && $this->foreignRecord
+                ($this->relation && $this->foreignRecord
                     ? url(
                         'dynamic.records.field.upload.newForeign',
                         [
@@ -439,13 +430,22 @@ class Dynamic extends Bootstrap
                             'record'   => $this->foreignRecord,
                         ]
                     )
-                    : url(
-                        'dynamic.records.field.upload.new',
-                        [
-                            'table' => $this->table,
-                            'field' => $field,
-                        ]
-                    ))
+                    : ($this->record->id
+                        ? url(
+                            'dynamic.records.field.upload',
+                            [
+                                'table'  => $this->table,
+                                'field'  => $field,
+                                'record' => $this->record,
+                            ]
+                        )
+                        : url(
+                            'dynamic.records.field.upload.new',
+                            [
+                                'table' => $this->table,
+                                'field' => $field,
+                            ]
+                        )))
             );
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
             $element->setAttribute(
