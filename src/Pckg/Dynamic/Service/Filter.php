@@ -130,6 +130,23 @@ class Filter extends AbstractService
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
             $field = (new Fields())->where('id', $filter['field'])->oneOrFail();
+
+            if ($field->fieldType->slug == 'boolean') {
+                $entity->where($field->field, $filter['value'] ? 1 : null, $signMapper[$filter['method']]);
+                continue;
+            }
+
+            if ($field->fieldType->slug == 'php') {
+                if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
+                    //$subquery = $entity->{'select' . ucfirst($field->field) . 'Field'}();
+                    //$subquery->addSelect(['order_id']);
+                    //$entity->join($subquery, 'isLateWithPayment.id = orders.id', $field->field);
+                    //$entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
+                    $entity->where('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
+                    continue;
+                }
+            }
+
             $entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
         }
 
