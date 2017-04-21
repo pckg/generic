@@ -295,7 +295,7 @@ class Records extends Controller
     public function getAddAction(
         Dynamic $form,
         Table $table,
-        Record $record,
+        Record $record = null,
         Relation $relation = null,
         DatabaseRecord $foreign = null
     ) {
@@ -304,6 +304,7 @@ class Records extends Controller
         }
 
         $tableEntity = $table->createEntity();
+        $record = $record ? $tableEntity->transformRecordToEntities($record) : $tableEntity->getRecord();
         $record->setEntity($tableEntity);
 
         $form->setRelation($relation);
@@ -317,7 +318,6 @@ class Records extends Controller
         $form->setTable($table);
         $form->setRecord($record);
         $form->initFields();
-
         $form->populateFromRecord($record);
 
         if ($tableEntity->isTranslatable()) {
@@ -338,16 +338,24 @@ class Records extends Controller
         );
     }
 
+    /**
+     * @param Dynamic             $form - resolved by injection
+     * @param Table               $table - resolved from url
+     * @param Record              $record
+     * @param Relation|null       $relation - resolved from url
+     * @param DatabaseRecord|null $foreign - resolved from url
+     *
+     * @return \Pckg\Framework\Response
+     */
     public function postAddAction(
         Dynamic $form,
         Table $table,
-        Record $record,
+        Record $record = null,
         Relation $relation = null,
         DatabaseRecord $foreign = null
     ) {
-        $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
-        $record = $entity->transformRecordToEntities($record);
+        $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();
         $record->setEntity($entity);
 
         if ($foreign && $relation->on_field_id) {
