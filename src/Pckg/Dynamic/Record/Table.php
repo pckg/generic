@@ -119,7 +119,7 @@ class Table extends DatabaseRecord
     /**
      * @return Entity
      */
-    public function createEntity($alias = null)
+    public function createEntity($alias = null, $extensions = true)
     {
         $repository = $this->getRepository();
         $entityClass = $this->framework_entity
@@ -133,7 +133,7 @@ class Table extends DatabaseRecord
         );
         $entity->setTable($this->table);
 
-        if ($entity->isTranslatable()) {
+        if ($extensions && $entity->isTranslatable()) {
             $entity->joinTranslations();
         }
 

@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Service;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Service\Filter as FilterService;
 use Pckg\Dynamic\Service\Group as GroupService;
 use Pckg\Dynamic\Service\Sort as OrderService;
@@ -76,19 +77,15 @@ class Dynamic
         }
     }
 
-    public function joinTranslationsIfTranslatable($entity)
+    public function joinTranslationsIfTranslatable(Entity $entity)
     {
         if ($entity->isTranslatable()) {
             if ($entity->isTranslated()) {
                 return;
             }
 
-            $session = $this->session;
-            $entity->joinTranslations(
-                function(Entity $entity) use ($session) {
-                    $entity->setTranslatableLang((new Lang())->setLangId($session->pckg_dynamic_lang_id));
-                }
-            );
+            $entity->setTranslatableLang((new Lang($_SESSION['pckg_dynamic_lang_id'])));
+            $entity->joinTranslations();
         }
     }
 

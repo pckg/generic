@@ -156,7 +156,7 @@ class Records extends Controller
         $dynamicService->setTable($tableRecord);
 
         if (!$entity) {
-            $entity = $tableRecord->createEntity();
+            $entity = $tableRecord->createEntity(null, false);
 
             $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
                    . path('ds') . 'View' . path('ds');
