@@ -468,7 +468,9 @@ class Tabelize
         try {
             $string = '';
 
-            $string .= '<!-- start tabelize -->' . $this->view->autoparse() . '<!-- end tabelize -->';
+            $string .= '<!-- start tabelize -->';
+            $string .= $this->view->autoparse();
+            $string .= '<!-- end tabelize -->';
 
             /**
              * @T00D00 ... scripts should be added to vue manager
