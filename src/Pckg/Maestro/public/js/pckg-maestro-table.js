@@ -70,7 +70,7 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             this.$parent.recordAction(record, action);
         },
         checkAll: function () {
-            if (!this.allChecked) {
+            if (this.allChecked) {
                 $.each(this.records, function (i, record) {
                     this.ids.push(record.id);
                 }.bind(this));
