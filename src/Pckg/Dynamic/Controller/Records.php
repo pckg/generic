@@ -512,24 +512,37 @@ class Records extends Controller
                          ->setFieldTransformations($fieldTransformations)
                          ->setDynamicRecord($record);
 
-        $this->vueManager()->addView('Pckg/Maestro:_pckg_chart')
-             ->addView('_pckg_maestro_actions_template', [
-                 'recordActions' => $actions,
-                 'table'         => $table->table,
-             ])
-             ->addView('Pckg/Maestro:_pckg_maestro_actions', ['recordActions' => $actions])
-             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom', ['table' => $table->table])
-             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
-                 'tabelize'     => $tabelize,
-                 'formalize'    => $formalize,
-                 'tabs'         => $tabs,
-                 'table'        => $table->table,
-                 'tabelizes'    => $tabelizes,
-                 'functionizes' => $functionizes,
-                 'record'       => $record,
-             ]);
+        $this->vueManager()
+             ->addView('Pckg/Maestro:_pckg_chart')
+             ->addView('Pckg/Maestro:_pckg_maestro_actions_template',
+                       [
+                           'recordActions' => $actions,
+                           'table'         => $table->table,
+                       ]
+             )
+             ->addView('Pckg/Maestro:_pckg_maestro_actions',
+                       [
+                           'recordActions' => $actions,
+                       ]
+             )
+             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom',
+                       [
+                           'table' => $table->table,
+                       ]
+             )
+             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs',
+                       [
+                           'tabelize'     => $tabelize,
+                           'formalize'    => $formalize,
+                           'tabs'         => $tabs,
+                           'table'        => $table->table,
+                           'tabelizes'    => $tabelizes,
+                           'functionizes' => $functionizes,
+                           'record'       => $record,
+                       ]
+             );
 
-        return view('edit/tabs');
+        return view('edit/tabs', ['tabelize' => $tabelize]);
     }
 
     public function getTabAction(
