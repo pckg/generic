@@ -339,11 +339,11 @@ class Records extends Controller
     }
 
     /**
-     * @param Dynamic             $form - resolved by injection
-     * @param Table               $table - resolved from url
+     * @param Dynamic             $form     - resolved by injection
+     * @param Table               $table    - resolved from url
      * @param Record              $record
      * @param Relation|null       $relation - resolved from url
-     * @param DatabaseRecord|null $foreign - resolved from url
+     * @param DatabaseRecord|null $foreign  - resolved from url
      *
      * @return \Pckg\Framework\Response
      */
@@ -512,19 +512,10 @@ class Records extends Controller
                          ->setFieldTransformations($fieldTransformations)
                          ->setDynamicRecord($record);
 
-        $data = [
-            'formalize'    => $formalize,
-            'tabelize'     => $tabelize,
-            'tabelizes'    => $tabelizes,
-            'functionizes' => $functionizes,
-            'record'       => $record,
-            'actions'      => $actions,
-            'tabs'         => $tabs,
-        ];
-
         $this->vueManager()->addView('Pckg/Maestro:_pckg_chart')
              ->addView('_pckg_maestro_actions_template', [
                  'recordActions' => $actions,
+                 'table'         => $table->table,
              ])
              ->addView('Pckg/Maestro:_pckg_maestro_actions', ['recordActions' => $actions])
              ->addView('Pckg/Maestro:_pckg_maestro_actions_custom', ['table' => $table->table])
@@ -538,10 +529,7 @@ class Records extends Controller
                  'record'       => $record,
              ]);
 
-        return view(
-            $tabs->count() ? 'edit/tabs' : 'edit/singular',
-            $data
-        );
+        return view('edit/tabs');
     }
 
     public function getTabAction(
