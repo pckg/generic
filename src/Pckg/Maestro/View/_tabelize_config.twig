@@ -41,6 +41,8 @@
                 <li>&gt;= - record value is greater or the same as filter value</li>
                 <li>&gt; - record value is greater than filter value</li>
                 <li>NOT - record value doesn't match filter value</li>
+                <li>NULL - record value is empty</li>
+                <li>NOT NULL - record value is not empty</li>
             </ul>
             <p>Additionally, you can filter fields with collection operators like IN and NOT IN, separated by comma.
                 Examples:
@@ -88,7 +90,7 @@
             },
             fetchData: function () {
                 this.fetching = true;
-                http.getJSON(window.location.href + '/configure', function (data) {
+                http.getJSON('{{ tabelize.getTable().getViewUrl() }}/configure', function (data) {
                     var self = this;
                     this.fetching = false;
                     var keys = [
@@ -165,7 +167,7 @@
                     }
                 });
 
-                http.post(window.location.href + '/configure', data, function (json) {
+                http.post('{{ tabelize.getTable().getViewUrl() }}/configure', data, function (json) {
                     $dispatcher.$emit('notification:success', 'Ok, saved');
                 });
             },

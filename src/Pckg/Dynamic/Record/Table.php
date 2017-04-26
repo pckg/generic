@@ -78,6 +78,10 @@ class Table extends DatabaseRecord
         );
     }
 
+    public function getListUrl() {
+        return url('dynamic.record.list', ['table' => $this]);
+    }
+
     public function getHasManyRelation()
     {
         return $this->relationExists('hasManyRelation')
