@@ -126,6 +126,8 @@ class Filter extends AbstractService
             'in'              => 'IN',
             'notIn'           => 'NOT IN',
             'like'            => 'LIKE',
+            'isNull'          => 'IS NULL',
+            'notNull'         => 'NOT NULL',
         ];
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
@@ -286,6 +288,12 @@ class Filter extends AbstractService
             ],
             'like'            => [
                 'label' => 'LIKE',
+            ],
+            'isNull'          => [
+                'label' => 'NULL',
+            ],
+            'notNull'         => [
+                'label' => 'NOT NULL',
             ],
         ];
     }

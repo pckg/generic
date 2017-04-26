@@ -28,7 +28,7 @@
                         </option>
                     </select>
                 </template>
-                <template v-else>
+                <template v-else-if="['isNull', 'notNull'].indexOf(field.filterMethod) == -1">
                     <input type="text" v-model="field.filterValue" class="form-control"/>
                 </template>
             </div>
