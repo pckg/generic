@@ -73,7 +73,7 @@
     </template>
     <div v-if="first">
         <pckg-dynamic-paginator :ref="'maestro-paginator'"
-                                :per-page="paginator.perPage"
+                                :initial-per-page="paginator.perPage"
                                 :initial-page="computed(paginator.page)"
                                 :total="paginator.total"
                                 :url="paginator.url"

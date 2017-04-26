@@ -4,7 +4,6 @@ use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Database\Relation\BelongsTo;
-use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
@@ -43,7 +42,7 @@ class Fields extends AbstractService
     public function getAvailableFields()
     {
         //return cache('availableFields#' . $this->table->id, function() {
-            return $this->makeFields($this->table->listableFields);
+        return $this->makeFields($this->table->listableFields);
         //}, 'app', 60);
     }
 
@@ -52,27 +51,27 @@ class Fields extends AbstractService
         $sessionRelations = $this->getSession()['relations'] ?? [];
 
         //return cache('availableRelations', function() use ($sessionRelations) {
-            return $this->table->relations->map(
-                function(Relation $relation) use ($sessionRelations) {
-                    $options = $relation->getOptions();
+        return $this->table->relations->map(
+            function(Relation $relation) use ($sessionRelations) {
+                $options = $relation->getOptions();
 
-                    $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
-                                                                                    ->first();
+                $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
+                                                                                ->first();
 
-                    return [
-                        'id'            => $relation->id,
-                        'title'         => $relation->title ?? $relation->showTable->table,
-                        'table'         => $relation->showTable->table,
-                        'fields'        => $this->makeFields($relation->showTable->fields),
-                        'type'          => $relation->dynamic_relation_type_id,
-                        'filterOptions' => $options,
-                        'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
-                        'filterMethod'  => $filtered['method'] ?? null,
-                        'filterValue'   => $filtered['value'] ?? null,
-                        'filterField'   => $filtered['field'] ?? null,
-                    ];
-                }
-            );
+                return [
+                    'id'            => $relation->id,
+                    'title'         => $relation->title ?? $relation->showTable->table,
+                    'table'         => $relation->showTable->table,
+                    'fields'        => $this->makeFields($relation->showTable->fields),
+                    'type'          => $relation->dynamic_relation_type_id,
+                    'filterOptions' => $options,
+                    'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
+                    'filterMethod'  => $filtered['method'] ?? null,
+                    'filterValue'   => $filtered['value'] ?? null,
+                    'filterField'   => $filtered['field'] ?? null,
+                ];
+            }
+        );
         //});
     }
 
@@ -80,6 +79,7 @@ class Fields extends AbstractService
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
         $relations = (new Relations())->where('on_field_id', $fields->map('id'))
+                                      ->where('on_table_id', $fields->first()->dynamic_table_id)
                                       ->withOnField()
                                       ->withForeignField()
                                       ->withShowTable(function(BelongsTo $showTable) {

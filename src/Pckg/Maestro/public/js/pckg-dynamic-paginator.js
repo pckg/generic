@@ -2,7 +2,7 @@ Vue.component('pckg-dynamic-paginator', {
     template: '#pckg-dynamic-paginator',
     mixins: [pckgDelimiters],
     props: {
-        perPage: 0,
+        initialPerPage: 0,
         initialPage: 0,
         total: 0,
         url: null,
@@ -23,6 +23,7 @@ Vue.component('pckg-dynamic-paginator', {
             margin: 5,
             limits: [50, 100, 250, 500, 1000],
             page: this.initialPage,
+            perPage: this.initialPerPage,
             groups: this.initialGroups,
             records: this.initialRecords
         };
