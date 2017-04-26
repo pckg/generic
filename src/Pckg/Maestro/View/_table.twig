@@ -64,28 +64,60 @@
                     this.records = data.records;
                 }.bind(this));
             },
-            getUrlParams: function (params) {
+            setUrlParams: function (params) {
                 params = params || {};
-                if (!params.search && this.search) {
-                    params.search = this.search;
+
+                if (params.search) {
+                    this.search = params.search;
                 }
-                if (!params.sort && this.sort.field) {
-                    params.field = this.sort.field;
-                    params.dir = this.sort.dir;
+
+                if (params.sort) {
+                    this.sort.field = params.sort;
                 }
-                if (!params.page && this.paginator.page) {
-                    params.page = this.paginator.page;
+
+                if (params.dir) {
+                    this.sort.dir = params.dir;
                 }
-                if (!params.perPage && this.paginator.perPage) {
-                    params.perPage = this.paginator.perPage;
+
+                if (params.page) {
+                    this.paginator.page = params.page;
                 }
-                if (Object.keys(params).length == 0) {
+
+                if (params.perPage) {
+                    this.paginator.perPage = params.perPage;
+                }
+            },
+            getUrlParams: function () {
+                var finalParams = {};
+
+                if (this.search.length > 0) {
+                    finalParams.search = this.search;
+                }
+
+                if (this.sort.dir.length > 0) {
+                    finalParams.dir = this.sort.dir;
+                }
+
+                if (this.sort.field.length > 0) {
+                    finalParams.field = this.sort.field;
+                }
+
+                if (this.paginator.page > 0) {
+                    finalParams.page = this.paginator.page;
+                }
+
+                if (this.paginator.perPage > 0) {
+                    finalParams.perPage = this.paginator.perPage;
+                }
+
+                if (Object.keys(finalParams).length == 0) {
                     return '';
                 }
-                return '?' + $.param(params);
+                return '?' + $.param(finalParams);
             },
             resetPaginatorUrl: function (preset) {
-                this.paginator.url = '{{ searchUrl }}' + this.getUrlParams(preset);
+                this.setUrlParams(preset);
+                this.paginator.url = '{{ searchUrl }}' + this.getUrlParams();
 
                 this.delaySearch();
             },
