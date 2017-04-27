@@ -13,7 +13,7 @@ class Content
          * Get content, set it to proper view.
          */
         return view(
-            'content\simple',
+            'Pckg/Generic:content/simple',
             [
                 'content' => $content,
             ]
