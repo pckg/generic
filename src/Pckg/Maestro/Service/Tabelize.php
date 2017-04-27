@@ -281,7 +281,7 @@ class Tabelize
         try {
             if (is_string($field)) {
                 return $originalRecord->{$field};
-            } else if (is_callable($field)) {
+            } else if (is_only_callable($field)) {
                 return $field($originalRecord);
             }
 
