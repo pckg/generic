@@ -26,19 +26,18 @@ class View extends Controller
 
     public function getSaveViewAction(Table $table)
     {
-        return view(
-            'Pckg/Dynamic:view/save',
-            [
-                'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(
-                ),
-                'saveCurrentViewUrl' => url(
-                    'dynamic.record.view.save',
-                    [
-                        'table' => $table,
-                    ]
-                ),
-            ]
-        );
+        vueManager()->addView('Pckg/Dynamic:view/_save', [
+            'table'              => $table,
+            'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(),
+            'saveCurrentViewUrl' => url(
+                'dynamic.record.view.save',
+                [
+                    'table' => $table,
+                ]
+            ),
+        ]);
+
+        return view('Pckg/Dynamic:view/save');
     }
 
     public function postSaveViewAction(Table $table)
@@ -46,7 +45,6 @@ class View extends Controller
         if ($id = $this->post()->get('id')) {
             $view = (new TableViews())->where('id', $id)->oneOrFail();
             $view->loadFromSession();
-
         } else {
             $view = new TableView(
                 [
@@ -55,7 +53,6 @@ class View extends Controller
                 ]
             );
             $view->loadFromSession();
-
         }
 
         $view->save();
@@ -65,18 +62,13 @@ class View extends Controller
 
     public function getResetViewAction(Table $table)
     {
-        /**
-         * @T00D00
-         */
-        $_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] = [];
-
-        return $this->response()->redirect(-1);
+        $_SESSION['pckg']['dynamic']['view']['table_' . $table->id . '_']['view'] = [];
 
         return $this->response()->redirect(
             url(
                 'dynamic.record.list',
                 [
-                    'table' => $view->table,
+                    'table' => $table,
                 ]
             )
         );

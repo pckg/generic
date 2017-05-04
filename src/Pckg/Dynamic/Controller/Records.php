@@ -91,7 +91,7 @@ class Records extends Controller
         /**
          * Set table.
          */
-        $this->dynamic->setView($tableView);
+        $dynamicService->setView($tableView);
         $tableView->loadToSession();
 
         return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType);
