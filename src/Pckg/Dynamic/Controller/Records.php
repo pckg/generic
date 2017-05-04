@@ -39,34 +39,28 @@ class Records extends Controller
     use Maestro;
 
     /**
-     * @var DynamicService
-     */
-    protected $dynamic;
-
-    /**
      * @var Plugin
      */
     protected $pluginService;
 
     public function __construct(
-        DynamicService $dynamic,
         Plugin $pluginService
     ) {
-        $this->dynamic = $dynamic;
         $this->pluginService = $pluginService;
     }
 
     public function getSelectListAction(
         Table $table,
         Field $field,
-        Record $record = null
+        Record $record = null,
+        DynamicService $dynamicService
     ) {
         $collection = new Collection();
         $collection->push(' -- select value --', null);
         $search = get('search');
-        $this->dynamic->setTable($table);
+        $dynamicService->setTable($table);
         if ($search) {
-            $relation = $field->getFilteredRelationForSelect($record, null, $this->dynamic);
+            $relation = $field->getFilteredRelationForSelect($record, null, $dynamicService);
         } else {
             $relation = $field->getRelationForSelect($record);
         }
@@ -103,18 +97,18 @@ class Records extends Controller
         DatabaseEntity $entity = null,
         $viewType = 'full'
     ) {
-        $this->dynamic->setTable($tableRecord);
+        $dynamicService->setTable($tableRecord);
         $dynamicService->setTable($tableRecord);
         $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
 
-        $fields = $this->dynamic->getFieldsService()->getAvailableFields();
-        $relations = $this->dynamic->getFieldsService()->getAvailableRelations();
+        $fields = $dynamicService->getFieldsService()->getAvailableFields();
+        $relations = $dynamicService->getFieldsService()->getAvailableRelations();
 
         return [
             'fields'        => $fields,
             'relations'     => $relations,
-            'directions'    => $this->dynamic->getSortService()->getDirections(),
-            'filterMethods' => $this->dynamic->getFilterService()->getTypeMethods(),
+            'directions'    => $dynamicService->getSortService()->getDirections(),
+            'filterMethods' => $dynamicService->getFilterService()->getTypeMethods(),
         ];
     }
 
@@ -138,7 +132,7 @@ class Records extends Controller
      */
     public function getViewTableAction(
         Table $tableRecord,
-        DynamicService $dynamicService = null,
+        DynamicService $dynamicService,
         DatabaseEntity $entity = null,
         $viewType = 'full',
         $returnTabelize = false,
@@ -146,10 +140,6 @@ class Records extends Controller
         $dynamicRecord = null,
         $dynamicRelation = null
     ) {
-        if (!$dynamicService) {
-            $dynamicService = $this->dynamic;
-        }
-
         /**
          * Set table so sub-services can reuse it later.
          */
@@ -582,7 +572,7 @@ class Records extends Controller
         );
         $tabelizes = [];
         $relations->each(
-            function(Relation $relation) use ($record, &$tabelizes, $dynamicService, $tab) {
+            function(Relation $relation) use ($record, &$tabelizes, $tab) {
                 $entity = null;
                 $tableId = $relation->over_table_id ?? $relation->show_table_id;
                 if ($relation->over_table_id) {
@@ -591,10 +581,11 @@ class Records extends Controller
                     $entity = $relation->showTable->createEntity();
                 }
 
+                $dynamicService = Reflect::create(DynamicService::class);
                 $relation->applyRecordFilterOnEntity($record, $entity);
                 $tabelize = $this->getViewTableAction(
                     (new Tables())->where('id', $tableId)->one(),
-                    $this->dynamic,
+                    $dynamicService,
                     $entity,
                     'related',
                     false,
@@ -663,9 +654,10 @@ class Records extends Controller
                 $tableResolver = Reflect::create(\Pckg\Dynamic\Resolver\Table::class);
                 $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
 
+                $dynamicService = Reflect::create(DynamicService::class);
                 $tabelize = $recordsController->getViewTableAction(
                     $table,
-                    $this->dynamic,
+                    $dynamicService,
                     $entity
                 );
 
