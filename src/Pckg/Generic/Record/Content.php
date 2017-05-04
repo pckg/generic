@@ -27,4 +27,15 @@ class Content extends Record
         return img($this->picture, 'contents');
     }
 
+    public function getSetting($key = null)
+    {
+        if ($key == 'content') {
+            return true;
+        }
+
+        if ($key == 'heading') {
+            return 'h2';
+        }
+    }
+
 }
