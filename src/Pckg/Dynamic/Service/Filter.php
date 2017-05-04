@@ -145,8 +145,8 @@ class Filter extends AbstractService
                     //$entity->join($subquery, 'isLateWithPayment.id = orders.id', $field->field);
                     //$entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
                     $entity->where('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
-                    continue;
                 }
+                continue;
             }
 
             $entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
