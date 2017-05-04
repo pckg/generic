@@ -1,6 +1,20 @@
 <div class="pckg-generic-content-simple">
-    {% if content %}
-        <h2>{{ content.title | raw }}</h2>
-        {{ content.content | raw }}
-    {% endif %}
+    <div class="row {{ content.getSetting('noPadding') ? 'no-padding' : '' }}">
+        {% if content.getSetting('picture') and content.getSetting('picturePosition') == 'left' %}
+            <div class="{{ content.getSetting('pictureWidth') }} {{ content.getSetting('pictureOffset') }}">
+                <img src="{{ content.picture }}" class="img-responsive"/>
+            </div>
+        {% endif %}
+        {% if content.getSetting('content') %}
+            <div class="{{ content.getSetting('contentWidth') }} {{ content.getSetting('contentOffset') }}">
+                <{{ content.getSetting('heading') }}>{{ content.title | raw }}</{{ content.getSetting('heading') }}>
+                {{ content.content | raw }}
+            </div>
+        {% endif %}
+        {% if content.getSetting('picture') and content.getSetting('picturePosition') == 'right' %}
+            <div class="{{ content.getSetting('pictureWidth') }} {{ content.getSetting('pictureOffset') }}">
+                <img src="{{ content.picture }}" class="img-responsive"/>
+            </div>
+        {% endif %}
+    </div>
 </div>

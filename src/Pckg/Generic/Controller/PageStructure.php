@@ -2,6 +2,7 @@
 
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
+use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
@@ -15,14 +16,15 @@ use Pckg\Generic\Record\ActionsMorph;
 class PageStructure
 {
 
-    public function getPageStructureAction(ActionMorph $actionMorphForm)
+    public function getPageStructureAction(ActionMorph $actionMorphForm, Simple $simpleContentForm)
     {
         $actionMorphForm->initFields();
 
         vueManager()->addView('Pckg/Generic:routes/_pageStructure', [
-            'actionMorphForm' => $actionMorphForm,
-            'backgrounds'     => (new ListItems())->where('list_id', 'actionsMorphs.backgrounds')->all(),
-            'widths'          => (new ListItems())->where('list_id', 'actionsMorphs.widths')->all(),
+            'actionMorphForm'   => $actionMorphForm,
+            'simpleContentForm' => $simpleContentForm,
+            'backgrounds'       => (new ListItems())->where('list_id', 'actionsMorphs.backgrounds')->all(),
+            'widths'            => (new ListItems())->where('list_id', 'actionsMorphs.widths')->all(),
         ]);
 
         return view('routes/pageStructure');
@@ -113,7 +115,7 @@ class PageStructure
     public function deleteActionsMorphAction(ActionsMorph $actionsMorph)
     {
         $actionsMorph->delete();
-        
+
         return response()->respondWithAjaxSuccess();
     }
 

@@ -67,6 +67,8 @@
                         </div>
                     </div>
                 </div>
+                {# this depends on selected action #}
+                {#{ simpleContentForm | raw }#}
             {% endblock %}
             {% block footer %}
                 <button class="btn btn-success" @click="saveActionsMorph">Save action</button>

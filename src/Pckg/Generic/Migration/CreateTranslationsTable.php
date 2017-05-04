@@ -7,12 +7,6 @@ class CreateTranslationsTable extends Migration
 
     public function up()
     {
-        $translationTypes = $this->table('translation_types');
-        $translationTypes->slug();
-
-        $translationTypesI18n = $this->translatable('translation_types');
-        $translationTypesI18n->title();
-
         $translations = $this->table('translations');
         $translations->slug();
 
