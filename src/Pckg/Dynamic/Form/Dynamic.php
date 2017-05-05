@@ -391,7 +391,8 @@ class Dynamic extends Bootstrap
                             '<a class="btn btn-info btn-md" title="Preview ' . $type . '" href="' .
                             $field->getPreviewFileUrlAttribute(
                                 $this->record
-                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Preview ' . $type . '</a>'
+                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Preview ' . $type .
+                            '</a>&nbsp;&nbsp;'
                         );
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
@@ -399,14 +400,15 @@ class Dynamic extends Bootstrap
                             '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' .
                             $field->getGenerateFileUrlAttribute(
                                 $this->record
-                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type . '</a>'
+                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type .
+                            '</a>&nbsp;&nbsp;'
                         );
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild(
-                            '&nbsp;&nbsp;<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' .
+                            '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' .
                             $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
-                            $this->record->{$field->field} . '</a>'
+                            $this->record->{$field->field} . '</a>&nbsp;&nbsp;'
                         );
                     }
                 }

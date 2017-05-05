@@ -2,6 +2,7 @@
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Orderable;
+use Pckg\Database\Relation\MorphsMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Generic\Entity\Settings;
@@ -23,7 +24,9 @@ class Fields extends DatabaseEntity
         $this->joinTranslations();
         $this->joinFallbackTranslation();
         $this->withFieldType();
-        $this->withSettings();
+        $this->withSettings(function(MorphsMany $settings){
+            $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
+        });
     }
 
     /**
