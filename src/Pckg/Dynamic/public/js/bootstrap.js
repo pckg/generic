@@ -69,7 +69,7 @@ $(document).ready(function () {
     /* Collapse or expand */
     function sidebarCollapseExpand() {
         //sidebar is collapsed and needs to be expanded
-        if(isSidebarCollapsed()) {
+        if (isSidebarCollapsed()) {
             $sidebar.removeClass('collapsed');
             $sidebarBg.removeClass('collapsed');
             $content.removeClass('expanded');
@@ -96,7 +96,7 @@ $(document).ready(function () {
             var $this = $(this),
                 href, target = $this.attr('data-target') || e.preventDefault() || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
 
-            if(collapsed) {
+            if (collapsed) {
                 //show submenu
                 $(target).addClass('in');
                 //add class to parent
@@ -106,7 +106,7 @@ $(document).ready(function () {
             }
             //when user leaves the submenu with mouse
             $(target).parent().on('mouseleave', function () {
-                if(collapsed) {
+                if (collapsed) {
                     //hide submenu
                     $(target).removeClass('in');
                     //remove class from parent
@@ -117,7 +117,7 @@ $(document).ready(function () {
             })
             //prevent click action on menu
                 .on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
-                    if(collapsed) {
+                    if (collapsed) {
                         e.stopPropagation();
                         return false;
                     }
@@ -172,21 +172,90 @@ $(document).ready(function () {
     //affixFromTop();
     collapsedHoverOn();
 
+    document.createElement('pc-kg');
+
+    tinymce.PluginManager.add('pckg', function (editor, url) {
+        // Add a button that opens a window
+        editor.addButton('pckgElementButton', {
+            text: 'Add 2 pckg',
+            icon: false,
+            onclick: function () {
+                // Open window
+                editor.windowManager.open({
+                    title: 'Please input text',
+                    body: [
+                        {type: 'textbox', name: 'description', label: 'Text'}
+                    ],
+                    onsubmit: function (e) {
+                        // Insert content when the window form is submitted
+                        editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:id</span>');
+                    }
+                });
+            }
+        });
+
+        // Adds a menu item to the tools menu
+        editor.addMenuItem('pckgElementMenuItem', {
+            text: 'Variables',
+            context: 'tools',
+            menu: [
+                {
+                    text: 'Order',
+                    menu: [
+                        {
+                            text: 'ID',
+                            onclick: function () {
+                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:id</span>');
+                            }
+                        },
+                        {
+                            text: 'Hash',
+                            onclick: function () {
+                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:hash</span>');
+                            }
+                        }
+                    ]
+                },
+                {
+                    text: 'Company',
+                    menu: [
+                        {
+                            text: 'Short name',
+                            onclick: function () {
+                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:short_name</span>');
+                            }
+                        },
+                        {
+                            text: 'Long name',
+                            onclick: function () {
+                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:long_name</span>');
+                            }
+                        }
+                    ]
+                }
+            ]
+        });
+    });
+
     tinymce.baseURL = '/bower_components/tinymce/';
 
     function initTinymce(selector) {
-        $('#' + selector).append('<div class="manual-dropzone"></div>');
-        var manualDropzone = $('#' + selector).parent().find('.manual-dropzone');
+        var selected = $('#' + selector);
+        selected.append('<div class="manual-dropzone"></div>');
+        var manualDropzone = selected.parent().find('.manual-dropzone');
         return tinymce.init({
+            content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
             selector: '#' + selector,
             height: 500,
             convert_urls: false,
             theme: 'modern',
+            extended_valid_elements: 'pc-kg',
+            custom_elements: 'pc-kg',
             plugins: [
                 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
                 'searchreplace wordcount visualblocks visualchars code fullscreen',
                 'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern imagetools codesample'
+                'emoticons template paste textcolor colorpicker textpattern imagetools codesample pckg noneditable'
             ],
             toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
             toolbar2: 'print preview media | forecolor backcolor emoticons | codesample',
@@ -209,7 +278,7 @@ $(document).ready(function () {
             ],
             images_upload_url: '/dynamic/uploader',
             automatic_uploads: false,
-            file_picker_callback: function(cb, value, meta){
+            file_picker_callback: function (cb, value, meta) {
                 console.log(cb, value, meta);
 
                 manualDropzone.dropzone({
@@ -221,7 +290,7 @@ $(document).ready(function () {
                         data = $.parseJSON(data);
                         console.log(file, data);
 
-                        cb(data.url, { title: null, class: 'pckg-img' });
+                        cb(data.url, {title: null, class: 'pckg-img'});
                     }
                 });
 
@@ -234,26 +303,26 @@ $(document).ready(function () {
                 // once you do not need it anymore.
 
                 /*input.onchange = function() {
-                    var file = this.files[0];
+                 var file = this.files[0];
 
-                    console.log("changed", file, this);
-                    return;
+                 console.log("changed", file, this);
+                 return;
 
-                    // Note: Now we need to register the blob in TinyMCEs image blob
-                    // registry. In the next release this part hopefully won't be
-                    // necessary, as we are looking to handle it internally.
-                    var id = 'blobid' + (new Date()).getTime();
-                    var blobCache = tinymce.activeEditor.editorUpload.blobCache;
-                    var blobInfo = blobCache.create(id, file);
-                    blobCache.add(blobInfo);
+                 // Note: Now we need to register the blob in TinyMCEs image blob
+                 // registry. In the next release this part hopefully won't be
+                 // necessary, as we are looking to handle it internally.
+                 var id = 'blobid' + (new Date()).getTime();
+                 var blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                 var blobInfo = blobCache.create(id, file);
+                 blobCache.add(blobInfo);
 
-                    // call the callback and populate the Title field with the file name
-                    cb(blobInfo.blobUri(), { title: file.name });
-                };
+                 // call the callback and populate the Title field with the file name
+                 cb(blobInfo.blobUri(), { title: file.name });
+                 };
 
-                input.click();*/
+                 input.click();*/
                 /*
-                console.log(callback, value, meta);*/
+                 console.log(callback, value, meta);*/
             }
         });
     }
