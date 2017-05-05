@@ -253,6 +253,17 @@ class Field extends DatabaseRecord
         return isset($setting->max->eval) ? eval('return ' . $setting->max->eval . ';') : $setting->max;
     }
 
+    public function getPreviewFileUrlAttribute($record = null)
+    {
+        $setting = $this->getSetting('pckg.dynamic.field.previewFileUrl');
+
+        if (!$setting) {
+            return null;
+        }
+
+        return $this->eval($setting, $record);
+    }
+
     public function getGenerateFileUrlAttribute($record = null)
     {
         $setting = $this->getSetting('pckg.dynamic.field.generateFileUrl');

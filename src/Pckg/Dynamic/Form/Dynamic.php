@@ -386,6 +386,14 @@ class Dynamic extends Bootstrap
             if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
                 $element = $this->addDiv();
                 if ($this->record) {
+                    if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
+                        $element->addChild(
+                            '<a class="btn btn-info btn-md" title="Preview ' . $type . '" href="' .
+                            $field->getPreviewFileUrlAttribute(
+                                $this->record
+                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Preview ' . $type . '</a>'
+                        );
+                    }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                         $element->addChild(
                             '<a class="btn btn-info btn-md" title="Generate ' . $type . '" href="' .
