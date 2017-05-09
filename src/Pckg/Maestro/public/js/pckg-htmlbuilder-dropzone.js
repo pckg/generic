@@ -13,6 +13,7 @@ var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
     created: function () {
         this.$nextTick(function () {
             if (!this.url) {
+                console.log("no upload url");
                 return;
             }
             var previewNode = document.querySelector("#template");

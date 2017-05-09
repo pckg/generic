@@ -1,5 +1,7 @@
 <?php namespace Pckg\Dynamic\Form;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
 use Pckg\Database\Record as DatabaseRecord;
@@ -103,23 +105,23 @@ class Dynamic extends Bootstrap
     {
         $data = $this->getData();
 
-        if (!isset($data['password']) || empty($data['password'])) {
-            return;
-        }
+        $fields = (new Fields())->where('dynamic_table_id', $this->table->id)
+                                ->where('field', array_keys($data))
+                                ->where('dynamic_field_type_id', 7) // password
+                                ->all();
 
-        $password = $data['password'];
-        $field = (new Fields())->where('dynamic_table_id', $this->table->id)
-                               ->where('field', 'password')
-                               ->one();
-        if (!$field) {
-            return;
-        }
+        $fields->each(function(Field $field) use ($record, $data) {
+            $password = $data[$field->field];
 
-        $provider = $field->getSetting('pckg.dynamic.field.passwordProvider');
-
-        $record->password = $provider
-            ? auth($provider)->hashPassword($password)
-            : $password;
+            if ($provider = $field->getSetting('pckg.dynamic.field.passwordProvider')) {
+                $record->{$field->field} = auth($provider)->hashPassword($password);
+            } else if ($encrypt = $field->getSetting('pckg.dynamic.field.encrypt')) {
+                $record->{$field->field} = Crypto::encrypt($password,
+                                                           Key::loadFromAsciiSafeString(config('security.key')));
+            } else {
+                $record->{$field->field} = $password;
+            }
+        });
     }
 
     public function initLanguageFields()
@@ -422,16 +424,11 @@ class Dynamic extends Bootstrap
                     $element->setAttribute('data-image', $fullPath);
                 }
                 $element->setAttribute('data-type', $type);
-            }
 
-            return $element;
-        } elseif ($type == 'picture') {
-            $element = $this->addPicture($name);
-            $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
-            $element->setAttribute(
-                'data-url',
-                ($this->relation && $this->foreignRecord
-                    ? url(
+                $element->setAttribute(
+                    'data-url',
+                    $this->relation && $this->foreignRecord
+                        ? url(
                         'dynamic.records.field.upload.newForeign',
                         [
                             'table'    => $this->table,
@@ -440,7 +437,7 @@ class Dynamic extends Bootstrap
                             'record'   => $this->foreignRecord,
                         ]
                     )
-                    : ($this->record->id
+                        : ($this->record->id
                         ? url(
                             'dynamic.records.field.upload',
                             [
@@ -455,7 +452,42 @@ class Dynamic extends Bootstrap
                                 'table' => $this->table,
                                 'field' => $field,
                             ]
-                        )))
+                        ))
+                );
+            }
+
+            return $element;
+        } elseif ($type == 'picture') {
+            $element = $this->addPicture($name);
+            $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
+            $element->setAttribute(
+                'data-url',
+                $this->relation && $this->foreignRecord
+                    ? url(
+                    'dynamic.records.field.upload.newForeign',
+                    [
+                        'table'    => $this->table,
+                        'field'    => $field,
+                        'relation' => $this->relation,
+                        'record'   => $this->foreignRecord,
+                    ]
+                )
+                    : ($this->record->id
+                    ? url(
+                        'dynamic.records.field.upload',
+                        [
+                            'table'  => $this->table,
+                            'field'  => $field,
+                            'record' => $this->record,
+                        ]
+                    )
+                    : url(
+                        'dynamic.records.field.upload.new',
+                        [
+                            'table' => $this->table,
+                            'field' => $field,
+                        ]
+                    ))
             );
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
             $element->setAttribute(
