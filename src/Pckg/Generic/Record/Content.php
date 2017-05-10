@@ -18,6 +18,8 @@ class Content extends Record
      */
     protected $entity = Contents::class;
 
+    protected $preparsedData = [];
+
     public function getImageAttribute()
     {
         if (!$this->picture) {
@@ -36,6 +38,22 @@ class Content extends Record
         if ($key == 'heading') {
             return 'h2';
         }
+    }
+
+    public function getContentAttribute()
+    {
+        $content = $this->data('content');
+
+        if (!$this->preparsedData) {
+            return $content;
+        }
+
+        return view()->setTemplate($content)->addData($this->preparsedData)->autoparse();
+    }
+
+    public function addPreparsedData($data)
+    {
+        $this->preparsedData = $data;
     }
 
 }
