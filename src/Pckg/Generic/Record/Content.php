@@ -54,6 +54,8 @@ class Content extends Record
     public function addPreparsedData($data)
     {
         $this->preparsedData = $data;
+
+        return $this;
     }
 
 }
