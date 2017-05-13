@@ -280,9 +280,7 @@
                 $('#changeContentModal').modal('show');
             },
             openSetPermissionsModal: function (action) {
-                console.log(this.action);
                 this.action = action;
-                console.log(this.action);
 
                 Vue.nextTick(function () {
                     $('#setPermissionsModal').modal('show');
@@ -358,8 +356,6 @@
                         return false;
                     }
                 });
-
-                console.log(action);
 
                 if (!action) {
                     return [];
