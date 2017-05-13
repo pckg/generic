@@ -20,6 +20,8 @@ abstract class AbstractStrategy implements Strategy
 
     protected $data = [];
 
+    protected $headers = [];
+
     public function input(Entity $entity)
     {
         $this->entity = $entity;
@@ -30,6 +32,17 @@ abstract class AbstractStrategy implements Strategy
         $this->data = $data;
 
         return $this;
+    }
+
+    public function setHeaders($headers)
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
+    public function getHeaders()
+    {
     }
 
     public function getData()

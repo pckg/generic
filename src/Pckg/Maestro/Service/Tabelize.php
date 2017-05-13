@@ -481,7 +481,8 @@ class Tabelize
         return (string)$string;
     }
 
-    public function __toStringParsedViews() {
+    public function __toStringParsedViews()
+    {
         /**
          * @T00D00 ... scripts should be added to vue manager
          *         ... component usages should be added to template
@@ -553,33 +554,35 @@ class Tabelize
             );
         }
 
+        if ($this->dataOnly) {
+            return $transformed;
+        }
+
         /**
          * We also need to fetch URLs.
          */
-        if (!$this->dataOnly) {
-            foreach ($this->getRecordActions() as $recordAction) {
-                $method = is_string($recordAction)
-                    ? $recordAction
-                    : $recordAction->slug;
+        foreach ($this->getRecordActions() as $recordAction) {
+            $method = is_string($recordAction)
+                ? $recordAction
+                : $recordAction->slug;
 
-                if (router()->hasUrl('dynamic.record.' . $method)) {
-                    $transformed[$method . 'Url'] = url('dynamic.record.' . $method, [
-                        'record' => $record,
-                        'table'  => $this->table,
-                    ]);
-                }
-
-                if (router()->hasUrl('dynamic.record.' . $method . 'Translation')) {
-                    $transformed[$method . 'TranslationUrl'] = url('dynamic.record.' . $method . 'Translation', [
-                        'record'   => $record,
-                        'table'    => $this->table,
-                        'language' => $_SESSION['pckg_dynamic_lang_id'],
-                    ]);
-                }
+            if (router()->hasUrl('dynamic.record.' . $method)) {
+                $transformed[$method . 'Url'] = url('dynamic.record.' . $method, [
+                    'record' => $record,
+                    'table'  => $this->table,
+                ]);
             }
-            $transformed = array_merge($record->getToArrayValues(), $transformed);
-            $transformed = array_merge($transformed, $record->getToJsonValues());
+
+            if (router()->hasUrl('dynamic.record.' . $method . 'Translation')) {
+                $transformed[$method . 'TranslationUrl'] = url('dynamic.record.' . $method . 'Translation', [
+                    'record'   => $record,
+                    'table'    => $this->table,
+                    'language' => $_SESSION['pckg_dynamic_lang_id'],
+                ]);
+            }
         }
+        $transformed = array_merge($record->getToArrayValues(), $transformed);
+        $transformed = array_merge($transformed, $record->getToJsonValues());
 
         if (!isset($transformed['id'])) {
             $transformed['id'] = $record->id;

@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
-use Pckg\Dynamic\Service\Export\Strategy;
 
 class Html extends AbstractStrategy
 {
@@ -14,9 +13,10 @@ class Html extends AbstractStrategy
     {
         $this->setFileContent(
             view(
-                'Pckg\Dynamic:export/html',
+                'Pckg/Dynamic:export/html',
                 [
-                    'lines' => $this->getData(),
+                    'lines'   => $this->getData(),
+                    'headers' => $this->headers,
                 ]
             )->autoparse()
         );

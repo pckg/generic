@@ -1,7 +1,8 @@
 <?php namespace Pckg\Dynamic\Service;
 
+use Pckg\Collection;
 use Pckg\Database\Entity;
-use Pckg\Database\Relation\HasMany;
+use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Service\Filter as FilterService;
 use Pckg\Dynamic\Service\Group as GroupService;
 use Pckg\Dynamic\Service\Sort as OrderService;
@@ -40,8 +41,7 @@ class Dynamic
         GroupService $groupService,
         Paginate $paginateService,
         Fields $fieldsService
-    )
-    {
+    ) {
         $this->session = $session;
         $this->filterService = $filterService;
         $this->sortService = $sortService;
@@ -97,7 +97,6 @@ class Dynamic
 
     public function getContentLanguage()
     {
-
     }
 
     public function getTable()
@@ -139,6 +138,45 @@ class Dynamic
             $this->paginateService->applyOnEntity($entity);
         }
         $this->fieldsService->applyOnEntity($entity);
+    }
+
+    public function selectScope(Entity $entity)
+    {
+        $this->joinTranslationsIfTranslatable($entity);
+        $this->joinPermissionsIfPermissionable($entity);
+        $this->removeDeletedIfDeletable($entity);
+    }
+
+    public function optimizeSelectedFields(Entity $entity, Collection $listedFields)
+    {
+        $listedFields->each(function(Field $field) use ($entity) {
+            if ($field->fieldType->slug == 'php' &&
+                method_exists($entity, 'select' . ucfirst($field->field) . 'Field')
+            ) {
+                $entity->{'select' . ucfirst($field->field) . 'Field'}();
+            }
+        });
+    }
+
+    public function getFieldsTransformations(Entity $entity, Collection $fields)
+    {
+        $fieldTransformations = [];
+
+        /**
+         * Transform field type = php, geo
+         * Add support for point fields.
+         */
+        $fields->each(
+            function(Field $field) use (&$fieldTransformations, $entity) {
+                $transformation = $field->getTransformedValue($entity);
+
+                if ($transformation) {
+                    $fieldTransformations[$field->field] = $transformation;
+                }
+            }
+        );
+
+        return $fieldTransformations;
     }
 
 }

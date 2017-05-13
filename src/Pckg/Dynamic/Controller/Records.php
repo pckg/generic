@@ -166,15 +166,12 @@ class Records extends Controller
         /**
          * Join extensions.
          */
-        $dynamicService->joinTranslationsIfTranslatable($entity);
-        $dynamicService->joinPermissionsIfPermissionable($entity);
-        $dynamicService->removeDeletedIfDeletable($entity);
+        $dynamicService->selectScope($entity);
 
         /**
          * Get all relations for fields with type (select).
          */
-        $fieldsDataset = new Fields();
-        $listableFields = $fieldsDataset->getListableFieldsForTable($tableRecord);
+        $listableFields = $tableRecord->listableFields;
         $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
         $relations = (new Relations())->withShowTable()
                                       ->withOnField()
@@ -184,29 +181,7 @@ class Records extends Controller
                                       ->all();
 
         foreach ($relations as $relation) {
-            /**
-             * Right table entity is created here.
-             */
-            $alias = $relation->alias ?? $relation->showTable->table;
-            $relationEntity = $relation->showTable->createEntity($alias);
-            $dynamicService->joinTranslationsIfTranslatable($relationEntity);
-
-            /**
-             * We need to add relations to select.
-             * $tableRecord is for example users.
-             * So entity is entity with table users.
-             * We will fetch all users and related user_group_id and language_id
-             * as user.relation_user_group_id and user.relation_language_id.
-             */
-            $belongsToRelation = (new BelongsTo($entity, $relationEntity, $alias))
-                ->foreignKey($relation->onField->field)
-                ->fill('relation_' . $relation->onField->field)
-                ->after(
-                    function($record) use ($relation) {
-                        $record->setRelation('select_relation_' . $relation->onField->field, $relation);
-                    }
-                );
-            $entity->with($belongsToRelation);
+            $relation->loadOnEntity($entity, $dynamicService);
         }
 
         /**
@@ -214,18 +189,12 @@ class Records extends Controller
          */
         $dynamicService->getFilterService()->filterByGet($entity);
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $entity);
+        $fieldTransformations = $dynamicService->getFieldsTransformations($entity, $listableFields);
 
         /**
          * Also, try optimizing php fields. ;-)
          */
-        $listedFields->each(function(Field $field) use ($entity) {
-            if ($field->fieldType->slug == 'php' &&
-                method_exists($entity, 'select' . ucfirst($field->field) . 'Field')
-            ) {
-                $entity->{'select' . ucfirst($field->field) . 'Field'}();
-            }
-        });
+        $dynamicService->optimizeSelectedFields($entity, $listedFields);
 
         /**
          * @T00D00
@@ -432,7 +401,7 @@ class Records extends Controller
         return $this->getEditAction($form, $record, $table);
     }
 
-    public function getEditAction(Dynamic $form, Record $record, Table $table)
+    public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
     {
         $listableFields = $table->listableFields;
         if (!$listableFields->count()) {
@@ -488,9 +457,8 @@ class Records extends Controller
         ksort($tabelizes);
         ksort($functionizes);
 
-        $fieldsDataset = new Fields();
-        $listableFields = $fieldsDataset->getListableFieldsForTable($table);
-        $fieldTransformations = $fieldsDataset->getFieldsTransformations($listableFields, $tableEntity);
+        $listableFields = $table->listableFields;
+        $fieldTransformations = $dynamicService->getFieldsTransformations($tableEntity, $listableFields);
 
         $tabelize = $this->tabelize()
                          ->setTable($table)

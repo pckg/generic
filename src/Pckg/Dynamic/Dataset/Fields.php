@@ -10,30 +10,4 @@ use Pckg\Dynamic\Record\Table;
 class Fields
 {
 
-    public function getListableFieldsForTable(Table $table)
-    {
-        return $table->listableFields;
-    }
-
-    public function getFieldsTransformations(Collection $fields, Entity $entity)
-    {
-        $fieldTransformations = [];
-
-        /**
-         * Transform field type = php, geo
-         * Add support for point fields.
-         */
-        $fields->each(
-            function(Field $field) use (&$fieldTransformations, $entity) {
-                $transformation = $field->getTransformedValue($entity);
-
-                if ($transformation) {
-                    $fieldTransformations[$field->field] = $transformation;
-                }
-            }
-        );
-
-        return $fieldTransformations;
-    }
-
 }

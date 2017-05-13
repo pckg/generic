@@ -4,7 +4,9 @@ use Pckg\Database\Entity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Dynamic\Entity\Relations;
+use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
 
 class Relation extends DatabaseRecord
@@ -69,26 +71,55 @@ class Relation extends DatabaseRecord
 
         $data = [];
         //if (true || $this->dynamic_relation_type_id == 1) {
-            // has many
-            $data = $entity->limit(100)
-                           ->all()
-                           ->keyBy(function($record) use ($relation) {
-                               return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
-                           })
-                           ->map(
-                               function($record) use ($relation, $entity) {
-                                   try {
-                                       $eval = eval(' return ' . $relation->value . '; ');
-                                   } catch (Throwable $e) {
-                                       $eval = exception($e);
-                                   }
-
-                                   return $eval;
+        // has many
+        $data = $entity->limit(100)
+                       ->all()
+                       ->keyBy(function($record) use ($relation) {
+                           return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
+                       })
+                       ->map(
+                           function($record) use ($relation, $entity) {
+                               try {
+                                   $eval = eval(' return ' . $relation->value . '; ');
+                               } catch (Throwable $e) {
+                                   $eval = exception($e);
                                }
-                           );
+
+                               return $eval;
+                           }
+                       );
+
         //}
 
         return $data;
+    }
+
+    public function loadOnEntity(Entity $entity, Dynamic $dynamicService)
+    {
+        /**
+         * Right table entity is created here.
+         */
+        $alias = $this->alias ?? $this->showTable->table;
+        $relationEntity = $this->showTable->createEntity($alias);
+        $dynamicService->joinTranslationsIfTranslatable($relationEntity);
+
+        /**
+         * We need to add relations to select.
+         * $tableRecord is for example users.
+         * So entity is entity with table users.
+         * We will fetch all users and related user_group_id and language_id
+         * as user.relation_user_group_id and user.relation_language_id.
+         */
+        $relation = $this;
+        $belongsToRelation = (new BelongsTo($entity, $relationEntity, $alias))
+            ->foreignKey($this->onField->field)
+            ->fill('relation_' . $this->onField->field)
+            ->after(
+                function($record) use ($relation) {
+                    $record->setRelation('select_relation_' . $relation->onField->field, $relation);
+                }
+            );
+        $entity->with($belongsToRelation);
     }
 
 }
