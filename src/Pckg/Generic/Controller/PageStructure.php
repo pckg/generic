@@ -124,7 +124,7 @@ class PageStructure
         /**
          * Collect data.
          */
-        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id']);
+        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id', 'content_id']);
         $data['morph_id'] = Routes::class;
 
         /**
