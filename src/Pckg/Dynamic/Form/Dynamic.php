@@ -113,6 +113,10 @@ class Dynamic extends Bootstrap
         $fields->each(function(Field $field) use ($record, $data) {
             $password = $data[$field->field];
 
+            if (!$password) {
+                return;
+            }
+
             if ($provider = $field->getSetting('pckg.dynamic.field.passwordProvider')) {
                 $record->{$field->field} = auth($provider)->hashPassword($password);
             } else if ($encrypt = $field->getSetting('pckg.dynamic.field.encrypt')) {
