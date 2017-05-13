@@ -108,6 +108,81 @@ class CreateGenericActionsData extends Migration
 This contract and any dispute, claim or other matter of any description that arises out of or in connection with this contract is governed by and shall be construed in accordance with law of {{ company.country.title }}. The courts of {{ company.country.title }} shall have jurisdiction to decide any dispute or claim that arises out of or in connection with this contract.<br /><br /><br /><br /><span>-</span>',
                 ],
             ],
+            [
+                'layout_id' => 2,
+                'url'       => '/privacy-policy',
+                'slug'      => 'privacy-policy',
+                'title'     => 'Privacy policy',
+                'morph'     => [
+                    'action'  => 'derive-content-company',
+                    'content' => '<h2><b>Introduction</b></h2>
+<p><span style="font-weight: 400;">This policy (together with our <a href="/terms-and-conditions" target="_blank">Terms and Conditions</a>) defines the basis on which any personal data is collected from you, or that you provide to us, will be processed. Please read the following carefully to understand our views and practices regarding your personal data.</span></p>
+<p><span style="font-weight: 400;">The {{ config(\'site.contact.name\') }} website and online booking system is available at the web address {{ config(\'url\') }} (hereinafter referred to as Website) is held and operated by:</span></p>
+<p><span style="font-weight: 400;">{{ company.long_name }}</span></p>
+<p><span style="font-weight: 400;">{{ company.address_line1 }}</span></p>
+<p><span style="font-weight: 400;">{{ company.address_line2 }}</span></p>
+<p><span style="font-weight: 400;">{{ company.address_line3 }}</span></p>
+<p><span style="font-weight: 400;">{{ company.country.title }}</span></p>
+<p><span style="font-weight: 400;">VAT: {{ company.vat_number }}</span></p>
+<p><span style="font-weight: 400;">Business number: {{ company.business_number }}</span></p>
+<p><span style="font-weight: 400;">{{ company.note1 }}</span></p>
+<p><span style="font-weight: 400;">{{ company.note2 }}</span></p>
+<p><span style="font-weight: 400;">(hereinafter &ldquo;</span><span style="font-weight: 400;">{{ company.short_name }}</span><span style="font-weight: 400;">&rdquo; or &ldquo;us&rdquo; or &ldquo;we&rdquo;).</span></p>
+<p><span style="font-weight: 400;">Hereinafter, all the services accessible through the Website are referred to as the &ldquo;Service&rdquo;. All visitors of the Website, whether guests or registered users, are hereinafter referred to as "User". </span><span style="font-weight: 400;">We may revise this Privacy Policy at any time without prior notice.<br /><br /></span></p>
+<h2><b>Legislature</b></h2>
+<p><span style="font-weight: 400;">{{ company.short_name }} as the data controller</span><span style="font-weight: 400;"> guarantees all data of Users are processed in accordance with the EU Data Protection Directive 2016.<br /><br /></span></p>
+<h2><b>Information we may collect from you</b></h2>
+<p><span style="font-weight: 400;">We may collect and process the following data about you:</span></p>
+<p><span style="font-weight: 400;">Information that you provide by filling in forms on our Website. This includes information provided at the time of registering to use our site, subscribing to our newsletters, posting reviews or other material on our site or requesting further services. We may also ask you for information when you enter a competition or promotion and when you report a problem with our site.</span></p>
+<p><span style="font-weight: 400;">If you contact us, we may keep a record of that correspondence.</span></p>
+<p><span style="font-weight: 400;">We may also ask you to complete surveys that we use for research purposes, although you do not have to respond to them.</span></p>
+<p><span style="font-weight: 400;">Details of bookings that you carry out through our site and of the fulfilment of your bookings.</span></p>
+<p><span style="font-weight: 400;">Details of your visits to our site including, but not limited to, traffic data, location data, logs and other communication data, whether this is required for our own billing purposes or otherwise and the resources that you access.<br /><br /></span></p>
+<h2><b>Method for collection of personal details</b></h2>
+<p><span style="font-weight: 400;">Information is collected based on forms or questionnaires that need to be filled in. Information we collect based is provided voluntarily. The User is obliged to provide only information needed to make a booking.</span></p>
+<p><span style="font-weight: 400;">Minors who want to use the Service need to be supervised by at least one of their parents. &nbsp;{{ company.short_name }} is not liable if minors use the Service without the required parental control.+<br /><br /></span></p>
+<h2><b>Required and optional personal details</b></h2>
+<p><span style="font-weight: 400;">In the context of using the Service, Users can be invited to fill out forms or questionnaires in which certain fields are required/obligatory to carry out the Service. This will be clearly indicated. The other fields are optional.</span></p>
+<p><span style="font-weight: 400;">The aim of the optional fields is to allow {{ company.short_name }} to contact the Users more quickly and/or to obtain information that is relevant in the context of the Service.<br /><br /></span></p>
+<h2><b>IP addresses</b></h2>
+<p><span style="font-weight: 400;">We may collect information about your computer, including where available your IP address, operating system and browser type, for system administration and to report aggregate information to our advertisers. This is statistical data about our users\' browsing actions and patterns, and does not identify any individual.<br /><br /></span></p>
+<h2><b>Cookies</b></h2>
+<p><span style="font-weight: 400;">While using the Service, we may use cookies, originating from the domain </span><span style="font-weight: 400;">{{ config(\'url\') }} </span><span style="font-weight: 400;">and all its subdomains. We use cookies to distinguish you from other users of our website. This helps us to provide you with a good experience when you browse our website and also allows us to improve our site.</span></p>
+<p><span style="font-weight: 400;">A cookie is a small amount of data, which often includes an anonymous unique identifier that is sent to the browser from a website\'s computer and stored on your computer\'s hard drive if you agree.</span></p>
+<p><span style="font-weight: 400;">Cookies can be ours or third party. We do not store any personal details in our cookies that can be used to identify individuals, however we do use cookies for tracking purposes.</span></p>
+<p><span style="font-weight: 400;">Although cookies are required to be able to fully use the Service and all of its features, Users can always refuse to accept cookies.</span></p>
+<p><span style="font-weight: 400;">We will ask you for your consent to our use of cookies in accordance and agreement with this policy. If you do not consent, but then continue to view our site or make a booking on our site, you will be deemed to have consented to us setting cookies in accordance with this policy.<br /><br /></span></p>
+<h2><b>Storage and transmission</b></h2>
+<p><span style="font-weight: 400;">The data that we collect from you normally will not be, but may be, transferred to, and stored at, a destination outside the European Economic Area ("EEA"). It may also be processed by staff operating outside the EEA who work for us or for one of our suppliers. Such staff maybe engaged in, among other things, the fulfilment of your bookings, the processing of your payment details and the provision of support services. By submitting your personal data, you agree to this transfer, storing or processing. We will take all steps reasonably necessary to ensure that your data is treated securely and in accordance with this privacy policy. All information you provide to us is stored on our secure servers. Any payment transactions will be encrypted. Where we have given you (or where you have chosen) a password that enables you to access certain parts of our site, you are responsible for keeping this password confidential. We expect that you will not share this password with any other person or service and will not support any loss incurred through its sharing. Unfortunately, the transmission of information via the internet is not completely secure. Although we will do our best to protect your personal data, we cannot guarantee the security of your data transmitted to our site; any transmission is at your own risk. Once we have received your information, we will use procedures and security features to try to prevent unauthorised access.<br /><br /></span></p>
+<h2><b>Goals and use</b></h2>
+<p><span style="font-weight: 400;">Personal details can only be collected and processed by {{ company.short_name }} for one of the following goals:</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">To ensure that content from our site is presented in the most effective manner for you and for your computer</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">to meet contractual obligations and rights between {{ company.short_name }} and User;</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">for the registration and participation in the Service (including but not limited to Contests);</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">for research and statistical goals;</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">to enable {{ company.short_name }} or its partners to contact Users concerning the Service or additional related Services;</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">to improve the content and quality of the Service;</span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">to draw up collective profiles (not of individual people);</span></li>
+</ul>
+<p><span style="font-weight: 400;">If you do not want us to use your data in this way, please either tick the relevant box situated on the form on which we collect your data, unsubscribe to any emails your receive or notify us at {{ config(\'site.contact.email\') }}.<br /><br /></span></p>
+<h2><b>Right of access to and correction of your personal details</b></h2>
+<p><span style="font-weight: 400;">You have the right to access information held about you. Users are able at all times to check the state of their personal details collected and processed by {{ company.short_name }} if they sign in to their account or send us an email to </span><span style="font-weight: 400;">{{ config(\'site.contact.email\') }}</span><span style="font-weight: 400;">.</span></p>
+<p><span style="font-weight: 400;">The request to access and check the Users\' information must arrive from the same email address the User signed up with. {{ company.short_name }} will inform the User on the state of your personal details as soon as possible.</span></p>
+<p><span style="font-weight: 400;">In case of a mistake, inaccuracy or hiatus regarding your personal details, the User can ask us to correct or change this information.</span></p>
+<p><span style="font-weight: 400;">If the User believes that the Service does not respect the law regarding the protection of personal details, he can contact us via the contact details mentioned in article 10 of the present Privacy Policy.<br /><br /></span></p>
+<h2><b>Consent and removal</b></h2>
+<p><span style="font-weight: 400;">By using the Service, Users explicitly agree with the Privacy Policy of {{ company.short_name }}. If Users want their personal details to be removed from our database, please contact us by e-mail or regular post using the contact details mentioned in article 10 of the present Privacy Policy. We undertake to remove personal details as soon as possible, except of course if it concerns information that needs to be kept in pursuance of the law or an agreement.<br /><br /></span></p>
+<h2><b>Property and disclosure</b></h2>
+<p><span style="font-weight: 400;">All information and personal data gathered in relation to the Service, belong to {{ company.short_name }} and shall only be used in accordance with the principles and provisions specified in the present Privacy Policy.</span></p>
+<p><span style="font-weight: 400;">We may disclose your personal information to third parties:</span></p>
+<p><span style="font-weight: 400;">In the event that we sell or buy any business or assets, in which case we may disclose your personal data to the prospective seller or buyer of such business or assets.</span></p>
+<p><span style="font-weight: 400;">If we or substantially all of our assets are acquired by a third party, in which case personal data held by us about our customers will be one of the transferred assets.</span></p>
+<p><span style="font-weight: 400;">If we are under a duty to disclose or share your personal data in order to comply with any legal obligation, or in order to enforce or apply our terms of use or our booking conditions or to protect the rights, property, or safety of {{ company.short_name }}, our customers, or others. This includes exchanging information with other companies and organisations for the purposes of fraud protection and credit risk reduction.<br /><br /></span></p>
+<h2><b>Miscellaneous</b></h2>
+<p><span style="font-weight: 400;">This Privacy Policy is without prejudice to {{ company.short_name }} right to take further reaching actions vis-&agrave;-vis certain users of the Service, based on an agreement, the law, regulations, etc. Users agree that {{ company.short_name }} may periodically update this Privacy Policy without prior notice. Any questions regarding this privacy policy should be addressed to {{ config(\'site.contact.email\') }}.</span></p>',
+                ],
+            ],
         ];
 
         (new Collection($routes))->each(function($route) {
