@@ -117,7 +117,6 @@ This contract and any dispute, claim or other matter of any description that ari
                 return;
             }
 
-            d('creating');
             $routeRecord = Route::create([
                                              'route'     => $route['url'],
                                              'slug'      => $route['slug'],
@@ -125,13 +124,10 @@ This contract and any dispute, claim or other matter of any description that ari
                                              'layout_id' => $route['layout_id'],
                                          ]);
 
-            d('getting');
             $action = Action::getOrFail(['slug' => $route['morph']['action']]);
 
-            d('creating2');
             $content = ContentRecord::create(['content' => $route['morph']['content']]);
 
-            d('creating3');
             ActionsMorph::create([
                                      'action_id'   => $action->id,
                                      'content_id'  => $content->id,

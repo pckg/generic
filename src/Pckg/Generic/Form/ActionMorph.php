@@ -3,6 +3,7 @@
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Action;
+use Pckg\Generic\Record\Content;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
 class ActionMorph extends Bootstrap
@@ -24,7 +25,9 @@ class ActionMorph extends Bootstrap
         $this->addSelect('content_id')
              ->setAttribute('v-model', 'form.content_id')
              ->setLabel('Content')
-             ->addOptions((new Contents())->all()->getListID());
+             ->addOptions((new Contents())->all()->keyBy('id')->map(function(Content $content) {
+                 return '#' . $content->id . ' - ' . $content->title;
+             }));
 
         $this->addText('template')
              ->setAttribute('v-model', 'form.template')
