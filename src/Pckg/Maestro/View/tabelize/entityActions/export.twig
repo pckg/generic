@@ -1,5 +1,5 @@
 <div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getEntityUrl('export', 'html') }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
+    <a href="{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
         <i class="fa fa-download" aria-hidden="true"></i> .html
     </a>
 

@@ -2,6 +2,7 @@
 
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Table;
+use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
 use Pckg\Dynamic\Service\Export\Strategy;
@@ -12,9 +13,17 @@ class Export extends Controller
 {
 
     public function getExportTableAction(
-        Table $table, Strategy $strategy, Dynamic $dynamicService, ExportService $exportService
+        Table $table,
+        Strategy $strategy,
+        Dynamic $dynamicService,
+        ExportService $exportService,
+        TableView $tableView = null
     ) {
         $entity = $table->createEntity();
+
+        if ($tableView) {
+            $dynamicService->setView($tableView);
+        }
 
         $dynamicService->setTable($table);
         $dynamicService->applyOnEntity($entity, false);
@@ -25,8 +34,11 @@ class Export extends Controller
          */
         $listableFields = $table->listableFields;
         $listedFields = $table->getFields($listableFields, $dynamicService->getFilterService());
-        $relations = (new Relations())->where('on_table_id', $table->id)
+        $relations = (new Relations())->withShowTable()
+                                      ->withOnField()
+                                      ->where('on_table_id', $table->id)
                                       ->where('dynamic_relation_type_id', 1)
+                                      ->where('on_field_id', $listedFields->map('id'))
                                       ->all();
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);

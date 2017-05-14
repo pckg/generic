@@ -5,12 +5,10 @@ use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record as DatabaseRecord;
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
-use Pckg\Dynamic\Dataset\Fields;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
@@ -83,7 +81,7 @@ class Records extends Controller
         $viewType = 'full'
     ) {
         /**
-         * Set table.
+         * Set view.
          */
         $dynamicService->setView($tableView);
         $tableView->loadToSession();
@@ -222,7 +220,10 @@ class Records extends Controller
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations)
                          ->setDynamicRecord($dynamicRecord)
-                         ->setDynamicRelation($dynamicRelation);
+                         ->setDynamicRelation($dynamicRelation)
+                         ->setViewData([
+                                           'view' => $dynamicService->getView(),
+                                       ]);
 
         if ($returnTabelize) {
             return $tabelize;

@@ -86,6 +86,8 @@ class Tabelize
 
     protected $listableRelations = [];
 
+    protected $viewData = [];
+
     public function __construct(Entity $entity = null, $fields = [])
     {
         $this->entity = $entity;
@@ -96,6 +98,13 @@ class Tabelize
                 'tabelize' => $this,
             ]
         );
+    }
+
+    public function setViewData($data)
+    {
+        $this->viewData = $data;
+
+        return $this;
     }
 
     public function setTable($table)
@@ -602,9 +611,8 @@ class Tabelize
     public function getEntityActionsHtml()
     {
         $html = null;
-        $data = [
-            'tabelize' => $this,
-        ];
+        $data = $this->viewData;
+        $data['tabelize'] = $this;
         foreach ($this->getEntityActions() as $action) {
             $template = null;
             if (isset($action->slug) && isset($action->entityTemplate)) {

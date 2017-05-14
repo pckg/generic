@@ -11,11 +11,11 @@ use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
 use Pckg\Dynamic\Resolver\ForeignRecord;
 use Pckg\Dynamic\Resolver\Language;
-use Pckg\Dynamic\Resolver\Record;
 use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
 use Pckg\Dynamic\Resolver\Tab as TabResolver;
 use Pckg\Dynamic\Resolver\Table as TableResolver;
+use Pckg\Dynamic\Resolver\TableView;
 use Pckg\Dynamic\Resolver\TableView as ViewResolver;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Provider\Frontend as FrontendProvider;
@@ -282,12 +282,21 @@ class Dynamic extends Provider
                         'controller' => Export::class,
                     ],
                     [
-                        '/dynamic/tables/export/[table]/[type]' => [
+                        '/dynamic/tables/export/[table]/[type]'             => [
                             'name'      => 'dynamic.record.export',
                             'view'      => 'exportTable',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                                 'type'  => ExportStrategy::class,
+                            ],
+                        ],
+                        '/dynamic/tables/export/[table]/[type]/[tableView]' => [
+                            'name'      => 'dynamic.record.export.view',
+                            'view'      => 'exportTable',
+                            'resolvers' => [
+                                'table'     => TableResolver::class,
+                                'type'      => ExportStrategy::class,
+                                'tableView' => TableView::class,
                             ],
                         ],
                     ]
