@@ -11,12 +11,17 @@
             </div>
         </div>
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pageStructureModal'} %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pageStructureModal', 'class': 'modal-lg'} %}
             {% block header %}
                 Add action
             {% endblock %}
             {% block body %}
-                {{ actionMorphForm | raw }}
+                <div class="row">
+                    <div class="col-md-3" v-for="action in actions">
+                        <h2>${ action.slug }</h2>
+                    </div>
+                </div>
+                <!--{{ actionMorphForm | raw }}-->
             {% endblock %}
         {% endembed %}
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'changeContentModal'} %}
