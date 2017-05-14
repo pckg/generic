@@ -394,11 +394,11 @@ class Records extends Controller
         );
     }
 
-    public function getViewAction(Dynamic $form, Record $record, Table $table)
+    public function getViewAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamic)
     {
         $form->setEditable(false);
 
-        return $this->getEditAction($form, $record, $table);
+        return $this->getEditAction($form, $record, $table, $dynamic);
     }
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
