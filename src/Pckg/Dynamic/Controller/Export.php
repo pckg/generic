@@ -60,8 +60,9 @@ class Export extends Controller
         /**
          * @T00D00 - hackish ...
          */
+        $records = $entity->all();
         $tabelize = (new Tabelize($entity))
-            ->setRecords($entity->all())
+            ->setRecords($records)
             ->setEntity($entity)
             ->setFields($listedFields)
             ->setFieldTransformations($fieldTransformations);

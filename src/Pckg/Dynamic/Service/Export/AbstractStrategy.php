@@ -43,6 +43,7 @@ abstract class AbstractStrategy implements Strategy
 
     public function getHeaders()
     {
+        return $this->headers;
     }
 
     public function getData()

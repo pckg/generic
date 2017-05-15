@@ -11,17 +11,17 @@
 
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'xlsx') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'xlsx') }}{{ view ? '/' ~ view.id : '' }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .xlsx
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'csv') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'csv') }}{{ view ? '/' ~ view.id : '' }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .csv
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'docx') }}">
+            <a href="{{ tabelize.getEntityUrl('export', 'docx') }}{{ view ? '/' ~ view.id : '' }}">
                 <i class="fa fa-file-text-o" aria-hidden="true"></i> .docx
             </a>
         </li>
