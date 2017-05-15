@@ -582,6 +582,10 @@ class Tabelize
                     'language' => $_SESSION['pckg_dynamic_lang_id'],
                 ]);
             }
+
+            if (method_exists($record, 'get' . ucfirst($method) . 'UrlAttribute')) {
+                $transformed[$method . 'Url'] = $record->{'get' . ucfirst($method) . 'UrlAttribute'}();
+            }
         }
         $transformed = array_merge($record->getToArrayValues(), $transformed);
         $transformed = array_merge($transformed, $record->getToJsonValues());
