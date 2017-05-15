@@ -16,9 +16,7 @@ class CreateGenericActionsData extends Migration
         (new Collection(config('pckg.generic.actions', [])))->each(function($action, $slug) {
             $actionRecord = Action::getOrNew(['slug' => $slug]);
 
-            if (!$actionRecord->isSaved()) {
-                $actionRecord->setAndSave($action);
-            }
+            $actionRecord->setAndSave($action);
         });
 
         (new Collection(config('pckg.generic.routes', [])))->each(function($route) {

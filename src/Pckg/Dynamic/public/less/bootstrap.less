@@ -354,6 +354,9 @@ table tr.strong > td:not(.actions) {
     border: 1px solid #ccc;
     padding: 1rem;
   }
+  & .action + .action{
+    margin-top: 16px;
+  }
 }
 
 input[type=number].narrow {
@@ -495,4 +498,25 @@ img.editor-img {
     width: 20%;
     float: left;
   }
+}
+.page-structure-actions {
+  .title {
+    font-weight: bold;
+    display: block;
+  }
+  .description {
+  }
+  .item a {
+    min-height: 80px;
+    display: block;
+    border: 1px solid #aaa;
+    padding: 8px;
+    margin: 8px;
+    color: inherit;
+    &:hover {
+      text-decoration: none;
+      background-color: #eee;
+    }
+  }
+  .list-container-responsive(4, 0, 0, ~'.item', 360px);
 }

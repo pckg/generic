@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Generic\Record;
+<?php namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\Actions;

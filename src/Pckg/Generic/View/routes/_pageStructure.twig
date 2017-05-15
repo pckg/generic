@@ -16,67 +16,14 @@
                 Add action
             {% endblock %}
             {% block body %}
-                <div class="row">
-                    <div class="col-md-3" v-for="action in actions">
-                        <h2>${ action.slug }</h2>
+                <div class="page-structure-actions">
+                    <div class="item" v-for="a in actions">
+                        <a href="#" @click.prevent="pushAction(a)">
+                            <span class="title">${ a.title ? a.title : a.slug }</span>
+                            <span class="description">${ a.description }</span>
+                        </a>
                     </div>
                 </div>
-                <!--{{ actionMorphForm | raw }}-->
-            {% endblock %}
-        {% endembed %}
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'changeContentModal'} %}
-            {% block header %}
-                Change content
-            {% endblock %}
-            {% block body %}
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Actions</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="actionsMorph.action_id">
-                                <option v-for="action in actions" :value="action.id">${ niceActionName(action) }
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3">Bind</label>
-                        <div class="col-md-9">
-                            Some objects
-                        </div>
-                    </div>
-                    <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
-                        <label class="col-md-3">Template</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="actionsMorph.template">
-                                <option v-for="template in getActionTemplates(actionsMorph.action_id)" :value="template">${ template }</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3">Background</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="actionsMorph.background">
-                                <option v-for="background in backgrounds" :value="background.slug">${ background.slug
-                                    }
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3">Width</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="actionsMorph.width">
-                                <option v-for="width in widths" :value="width.slug">${ width.slug }</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                {# this depends on selected action #}
-                {#{ simpleContentForm | raw }#}
-            {% endblock %}
-            {% block footer %}
-                <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
             {% endblock %}
         {% endembed %}
 
@@ -92,81 +39,160 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'setPermissionsModal'} %}
-            {% block header %}
-                Set permissions for ${ niceActionName(action) }
-            {% endblock %}
-            {% block body %}
-                <table v-if="action.id">
-                    <tr>
-                        <th>User group</th>
-                        <th>Read</th>
-                    </tr>
-                    <tbody>
-                    <tr v-for="userGroup in userGroups">
-                        <td>${ userGroup.title }</td>
-                        <td><input type="checkbox" :value="userGroup.id" v-model="action.pivot.permissions"/></td>
-                    </tr>
-                    </tbody>
-                </table>
-            {% endblock %}
-            {% block footer %}
-                <button class="btn btn-success" @click="savePermissions">Save permissions</button>
-            {% endblock %}
-        {% endembed %}
-        <div v-for="variable in variables" v-if="route.id">
-            <h3>${ variable.slug }</h3>
+        <div v-for="variable in variables" v-if="route.id" class="variable">
+            <h3>
+                ${ variable.slug }
+            </h3>
 
-            {% embed 'Pckg/Generic/View/panel.twig' %}
-                {% block content %}
-                    <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction(variable)">
-                        <i class="fa fa-plus"></i>
-                    </a>
-                    <table class="table table-condensed">
-                        <tr v-for="act in getActionsForVariable(variable)">
-                            <td>
-                                <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
-                                ${ niceActionName(act) }
-                            </td>
-                            <td>${ act.pivot.content_id ? act.pivot.content.title : '' }</td>
-                            <td>
-                                <input type="number" class="form-control narrow" v-model="act.pivot.order"
-                                       @change="timeoutUpdateActionOrder(act)"/>
-                            </td>
-                            <td>
-                                <div class="btn-group pull-right" role="group" aria-label="...">
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default btn-xs dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Options
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <template v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Routes'">
-                                                <li>
-                                                    <a href="#" @click.prevent="openSetPermissionsModal(act)">Set
-                                                        permissions</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" @click.prevent="openChangeActionModal(act)">Change
-                                                        content</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" @click.prevent="openDeleteActionModal(act)">Delete
-                                                        action</a>
-                                                </li>
-                                            </template>
-                                            <template v-else>
-                                                <li><a href="#">Edit layout</a></li>
-                                            </template>
-                                        </ul>
-                                    </div>
+            <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction(variable)"><i class="fa fa-plus"></i></a>
+
+            <div v-for="act in getActionsForVariable(variable)" class="action">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a :href="'#home' + act.pivot.id" aria-controls="home" role="tab" data-toggle="tab">
+                            <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
+                            ${ act.title && act.title.length > 0 ? act.title : act.slug }
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a :href="'#settings' + act.pivot.id" aria-controls="settings" role="tab" data-toggle="tab"><i
+                                    class="fa fa-th"></i></a>
+                    </li>
+                    <li role="presentation">
+                        <a :href="'#layout' + act.pivot.id" aria-controls="layout" role="tab" data-toggle="tab"><i
+                                    class="fa fa-cogs"></i></a>
+                    </li>
+                    <li role="presentation">
+                        <a :href="'#permissions' + act.pivot.id" aria-controls="permissions" role="tab" data-toggle="tab"><i
+                                    class="fa fa-users"></i></a>
+                    </li>
+                    <li role="presentation">
+                        <a :href="'#advanced' + act.pivot.id" aria-controls="advanced" role="tab" data-toggle="tab"><i
+                                    class="fa fa-wrench"></i></a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" :id="'home' + act.pivot.id">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3">Position</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control narrow" v-model="act.pivot.order"
+                                           @change="timeoutUpdateActionOrder(act)"/>
                                 </div>
-                            </td>
-                        </tr>
-                    </table>
-                {% endblock %}
-            {% endembed %}
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
+                        <div class="form-horizontal" v-if="action">
+                            <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
+                                <label class="col-md-3">Template</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="actionsMorph.template">
+                                        <option v-for="template in getActionTemplates(actionsMorph.action_id)"
+                                                :value="template">${ template }
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3">Background</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="actionsMorph.background">
+                                        <option v-for="background in backgrounds" :value="background.slug">${
+                                            background.slug
+                                            }
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3">Width</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="actionsMorph.width">
+                                        <option v-for="width in widths" :value="width.slug">${ width.slug }</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" :id="'layout' + act.pivot.id">
+                        {# this depends on selected action #}
+                        {{ simpleContentForm | raw }}
+
+                        <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" :id="'permissions' + act.pivot.id">
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                            <tr>
+                                <th>User group</th>
+                                <th>Read</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="userGroup in userGroups">
+                                <td>${ userGroup.title }</td>
+                                <td><input type="checkbox" :value="userGroup.id" v-model="act.pivot.permissions"/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-success" @click="savePermissions">Save permissions</button>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" :id="'advanced' + act.pivot.id">
+                        <a href="#" @click.prevent="openDeleteActionModal(act)" class="btn btn-danger">Delete
+                            action</a>
+                    </div>
+                </div>
+            </div>
+
+            <!--<table class="table table-condensed">
+                <tr v-for="act in getActionsForVariable(variable)">
+                    <td>
+                        <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
+                        ${ act.title }
+                    </td>
+                    <!-<td>${ act.pivot.content_id ? act.pivot.content.title : '' }</td>->
+                    <td>
+                        <input type="number" class="form-control narrow" v-model="act.pivot.order"
+                               @change="timeoutUpdateActionOrder(act)"/>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right" role="group" aria-label="...">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Options
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <template v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Routes'">
+                                        <li>
+                                            <a href="#" @click.prevent="openSetPermissionsModal(act)">Set
+                                                permissions</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" @click.prevent="openChangeActionModal(act)">Change
+                                                content</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" @click.prevent="openDeleteActionModal(act)">Delete
+                                                action</a>
+                                        </li>
+                                    </template>
+                                    <template v-else>
+                                        <li><a href="#">Edit layout</a></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>-->
         </div>
     </div>
 </script>
@@ -291,15 +317,20 @@
                     $('#setPermissionsModal').modal('show');
                 });
             },
-            onSubmit: function () {
-                var postData = this.form;
-                postData.route_id = this.route.id;
-                postData.variable_id = this.variable.id;
+            pushAction: function (action) {
+                var postData = {
+                    route_id: this.route.id,
+                    variable_id: this.variable.id,
+                    action_id: action.id
+                };
+
                 http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
                     $dispatcher.$emit('notification:success', 'Action successfully added');
                     $('#pageStructureModal').modal('hide');
                     $dispatcher.$emit('record:actionsMorph:add:action', data.action);
-                });
+
+                    this.openChangeActionModal(data.action);
+                }.bind(this));
             },
             savePermissions: function () {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.setActionsMorphPermissions') }}',
@@ -349,13 +380,10 @@
                     this.updateActionOrder(action);
                 }.bind(this), 333);
             },
-            niceActionName: function (action) {
-                return (action.class ? utils.last(action.class.split('\\')) + ' @ ' : '') + action.method;
-            },
             getActionTemplates: function (actionId) {
                 var action = null;
 
-                $.each(this.actions, function(i, act){
+                $.each(this.actions, function (i, act) {
                     if (act.id == actionId) {
                         action = act;
                         return false;

@@ -19,6 +19,10 @@ class Export extends Controller
         ExportService $exportService,
         TableView $tableView = null
     ) {
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 60);
+        set_time_limit(60);
+
         $entity = $table->createEntity();
 
         if ($tableView) {

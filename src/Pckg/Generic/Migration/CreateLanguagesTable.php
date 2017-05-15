@@ -29,6 +29,8 @@ class CreateLanguagesTable extends Migration
         $languages->varchar('currency', 3);
         $languages->varchar('locale', 5);
         $languages->varchar('domain');
+        $languages->boolean('frontend');
+        $languages->boolean('backend');
 
         $languagesI18n = $this->translatable('languages');
         $languagesI18n->title();

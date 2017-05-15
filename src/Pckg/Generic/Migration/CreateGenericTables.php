@@ -89,6 +89,7 @@ class CreateGenericTables extends Migration
 
         $actionsI18n = $this->translatable('actions');
         $actionsI18n->title();
+        $actionsI18n->description();
 
         $actionsMorphs = $this->morphtable('actions', 'action_id');
         $actionsMorphs->integer('content_id')->references('contents');

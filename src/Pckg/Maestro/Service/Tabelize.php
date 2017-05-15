@@ -322,13 +322,6 @@ class Tabelize
                         ? $eval
                         : ('<a href="' . $relation->showTable->getEditUrl($record) . '">' . $eval . '</a>');
                 }
-            } elseif ($field->dynamic_field_type_id == 19) {
-                /**
-                 * Php / object method
-                 */
-                $eval = $this->eval('$record->' . $field->field, $originalRecord, $originalRecord);
-
-                return $eval;
             }
 
             return $originalRecord->{$field->field};
