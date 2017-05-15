@@ -354,8 +354,11 @@ table tr.strong > td:not(.actions) {
     border: 1px solid #ccc;
     padding: 1rem;
   }
-  & .action + .action{
-    margin-top: 16px;
+  & .action {
+    margin-bottom: 16px;
+    & + a.btn-block {
+      margin-bottom: 16px;
+    }
   }
 }
 

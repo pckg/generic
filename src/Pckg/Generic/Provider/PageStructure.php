@@ -25,6 +25,7 @@ class PageStructure extends Provider
                        ]))->routes([
                                        '.getRoutes'                  => new Route('/routes', 'routes'),
                                        '.getVariables'               => new Route('/variables', 'variables'),
+                                       '.getContents'                => new Route('/contents', 'contents'),
                                        '.getActions'                 => new Route('/actions', 'actions'),
                                        '.getRoute'                   => new Route('/routes/[route]', 'route'),
                                        '.getRouteActions'            => new Route('/routes/[route]/actions',

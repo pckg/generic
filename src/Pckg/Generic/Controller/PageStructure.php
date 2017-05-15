@@ -5,6 +5,7 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
+use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\ListItems;
 use Pckg\Generic\Entity\Routes;
@@ -50,6 +51,13 @@ class PageStructure
     {
         return [
             'actions' => (new Actions())->all(),
+        ];
+    }
+
+    public function getContentsAction()
+    {
+        return [
+            'contents' => (new Contents())->joinTranslations()->all(),
         ];
     }
 

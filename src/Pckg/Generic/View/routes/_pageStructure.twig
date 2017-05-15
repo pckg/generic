@@ -40,11 +40,7 @@
         {% endembed %}
 
         <div v-for="variable in variables" v-if="route.id" class="variable">
-            <h3>
-                ${ variable.slug }
-            </h3>
-
-            <a href="#" class="btn btn-default btn-xs pull-right" @click.prevent="addAction(variable)"><i class="fa fa-plus"></i></a>
+            <h3>${ variable.slug }</h3>
 
             <div v-for="act in getActionsForVariable(variable)" class="action">
                 <ul class="nav nav-tabs" role="tablist">
@@ -63,7 +59,8 @@
                                     class="fa fa-cogs"></i></a>
                     </li>
                     <li role="presentation">
-                        <a :href="'#permissions' + act.pivot.id" aria-controls="permissions" role="tab" data-toggle="tab"><i
+                        <a :href="'#permissions' + act.pivot.id" aria-controls="permissions" role="tab"
+                           data-toggle="tab"><i
                                     class="fa fa-users"></i></a>
                     </li>
                     <li role="presentation">
@@ -76,16 +73,26 @@
                     <div role="tabpanel" class="tab-pane active" :id="'home' + act.pivot.id">
                         <div class="form-horizontal">
                             <div class="form-group">
+                                <label class="col-md-3">Content</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="act.pivot.content_id">
+                                        <option v-for="content in contents"
+                                                :value="content.id">#${ content.id } - ${ content.title }
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
+                        <div class="form-horizontal" v-if="act">
+                            <div class="form-group">
                                 <label class="col-md-3">Position</label>
                                 <div class="col-md-9">
                                     <input type="number" class="form-control narrow" v-model="act.pivot.order"
                                            @change="timeoutUpdateActionOrder(act)"/>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
-                        <div class="form-horizontal" v-if="action">
                             <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
                                 <label class="col-md-3">Template</label>
                                 <div class="col-md-9">
@@ -117,13 +124,13 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
+                        <button class="btn btn-success" @click="saveActionsMorph">Save layout</button>
                     </div>
                     <div role="tabpanel" class="tab-pane" :id="'layout' + act.pivot.id">
                         {# this depends on selected action #}
                         {{ simpleContentForm | raw }}
 
-                        <button class="btn btn-success" @click="saveActionsMorph">Save action</button>
+                        <button class="btn btn-success" @click="saveActionsMorph">Save settings</button>
                     </div>
                     <div role="tabpanel" class="tab-pane" :id="'permissions' + act.pivot.id">
                         <table class="table table-condensed table-hover">
@@ -150,49 +157,9 @@
                 </div>
             </div>
 
-            <!--<table class="table table-condensed">
-                <tr v-for="act in getActionsForVariable(variable)">
-                    <td>
-                        <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
-                        ${ act.title }
-                    </td>
-                    <!-<td>${ act.pivot.content_id ? act.pivot.content.title : '' }</td>->
-                    <td>
-                        <input type="number" class="form-control narrow" v-model="act.pivot.order"
-                               @change="timeoutUpdateActionOrder(act)"/>
-                    </td>
-                    <td>
-                        <div class="btn-group pull-right" role="group" aria-label="...">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Options
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <template v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Routes'">
-                                        <li>
-                                            <a href="#" @click.prevent="openSetPermissionsModal(act)">Set
-                                                permissions</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" @click.prevent="openChangeActionModal(act)">Change
-                                                content</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" @click.prevent="openDeleteActionModal(act)">Delete
-                                                action</a>
-                                        </li>
-                                    </template>
-                                    <template v-else>
-                                        <li><a href="#">Edit layout</a></li>
-                                    </template>
-                                </ul>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>-->
+            <a href="#" class="btn btn-info btn-primary" @click.prevent="addAction(variable)">
+                <i class="fa fa-plus"></i>
+            </a>
         </div>
     </div>
 </script>
@@ -203,6 +170,7 @@
         template: '#pckg-generic-page-structure',
         data: function () {
             return {
+                contents: [],
                 actions: [],
                 routes: [],
                 selectedRoute: null,
@@ -256,6 +224,11 @@
             fetchActions: function () {
                 http.getJSON('{{ url('pckg.generic.pageStructure.getActions') }}', function (data) {
                     this.actions = data.actions;
+                }.bind(this));
+            },
+            fetchContents: function () {
+                http.getJSON('{{ url('pckg.generic.pageStructure.getContents') }}', function (data) {
+                    this.contents = data.contents;
                 }.bind(this));
             },
             fetchRoute: function () {
@@ -405,6 +378,7 @@
             this.fetchRoutes();
             this.fetchActions();
             this.fetchVariables();
+            this.fetchContents();
 
             $dispatcher.$on('record:actionsMorph:remove:action', function (action) {
                 this.routeActions.splice(action, 1);
