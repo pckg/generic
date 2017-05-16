@@ -128,8 +128,7 @@
                                     <div class="col-md-9">
                                         <select class="form-control" v-model="act.pivot.background"
                                                 @change="saveActionsMorph(act.pivot)">
-                                            <option v-for="background in backgrounds" :value="background.slug"
-                                                    :html="background.slug"></option>
+                                            <option v-for="background in backgrounds" :value="background.slug">${ background.slug }</option>
                                         </select>
                                         <p>Select background class for container.</p>
                                     </div>
@@ -139,8 +138,8 @@
                                     <div class="col-md-9">
                                         <select class="form-control" v-model="act.pivot.template"
                                                 @change="saveActionsMorph(act.pivot)">
-                                            <option v-for="template in getActionTemplates(actionsMorph.action_id)"
-                                                    :value="template" :html="template"></option>
+                                            <option v-for="template in getActionTemplates(act.id)"
+                                                    :value="template">${ template }</option>
                                         </select>
                                         <p>Select presentation template for plugin.</p>
                                     </div>
