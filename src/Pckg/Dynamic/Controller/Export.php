@@ -79,7 +79,7 @@ class Export extends Controller
          */
         $listedFields->each(function(Field $field) use ($strategy, &$transformedRecords) {
             if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst(substr($strategy->getExtension(), 1)))) {
-                foreach ($transformedRecords as $record) {
+                foreach ($transformedRecords as &$record) {
                     $record[$field->field] = br2nl($record[$field->field]);
                 }
             }
