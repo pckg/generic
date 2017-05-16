@@ -13,14 +13,14 @@
                 <input type="checkbox" v-model="model"/>
             </template>
         </template>
-        <template v-if="type == 'order'">
+        <template v-else-if="type == 'order'">
             <pckg-tabelize-field-order :field="field.id"
                                        :record="record.id"
                                        :value="record[field.field]"
                                        :table="table"
                                        :url="'{{ url('dynamic.records.field.order') }}'"></pckg-tabelize-field-order>
         </template>
-        <template v-if="type == 'datetime' && field.isTogglable">
+        <template v-else-if="type == 'datetime' && field.isTogglable">
             <template v-if="!editable">
                 <pckg-tabelize-field-datetime :field="field.id"
                                               :record="record.id"
@@ -34,7 +34,7 @@
                 <input type="date" v-model="model"/>
             </template>
         </template>
-        <template v-if="type == 'editor'">
+        <template v-else-if="type == 'editor'">
             <template v-if="!editable">
                 <pckg-tabelize-field-editor
                         :value="record[field.field]"></pckg-tabelize-field-editor>
@@ -43,12 +43,12 @@
                 <textarea>${ model | raw }</textarea>
             </template>
         </template>
-        <template
-                v-if="!type || !field.id || (type != 'boolean' && type != 'order' && type != 'editor' && (type != 'datetime' || !field.isTogglable))">
+        <template v-else>
             <template v-if="!editable">
                 <template v-if="field.field == 'title' || field.field == 'id'">
                     <a :href="record.viewUrl" v-html="record[field.field]"></a>
                 </template>
+                <template v-else-if="field.isRaw"><span>${ record[field.field] }</span></template>
                 <template v-else><span v-html="record[field.field]"></span></template>
             </template>
             <template v-else>

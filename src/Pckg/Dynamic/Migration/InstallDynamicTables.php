@@ -1284,10 +1284,6 @@ class InstallDynamicTables extends Migration
                         'type'  => 'text',
                     ],
                     [
-                        'field' => 'position_index',
-                        'type'  => 'order',
-                    ],
-                    [
                         'field' => 'order_limit_count',
                         'type'  => 'integer',
                     ],

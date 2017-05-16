@@ -16,6 +16,7 @@ class Field extends DatabaseRecord
         'isTogglable',
         'minTogglable',
         'maxTogglable',
+        'isRaw',
         'title', // @T00D00 - this should be added to extension
     ];
 
@@ -251,6 +252,11 @@ class Field extends DatabaseRecord
         }
 
         return isset($setting->max->eval) ? eval('return ' . $setting->max->eval . ';') : $setting->max;
+    }
+
+    public function getIsRawAttribute()
+    {
+        return $this->getSetting('pckg-generic-field-isRaw');
     }
 
     public function getPreviewFileUrlAttribute($record = null)
