@@ -169,7 +169,7 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-success" @click="savePermissions">Save permissions</button>
+                            <button class="btn btn-success" @click="savePermissions(act.pivot)">Save permissions</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" :id="'advanced' + act.pivot.id">
                             <a href="#" @click.prevent="openDeleteActionModal(act)" class="btn btn-danger">Delete
@@ -342,15 +342,17 @@
                     this.openChangeActionModal(data.action);
                 }.bind(this));
             },
-            savePermissions: function () {
+            savePermissions: function (actionsMorph) {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.setActionsMorphPermissions') }}',
-                    {actionsMorph: this.action.pivot.id}),
+                    {actionsMorph: actionsMorph.id}),
                     {
-                        read: this.action.pivot.permissions
+                        read: actionsMorph.permissions
                     },
                     function (data) {
                         if (data.success) {
-                            $('#setPermissionsModal').modal('hide');
+                            $dispatcher.$emit('notification:success', 'Permissions set');
+                        } else {
+                            $dispatcher.$emit('notification:error', 'Permissions not set');
                         }
                     }.bind(this));
             },
