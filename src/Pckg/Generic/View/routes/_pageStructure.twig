@@ -90,6 +90,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <button v-if="act.pivot.content_id" @click="openEditContentPopup(act.pivot.content_id)" class="btn btn-primary">Edit content</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
                             <div class="form-horizontal" v-if="act">
@@ -285,6 +286,14 @@
                     });
                 }.bind(this));
             },
+            openEditContentPopup: function (contentId) {
+                $.magnificPopup.open({
+                    items: {
+                        src: '/dynamic/records/edit/73/' + contentId
+                    },
+                    type: 'iframe'
+                });
+            },
             onEnd: function (event, variable) {
                 var orders = {};
                 $.each(variable.actions, function (i, action) {
@@ -400,11 +409,11 @@
             this.fetchContents();
 
             $dispatcher.$on('record:actionsMorph:remove:action', function (action) {
-            //    this.routeActions.splice(action, 1);
+                //    this.routeActions.splice(action, 1);
             }.bind(this));
 
             $dispatcher.$on('record:actionsMorph:add:action', function (action) {
-            //    this.routeActions.push(action);
+                //    this.routeActions.push(action);
             }.bind(this));
         },
         watch: {

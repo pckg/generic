@@ -1,6 +1,5 @@
 <?php namespace Pckg\Generic\Migration;
 
-use Pckg\Database\Repository;
 use Pckg\Migration\Migration;
 
 class CreateGenericTables extends Migration
@@ -98,6 +97,7 @@ class CreateGenericTables extends Migration
         $actionsMorphs->varchar('template');
         $actionsMorphs->varchar('background');
         $actionsMorphs->varchar('width');
+        $actionsMorphs->varchar('container');
 
         $actionsMorphsP17n = $this->permissiontable('actions_morphs');
     }
