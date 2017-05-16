@@ -602,6 +602,10 @@ class Tabelize
             $transformed['language_id'] = $record->language_id;
         }
 
+        if ($record->hasKey('hash') && !isset($transformed['hash'])) {
+            $transformed['hash'] = $record->hash;
+        }
+
         return $transformed;
     }
 
