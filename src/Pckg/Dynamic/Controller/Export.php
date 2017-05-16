@@ -78,13 +78,13 @@ class Export extends Controller
          * Check for additional export transformations.
          */
         $listedFields->each(function(Field $field) use ($strategy, &$transformedRecords) {
-            if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst(substr($strategy->getExtension(), 1)))) {
+            if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst($strategy->getExtension()))) {
                 foreach ($transformedRecords as &$record) {
                     $record[$field->field] = br2nl($record[$field->field]);
                 }
             }
         });
-
+        
         $strategy->setData($transformedRecords);
 
         $strategy->setFileName($table->table . '-' . date('Ymd-his'));
