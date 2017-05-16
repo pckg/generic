@@ -413,7 +413,14 @@
             }.bind(this));
 
             $dispatcher.$on('record:actionsMorph:add:action', function (action) {
-                //    this.routeActions.push(action);
+                $.each(this.variables, function(i, variable){
+                    if (variable.id != action.pivot.variable_id) {
+                        return;
+                    }
+
+                    variable.actions.push(action);
+                });
+                this.routeActions.push(action);
             }.bind(this));
         },
         watch: {
