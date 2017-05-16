@@ -13,6 +13,7 @@ use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
+use Pckg\Generic\Record\Route;
 
 class PageStructure
 {
@@ -65,6 +66,27 @@ class PageStructure
     {
         return [
             'route' => (new Routes())->where('id', $route)->one(),
+        ];
+    }
+
+    public function getActionsMorphsForRouteAction(Route $route)
+    {
+        return [
+            'actionsMorphs' => $route->actions(function(MorphedBy $actions) {
+                $actions->getMiddleEntity()->withAllPermissions();
+                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                    $content->joinTranslations();
+                });
+            })->sortBy(function(Action $action) {
+                return $action->pivot->order;
+            })
+                                     ->map(function(Action $action) {
+                                         $array = $action->toArray();
+                                         $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                                         $array['pivot']['content'] = $action->pivot->content;
+
+                                         return $array;
+                                     }),
         ];
     }
 
@@ -157,7 +179,7 @@ class PageStructure
          * Collect posted data.
          */
         $data = [];
-        foreach (['order', 'background', 'template', 'width', 'action_id'] as $key) {
+        foreach (['order', 'container', 'background', 'template', 'width', 'content_id'] as $key) {
             if (post()->has($key)) {
                 $data[$key] = post($key, null);
             }
@@ -169,6 +191,17 @@ class PageStructure
         if ($data) {
             $actionsMorph->setAndSave($data);
         }
+
+        return response()->respondWithSuccess();
+    }
+
+    public function postOrdersActionsMorphAction()
+    {
+        $orders = post('orders', []);
+        $actionsMorphs = (new ActionsMorphs())->where('id', array_keys($orders))->all();
+        $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders) {
+            $actionsMorph->setAndSave(['order' => $orders[$actionsMorph->id]]);
+        });
 
         return response()->respondWithSuccess();
     }

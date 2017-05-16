@@ -42,120 +42,141 @@
         <div v-for="variable in variables" v-if="route.id" class="variable">
             <h3>${ variable.slug }</h3>
 
-            <div v-for="act in getActionsForVariable(variable)" class="action">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active">
-                        <a :href="'#home' + act.pivot.id" aria-controls="home" role="tab" data-toggle="tab">
-                            <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
-                            ${ act.title && act.title.length > 0 ? act.title : act.slug }
-                        </a>
-                    </li>
-                    <li role="presentation">
-                        <a :href="'#settings' + act.pivot.id" aria-controls="settings" role="tab" data-toggle="tab"><i
-                                    class="fa fa-th"></i></a>
-                    </li>
-                    <li role="presentation">
-                        <a :href="'#layout' + act.pivot.id" aria-controls="layout" role="tab" data-toggle="tab"><i
-                                    class="fa fa-cogs"></i></a>
-                    </li>
-                    <li role="presentation">
-                        <a :href="'#permissions' + act.pivot.id" aria-controls="permissions" role="tab"
-                           data-toggle="tab"><i
-                                    class="fa fa-users"></i></a>
-                    </li>
-                    <li role="presentation">
-                        <a :href="'#advanced' + act.pivot.id" aria-controls="advanced" role="tab" data-toggle="tab"><i
-                                    class="fa fa-wrench"></i></a>
-                    </li>
-                </ul>
+            <draggable v-model="variable.actions" :options="{handle:'.move-handle'}" @end="onEnd($event, variable)">
+                <div v-for="act in variable.actions" class="action">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation">
+                            <a href="#" class="move-handle" @click.prevent>
+                                <i class="fa fa-arrows"></i>
+                            </a>
+                        </li>
+                        <li role="presentation" class="active">
+                            <a :href="'#home' + act.pivot.id" aria-controls="home" role="tab" data-toggle="tab">
+                                <i v-if="act.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'" class="fa fa-lock"></i>
+                                ${ act.title && act.title.length > 0 ? act.title : act.slug }
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a :href="'#settings' + act.pivot.id" aria-controls="settings" role="tab" data-toggle="tab"><i
+                                        class="fa fa-th"></i></a>
+                        </li>
+                        <li role="presentation">
+                            <a :href="'#layout' + act.pivot.id" aria-controls="layout" role="tab" data-toggle="tab"><i
+                                        class="fa fa-cogs"></i></a>
+                        </li>
+                        <li role="presentation">
+                            <a :href="'#permissions' + act.pivot.id" aria-controls="permissions" role="tab"
+                               data-toggle="tab"><i
+                                        class="fa fa-users"></i></a>
+                        </li>
+                        <li role="presentation">
+                            <a :href="'#advanced' + act.pivot.id" aria-controls="advanced" role="tab" data-toggle="tab"><i
+                                        class="fa fa-wrench"></i></a>
+                        </li>
+                    </ul>
 
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" :id="'home' + act.pivot.id">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-md-3">Content</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="act.pivot.content_id">
-                                        <option v-for="content in contents"
-                                                :value="content.id">#${ content.id } - ${ content.title }
-                                        </option>
-                                    </select>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" :id="'home' + act.pivot.id">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-3">Content</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="act.pivot.content_id"
+                                                @change="saveActionsMorph(act.pivot)">
+                                            <option v-for="content in contents"
+                                                    :value="content.id">#${ content.id } - ${ content.title }
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
-                        <div class="form-horizontal" v-if="act">
-                            <div class="form-group">
-                                <label class="col-md-3">Position</label>
-                                <div class="col-md-9">
-                                    <input type="number" class="form-control narrow" v-model="act.pivot.order"
-                                           @change="timeoutUpdateActionOrder(act)"/>
+                        <div role="tabpanel" class="tab-pane" :id="'settings' + act.pivot.id">
+                            <div class="form-horizontal" v-if="act">
+                                <div class="form-group">
+                                    <label class="col-md-3">Container</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="act.pivot.container"
+                                                @change="saveActionsMorph(act.pivot)">
+                                            <option>fluid</option>
+                                            <option>wrapped</option>
+                                            <option>keep</option>
+                                            <option>none</option>
+                                        </select>
+                                        <ul>
+                                            <li><b>fluid:</b> open new fluid container around plugin, close old one</li>
+                                            <li><b>wrapped:</b> start new wrapped container around plugin, close old one
+                                            </li>
+                                            <li><b>keep:</b> keep old container opened</li>
+                                            <li><b>none:</b> close container if existent</li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
-                                <label class="col-md-3">Template</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="actionsMorph.template">
-                                        <option v-for="template in getActionTemplates(actionsMorph.action_id)"
-                                                :value="template">${ template }
-                                        </option>
-                                    </select>
+                                <div class="form-group">
+                                    <label class="col-md-3">Width</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="act.pivot.width"
+                                                @change="saveActionsMorph(act.pivot)">
+                                            <option v-for="width in widths" :value="width.slug">${ width.slug }</option>
+                                        </select>
+                                        <p>Select width of plugin inside of container.</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3">Background</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="actionsMorph.background">
-                                        <option v-for="background in backgrounds" :value="background.slug">${
-                                            background.slug
-                                            }
-                                        </option>
-                                    </select>
+                                <div class="form-group">
+                                    <label class="col-md-3">Background</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="act.pivot.background"
+                                                @change="saveActionsMorph(act.pivot)">
+                                            <option v-for="background in backgrounds" :value="background.slug"
+                                                    :html="background.slug"></option>
+                                        </select>
+                                        <p>Select background class for container.</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-3">Width</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="actionsMorph.width">
-                                        <option v-for="width in widths" :value="width.slug">${ width.slug }</option>
-                                    </select>
+                                <div class="form-group" v-if="getActionTemplates(actionsMorph.action_id).length > 0">
+                                    <label class="col-md-3">Template</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="act.pivot.template"
+                                                @change="saveActionsMorph(act.pivot)">
+                                            <option v-for="template in getActionTemplates(actionsMorph.action_id)"
+                                                    :value="template" :html="template"></option>
+                                        </select>
+                                        <p>Select presentation template for plugin.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div role="tabpanel" class="tab-pane" :id="'layout' + act.pivot.id">
+                            {# this depends on selected action #}
+                            {{ simpleContentForm | raw }}
 
-                        <button class="btn btn-success" @click="saveActionsMorph">Save layout</button>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" :id="'layout' + act.pivot.id">
-                        {# this depends on selected action #}
-                        {{ simpleContentForm | raw }}
-
-                        <button class="btn btn-success" @click="saveActionsMorph">Save settings</button>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" :id="'permissions' + act.pivot.id">
-                        <table class="table table-condensed table-hover">
-                            <thead>
-                            <tr>
-                                <th>User group</th>
-                                <th>Read</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="userGroup in userGroups">
-                                <td>${ userGroup.title }</td>
-                                <td><input type="checkbox" :value="userGroup.id" v-model="act.pivot.permissions"/>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <button class="btn btn-success" @click="savePermissions">Save permissions</button>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" :id="'advanced' + act.pivot.id">
-                        <a href="#" @click.prevent="openDeleteActionModal(act)" class="btn btn-danger">Delete
-                            action</a>
+                            <button class="btn btn-success" @click="saveActionsMorph">Save settings</button>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" :id="'permissions' + act.pivot.id">
+                            <table class="table table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    <th>User group</th>
+                                    <th>Read</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="userGroup in userGroups">
+                                    <td>${ userGroup.title }</td>
+                                    <td><input type="checkbox" :value="userGroup.id" v-model="act.pivot.permissions"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-success" @click="savePermissions">Save permissions</button>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" :id="'advanced' + act.pivot.id">
+                            <a href="#" @click.prevent="openDeleteActionModal(act)" class="btn btn-danger">Delete
+                                action</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </draggable>
 
             <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addAction(variable)">
                 <i class="fa fa-plus"></i>
@@ -175,7 +196,6 @@
                 routes: [],
                 selectedRoute: null,
                 route: {},
-                routeActions: [],
                 layout: {},
                 layoutActions: [],
                 variables: [],
@@ -218,8 +238,16 @@
             },
             fetchVariables: function () {
                 http.getJSON('{{ url('pckg.generic.pageStructure.getVariables') }}', function (data) {
-                    this.variables = data.variables;
+                    this.variables = this.prepareVariables(data.variables);
                 }.bind(this));
+            },
+            prepareVariables: function (variables) {
+                $.each(variables, function (i, variable) {
+                    variable.actions = [];
+                    variables[i] = variable;
+                });
+
+                return variables;
             },
             fetchActions: function () {
                 http.getJSON('{{ url('pckg.generic.pageStructure.getActions') }}', function (data) {
@@ -234,40 +262,40 @@
             fetchRoute: function () {
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getRoute') }}', {route: this.selectedRoute}), function (data) {
                     this.route = data.route;
-                    this.fetchRouteActions();
-                    this.fetchLayoutActions();
+                    this.fetchActionsMorphs();
                 }.bind(this));
             },
-            fetchRouteActions: function () {
-                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getRouteActions') }}', {route: this.route.id}), function (data) {
-                    this.routeActions = data.routeActions;
+            fetchActionsMorphs: function () {
+                $.each(this.variables, function (i, variable) {
+                    variable.actions = [];
+                });
+
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getActionsMorphs') }}', {route: this.route.id}), function (data) {
+                    this.mergeActionsMorphs(data.actionsMorphs);
                 }.bind(this));
             },
-            fetchLayoutActions: function () {
-                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getLayoutActions') }}', {layout: this.route.layout_id}), function (data) {
-                    this.layoutActions = data.layoutActions;
+            mergeActionsMorphs: function (actionsMorphs) {
+                $.each(actionsMorphs, function (i, actionsMorph) {
+                    $.each(this.variables, function (j, variable) {
+                        if (variable.id != actionsMorph.pivot.variable_id) {
+                            return;
+                        }
+
+                        variable.actions.push(actionsMorph);
+                    });
                 }.bind(this));
             },
-            getActionsForVariable: function (variable) {
-                var actions = [];
-
-                $.each(this.routeActions.filter(function (item) {
-                    return variable.id == item.pivot.variable_id;
-                }), function (i, action) {
-                    actions.push(action);
+            onEnd: function (event, variable) {
+                var orders = {};
+                $.each(variable.actions, function (i, action) {
+                    if (i <= event.newIndex || i <= event.oldIndex) {
+                        orders[action.pivot.id] = i;
+                    }
                 });
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.postActionsMorphsOrders') }}'), {orders: orders}, function (data) {
 
-                $.each(this.layoutActions.filter(function (item) {
-                    return variable.id == item.pivot.variable_id;
-                }), function (i, action) {
-                    actions.push(action);
-                });
-
-                return actions.sort(function (a, b) {
-                    return utils.sortInt(a.pivot.order, b.pivot.order);
                 });
             },
-
             addAction: function (variable) {
                 this.variable = variable;
                 $('#pageStructureModal').modal('show');
@@ -326,32 +354,23 @@
                     }
                 });
             },
-            saveActionsMorph: function () {
+            saveActionsMorph: function (actionsMorph) {
                 http.post(
-                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.pivot.id}),
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: actionsMorph.id}),
                     {
-                        action_id: this.actionsMorph.action_id,
-                        template: this.actionsMorph.template,
-                        width: this.actionsMorph.width,
-                        background: this.actionsMorph.background,
+                        template: actionsMorph.template,
+                        width: actionsMorph.width,
+                        background: actionsMorph.background,
+                        container: actionsMorph.container,
+                        content_id: actionsMorph.content_id
                     },
                     function (data) {
                         if (data.success) {
-                            $('#changeContentModal').modal('hide');
+                            $dispatcher.$emit('notification:success', 'Action saved');
+                        } else {
+                            $dispatcher.$emit('notification:error', 'Error saving action');
                         }
                     });
-            },
-            updateActionOrder: function (action) {
-                http.post(
-                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: action.pivot.id}),
-                    {
-                        order: action.pivot.order
-                    });
-            },
-            timeoutUpdateActionOrder: function (action) {
-                this.timeout('updateActionOrder' + action.pivot.id, function () {
-                    this.updateActionOrder(action);
-                }.bind(this), 333);
             },
             getActionTemplates: function (actionId) {
                 var action = null;
@@ -381,11 +400,11 @@
             this.fetchContents();
 
             $dispatcher.$on('record:actionsMorph:remove:action', function (action) {
-                this.routeActions.splice(action, 1);
+            //    this.routeActions.splice(action, 1);
             }.bind(this));
 
             $dispatcher.$on('record:actionsMorph:add:action', function (action) {
-                this.routeActions.push(action);
+            //    this.routeActions.push(action);
             }.bind(this));
         },
         watch: {

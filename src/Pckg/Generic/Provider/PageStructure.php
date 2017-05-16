@@ -5,6 +5,7 @@ use Pckg\Framework\Router\Route\Group;
 use Pckg\Framework\Router\Route\Route;
 use Pckg\Generic\Controller\PageStructure as PageStructureController;
 use Pckg\Generic\Resolver\ActionsMorph;
+use Pckg\Generic\Resolver\Route as RouteResolver;
 
 class PageStructure extends Provider
 {
@@ -32,10 +33,17 @@ class PageStructure extends Provider
                                                                                   'routeActions'),
                                        '.getLayoutActions'           => new Route('/layout/[layout]/actions',
                                                                                   'layoutActions'),
+                                       '.getActionsMorphs'           => (new Route('/actionsMorph/forRoute/[route]',
+                                                                                   'actionsMorphsForRoute'))->resolvers([
+                                                                                                                            'route' => (new RouteResolver())->by('id',
+                                                                                                                                                                 'route'),
+                                                                                                                        ]),
                                        '.setActionsMorphPermissions' => new Route('/actionsMorph/[actionsMorph]/permissions',
                                                                                   'actionsMorphPermissions'),
                                        '.addActionsMorph'            => new Route('/actionsMorph/add',
                                                                                   'addActionsMorph'),
+                                       '.postActionsMorphsOrders'    => new Route('/actionsMorph/orders',
+                                                                                  'ordersActionsMorph'),
                                        '.actionsMorph'               => (new Route('/actionsMorph/[actionsMorph]',
                                                                                    'actionsMorph'))->resolvers([
                                                                                                                    'actionsMorph' => ActionsMorph::class,
