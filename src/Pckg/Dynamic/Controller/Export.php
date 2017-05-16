@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use Pckg\Dynamic\Entity\Relations;
+use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic;
@@ -71,7 +72,20 @@ class Export extends Controller
 
         $strategy->setHeaders($listedFields->keyBy('field')->map('title'));
 
-        $strategy->setData($tabelize->transformRecords());
+        $transformedRecords = $tabelize->transformRecords();
+
+        /**
+         * Check for additional export transformations.
+         */
+        $listedFields->each(function(Field $field) use ($strategy, &$transformedRecords) {
+            if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst(substr($strategy->getExtension(), 1)))) {
+                foreach ($transformedRecords as $record) {
+                    $record[$field->field] = br2nl($record[$field->field]);
+                }
+            }
+        });
+
+        $strategy->setData($transformedRecords);
 
         $strategy->setFileName($table->table . '-' . date('Ymd-his'));
 

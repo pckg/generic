@@ -22,6 +22,11 @@ abstract class AbstractStrategy implements Strategy
 
     protected $headers = [];
 
+    public function getExtension()
+    {
+        return $this->extension;
+    }
+
     public function input(Entity $entity)
     {
         $this->entity = $entity;

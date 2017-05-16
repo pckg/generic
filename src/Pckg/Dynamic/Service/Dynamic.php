@@ -162,10 +162,6 @@ class Dynamic
     {
         $fieldTransformations = [];
 
-        /**
-         * Transform field type = php, geo
-         * Add support for point fields.
-         */
         $fields->each(
             function(Field $field) use (&$fieldTransformations, $entity) {
                 $transformation = $field->getTransformedValue($entity);
