@@ -27,10 +27,14 @@ class CreateListData extends Migration
                 'title' => 'Action widths',
                 'items' => [
                     'fluid'     => 'Fluid',
-                    'container' => 'Container',
                     'small'     => 'Small',
                     'medium'    => 'Medium',
                     'large'     => 'Large',
+                    'col-md-3'  => 'Quarter (col-md-3)',
+                    'col-md-4'  => 'Third (col-md-4)',
+                    'col-md-6'  => 'Half (col-md-6)',
+                    'col-md-8'  => 'Two thirds (col-md-8)',
+                    'col-md-12' => 'Full (col-md-12)',
                 ],
             ],
             [
