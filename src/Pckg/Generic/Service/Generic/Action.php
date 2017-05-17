@@ -46,13 +46,16 @@ class Action
 
     protected $background;
 
+    protected $container;
+
     /**
      * @param      $class
      * @param      $method
      * @param null $order
      */
     public function __construct(
-        $class, $method, $args = [], $order = null, $template = null, $width = null, $background = null
+        $class, $method, $args = [], $order = null, $template = null, $width = null, $background = null,
+        $container = null
     ) {
         $this->class = $class;
         $this->method = $method;
@@ -61,11 +64,27 @@ class Action
         $this->template = $template;
         $this->width = $width;
         $this->background = $background;
+        $this->container = $container;
     }
 
     public function getOrder()
     {
         return $this->order;
+    }
+
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    public function getBackground()
+    {
+        return $this->background;
     }
 
     public function getClass()
@@ -140,22 +159,6 @@ class Action
              * Parse view to string in all cases.
              */
             $result = (string)$result;
-
-            /**
-             * Add some width and background classes.
-             */
-            $classes = [];
-            if ($this->width) {
-                $classes[] = 'width-' . $this->width;
-            }
-
-            if ($this->background) {
-                $classes[] = 'background-' . $this->background;
-            }
-
-            if ($classes) {
-                $result = '<div class="generic-action ' . implode(' ', $classes) . '">' . $result . '</div>';
-            }
 
             /**
              * Prepare comments for dev environment.

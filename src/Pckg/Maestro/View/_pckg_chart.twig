@@ -11,8 +11,7 @@
             type: null
         },
         mounted: function () {
-
-            this.$nextTick(function() {
+            this.$nextTick(function () {
                 new Chart($(this.$el).get()[0], {
                     type: this.type,
                     data: this.data,

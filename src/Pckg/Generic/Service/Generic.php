@@ -110,7 +110,8 @@ class Generic
                     $action->pivot->order,
                     $action->pivot->template,
                     $action->pivot->width,
-                    $action->pivot->background
+                    $action->pivot->background,
+                    $action->pivot->container
                 );
             }
         );
@@ -139,7 +140,8 @@ class Generic
                         $action->pivot->order,
                         $action->pivot->template,
                         $action->pivot->width,
-                        $action->pivot->background
+                        $action->pivot->background,
+                        $action->pivot->container
                     );
                 }
             );
@@ -155,11 +157,11 @@ class Generic
      */
     public function addAction(
         $variable, $class, $method = null, $args = [], $order = null, $template = null, $width = null,
-        $background = null
+        $background = null, $container = null
     ) {
         $block = $this->touchBlock($variable);
 
-        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background));
+        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background, $container));
 
         return $action;
     }
@@ -196,9 +198,14 @@ class Generic
      */
     private function getVariablesFromOrder($order)
     {
+        $lastContainer = [];
         $variables = [];
         foreach ($order as $ord => $blocks) {
             foreach ($blocks as $block => $actions) {
+                if (!isset($lastContainer[$block])) {
+                    $lastContainer[$block] = null;
+                }
+
                 foreach ($actions as $action) {
                     startMeasure(
                         'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
@@ -206,6 +213,56 @@ class Generic
                     );
                     try {
                         $html = $action->getHtml();
+
+                        /**
+                         * Wrap into container and width classes.
+                         */
+                        $classes = [];
+                        if ($width = $action->getWidth()) {
+                            $classes[] = 'width-' . $width;
+                        }
+
+                        if ($background = $action->getBackground()) {
+                            $classes[] = 'background-' . $background;
+                        }
+
+                        if ($classes) {
+                            $html = '<div class="generic-action ' . implode(' ', $classes) . '">' . $html . '</div>';
+                        }
+
+                        if ($container = $action->getContainer()) {
+                            if (in_array($container, ['fluid', 'wrapped', 'none']) && in_array($lastContainer[$block], ['fluid', 'wrapped'])) {
+                                /**
+                                 * If last container exists and we will create new one or close it, close it.
+                                 */
+                                $variables[$block][] = '</div>';
+                            }
+
+                            if ($container == 'fluid') {
+                                /**
+                                 * Open fluid container
+                                 */
+                                $variables[$block][] = '<div class="container-fluid">';
+                            } else if ($container == 'wrapped') {
+                                /**
+                                 * Open normal container
+                                 */
+                                $variables[$block][] = '<div class="container">';
+                            } else if ($container == 'keep') {
+                                /**
+                                 * Keep things as they are.
+                                 */
+                            } else if ($container == 'none') {
+                                /**
+                                 * Keep things as they are.
+                                 */
+                            }
+
+                            if (in_array($container, ['fluid', 'wrapped', 'none'])) {
+                                $lastContainer[$block] = $container;
+                            }
+                        }
+
                         $variables[$block][] = $html;
                     } catch (Throwable $e) {
                         if (dev()) {
@@ -217,6 +274,15 @@ class Generic
                         $ord
                     );
                 }
+            }
+        }
+
+        foreach ($variables as $block => $blocks) {
+            if (in_array($lastContainer[$block], ['fluid', 'wrapped'])) {
+                /**
+                 * Close container.
+                 */
+                $variables[$block][] = '</div>';
             }
         }
 

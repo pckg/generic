@@ -33,6 +33,16 @@ class CreateListData extends Migration
                     'large'     => 'Large',
                 ],
             ],
+            [
+                'id'    => 'mails.types',
+                'title' => 'Mail types',
+                'items' => [
+                    'frontend'     => 'Frontend / Transactional',
+                    'notification' => 'Notification / Event',
+                    'newsletter'   => 'Newsletter',
+                    'custom'       => 'Custom',
+                ],
+            ],
         ];
 
         foreach ($lists as $listConfig) {
@@ -57,6 +67,8 @@ class CreateListData extends Migration
                                          'slug'    => $key,
                                          'value'   => $title,
                                      ]);
+                } else {
+                    $listItem->setAndSave(['value' => $title]);
                 }
             }
         }
