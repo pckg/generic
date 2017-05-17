@@ -161,7 +161,8 @@ class Generic
     ) {
         $block = $this->touchBlock($variable);
 
-        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background, $container));
+        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background,
+                                               $container));
 
         return $action;
     }
@@ -226,28 +227,28 @@ class Generic
                             $classes[] = 'background-' . $background;
                         }
 
-                        if ($classes) {
-                            $html = '<div class="generic-action ' . implode(' ', $classes) . '">' . $html . '</div>';
-                        }
+                        $classes = implode(' ', $classes);
 
                         if ($container = $action->getContainer()) {
-                            if (in_array($container, ['fluid', 'wrapped', 'none']) && in_array($lastContainer[$block], ['fluid', 'wrapped'])) {
+                            if (in_array($container, ['fluid', 'wrapped', 'none'])
+                                && in_array($lastContainer[$block], ['fluid', 'wrapped'])
+                            ) {
                                 /**
                                  * If last container exists and we will create new one or close it, close it.
                                  */
-                                $variables[$block][] = '</div>';
+                                $variables[$block][] = '</div></div>';
                             }
 
                             if ($container == 'fluid') {
                                 /**
                                  * Open fluid container
                                  */
-                                $variables[$block][] = '<div class="container-fluid">';
+                                $variables[$block][] = '<div class="container-fluid pckg-container-fluid ' . $classes . '">';
                             } else if ($container == 'wrapped') {
                                 /**
                                  * Open normal container
                                  */
-                                $variables[$block][] = '<div class="container">';
+                                $variables[$block][] = '<div class="container pckg-container-wrapped ' . $classes . '">';
                             } else if ($container == 'keep') {
                                 /**
                                  * Keep things as they are.
@@ -258,9 +259,20 @@ class Generic
                                  */
                             }
 
+                            if (in_array($container, ['fluid', 'wrapped'])) {
+                                /**
+                                 * Add row.
+                                 */
+                                $variables[$block][] = '<div class="row">';
+                            }
+
                             if (in_array($container, ['fluid', 'wrapped', 'none'])) {
                                 $lastContainer[$block] = $container;
                             }
+                        }
+
+                        if ($container != 'none') {
+                            $html = '<div class="pckg-action ' . $classes . '">' . $html . '</div>';
                         }
 
                         $variables[$block][] = $html;
@@ -280,9 +292,9 @@ class Generic
         foreach ($variables as $block => $blocks) {
             if (in_array($lastContainer[$block], ['fluid', 'wrapped'])) {
                 /**
-                 * Close container.
+                 * Close row and container.
                  */
-                $variables[$block][] = '</div>';
+                $variables[$block][] = '</div></div>';
             }
         }
 
