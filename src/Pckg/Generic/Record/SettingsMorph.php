@@ -15,16 +15,15 @@ class SettingsMorph extends Record
     {
         if ($this->setting_id == 1 || $this->setting_id == 9) {
             $args[] = Reflect::create(Table::class)->resolve($this->value);
-
         } else if ($this->setting_id == 7) {
             $args[] = (new ActionsMorphs())->where('id', $this->value)->oneOrFail();
-
         }
     }
 
     public function registerToConfig()
     {
-        config()->set($this->setting->slug, $this->value);
+        config()->set($this->setting->slug,
+                      $this->setting->type == 'array' ? json_decode($this->value, true) : $this->value);
 
         return $this;
     }

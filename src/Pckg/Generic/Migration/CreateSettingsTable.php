@@ -14,7 +14,7 @@ class CreateSettingsTable extends Migration
         $settingTypesI18n->title();
 
         $settings = $this->table('settings');
-        $settings->integer('setting_type_id')->references('setting_types');
+        $settings->varchar('type')->references('setting_types', 'slug');
 
         $settingsI18n = $this->translatable('settings');
         $settingsI18n->text('value');
