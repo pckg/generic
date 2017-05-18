@@ -215,6 +215,11 @@ class Generic
                     try {
                         $html = $action->getHtml();
 
+                        if (is_array($html)) {
+                            $variables[$block][] = $html;
+                            continue;
+                        }
+
                         /**
                          * Wrap into container and width classes.
                          */
@@ -272,10 +277,10 @@ class Generic
                         }
 
                         if ($container != 'none') {
-                            $html = '<div class="pckg-action ' . $classes . '">' . $html . '</div>';
+                            $html = '<div class="pckg-action ' . implode(" ", $classes) . '">' . $html . '</div>';
                         }
 
-                        $variables[$block][] = $html;
+                        $variables[$block][] = (string)$html;
                     } catch (Throwable $e) {
                         if (dev()) {
                             throw $e;
@@ -308,6 +313,10 @@ class Generic
      */
     private function mergeVariables($variables)
     {
+        if (request()->isPost() && is_array($variables['content'][0])) {
+            return $variables['content'][0];
+        }
+
         foreach ($variables as &$contents) {
             $isArray = false;
             foreach ($contents as $content) {

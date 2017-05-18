@@ -39,8 +39,10 @@ class Tabelize
      * @var array
      */
     protected $recordActions = [
+        'view',
         'edit',
         'delete',
+        'clone',
     ];
 
     /**

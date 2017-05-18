@@ -130,6 +130,9 @@
                     this.groups = data.groups;
                     $vue.$set(this.paginator, 'total', data.paginator.total);
                 }.bind(this));
+            },
+            setRecords: function (records) {
+                this.records = records;
             }
         },
         watch: {
@@ -140,13 +143,15 @@
                 });
             }
         },
-        {% if tab %}
         mounted: function () {
+            {% if tab %}
             /**
              * @T00D00 - what if we have multiple tables in tab?
              */
             $dispatcher.$once('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
+            {% else %}
+            $dispatcher.$on('pckg-maestro-table-{{ table }}:setRecords', this.setRecords);
+            {% endif %}
         }
-        {% endif %}
     }));
 </script>
