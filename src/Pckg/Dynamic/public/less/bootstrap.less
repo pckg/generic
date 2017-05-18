@@ -300,7 +300,9 @@ table tr.strong > td:not(.actions) {
     margin-top: 1rem;
     margin-bottom: 3rem;
     > .btn-group {
-      > div:first-child { display: none }
+      > div:first-child {
+        display: none
+      }
     }
   }
 }
@@ -470,10 +472,12 @@ button[type=button] {
     }
   }
 }
+
 #vue-app .maestro-sidebar.collapsed div#main-admin-user-nav ul li > a {
   width: 0;
   overflow: hidden;
 }
+
 #vue-app .maestro-sidebar .top-level {
   overflow: hidden;
 }
@@ -502,6 +506,7 @@ img.editor-img {
     float: left;
   }
 }
+
 .page-structure-actions {
   .title {
     font-weight: bold;
@@ -522,4 +527,23 @@ img.editor-img {
     }
   }
   .list-container-responsive(4, 0, 0, ~'.item', 360px);
+}
+
+.derive-tools-segmentation-component {
+  .row {
+    .list-container-responsive(4, 0, 0, ~'.item', 360px);
+    .item {
+      .form-group {
+        margin: 0;
+        > label {
+          display: block;
+          width: 100%;
+        }
+        > div {
+          display: block;
+          width: 100%;
+        }
+      }
+    }
+  }
 }
