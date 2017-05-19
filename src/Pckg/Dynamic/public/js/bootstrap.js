@@ -169,7 +169,7 @@ $(document).ready(function () {
         }
     }
 
-    affixFromTop();
+    //affixFromTop();
     collapsedHoverOn();
 
     document.createElement('pc-kg');
