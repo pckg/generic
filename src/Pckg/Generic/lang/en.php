@@ -19,6 +19,8 @@ return [
                 'customizeView'     => 'Customize view',
                 'saveView'          => 'Save view',
                 'export'            => 'Export',
+                'list'              => 'List',
+                'settings'          => 'Settings',
             ],
         ],
         'htmlbuilder' => [
