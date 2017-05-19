@@ -8,11 +8,24 @@
         template: '#pckg-chart',
         props: {
             data: null,
-            type: null
+            type: null,
+            scale: {
+                type: String,
+                default: 'linear'
+            }
         },
-        mounted: function () {
-            this.$nextTick(function () {
-                new Chart($(this.$el).get()[0], {
+        data: function () {
+            return {
+                _chart: {}
+            };
+        },
+        methods: {
+            initChart: function () {
+                if (this._chart) {
+                    this._chart.destroy();
+                }
+
+                this._chart = new Chart($(this.$el).get()[0], {
                     type: this.type,
                     data: this.data,
                     options: {
@@ -21,10 +34,26 @@
                         },
                         tooltips: {
                             mode: 'x-axis'
+                        },
+                        scales: {
+                            yAxes: [{
+                                type: this.scale
+                            }]
                         }
                     }
                 });
-            }.bind(this));
+            }
+        },
+        watch: {
+            data: function () {
+                this.initChart();
+            },
+            scale: function () {
+                this.initChart();
+            }
+        },
+        mounted: function () {
+            this.$nextTick(this.initChart);
         }
     });
 </script>
