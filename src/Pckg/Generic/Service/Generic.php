@@ -277,7 +277,7 @@ class Generic
                         }
 
                         if ($container != 'none') {
-                            $html = '<div class="pckg-action ' . implode(" ", $classes) . '">' . $html . '</div>';
+                            $html = '<div class="pckg-action ' . $classes . '">' . $html . '</div>';
                         }
 
                         $variables[$block][] = (string)$html;

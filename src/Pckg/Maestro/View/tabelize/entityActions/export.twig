@@ -1,6 +1,6 @@
 <div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}" class="btn btn-warning" title="{{ __('Export HTML') }}">
-        <i class="fa fa-download" aria-hidden="true"></i> .html
+    <a href="#" class="btn btn-warning" data-toggle="dropdown" title="{{ __('pckg.generic.btn.export') }}">
+        <i class="fa fa-download" aria-hidden="true"></i> {{ __('pckg.generic.btn.export') }}
     </a>
 
     <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -10,6 +10,11 @@
     </button>
 
     <ul class="dropdown-menu dropdown-menu-right">
+        <li>
+            <a href="{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}">
+                <i class="fa fa-table" aria-hidden="true"></i> .html
+            </a>
+        </li>
         <li>
             <a href="{{ tabelize.getEntityUrl('export', 'xlsx') }}{{ view ? '/' ~ view.id : '' }}">
                 <i class="fa fa-table" aria-hidden="true"></i> .xlsx

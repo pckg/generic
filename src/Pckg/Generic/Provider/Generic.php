@@ -8,6 +8,8 @@ use Pckg\Generic\Service\Menu;
 class Generic extends Provider
 {
 
+    protected $translations = true;
+
     public function providers()
     {
         return [

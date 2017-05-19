@@ -663,16 +663,6 @@ class Tabelize
         );
     }
 
-    public function getShareViewUrl()
-    {
-        return url(
-            'dynamic.record.view.share',
-            [
-                'table' => $this->table,
-            ]
-        );
-    }
-
     public function getSaveViewUrl()
     {
         return url(
