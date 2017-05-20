@@ -179,7 +179,7 @@ class Tabelize
 
     public function getTitle()
     {
-        return $this->title . ' (' . $this->total . ')';
+        return $this->title;
     }
 
     public function setTotal($total)

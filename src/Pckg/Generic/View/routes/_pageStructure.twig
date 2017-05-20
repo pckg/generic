@@ -281,6 +281,10 @@
                             return;
                         }
 
+                        if (!variable.actions) {
+                            variable.actions = [];
+                        }
+
                         variable.actions.push(actionsMorph);
                     });
                 }.bind(this));
@@ -419,6 +423,9 @@
                         return;
                     }
 
+                    if (!variable.actions) {
+                        variable.actions = [];
+                    }
                     variable.actions.push(action);
                 });
                 this.routeActions.push(action);

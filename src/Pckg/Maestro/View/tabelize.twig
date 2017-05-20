@@ -25,6 +25,7 @@
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"
                                     :table="{{ tabelize.getTable() | json_encode | escape }}"
                                     :paginator="{{ tabelize.getPaginator() | json_encode | escape }}"
+                                    :total="{{ tabelize.getTotal() }}"
                                     :first="1"></pckg-maestro-table-{{ table }}>
 
     <pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>

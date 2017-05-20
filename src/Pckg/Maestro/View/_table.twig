@@ -128,11 +128,14 @@
                 http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
                     this.groups = data.groups;
-                    $vue.$set(this.paginator, 'total', data.paginator.total);
+                    this.setPaginatorTotal(data.paginator.total);
                 }.bind(this));
             },
             setRecords: function (records) {
                 this.records = records;
+            },
+            setPaginatorTotal: function (total) {
+                $vue.$set(this.paginator, 'total', total);
             }
         },
         watch: {
@@ -151,6 +154,7 @@
             $dispatcher.$once('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
             {% else %}
             $dispatcher.$on('pckg-maestro-table-{{ table }}:setRecords', this.setRecords);
+            $dispatcher.$on('pckg-maestro-table-{{ table }}:setPaginatorTotal', this.setPaginatorTotal);
             {% endif %}
         }
     }));
