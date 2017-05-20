@@ -7,6 +7,15 @@
             <div class="btn-group btn-group-sm pull-right" role="group" style="text-align: right;">
                 {# print all buttons for mixed, entity-plugin and entity actions #}
                 {{ tabelize.getEntityActionsHtml() | raw }}
+                <div class="btn-group btn-group-sm">
+                    <a type="button" class="entity-action-view btn btn-default dropdown-toggle" href="#" title="" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-bars" aria-hidden="true"></i> More
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        {{ tabelize.getEntityActionsHtml(false) | raw }}
+                    </ul>
+                </div>
             </div>
             {% if viewType == 'full' %}
                 <div class="quick-search">

@@ -19,13 +19,12 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             }
         },
         first: false,
-        ids: {
+        initialIds: {
             default: function () {
                 return [];
             }/*,
              type: Array*/
         },
-        allChecked: false,
         search: null,
         entityactions: {},
         table: Object,
@@ -70,8 +69,10 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             _searchTimeout: null,
             _sortTimeout: null,
             records: this.initialRecords,
+            ids: this.initialIds,
             emitted: 0,
-            search: ''
+            search: '',
+            allChecked: false
         };
     },
     methods: {

@@ -611,7 +611,7 @@ class Tabelize
         return $transformed;
     }
 
-    public function getEntityActionsHtml()
+    public function getEntityActionsHtml($normal = true)
     {
         $html = null;
         $data = $this->viewData;
@@ -624,8 +624,16 @@ class Tabelize
                 $template = 'tabelize/entityActions/' . $action;
             }
 
-            $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
-            $html .= view($template, $data);
+
+            if ($normal && in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) {
+                $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
+                $parsed = view($template, $data)->autoparse();
+                $html .= $parsed;
+            } elseif (!$normal && !in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) {
+                $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
+                $parsed = view($template, $data)->autoparse();
+                $html .= '<li>' . $parsed . '</li>';
+            }
         }
 
         return $html;
