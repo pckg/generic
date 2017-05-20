@@ -20,7 +20,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="record in filteredRecords">
+                <tr v-for="record in records">
                     <td v-for="field in fields" v-html="record[field.field]"></td>
                 </tr>
                 </tbody>

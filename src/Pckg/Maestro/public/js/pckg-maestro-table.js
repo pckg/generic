@@ -92,7 +92,7 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
         computed: function(val){
             return val;
         }
-    },
+    }/*,
     computed: {
         filteredRecords: function () {
             var self = this;
@@ -108,5 +108,5 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
                 });
             });
         }
-    }
+    }*/
 });
