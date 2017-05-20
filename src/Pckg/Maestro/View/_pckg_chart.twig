@@ -33,7 +33,8 @@
                             mode: 'x-axis'
                         },
                         tooltips: {
-                            mode: 'x-axis'
+                            mode: 'x-axis',
+                            position: 'nearest'
                         },
                         scales: {
                             yAxes: [{
@@ -53,6 +54,15 @@
             }
         },
         mounted: function () {
+            Chart.Tooltip.positioners.leftTop = function(a){
+                var average = this.average(a);
+
+                if (average) {
+                    average.y = 10;
+                }
+
+                return average;
+            };
             this.$nextTick(this.initChart);
         }
     });
