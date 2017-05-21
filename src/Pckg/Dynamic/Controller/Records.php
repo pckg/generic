@@ -844,11 +844,11 @@ class Records extends Controller
         $filename = $upload->getUploadedFilename();
 
         $entity = $table->createEntity();
-        if (!$record && $foreignRecord && $relation) {
+        if (!$record) {
             $_SESSION[Records::class]['upload'][] = [
-                '_relation'               => $relation->id,
-                $relation->onField->field => $foreignRecord->id,
-                $field->field             => $filename,
+                '_relation'                     => $relation->id,
+                $relation->onField->field ?? '' => $foreignRecord ?? $foreignRecord->id,
+                $field->field                   => $filename,
             ];
         } else {
             $record->setEntity($entity);
