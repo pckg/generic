@@ -6,8 +6,11 @@
     routes: []
 });*/
 
+var store = new Vuex.Store({});
+
 var $vue = new Vue({
     // router: $router,
+    store,
     data: {
         alerts: [],
         modals: []
