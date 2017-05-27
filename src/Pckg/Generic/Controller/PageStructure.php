@@ -162,13 +162,25 @@ class PageStructure
          */
         if ($data['type'] == 'container') {
             // pckg-generic-pageStructure-container
-            $data['action_id'] = 18;
+            $data['action_id'] = Action::getOrCreate([
+                                                         'slug'   => 'pckg-generic-pageStructure-container',
+                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'method' => 'container',
+                                                     ])->id;
         } elseif ($data['type'] == 'row') {
             // pckg-generic-pageStructure-row
-            $data['action_id'] = 19;
+            $data['action_id'] = Action::getOrCreate([
+                                                         'slug'   => 'pckg-generic-pageStructure-row',
+                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'method' => 'row',
+                                                     ])->id;
         } elseif ($data['type'] == 'column') {
             // pckg-generic-pageStructure-column
-            $data['action_id'] = 20;
+            $data['action_id'] = Action::getOrCreate([
+                                                         'slug'   => 'pckg-generic-pageStructure-column',
+                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'method' => 'column',
+                                                     ])->id;
         }
 
         /**
