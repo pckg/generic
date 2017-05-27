@@ -48,6 +48,13 @@ class Action
 
     protected $container;
 
+    protected $type;
+
+    /**
+     * @var \Pckg\Generic\Record\Action
+     */
+    protected $action;
+
     /**
      * @param      $class
      * @param      $method
@@ -55,7 +62,7 @@ class Action
      */
     public function __construct(
         $class, $method, $args = [], $order = null, $template = null, $width = null, $background = null,
-        $container = null
+        $container = null, $type = null, \Pckg\Generic\Record\Action $actionRecord
     ) {
         $this->class = $class;
         $this->method = $method;
@@ -65,6 +72,8 @@ class Action
         $this->width = $width;
         $this->background = $background;
         $this->container = $container;
+        $this->type = $type;
+        $this->action = $actionRecord;
     }
 
     public function getOrder()
@@ -97,6 +106,11 @@ class Action
         return $this->method;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
     /**
      * @return mixed|null|Content
      */
@@ -105,12 +119,49 @@ class Action
         return $this->args['content'] ?? null;
     }
 
+    public function getSubHtml()
+    {
+        $html = [];
+
+        foreach ($this->action->getChildren as $action) {
+            $genericAction = new Action(
+                $action->class,
+                $action->method,
+                [
+                    'content'   => $action->pivot->content,
+                    'settings'  => $action->pivot->settings,
+                    'route'     => $this->args['route'],
+                    'resolvers' => $this->args['resolvers'],
+                ],
+                $action->pivot->order,
+                $action->pivot->template,
+                $action->pivot->width,
+                $action->pivot->background,
+                $action->pivot->container,
+                $action->pivot->type,
+                $action
+            );
+
+            $html[] = $genericAction->getHtml();
+        }
+
+        return implode($html);
+    }
+
     /**
      * @return string
      * @throws Exception
      */
     public function getHtml()
     {
+        if ($this->type == 'container') {
+            return '<div class="container container-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
+        } else if ($this->type == 'row') {
+            return '<div class="row row-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
+        } else if ($this->type == 'column') {
+            return '<div class="col-md-12 column-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
+        }
+
         if ($this->class && $this->method) {
             $prefix = strtolower(request()->method());
 

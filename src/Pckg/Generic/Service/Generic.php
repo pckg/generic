@@ -88,12 +88,18 @@ class Generic
 
         $actions = $route->actions(
             function(MorphedBy $actions) {
-                $actions->getMiddleEntity()->joinPermissionTo('read');
+                // $actions->getMiddleEntity()->joinPermissionTo('read');
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->joinTranslations();
                 });
             }
         );
+
+        $actions = $actions->tree(function($action) {
+            return $action->pivot->parent_id;
+        }, function($action) {
+            return $action->pivot->id;
+        });
 
         $actions->each(
             function(ActionRecord $action) use ($resolvers) {
@@ -111,7 +117,9 @@ class Generic
                     $action->pivot->template,
                     $action->pivot->width,
                     $action->pivot->background,
-                    $action->pivot->container
+                    $action->pivot->container,
+                    $action->pivot->type,
+                    $action
                 );
             }
         );
@@ -119,7 +127,7 @@ class Generic
         if ($route->layout) {
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
-                    $actions->getMiddleEntity()->joinPermissionTo('read');
+                    // $actions->getMiddleEntity()->joinPermissionTo('read');
                     $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                         $content->joinTranslations();
                     });
@@ -141,7 +149,9 @@ class Generic
                         $action->pivot->template,
                         $action->pivot->width,
                         $action->pivot->background,
-                        $action->pivot->container
+                        $action->pivot->container,
+                        $action->pivot->type,
+                        $action
                     );
                 }
             );
@@ -157,12 +167,12 @@ class Generic
      */
     public function addAction(
         $variable, $class, $method = null, $args = [], $order = null, $template = null, $width = null,
-        $background = null, $container = null
+        $background = null, $container = null, $type = null, \Pckg\Generic\Record\Action $actionRecord = null
     ) {
         $block = $this->touchBlock($variable);
 
         $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background,
-                                               $container));
+                                               $container, $type, $actionRecord));
 
         return $action;
     }
@@ -199,14 +209,9 @@ class Generic
      */
     private function getVariablesFromOrder($order)
     {
-        $lastContainer = [];
         $variables = [];
         foreach ($order as $ord => $blocks) {
             foreach ($blocks as $block => $actions) {
-                if (!isset($lastContainer[$block])) {
-                    $lastContainer[$block] = null;
-                }
-
                 foreach ($actions as $action) {
                     startMeasure(
                         'Getting output: ' . $action->getClass() . ' ' . $action->getMethod() . ' ' . $block . ' ' .
@@ -220,65 +225,7 @@ class Generic
                             continue;
                         }
 
-                        /**
-                         * Wrap into container and width classes.
-                         */
-                        $classes = [];
-                        if ($width = $action->getWidth()) {
-                            $classes[] = 'width-' . $width;
-                        }
-
-                        if ($background = $action->getBackground()) {
-                            $classes[] = 'background-' . $background;
-                        }
-
-                        $classes = implode(' ', $classes);
-
-                        if ($container = $action->getContainer()) {
-                            if (in_array($container, ['fluid', 'wrapped', 'none'])
-                                && in_array($lastContainer[$block], ['fluid', 'wrapped'])
-                            ) {
-                                /**
-                                 * If last container exists and we will create new one or close it, close it.
-                                 */
-                                $variables[$block][] = '</div></div>';
-                            }
-
-                            if ($container == 'fluid') {
-                                /**
-                                 * Open fluid container
-                                 */
-                                $variables[$block][] = '<div class="container-fluid pckg-container-fluid ' . $classes . '">';
-                            } else if ($container == 'wrapped') {
-                                /**
-                                 * Open normal container
-                                 */
-                                $variables[$block][] = '<div class="container pckg-container-wrapped ' . $classes . '">';
-                            } else if ($container == 'keep') {
-                                /**
-                                 * Keep things as they are.
-                                 */
-                            } else if ($container == 'none') {
-                                /**
-                                 * Keep things as they are.
-                                 */
-                            }
-
-                            if (in_array($container, ['fluid', 'wrapped'])) {
-                                /**
-                                 * Add row.
-                                 */
-                                $variables[$block][] = '<div class="row">';
-                            }
-
-                            if (in_array($container, ['fluid', 'wrapped', 'none'])) {
-                                $lastContainer[$block] = $container;
-                            }
-                        }
-
-                        if ($container != 'none') {
-                            $html = '<div class="pckg-action ' . $classes . '">' . $html . '</div>';
-                        }
+                        //$html = '<div class="pckg-action">' . $html . '</div>';
 
                         $variables[$block][] = (string)$html;
                     } catch (Throwable $e) {
@@ -291,15 +238,6 @@ class Generic
                         $ord
                     );
                 }
-            }
-        }
-
-        foreach ($variables as $block => $blocks) {
-            if (in_array($lastContainer[$block], ['fluid', 'wrapped'])) {
-                /**
-                 * Close row and container.
-                 */
-                $variables[$block][] = '</div></div>';
             }
         }
 
