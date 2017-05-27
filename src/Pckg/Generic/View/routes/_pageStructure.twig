@@ -75,7 +75,7 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addRow(action.actions)">
+                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addRow(action)">
                     <i class="fa fa-plus"></i> Add row
                 </a>
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
@@ -122,7 +122,7 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addColumn(action.actions)">
+                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addColumn(action)">
                     <i class="fa fa-plus"></i> Add column
                 </a>
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-column',group:'column'}"
@@ -357,19 +357,19 @@
 
 <script type="text/x-template" id="pckg-generic-pageVariable">
     <div class="pckg-generic-pageVariable">
-        <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addContainer(variable.actions)">
+        <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addContainer(variable)">
             <i class="fa fa-plus"></i> Add container
         </a>
         <draggable v-model="variable.actions" :options="{handle:'.move-handle-container',group:'container'}"
                    @end="onEnd($event, variable)">
             <div v-for="act in variable.actions" class="action">
-                <template v-if="act.type == 'container'">
+                <template v-if="act.pivot.type == 'container'">
                     <pckg-generic-pageContainer :action="act"></pckg-generic-pageContainer>
                 </template>
-                <template v-else-if="act.type == 'row'">
+                <template v-else-if="act.pivot.type == 'row'">
                     <pckg-generic-pageRow :action="act"></pckg-generic-pageRow>
                 </template>
-                <template v-else-if="act.type == 'column'">
+                <template v-else-if="act.pivot.type == 'column'">
                     <pckg-generic-pageColumn :action="act"></pckg-generic-pageColumn>
                 </template>
                 <template v-else>
@@ -383,6 +383,7 @@
 <script>
     var pageStructureStore = new Vuex.Store({
         state: {
+            route: {},
             parent: {},
             contents: [],
             actions: [],
@@ -411,8 +412,80 @@
             templates: {{ config('pckg.generic.templates') | json_encode | raw }},
         },
         actions: {
+            /**
+             * Called when adding:
+             *  - container to variable
+             *  - row to container
+             *  - column to row
+             */
+            addBox: function (store, config) {
+                var postData = {
+                    parent_id: config.parent,
+                    type: config.type,
+                    variable_id: config.variable,
+                    route_id: store.state.route.id,
+                    action_id: config.action
+                };
+
+                http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
+                    pageStructureStore.dispatch('pushAction', data.action);
+                });
+            },
+            pushAction: function (store, action) {
+                action.actions = [];
+                if (action.pivot.type == 'container') {
+                    $.each(store.state.variables, function (i, variable) {
+                        if (variable.id == action.pivot.variable_id) {
+                            store.state.variables[i].actions.push(action);
+                            store.commit('variables', store.state.variables);
+                        }
+                    });
+                } else if (action.pivot.type == 'row') {
+                    $.each(store.state.variables, function (i, variable) {
+                        $.each(variable.actions, function (j, container) {
+                            if (container.pivot.id == action.pivot.parent_id) {
+                                store.state.variables[i].actions[j].actions.push(action);
+                                store.commit('variables', store.state.variables);
+                            }
+                        });
+                    });
+                } else if (action.pivot.type == 'column') {
+                    $.each(store.state.variables, function (i, variable) {
+                        $.each(variable.actions, function (j, container) {
+                            $.each(container.actions, function (k, row) {
+                                if (row.pivot.id == action.pivot.parent_id) {
+                                    store.state.variables[i].actions[j].actions[k].actions.push(action);
+                                    store.commit('variables', store.state.variables);
+                                }
+                            });
+                        });
+                    });
+                } else if (action.pivot.type == 'action') {
+                    $.each(store.state.variables, function (i, variable) {
+                        $.each(variable.actions, function (j, container) {
+                            $.each(container.actions, function (k, row) {
+                                $.each(row.actions, function (l, column) {
+                                    if (column.pivot.id == action.pivot.parent_id) {
+                                        store.state.variables[i].actions[j].actions[k].actions[l].actions.push(action);
+                                        store.commit('variables', store.state.variables);
+                                    }
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    console.log('unknown action type');
+                }
+            },
             setParent: function (store, parent) {
                 store.commit('parent', parent);
+            },
+            setRoute: function (store, route) {
+                store.commit('route', route);
+            },
+            addAction: function (store, action) {
+                pageStructureStore.state.parent.actions.push(action);
+                store.commit('parent', pageStructureStore.state.parent);
             },
             fetchAll: function () {
                 pageStructureStore.dispatch('fetchRoutes');
@@ -462,6 +535,9 @@
             },
             parent: function (state, parent) {
                 state.parent = parent;
+            },
+            route: function (state, route) {
+                state.route = route;
             }
         },
         getters: {}
@@ -481,22 +557,14 @@
                 });
             },
             pushAction: function (action) {
-                console.log(this);
-                var postData = {
-                    route_id: this.route.id,
-                    variable_id: this.variable.id,
-                    action_id: action.id
-                };
-                console.log(postData, this.parent);
+                pageStructureStore.dispatch('addBox', {
+                    type: 'action',
+                    variable: null, // @T00D00 - determine variable
+                    parent: this.parent.pivot.id,
+                    action: action.id
+                });
 
-                http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
-                    $dispatcher.$emit('notification:success', 'Action successfully added');
-                    $('#pageStructureModal').modal('hide');
-                    this.parent.actions.push(data.action);
-                    $dispatcher.$emit('record:actionsMorph:add:action', data.action);
-
-                    this.openChangeActionModal(data.action);
-                }.bind(this));
+                $('#pageStructureModal').modal('hide');
             }
         },
         computed: {
@@ -526,6 +594,9 @@
             },
             parent: function () {
                 return this.$store.state.pageStructure.parent;
+            },
+            route: function () {
+                return this.$store.state.pageStructure.route;
             }
         }
     };
@@ -608,14 +679,11 @@
             }
         },
         methods: {
-            addColumn: function (actions) {
-                actions.push({
+            addColumn: function (row) {
+                pageStructureStore.dispatch('addBox', {
                     type: 'column',
-                    actions: [],
-                    id: 123,
-                    pivot: {
-                        id: 123
-                    }
+                    variable: null, // @T00D00 - determine variable
+                    parent: row.pivot.id
                 });
             }
         }
@@ -631,21 +699,18 @@
             }
         },
         methods: {
-            addRow: function (actions) {
-                actions.push({
+            addRow: function (container) {
+                pageStructureStore.dispatch('addBox', {
                     type: 'row',
-                    actions: [],
-                    id: 123,
-                    pivot: {
-                        id: 123
-                    }
+                    variable: null, // @T00D00 - determine variable
+                    parent: container.pivot.id
                 });
             }
         }
     });
 
     Vue.component('pckg-generic-pageVariable', {
-        mixins: [pckgDelimiters, pckgTimeout],
+        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
         name: 'pckg-generic-pageVariable',
         template: '#pckg-generic-pageVariable',
         props: {
@@ -660,14 +725,11 @@
             return {};
         },
         methods: {
-            addContainer: function (actions) {
-                actions.push({
+            addContainer: function (variable) {
+                pageStructureStore.dispatch('addBox', {
                     type: 'container',
-                    actions: [],
-                    id: 123,
-                    pivot: {
-                        id: 123
-                    }
+                    variable: variable.id,
+                    parent: null
                 });
             }
         }
@@ -679,7 +741,6 @@
         data: function () {
             return {
                 selectedRoute: null,
-                route: {},
                 layout: {},
                 layoutActions: [],
                 variable: {},
@@ -695,7 +756,7 @@
         methods: {
             fetchRoute: function () {
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getRoute') }}', {route: this.selectedRoute}), function (data) {
-                    this.route = data.route;
+                    pageStructureStore.dispatch('setRoute', data.route);
                     this.fetchActionsMorphs();
                 }.bind(this));
             },
@@ -708,18 +769,32 @@
                     this.mergeActionsMorphs(data.actionsMorphs);
                 }.bind(this));
             },
-            mergeActionsMorphs: function (actionsMorphs) {
-                $.each(actionsMorphs, function (i, actionsMorph) {
+            mergeActionsMorphs: function (actions) {
+                /**
+                 * Make tree structure.
+                 */
+                var treeActions = [];
+                $.each(actions, function (i, action) {
+                    action.actions = [];
+                    $.each(actions, function (j, action2) {
+                        if (action2.pivot.parent_id == action.pivot.id) {
+                            console.log(action2.pivot.parent_id);
+                            action.actions.push(action2);
+                        }
+                    });
+                    treeActions.push(action);
+                });
+
+                /**
+                 * Push to variables.
+                 */
+                $.each(treeActions, function (i, action) {
                     $.each(this.variables, function (j, variable) {
-                        if (variable.id != actionsMorph.pivot.variable_id) {
+                        if (variable.id != action.pivot.variable_id) {
                             return;
                         }
 
-                        if (!variable.actions) {
-                            variable.actions = [];
-                        }
-
-                        variable.actions.push(actionsMorph);
+                        variable.actions.push(action);
                     });
                 }.bind(this));
             },

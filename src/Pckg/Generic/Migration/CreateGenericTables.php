@@ -91,6 +91,8 @@ class CreateGenericTables extends Migration
         $actionsI18n->description();
 
         $actionsMorphs = $this->morphtable('actions', 'action_id');
+        $actionsMorphs->parent();
+        $actionsMorphs->varchar('type');
         $actionsMorphs->integer('content_id')->references('contents');
         $actionsMorphs->integer('variable_id')->references('variables'); // @T00D00 - move this to list_items
         $actionsMorphs->orderable();

@@ -154,8 +154,22 @@ class PageStructure
         /**
          * Collect data.
          */
-        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id', 'content_id']);
+        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id', 'content_id', 'parent_id', 'type']);
         $data['morph_id'] = Routes::class;
+
+        /**
+         * Container, row and column actions.
+         */
+        if ($data['type'] == 'container') {
+            // pckg-generic-pageStructure-container
+            $data['action_id'] = 18;
+        } elseif ($data['type'] == 'row') {
+            // pckg-generic-pageStructure-row
+            $data['action_id'] = 19;
+        } elseif ($data['type'] == 'column') {
+            // pckg-generic-pageStructure-column
+            $data['action_id'] = 20;
+        }
 
         /**
          * Create record.
