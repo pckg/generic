@@ -15,4 +15,19 @@ class CustomAction extends Action
         return (string)$this->view;
     }
 
+    public function getOrder()
+    {
+        return null;
+    }
+
+    public function getClass()
+    {
+        return null;
+    }
+
+    public function getMethod()
+    {
+        return null;
+    }
+
 }
