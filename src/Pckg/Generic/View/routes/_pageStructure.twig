@@ -47,6 +47,71 @@
     </div>
 </script>
 
+<script type="text/x-template" id="pckg-generic-pageWrapper">
+    <div class="pckg-generic-pageWrapper">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation">
+                <a href="#" class="move-handle move-handle-wrapper" @click.prevent>
+                    <i class="fa fa-arrows"></i>
+                </a>
+            </li>
+            <li role="presentation" class="active">
+                <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
+                   data-toggle="tab">
+                    container
+                </a>
+            </li>
+            <li role="presentation">
+                <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
+                   data-toggle="tab"><i
+                            class="fa fa-th"></i></a>
+            </li>
+            <li role="presentation">
+                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
+                   data-toggle="tab"><i
+                            class="fa fa-wrench"></i></a>
+            </li>
+            <li role="presentation">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
+                   aria-expanded="false"><i class="fa fa-plus"></i></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#" @click.prevent="addContainer(action)">Add container</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
+                <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
+                           @end="onEnd($event, action)">
+                    <pckg-generic-pageContainer v-for="action in action.actions" :key="action.pivot.id"
+                                          :action="action"></pckg-generic-pageContainer>
+                </draggable>
+            </div>
+            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3">Container</label>
+                        <div class="col-md-9">
+                            <select class="form-control" v-model="action.pivot.container"
+                                    @change="saveActionsMorph(action.pivot)">
+                                <option>normal - .container</option>
+                                <option>fluid - .container-fluid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% include '_pageStructure-background.twig' %}
+            </div>
+            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
+                Advanced
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-template" id="pckg-generic-pageContainer">
     <div class="pckg-generic-pageContainer">
         <ul class="nav nav-tabs" role="tablist">
@@ -368,13 +433,16 @@
 
 <script type="text/x-template" id="pckg-generic-pageVariable">
     <div class="pckg-generic-pageVariable">
-        <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addContainer(variable)">
-            <i class="fa fa-plus"></i> Add container
+        <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addWrapper(variable)">
+            <i class="fa fa-plus"></i> Add wrapper
         </a>
         <draggable v-model="variable.actions" :options="{handle:'.move-handle-container',group:'container'}"
                    @end="onEnd($event, variable)">
             <div v-for="act in variable.actions" class="action">
-                <template v-if="act.pivot.type == 'container'">
+                <template v-if="act.pivot.type == 'wrapper'">
+                    <pckg-generic-pageWrapper :action="act"></pckg-generic-pageWrapper>
+                </template>
+                <template v-else-if="act.pivot.type == 'container'">
                     <pckg-generic-pageContainer :action="act"></pckg-generic-pageContainer>
                 </template>
                 <template v-else-if="act.pivot.type == 'row'">
@@ -728,6 +796,26 @@
         }
     });
 
+    Vue.component('pckg-generic-pageWrapper', {
+        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
+        name: 'pckg-generic-pageWrapper',
+        template: '#pckg-generic-pageWrapper',
+        props: {
+            action: {
+                type: Object
+            }
+        },
+        methods: {
+            addContainer: function (wrapper) {
+                pageStructureStore.dispatch('addBox', {
+                    type: 'container',
+                    variable: null, // @T00D00 - determine variable
+                    parent: wrapper.pivot.id
+                });
+            }
+        }
+    });
+
     Vue.component('pckg-generic-pageVariable', {
         mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
         name: 'pckg-generic-pageVariable',
@@ -744,9 +832,9 @@
             return {};
         },
         methods: {
-            addContainer: function (variable) {
+            addWrapper: function (variable) {
                 pageStructureStore.dispatch('addBox', {
-                    type: 'container',
+                    type: 'wrapper',
                     variable: variable.id,
                     parent: null
                 });

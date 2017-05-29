@@ -63,7 +63,7 @@ class Action extends Record
 
             $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
             if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = 'url(' . $value . ')';
+                $value = 'url(/storage/uploads/' . config('app') . '/' . $value . ')';
             }
             $styles[] = $value;
         }

@@ -107,7 +107,7 @@ class Action
      */
     public function getHtml()
     {
-        if (in_array($this->getType(), ['container', 'row', 'column'])) {
+        if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
             return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' .
                    $this->getSubHtml() . '</div>';
         }
