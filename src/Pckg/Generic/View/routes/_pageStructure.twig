@@ -797,7 +797,6 @@
                     action.actions = [];
                     $.each(actions, function (j, action2) {
                         if (action2.pivot.parent_id == action.pivot.id) {
-                            console.log(action2.pivot.parent_id);
                             action.actions.push(action2);
                         }
                     });
@@ -809,7 +808,7 @@
                  */
                 $.each(treeActions, function (i, action) {
                     $.each(this.variables, function (j, variable) {
-                        if (variable.id != action.pivot.variable_id) {
+                        if (variable.id != action.pivot.variable_id || action.pivot.parent_id > 0) {
                             return;
                         }
 
