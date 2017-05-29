@@ -161,7 +161,7 @@ class PageStructure
          * Container, row and column actions.
          */
         if ($data['type'] == 'wrapper') {
-            // pckg-generic-pageStructure-container
+            // pckg-generic-pageStructure-wrapper
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-wrapper',
                                                          'class'  => 'Pckg\Generic\Controller\PageStructure',
