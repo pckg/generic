@@ -154,12 +154,8 @@ class Action
      */
     public function getHtml()
     {
-        if ($this->type == 'container') {
-            return '<div class="container container-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
-        } else if ($this->type == 'row') {
-            return '<div class="row row-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
-        } else if ($this->type == 'column') {
-            return '<div class="col-md-12 column-' . $this->action->pivot->id . '">' . $this->getSubHtml() . '</div>';
+        if (in_array($this->type, ['container', 'row', 'column'])) {
+            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' . $this->getSubHtml() . '</div>';
         }
 
         if ($this->class && $this->method) {
