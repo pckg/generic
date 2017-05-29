@@ -28,7 +28,7 @@ class Action extends Record
         }
 
         if ($keyedBySlug->hasKey('pckg.generic.pageStructure.class')) {
-            $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->value;
+            $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->pivot->value;
         }
 
         $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;

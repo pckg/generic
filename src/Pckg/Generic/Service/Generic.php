@@ -202,8 +202,6 @@ class Generic
                             continue;
                         }
 
-                        //$html = '<div class="pckg-action">' . $html . '</div>';
-
                         $variables[$block][] = (string)$html;
                     } catch (Throwable $e) {
                         if (dev()) {

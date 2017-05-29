@@ -113,6 +113,7 @@ class Action
                    $this->getSubHtml() . '</div>';
         }
 
+        $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">';
         if ($this->getClass() && $this->getMethod()) {
             $prefix = strtolower(request()->method());
 
@@ -179,8 +180,11 @@ class Action
             /**
              * Return built output.
              */
-            return $devPrefix . $result . $devSuffix;
+            $return .= $devPrefix . $result . $devSuffix;
         }
+        $return .= '</div>';
+
+        return $return;
     }
 
 }
