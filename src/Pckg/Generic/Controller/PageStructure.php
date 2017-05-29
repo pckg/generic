@@ -160,7 +160,14 @@ class PageStructure
         /**
          * Container, row and column actions.
          */
-        if ($data['type'] == 'container') {
+        if ($data['type'] == 'wrapper') {
+            // pckg-generic-pageStructure-container
+            $data['action_id'] = Action::getOrCreate([
+                                                         'slug'   => 'pckg-generic-pageStructure-wrapper',
+                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'method' => 'wrapper',
+                                                     ])->id;
+        } elseif ($data['type'] == 'container') {
             // pckg-generic-pageStructure-container
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-container',

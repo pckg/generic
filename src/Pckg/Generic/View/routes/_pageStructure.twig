@@ -87,7 +87,7 @@
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
                            @end="onEnd($event, action)">
                     <pckg-generic-pageContainer v-for="action in action.actions" :key="action.pivot.id"
-                                          :action="action"></pckg-generic-pageContainer>
+                                                :action="action"></pckg-generic-pageContainer>
                 </draggable>
             </div>
             <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
@@ -512,42 +512,72 @@
             },
             pushAction: function (store, action) {
                 action.actions = [];
-                if (action.pivot.type == 'container') {
+                if (action.pivot.type == 'wrapper') {
                     $.each(store.state.variables, function (i, variable) {
                         if (variable.id == action.pivot.variable_id) {
                             store.state.variables[i].actions.push(action);
                             store.commit('variables', store.state.variables);
                         }
                     });
-                } else if (action.pivot.type == 'row') {
+                } else if (action.pivot.type == 'container') {
                     $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (j, container) {
-                            if (container.pivot.id == action.pivot.parent_id) {
-                                store.state.variables[i].actions[j].actions.push(action);
+                        $.each(variable.actions, function (m, wrapper) {
+                            if (variable.id == action.pivot.variable_id) {
+                                store.state.variables[i].actions[m].actions.push(action);
                                 store.commit('variables', store.state.variables);
                             }
                         });
                     });
-                } else if (action.pivot.type == 'column') {
+                } else if (action.pivot.type == 'row') {
                     $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (j, container) {
-                            $.each(container.actions, function (k, row) {
-                                if (row.pivot.id == action.pivot.parent_id) {
-                                    store.state.variables[i].actions[j].actions[k].actions.push(action);
+                        $.each(variable.actions, function (m, wrapper) {
+                            $.each(wrapper.actions, function (j, container) {
+                                if (container.pivot.id == action.pivot.parent_id) {
+                                    store.state.variables[i].actions[m].actions[j].actions.push(action);
                                     store.commit('variables', store.state.variables);
                                 }
                             });
                         });
                     });
-                } else if (action.pivot.type == 'action') {
+                } else if (action.pivot.type == 'column') {
                     $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (j, container) {
-                            $.each(container.actions, function (k, row) {
-                                $.each(row.actions, function (l, column) {
-                                    if (column.pivot.id == action.pivot.parent_id) {
-                                        store.state.variables[i].actions[j].actions[k].actions[l].actions.push(action);
+                        $.each(variable.actions, function (m, wrapper) {
+                            $.each(wrapper.actions, function (j, container) {
+                                $.each(container.actions, function (k, row) {
+                                    if (row.pivot.id == action.pivot.parent_id) {
+                                        store.state.variables[i].actions[m].actions[j].actions[k].actions.push(action);
                                         store.commit('variables', store.state.variables);
                                     }
+                                });
+                            });
+                        });
+                    });
+                } else if (action.pivot.type == 'action') {
+                    $.each(store.state.variables, function (i, variable) {
+                        $.each(variable.actions, function (m, wrapper) {
+                            $.each(wrapper.actions, function (j, container) {
+                                $.each(container.actions, function (k, row) {
+                                    $.each(row.actions, function (l, column) {
+                                        if (column.pivot.id == action.pivot.parent_id) {
+                                            store.state.variables[i].actions[m].actions[j].actions[k].actions[l].actions.push(action);
+                                            store.commit('variables', store.state.variables);
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    });
+                } else if (action.pivot.type == 'action') {
+                    $.each(store.state.variables, function (i, variable) {
+                        $.each(variable.actions, function (m, wrapper) {
+                            $.each(wrapper.actions, function (j, container) {
+                                $.each(container.actions, function (k, row) {
+                                    $.each(row.actions, function (l, column) {
+                                        if (column.pivot.id == action.pivot.parent_id) {
+                                            store.state.variables[i].actions[m].actions[j].actions[k].actions[l].actions.push(action);
+                                            store.commit('variables', store.state.variables);
+                                        }
+                                    });
                                 });
                             });
                         });
