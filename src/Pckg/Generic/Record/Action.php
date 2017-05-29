@@ -66,9 +66,11 @@ class Action extends Record
                 continue;
             }
 
-            $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
             if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = 'url(/storage/uploads/' . config('app') . '/' . $value . ')';
+                $value = $mapper[$setting->slug] . ': url(/storage/uploads/' . config('app') . '/' .
+                         $setting->pivot->value . ')';
+            } else {
+                $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
             }
             $styles[] = $value;
         }
