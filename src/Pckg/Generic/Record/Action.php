@@ -20,7 +20,13 @@ class Action extends Record
 
     public function getHtmlClassAttribute()
     {
-        $mainClass = $this->pivot->type . ' ' . $this->pivot->type . '-' . $this->pivot->id;
+        $typeSuffix = '';
+        if ($this->pivot->type == 'container' &&
+            $this->pivot->settings->keyBy('slug')->hasKey('pckg.generic.pageStructure.container')
+        ) {
+            $typeSuffix = '-fluid';
+        }
+        $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
             'pckg.generic.pageStructure.bgRepeat'   => 'bg-repeat',
@@ -28,7 +34,6 @@ class Action extends Record
         ];
 
         $settings = $this->pivot->settings;
-        $styles = [];
         foreach ($settings as $setting) {
             if (!array_key_exists($setting->slug, $mapper)) {
                 continue;
