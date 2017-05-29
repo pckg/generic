@@ -104,22 +104,9 @@ class Generic
         $actions->each(
             function(ActionRecord $action) use ($resolvers) {
                 $this->addAction(
-                    $action->pivot->variable->slug,
-                    $action->class,
-                    $action->method,
-                    [
-                        'content'   => $action->pivot->content,
-                        'settings'  => $action->pivot->settings,
-                        'route'     => $this->route,
-                        'resolvers' => $resolvers,
-                    ],
-                    $action->pivot->order,
-                    $action->pivot->template,
-                    $action->pivot->width,
-                    $action->pivot->background,
-                    $action->pivot->container,
-                    $action->pivot->type,
-                    $action
+                    $action,
+                    $this->route,
+                    $resolvers
                 );
             }
         );
@@ -136,22 +123,9 @@ class Generic
             $layoutActions->each(
                 function(ActionRecord $action) use ($resolvers) {
                     $this->addAction(
-                        $action->pivot->variable->slug,
-                        $action->class,
-                        $action->method,
-                        [
-                            'content'   => $action->pivot->content,
-                            'settings'  => $action->pivot->settings,
-                            'route'     => $this->route,
-                            'resolvers' => $resolvers,
-                        ],
-                        $action->pivot->order,
-                        $action->pivot->template,
-                        $action->pivot->width,
-                        $action->pivot->background,
-                        $action->pivot->container,
-                        $action->pivot->type,
-                        $action
+                        $action,
+                        $this->route,
+                        $resolvers
                     );
                 }
             );
@@ -166,13 +140,13 @@ class Generic
      * @return Action
      */
     public function addAction(
-        $variable, $class, $method = null, $args = [], $order = null, $template = null, $width = null,
-        $background = null, $container = null, $type = null, \Pckg\Generic\Record\Action $actionRecord = null
+        \Pckg\Generic\Record\Action $action,
+        Route $route,
+        $resolvers = []
     ) {
-        $block = $this->touchBlock($variable);
+        $block = $this->touchBlock($action->pivot->variable_id ? $action->pivot->variable->slug : null);
 
-        $block->addAction($action = new Action($class, $method, $args, $order, $template, $width, $background,
-                                               $container, $type, $actionRecord));
+        $block->addAction($action = new Action($action, $route, $resolvers));
 
         return $action;
     }

@@ -6,7 +6,9 @@ use Exception;
 use Pckg\Framework\Router\Command\ResolveDependencies;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Content;
+use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
 
 /**
@@ -18,40 +20,12 @@ class Action
 {
 
     /**
-     * @var
-     */
-    protected $class;
-
-    /**
-     * @var
-     */
-    protected $method;
-
-    /**
      * @var array
      */
     protected $args = [];
 
     /**
-     * @var null
-     */
-    protected $order;
-
-    /**
-     * @var
-     */
-    protected $template;
-
-    protected $width;
-
-    protected $background;
-
-    protected $container;
-
-    protected $type;
-
-    /**
-     * @var \Pckg\Generic\Record\Action
+     * @var ActionRecord
      */
     protected $action;
 
@@ -60,55 +34,50 @@ class Action
      * @param      $method
      * @param null $order
      */
-    public function __construct(
-        $class, $method, $args = [], $order = null, $template = null, $width = null, $background = null,
-        $container = null, $type = null, \Pckg\Generic\Record\Action $actionRecord
-    ) {
-        $this->class = $class;
-        $this->method = $method;
-        $this->order = $order;
-        $this->args = $args;
-        $this->template = $template;
-        $this->width = $width;
-        $this->background = $background;
-        $this->container = $container;
-        $this->type = $type;
-        $this->action = $actionRecord;
+    public function __construct(ActionRecord $action, Route $route, $resolvers = [])
+    {
+        $this->args = [
+            'content'   => $action->pivot->content,
+            'settings'  => $action->pivot->settings,
+            'route'     => $route,
+            'resolvers' => $resolvers,
+        ];
+        $this->action = $action;
     }
 
     public function getOrder()
     {
-        return $this->order;
+        return $this->action->pivot->order;
     }
 
     public function getWidth()
     {
-        return $this->width;
+        return $this->action->pivot->width;
     }
 
     public function getContainer()
     {
-        return $this->container;
+        return $this->action->pivot->container;
     }
 
     public function getBackground()
     {
-        return $this->background;
+        return $this->action->pivot->background;
     }
 
     public function getClass()
     {
-        return $this->class;
+        return $this->action->class;
     }
 
     public function getMethod()
     {
-        return $this->method;
+        return $this->action->method;
     }
 
     public function getType()
     {
-        return $this->type;
+        return $this->action->pivot->type;
     }
 
     /**
@@ -124,23 +93,7 @@ class Action
         $html = [];
 
         foreach ($this->action->getChildren as $action) {
-            $genericAction = new Action(
-                $action->class,
-                $action->method,
-                [
-                    'content'   => $action->pivot->content,
-                    'settings'  => $action->pivot->settings,
-                    'route'     => $this->args['route'],
-                    'resolvers' => $this->args['resolvers'],
-                ],
-                $action->pivot->order,
-                $action->pivot->template,
-                $action->pivot->width,
-                $action->pivot->background,
-                $action->pivot->container,
-                $action->pivot->type,
-                $action
-            );
+            $genericAction = new Action($action, $this->args['route'], $this->args['resolvers']);
 
             $html[] = $genericAction->getHtml();
         }
@@ -154,15 +107,16 @@ class Action
      */
     public function getHtml()
     {
-        if (in_array($this->type, ['container', 'row', 'column'])) {
-            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' . $this->getSubHtml() . '</div>';
+        if (in_array($this->getType(), ['container', 'row', 'column'])) {
+            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' .
+                   $this->getSubHtml() . '</div>';
         }
 
-        if ($this->class && $this->method) {
+        if ($this->getClass() && $this->getMethod()) {
             $prefix = strtolower(request()->method());
 
             $args = array_merge($this->args, ['action' => $this, 'content' => $this->getContent()]);
-            $method = ($prefix ? $prefix . ucfirst($this->method) : $this->method) . 'Action';
+            $method = ($prefix ? $prefix . ucfirst($this->getMethod()) : $this->getMethod()) . 'Action';
 
             if (isset($args['settings'])) {
                 /**
@@ -186,7 +140,7 @@ class Action
              * Get plugin output.
              */
             $pluginService = new Plugin();
-            $result = $pluginService->make($this->class, $this->method, $args, true, false);
+            $result = $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
 
             /**
              * Array should be returned directly.
@@ -198,8 +152,8 @@ class Action
             /**
              * Allow custom template.
              */
-            if ($result instanceof View\Twig && $this->template) {
-                $result->setFile(str_replace(':', '/View/', $this->template));
+            if ($result instanceof View\Twig && $this->action->pivot->template) {
+                $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
             }
 
             /**
@@ -213,8 +167,8 @@ class Action
             $devPrefix = null;
             $devSuffix = null;
             if (dev() || implicitDev()) {
-                $devPrefix = '<!-- start action ' . $this->class . '::' . $method . ' -->' . "\n";
-                $devSuffix = '<!-- end action ' . $this->class . '::' . $method . ' -->' . "\n";
+                $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
+                $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
             }
 
             /**

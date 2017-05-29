@@ -71,13 +71,19 @@
                    data-toggle="tab"><i
                             class="fa fa-wrench"></i></a>
             </li>
+            <li role="presentation">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
+                   aria-expanded="false"><i class="fa fa-plus"></i></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#" @click.prevent="addRow(action)">Add row</a>
+                    </li>
+                </ul>
+            </li>
         </ul>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addRow(action)">
-                    <i class="fa fa-plus"></i> Add row
-                </a>
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
                            @end="onEnd($event, action)">
                     <pckg-generic-pageRow v-for="action in action.actions" :key="action.pivot.id"
@@ -130,13 +136,19 @@
                    data-toggle="tab"><i
                             class="fa fa-wrench"></i></a>
             </li>
+            <li role="presentation">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
+                   aria-expanded="false"><i class="fa fa-plus"></i></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#" @click.prevent="addColumn(action)">Add column</a>
+                    </li>
+                </ul>
+            </li>
         </ul>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addColumn(action)">
-                    <i class="fa fa-plus"></i> Add column
-                </a>
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-column',group:'column'}"
                            @end="onEnd($event, action)">
                     <pckg-generic-pageColumn v-for="action in action.actions"
@@ -189,14 +201,19 @@
                    data-toggle="tab"><i
                             class="fa fa-wrench"></i></a>
             </li>
+            <li role="presentation">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
+                   aria-expanded="false"><i class="fa fa-plus"></i></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#" @click.prevent="addAction(action)">Add action</a>
+                    </li>
+                </ul>
+            </li>
         </ul>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addAction(action)">
-                    <i class="fa fa-plus"></i> Add action
-                </a>
-
                 <draggable v-model="action.actions" :options="{handle:'.move-handle-action',group:'action'}"
                            @end="onEnd($event, action)">
                     <pckg-generic-pageAction v-for="action in action.actions"
@@ -295,59 +312,8 @@
                         class="btn btn-primary">
                     Edit content
                 </button>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                <div class="form-horizontal" v-if="action">
-                    <div class="form-group">
-                        <label class="col-md-3">Container</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.container"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option>fluid</option>
-                                <option>wrapped</option>
-                                <option>keep</option>
-                                <option>none</option>
-                            </select>
-                            <ul>
-                                <li><b>fluid:</b> open new fluid container around plugin,
-                                    close old
-                                    one
-                                </li>
-                                <li><b>wrapped:</b> start new wrapped container around
-                                    plugin, close
-                                    old one
-                                </li>
-                                <li><b>keep:</b> keep old container opened</li>
-                                <li><b>none:</b> close container if existent</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3">Width</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.width"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option v-for="width in widths" :value="width.slug">${
-                                    width.slug
-                                    }
-                                </option>
-                            </select>
-                            <p>Select width of plugin inside of container.</p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3">Background</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.background"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option v-for="background in backgrounds"
-                                        :value="background.slug">
-                                    ${ background.slug }
-                                </option>
-                            </select>
-                            <p>Select background class for container.</p>
-                        </div>
-                    </div>
+
+                <div class="form-horizontal">
                     <div class="form-group" v-if="getActionTemplates(action.id).length > 0">
                         <label class="col-md-3">Template</label>
                         <div class="col-md-9">
@@ -357,17 +323,18 @@
                                         :value="template">${ template }
                                 </option>
                             </select>
-                            <p>Select presentation template for plugin.</p>
                         </div>
                     </div>
                 </div>
             </div>
+            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
+                Settings ...
+            </div>
             <div role="tabpanel" class="tab-pane" :id="'layout' + action.pivot.id">
-                {# this depends on selected action #}
-                {{ simpleContentForm | raw }}
-
-                <button class="btn btn-success" @click="saveActionsMorph">Save settings
-                </button>
+                <template v-if="action.slug == 'pckg-generic-content-simple'">
+                    {{ simpleContentForm | raw }}
+                    <button class="btn btn-success" @click="saveActionsMorph">Save settings</button>
+                </template>
             </div>
             <div role="tabpanel" class="tab-pane" :id="'permissions' + action.pivot.id">
                 <table class="table table-condensed table-hover">
@@ -692,6 +659,14 @@
                             $dispatcher.$emit('notification:error', 'Error saving action');
                         }
                     });
+            },
+            openEditContentPopup: function (contentId) {
+                $.magnificPopup.open({
+                    items: {
+                        src: '/dynamic/records/edit/73/' + contentId
+                    },
+                    type: 'iframe'
+                });
             }
         }
     });
@@ -841,14 +816,6 @@
                         variable.actions.push(action);
                     });
                 }.bind(this));
-            },
-            openEditContentPopup: function (contentId) {
-                $.magnificPopup.open({
-                    items: {
-                        src: '/dynamic/records/edit/73/' + contentId
-                    },
-                    type: 'iframe'
-                });
             },
             openDeleteActionModal: function (action) {
                 this.action = action;
