@@ -857,6 +857,16 @@
                         $dispatcher.$emit('record:actionsMorph:remove:action', action);
                     }
                 });
+            },
+            getQueryVariable: function (variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split('&');
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split('=');
+                    if (decodeURIComponent(pair[0]) == variable) {
+                        return decodeURIComponent(pair[1]);
+                    }
+                }
             }
         },
         created: function () {
@@ -880,6 +890,15 @@
                 });
                 // this.routeActions.push(action);
             }.bind(this));
+
+            var search = window.location.search;
+            if (search.length > 0) {
+                this.selectedRoute = this.getQueryVariable('route');
+                var action = this.getQueryVariable('action');
+                setTimeout(function () {
+                    $('html, body').animate({scrollTop: $('#home' + action).offset().top - 40}, 200);
+                }, 1000);
+            }
         },
         watch: {
             selectedRoute: function () {

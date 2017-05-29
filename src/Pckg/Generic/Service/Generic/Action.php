@@ -168,6 +168,9 @@ class Action
             $devSuffix = null;
             if (dev() || implicitDev()) {
                 $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
+                $devPrefix .= '<a href="/dev.php/tools/page-structure?route=' . router()->resolved('route')->id . '&action=' .
+                              $this->action->pivot->id .
+                              '" style="position: absolute; z-index: 9999;" class="btn btn-xs btn-info" target="_blank">Edit action</a>';
                 $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
             }
 
