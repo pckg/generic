@@ -8,6 +8,7 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
+use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Route;
@@ -95,7 +96,9 @@ class Generic
             }
         );
 
-        $actions = $actions->tree(function($action) {
+        $actions = $actions->sortBy(function($item){
+            return $item->pivot->order;
+        })->tree(function($action) {
             return $action->pivot->parent_id;
         }, function($action) {
             return $action->pivot->id;
@@ -111,7 +114,7 @@ class Generic
             }
         );
 
-        if ($route->layout) {
+        /*if ($route->layout) {
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
                     // $actions->getMiddleEntity()->joinPermissionTo('read');
@@ -129,7 +132,7 @@ class Generic
                     );
                 }
             );
-        }
+        }*/
     }
 
     /**

@@ -107,6 +107,7 @@ class Action
      */
     public function getHtml()
     {
+        $return = null;
         if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
             return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' .
                    $this->getSubHtml() . '</div>';
@@ -168,7 +169,8 @@ class Action
             $devSuffix = null;
             if (dev() || implicitDev()) {
                 $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
-                $devPrefix .= '<a href="/dev.php/tools/page-structure?route=' . router()->resolved('route')->id . '&action=' .
+                $devPrefix .= '<a href="/dev.php/tools/page-structure?route=' . router()->resolved('route')->id .
+                              '&action=' .
                               $this->action->pivot->id .
                               '" style="position: absolute; z-index: 9999;" class="btn btn-xs btn-info" target="_blank">Edit action</a>';
                 $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $method . ' -->' . "\n";

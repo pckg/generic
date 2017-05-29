@@ -21,11 +21,16 @@ class Action extends Record
     public function getHtmlClassAttribute()
     {
         $typeSuffix = '';
-        if ($this->pivot->type == 'container' &&
-            $this->pivot->settings->keyBy('slug')->hasKey('pckg.generic.pageStructure.container')
+        $keyedBySlug = $this->pivot->settings->keyBy('slug');
+        if ($this->pivot->type == 'container' && $keyedBySlug->hasKey('pckg.generic.pageStructure.container')
         ) {
             $typeSuffix = '-fluid';
         }
+
+        if ($keyedBySlug->hasKey('pckg.generic.pageStructure.class')) {
+            $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->value;
+        }
+
         $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
