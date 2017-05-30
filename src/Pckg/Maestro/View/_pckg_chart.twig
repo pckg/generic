@@ -54,7 +54,7 @@
             }
         },
         mounted: function () {
-            Chart.Tooltip.positioners.leftTop = function(a){
+            /*Chart.Tooltip.positioners.leftTop = function(a){
                 var average = this.average(a);
 
                 if (average) {
@@ -62,7 +62,7 @@
                 }
 
                 return average;
-            };
+            };*/
             this.$nextTick(this.initChart);
         }
     });
