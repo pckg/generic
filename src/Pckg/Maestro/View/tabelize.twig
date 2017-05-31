@@ -10,11 +10,11 @@
 {% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
 {% set instance = table %}
 
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: recordActions, table: table }) %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: recordActions, table: table }, true) %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
-{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }) %}
-{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }) %}
+{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }, true) %}
+{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }, true) %}
 
 <div>
     <pckg-maestro-table-{{ table }} :ref="'maestro-table'"

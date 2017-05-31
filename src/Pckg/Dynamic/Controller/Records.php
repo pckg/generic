@@ -504,9 +504,8 @@ class Records extends Controller
         return view('edit/tabs', ['tabelize' => $tabelize]);
     }
 
-    public function getTabAction(
-        Record $record, Table $table, Tab $tab, \Pckg\Dynamic\Service\Dynamic $dynamicService
-    ) {
+    public function getTabAction(Record $record, Table $table, Tab $tab)
+    {
         $relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
                 $relation->where('dynamic_table_tab_id', $tab->id);
