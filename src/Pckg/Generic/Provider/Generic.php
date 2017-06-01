@@ -28,6 +28,9 @@ class Generic extends Provider
                     'view'       => 'stats',
                     'controller' => Orders::class,
                     'name'       => 'maestro',
+                    'tags'       => [
+                        'group:admin',
+                    ],
                 ],
             ],
             'method' => [

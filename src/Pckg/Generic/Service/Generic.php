@@ -265,6 +265,7 @@ class Generic
              */
             $url = $route->getRoute(false);
             $existingRoute = router()->getRoute($url);
+
             if ($existingRoute) {
                 $router->replace($url, [
                     "controller" => GenericController::class,
