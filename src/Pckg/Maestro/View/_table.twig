@@ -125,10 +125,12 @@
                 this.timeout('search', this.refreshData, 500);
             },
             refreshData: function (config) {
+                this.loading++;
                 http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
                     this.groups = data.groups;
                     this.setPaginatorTotal(data.paginator.total);
+                    this.loading--;
                 }.bind(this));
             },
             setRecords: function (records) {
@@ -154,7 +156,7 @@
             /**
              * @T00D00 - what if we have multiple tables in tab?
              */
-            $dispatcher.$once('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
+            $dispatcher.$on('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
             {% else %}
             $dispatcher.$on('pckg-maestro-table-{{ table }}:setRecords', this.setRecords);
             $dispatcher.$on('pckg-maestro-table-{{ table }}:setPaginatorTotal', this.setPaginatorTotal);
