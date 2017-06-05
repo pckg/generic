@@ -88,17 +88,7 @@ class Filter extends AbstractService
                 if ($type == 'select') {
                     $relation = $field->hasOneSelectRelation;
                     if ($relation) {
-                        $options = $relation->getOptions();/*
-                        $options = $relation->showTable()
-                                            ->createEntity()
-                                            ->limit(100)
-                                            ->all()
-                                            ->keyBy($relation->onField->field)
-                                            ->map(
-                                                function($record) {
-                                                    return $record->id;
-                                                }
-                                            )->toArray();*/
+                        $options = $relation->getOptions();
                     }
                 }
 
@@ -185,16 +175,13 @@ class Filter extends AbstractService
             } else if ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
-                $f = $relation->showTable->table . '.' . $field->field . ' ' . $signMapper[$relationFilter['method']] .
-                     ' ' .
-                     $entity->getRepository()->getConnection()->quote($relationFilter['value']);
-
                 $entity->join(
                     'INNER JOIN ' . $relation->showTable->table,
                     $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
-                    $relation->onField->field,
-                    $f
+                    $relation->onField->field
                 );
+
+                $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'], $signMapper[$relationFilter['method']]);
             }
         }
     }

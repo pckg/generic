@@ -62,7 +62,7 @@ class Fields extends AbstractService
                     'id'            => $relation->id,
                     'title'         => $relation->title ?? $relation->showTable->table,
                     'table'         => $relation->showTable->table,
-                    'fields'        => $this->makeFields($relation->showTable->fields),
+                    'fields'        => $this->makeFields($relation->showTable->fields, 1),
                     'type'          => $relation->dynamic_relation_type_id,
                     'filterOptions' => $options,
                     'visible'       => in_array($relation->id, $sessionRelations['visible'] ?? []),
@@ -75,7 +75,7 @@ class Fields extends AbstractService
         //});
     }
 
-    protected function makeFields(CollectionInterface $fields, $deep = false)
+    protected function makeFields(CollectionInterface $fields, $deep = 0)
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
         $relations = (new Relations())->where('on_field_id', $fields->map('id'))
@@ -102,7 +102,7 @@ class Fields extends AbstractService
                 }
 
                 if ($deep && $relation) {
-                    $fields = $this->makeFields($relation->showTable->fields);
+                    $fields = $this->makeFields($relation->showTable->fields, $deep - 1);
                 }
 
                 return [

@@ -259,7 +259,7 @@ class Dynamic extends Bootstrap
                  * Should we display content?
                  */
                 if (!$this->record->id) {
-                    continue;
+                    //continue;
                 }
 
                 $element = $this->getFieldset()->addDiv()->addChild(
