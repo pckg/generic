@@ -122,4 +122,10 @@ class Relation extends DatabaseRecord
         $entity->with($belongsToRelation);
     }
 
+    public function joinToEntity(Entity $entity, Field $field)
+    {
+        $entity->join('INNER JOIN ' . $this->showTable->table,
+                      $this->showTable->table . '.id = ' . $this->onTable->table . '.' . $this->onField->field);
+    }
+
 }

@@ -149,14 +149,23 @@ class Filter extends AbstractService
             $relation = (new Relations())->withOnField()
                                          ->withShowTable()
                                          ->withOnTable()
-                                         ->where('id', $relationFilter['relation'])->one();
+                                         ->where('id', $relationFilter['relation'])
+                                         ->one();
 
             if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
-                $entity->where(
-                    $relation->onField->field,
-                    $relationFilter['value'],
-                    $signMapper[$relationFilter['method']]
-                );
+                $field = null;
+                if (isset($relationFilter['field'])) {
+                    $field = (new Fields())->where('id', $relationFilter['field'])->one();
+                    $relation->joinToEntity($entity, $field);
+                    $entity->where($field->field, $relationFilter['value'],
+                                   $signMapper[$relationFilter['method']]);
+                } else {
+                    $entity->where(
+                        $relation->onField->field,
+                        $relationFilter['value'],
+                        $signMapper[$relationFilter['method']]
+                    );
+                }
 
                 if ($relationFilter['subfield']) {
                     $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
@@ -181,7 +190,8 @@ class Filter extends AbstractService
                     $relation->onField->field
                 );
 
-                $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'], $signMapper[$relationFilter['method']]);
+                $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'],
+                               $signMapper[$relationFilter['method']]);
             }
         }
     }

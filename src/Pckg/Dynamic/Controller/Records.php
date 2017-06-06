@@ -201,7 +201,7 @@ class Records extends Controller
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
         if ($groups) {
             $entity->addCount();
-            $listedFields->push('count');
+            $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
         }
 
         $records = $entity->count()->all();
