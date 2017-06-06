@@ -58,6 +58,12 @@ class Export extends Controller
 
         $strategy->input($entity);
 
+        $groups = $dynamicService->getGroupService()->getAppliedGroups();
+        if ($groups) {
+            $entity->addCount();
+            $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
+        }
+
         /**
          * @T00D00 - hackish ...
          */
@@ -77,14 +83,18 @@ class Export extends Controller
         /**
          * Check for additional export transformations.
          */
-        $listedFields->each(function(Field $field) use ($strategy, &$transformedRecords) {
+        $listedFields->each(function($field) use ($strategy, &$transformedRecords) {
+            if (!($field instanceof Field)) {
+                return;
+            }
+
             if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst($strategy->getExtension()))) {
                 foreach ($transformedRecords as &$record) {
                     $record[$field->field] = br2nl($record[$field->field]);
                 }
             }
         });
-        
+
         $strategy->setData($transformedRecords);
 
         $strategy->setFileName($table->table . '-' . date('Ymd-his'));

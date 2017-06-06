@@ -57,6 +57,8 @@ class Fields extends AbstractService
 
                 $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
                                                                                 ->first();
+                $grouped = (new Collection($sessionRelations['groups'] ?? []))->filter('relation', $relation->id)
+                                                                              ->first();
 
                 return [
                     'id'            => $relation->id,
@@ -69,6 +71,7 @@ class Fields extends AbstractService
                     'filterMethod'  => $filtered['method'] ?? null,
                     'filterValue'   => $filtered['value'] ?? null,
                     'filterField'   => $filtered['field'] ?? null,
+                    'group'         => $grouped ?? null,
                 ];
             }
         );
@@ -93,6 +96,7 @@ class Fields extends AbstractService
             function(Field $field) use ($sessionFields, $deep, $relations) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
+                $grouped = (new Collection($sessionFields['groups'] ?? []))->filter('field', $field->id)->first();
                 $options = [];
                 $fields = [];
 
@@ -116,6 +120,7 @@ class Fields extends AbstractService
                     'sort'         => $sorted['direction'] ?? null,
                     'options'      => $options,
                     'fields'       => $fields,
+                    'group'        => $grouped ?? null,
                 ];
             }
         )->keyBy('field');

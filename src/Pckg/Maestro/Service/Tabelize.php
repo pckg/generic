@@ -243,9 +243,16 @@ class Tabelize
                 return $item;
             }
 
+            if (is_string($item)) {
+                return new DatabaseRecord([
+                                              'title' => $item,
+                                              'field' => $item,
+                                          ]);
+            }
+
             return new DatabaseRecord([
-                                          'title' => $item,
-                                          'field' => $item,
+                                          'title' => $item['title'] ?? null,
+                                          'field' => $item['field'] ?? null,
                                       ]);
         });
     }
@@ -544,7 +551,13 @@ class Tabelize
          * Table fields
          */
         foreach ($this->getFields() as $key => $field) {
-            $transformed[is_string($key) ? $key : (is_string($field) ? $field : $field->field)] =
+            $transformed[is_string($key)
+                ? $key
+                : (is_string($field)
+                    ? $field
+                    : (is_object($field)
+                        ? $field->field
+                        : $field['field']))] =
                 $this->getRecordValue($field, $record);
         }
 
@@ -623,7 +636,6 @@ class Tabelize
             } else {
                 $template = 'tabelize/entityActions/' . $action;
             }
-
 
             if ($normal && in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) {
                 $html .= "\n" . '<!-- entity action template ' . $template . ' -->';

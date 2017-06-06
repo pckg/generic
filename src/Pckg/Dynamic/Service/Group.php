@@ -3,6 +3,7 @@
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Field;
 
 class Group extends AbstractService
@@ -20,7 +21,7 @@ class Group extends AbstractService
 
     public function getAppliedGroups()
     {
-        return $this->getSession('group');
+        return $this->getSession('fields')['groups'] ?? [];
     }
 
     public function getAvailableGroups()
@@ -41,10 +42,10 @@ class Group extends AbstractService
     public function applyOnEntity(Entity $entity)
     {
         $groups = $this->getAppliedGroups();
-
         foreach ($groups as $group) {
-            if (($group['type'] ?? null) == 'db') {
-                $entity->groupBy($group['field']);
+            if (isset($group['field'])) {
+                $field = (new Fields())->where('id', $group['field'])->one();
+                $entity->addGroupBy($field->field);
             }
         }
     }

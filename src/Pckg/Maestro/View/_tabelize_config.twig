@@ -10,9 +10,9 @@
                     <tr>
                         <th>Visible</th>
                         <th style="display: none;">Position</th>
-                        <th>Field</th>
+                        <th>Column</th>
                         <th>Filter</th>
-                        <th style="display: none;">Group by</th>
+                        <th>Group by</th>
                         <th>Order</th>
                     </tr>
                     <tr v-for="field in fields" :class="'field field-' + field.id">
@@ -141,7 +141,7 @@
                     }
 
                     if (field.group) {
-                        data.fields.groups.push(field.id);
+                        data.fields.groups.push({field: field.id});
                     }
 
                     if (field.sort) {
@@ -164,6 +164,10 @@
                             field: relation.filterField,
                             subfield: relation.filterSubField
                         });
+                    }
+
+                    if (relation.group) {
+                        data.relations.groups.push({relation: relations.id});
                     }
                 });
 

@@ -186,7 +186,6 @@ class Records extends Controller
          * Filter records by $_GET['search']
          */
         $dynamicService->getFilterService()->filterByGet($entity);
-        $groups = $dynamicService->getGroupService()->getAppliedGroups();
         $fieldTransformations = $dynamicService->getFieldsTransformations($entity, $listableFields);
 
         /**
@@ -198,12 +197,15 @@ class Records extends Controller
          * @T00D00
          *  - find out joins / scopes / withs for field type = php and mysql
          */
+
+        $groups = $dynamicService->getGroupService()->getAppliedGroups();
+        if ($groups) {
+            $entity->addCount();
+            $listedFields->push('count');
+        }
+
         $records = $entity->count()->all();
         $total = $records->total();
-
-        foreach ($groups as $group) {
-            $records = $records->groupBy($group['field']);
-        }
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
@@ -214,7 +216,6 @@ class Records extends Controller
                          ->setPerPage(get('perPage', 50))
                          ->setPage(1)
                          ->setTotal($total)
-                         ->setGroups($groups ? range(1, count($groups)) : [])
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
@@ -232,7 +233,7 @@ class Records extends Controller
         if (($this->request()->isAjax() && !get('html')) || get('search')) {
             return [
                 'records'   => $tabelize->transformRecords(),
-                'groups'    => $groups,
+                'groups'    => [],
                 'paginator' => [
                     'total' => $total,
                     'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
