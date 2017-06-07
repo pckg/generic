@@ -72,7 +72,7 @@ class Relation extends DatabaseRecord
         $data = [];
         //if (true || $this->dynamic_relation_type_id == 1) {
         // has many
-        $data = $entity->limit(100)
+        $data = $entity->limit(500)
                        ->all()
                        ->keyBy(function($record) use ($relation) {
                            return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
