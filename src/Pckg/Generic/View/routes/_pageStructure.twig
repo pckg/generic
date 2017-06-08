@@ -393,7 +393,15 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                Settings ...
+                {{ _formService.open() | raw }}
+                {{ _formService.addText('padding').setLabel('Padding') | raw }}
+                {{ _formService.addText('margin').setLabel('Margin') | raw }}
+                {{ _formService.addText('background_color').setLabel('Background color') | raw }}
+                {{ _formService.addPicture('background_image').setLabel('Background image') | raw }}
+                {{ _formService.addText('background_position').setLabel('Background position') | raw }}
+                {{ _formService.addText('background_size').setLabel('Background size') | raw }}
+                {{ _formService.addText('class').setLabel('Class') | raw }}
+                {{ _formService.close() | raw }}
             </div>
             <div role="tabpanel" class="tab-pane" :id="'layout' + action.pivot.id">
                 <template v-if="action.slug == 'pckg-generic-content-simple'">
@@ -854,7 +862,7 @@
             variable: {
                 type: Object
             },
-            action: {
+            action: {addConta
                 type: Object
             }
         },

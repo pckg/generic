@@ -100,7 +100,7 @@ class Field extends DatabaseRecord
     public function getItemForSelect($record, $foreignRecord, $value)
     {
         $relation = $this->hasOneSelectRelation;
-        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value);
+        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value, $relation->foreign_field_id ? $relation->foreignField->field : 'id');
 
         if (!$relatedRecord) {
             return null;
@@ -111,7 +111,7 @@ class Field extends DatabaseRecord
         return $value;
     }
 
-    public function getRecordForSelect($record, $foreignRecord, $value)
+    public function getRecordForSelect($record, $foreignRecord, $value, $by = 'id')
     {
         $entity = $this->getEntityForSelect($record, $foreignRecord);
 
@@ -119,7 +119,10 @@ class Field extends DatabaseRecord
             return null;
         }
 
-        $entity->where('id', $value);
+        /**
+         * We need to replace id with real relation slug.
+         */
+        $entity->where($by, $value);
 
         return $entity->one();
     }

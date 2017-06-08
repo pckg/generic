@@ -583,6 +583,22 @@ div.form-control {
   margin-top: 12px;
 }
 
-.tab-pane[id$='home'] > div {
-  min-height: 12px;
+.tab-pane > div {
+
+  &:not([class]):empty {
+    padding: 12px;
+    position: relative;
+    &:after {
+      background: #eee;
+      content: '+';
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      font-weight: bold;
+      text-align: center;
+      transform: translateY(-50%);
+    }
+  }
 }

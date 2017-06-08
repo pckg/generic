@@ -173,7 +173,7 @@ class Action
                 $devPrefix .= '<a href="/dev.php/tools/page-structure?route=' . router()->resolved('route')->id .
                               '&action=' .
                               $this->action->pivot->id .
-                              '" style="position: absolute; z-index: 9999;" class="btn btn-xs btn-info" target="_blank">Edit action</a>';
+                              '" style="position: absolute; z-index: 9999;" class="btn btn-xs btn-info popup-iframe" target="_blank">Edit action</a>';
                 $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
             }
 

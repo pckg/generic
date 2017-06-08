@@ -107,7 +107,7 @@ class Dynamic extends Bootstrap
 
         $fields = (new Fields())->where('dynamic_table_id', $this->table->id)
                                 ->where('field', array_keys($data))
-                                ->where('dynamic_field_type_id', 7) // password
+                                ->where('dynamic_field_type_id', 7)// password
                                 ->all();
 
         $fields->each(function(Field $field) use ($record, $data) {
@@ -544,12 +544,13 @@ class Dynamic extends Bootstrap
 
             if ($this->record) {
                 $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
+
                 $element = $this->addSelect($name);
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
                 $element->addOption(null, ' -- select value -- ');
-                if (count($relation) > 100) {
+                if (count($relation) > 500) {
                     $element->addOption(
                         $this->record->{$field->field},
                         str_replace(
