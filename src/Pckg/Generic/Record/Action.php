@@ -53,10 +53,11 @@ class Action extends Record
     public function getHtmlStyleAttribute()
     {
         $mapper = [
-            'pckg.generic.pageStructure.bgColor' => 'background-color',
-            'pckg.generic.pageStructure.bgImage' => 'background-image',
-            'pckg.generic.pageStructure.margin'  => 'margin',
-            'pckg.generic.pageStructure.padding' => 'padding',
+            'pckg.generic.pageStructure.bgColor'      => 'background-color',
+            'pckg.generic.pageStructure.bgAttachment' => 'background-attachment',
+            'pckg.generic.pageStructure.bgImage'      => 'background-image',
+            'pckg.generic.pageStructure.margin'       => 'margin',
+            'pckg.generic.pageStructure.padding'      => 'padding',
         ];
 
         $settings = $this->pivot->settings;
