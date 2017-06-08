@@ -100,7 +100,8 @@ class Field extends DatabaseRecord
     public function getItemForSelect($record, $foreignRecord, $value)
     {
         $relation = $this->hasOneSelectRelation;
-        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value, $relation->foreign_field_id ? $relation->foreignField->field : 'id');
+        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value,
+                                                   $relation->foreign_field_id ? $relation->foreignField->field : 'id');
 
         if (!$relatedRecord) {
             return null;
@@ -135,17 +136,7 @@ class Field extends DatabaseRecord
             return [];
         }
 
-        $relation = $this->hasOneSelectRelation;
-        $foreignField = $relation->foreign_field_id ? $relation->foreignField->field : 'id';
-
-        $values = [];
-        $entity->all()->each(
-            function($record) use ($relation, &$values, $foreignField) {
-                $values[$record->{$foreignField}] = $this->eval($relation->value, $record, $relation);
-            }
-        );
-
-        return $values;
+        return $this->fetchAndPrepareResultsForSelect($entity);
     }
 
     public function getFilteredRelationForSelect($record = null, $foreignRecord = null, Dynamic $dynamic)
@@ -153,22 +144,33 @@ class Field extends DatabaseRecord
         $entity = $this->getEntityForSelect($record, $foreignRecord);
 
         if (!$entity) {
-            return null;
+            return [];
         }
 
-        $dynamic->getFilterService()->filterByGet($entity);
+        $entity->limit(500);
 
+        return $this->fetchAndPrepareResultsForSelect($entity);
+    }
+
+    protected function fetchAndPrepareResultsForSelect(Entity $entity)
+    {
         $relation = $this->hasOneSelectRelation;
         $foreignField = $relation->foreign_field_id
             ? $relation->foreignField->field
             : 'id';
 
         $values = [];
-        $entity->limit(100)->all()->each(
+        $entity->all()->each(
             function($record) use ($relation, &$values, $foreignField) {
-                $values[$record->{$foreignField}] = $this->eval($relation->value, $record, $relation);
+                $value = $this->eval($relation->value, $record, $relation);
+                $groupValue = $relation->group_value ? $this->eval($relation->group_value, $record, $relation) : null;
+                $values[$groupValue][$record->{$foreignField}] = $value;
             }
         );
+
+        if (count($values) == 1) {
+            $values = end($values);
+        }
 
         return $values;
     }

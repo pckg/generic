@@ -565,7 +565,14 @@ class Dynamic extends Bootstrap
                     );
                 } else {
                     foreach ($relation as $id => $value) {
-                        $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                        if (is_array($value)) {
+                            $optgroup = $element->addOptionGroup()->setAttribute('label', $id);
+                            foreach ($value as $k => $v) {
+                                $optgroup->addOption($k, str_replace(['<br />', '<br/>', '<br>'], ' - ', $v));
+                            }
+                        } else {
+                            $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                        }
                     }
                 }
 

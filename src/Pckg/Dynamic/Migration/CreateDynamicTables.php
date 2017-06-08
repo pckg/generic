@@ -101,6 +101,7 @@ class CreateDynamicTables extends Migration
         $dynamicRelations->integer('show_table_id')->references('dynamic_tables');
         $dynamicRelations->integer('dynamic_relation_type_id')->references('dynamic_relation_types');
         $dynamicRelations->varchar('value')->nullable();
+        $dynamicRelations->varchar('group_value')->nullable();
         $dynamicRelations->integer('dynamic_table_tab_id')->references('dynamic_table_tabs')->nullable();
         $dynamicRelations->varchar('filter', 255)->nullable();
         $dynamicRelations->varchar('alias')->nullable();

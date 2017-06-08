@@ -363,7 +363,16 @@ $(document).ready(function () {
                         var val = $select.val();
                         $select.find('option').remove();
                         $.each(data.records, function (key, val) {
-                            $select.append('<option value="' + key + '">' + val + '</option>');
+                            if (typeof val == 'object' || typeof val == 'array') {
+                                var optgroup = '<optgroup label="' + key + '">';
+                                $.each(val, function(k, v){
+                                    optgroup += '<option value="' + (k === 0 ? '' : k) + '">' + v + '</option>';
+                                });
+                                optgroup += '</optgroup>';
+                                $select.append(optgroup);
+                            } else {
+                                $select.append('<option value="' + (key === 0 ? '' : key) + '">' + val + '</option>');
+                            }
                         });
                         $select.val(val);
                         $select.selectpicker('refresh');
