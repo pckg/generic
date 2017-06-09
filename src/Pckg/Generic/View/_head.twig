@@ -126,19 +126,21 @@
         },
         methods: {
             refreshList: function () {
-                if (this.refreshUrl.length == 0) {
-                    console.log("no refresh url");
-                    return;
-                }
+                this.timeout('refreshList', function () {
+                    if (this.refreshUrl.length == 0) {
+                        console.log("no refresh url");
+                        return;
+                    }
 
-                http.getJSON(this.refreshUrl, function (data) {
-                    this.options = data.records;
-                }.bind(this));
+                    http.getJSON(this.refreshUrl + '?search=' + $(this.$el).find('.bs-searchbox input').val(), function (data) {
+                        this.options = data.records;
+                    }.bind(this));
+                }.bind(this), 333);
             }
         },
         mounted: function () {
             $(this.$el).find('select').selectpicker();
-            $(this.$el).find('.bs-searchbox input').on('keydown', function () {
+            $(this.$el).find('.bs-searchbox input').on('keyup', function () {
                 this.refreshList();
             }.bind(this));
             $(this.$el).on('change', function () {
