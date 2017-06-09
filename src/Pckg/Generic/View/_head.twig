@@ -22,6 +22,133 @@
 <!-- vue components -->
 {{ _vueManager.getComponents() | raw }}
 
+<script type="text/x-template" id="vue-pckg-select">
+    <div class="pckg-select">
+        <select v-if="multiple" class="form-control pckg-selectpicker" multiple v-model="selectedMultiple"
+                data-live-search="true">
+            <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
+                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+            </optgroup>
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+        </select>
+        <select v-else class="form-control pckg-selectpicker" v-model="selectedSingle"
+                data-live-search="true">
+            <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
+                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+            </optgroup>
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+        </select>
+    </div>
+</script>
+
+<script>
+
+    Vue.component('pckg-select', {
+        mixins: [pckgDelimiters, pckgTimeout],
+        name: 'pckg-select',
+        template: '#vue-pckg-select',
+        model: {
+            prop: 'selected',
+            event: 'input'
+        },
+        data: function () {
+            return {
+                options: this.initialOptions,
+                selectedMultiple: [this.selected],
+                selectedSingle: this.selected,
+            };
+        },
+        props: {
+            withEmpty: {
+                default: true
+            },
+            initialOptions: {
+                default: []
+            },
+            selected: {
+                default: []
+            },
+            initialMultiple: {
+                default: false
+            },
+            refreshUrl: {
+                type: String,
+                default: ''
+            }
+        },
+        computed: {
+            finalOptions: function () {
+                var options = {'': ' -- select value -- '};
+
+                $.each(this.options, function (key, item) {
+                    if (typeof item != 'string') {
+                        return;
+                    }
+
+                    options[key] = item;
+                });
+
+                return options;
+            },
+            finalOptionGroups: function () {
+                var options = {};
+                $.each(this.options, function (key, item) {
+                    if (typeof item == 'string') {
+                        return;
+                    }
+
+                    options[key] = item;
+                });
+
+                return options;
+            },
+            multiple: function () {
+                return this.initialMultiple;
+            }
+        },
+        watch: {
+            selected: function (newVal) {
+                this.$emit('input', newVal);
+            },
+            selectedMultiple: function (newVal) {
+                this.$emit('input', newVal);
+            },
+            selectedSingle: function (newVal) {
+                this.$emit('input', newVal);
+            },
+            options: function (newVal) {
+                console.log('options changed');
+                Vue.nextTick(function () {
+                    console.log('refreshing selectpicker');
+                    $(this.$el).find('select').selectpicker('refresh');
+                }.bind(this));
+            }
+        },
+        methods: {
+            refreshList: function () {
+                if (this.refreshUrl.length == 0) {
+                    console.log("no refresh url");
+                    return;
+                }
+
+                http.getJSON(this.refreshUrl, function (data) {
+                    this.options = data.records;
+                }.bind(this));
+            }
+        },
+        mounted: function () {
+            $(this.$el).find('select').selectpicker();
+            $(this.$el).find('.bs-searchbox input').on('keydown', function () {
+                this.refreshList();
+            }.bind(this));
+            $(this.$el).on('change', function () {
+                console.log('changing');
+                this.$emit('input', $(this.$el).val());
+            }.bind(this));
+        }
+    });
+</script>
+
 <!-- vue filters -->
 {{ _vueManager.getFilters() | raw }}
 

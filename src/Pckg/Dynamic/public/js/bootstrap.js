@@ -1,3 +1,41 @@
+var initUninitialiedSelectpicker = function () {
+    $('.pckg-selectpicker:not(.initialized)').each(function () {
+        $(this).addClass('initialized');
+        var $select = $(this);
+        $select.selectpicker({liveSearch: true});
+        var dataRefreshUrl = $select.attr('data-refresh-url');
+        if ($select.hasClass('ajax') || (dataRefreshUrl && dataRefreshUrl.length > 0)) {
+            var searchTimeout;
+            $select.parent().find('.bs-searchbox input').on('keydown keyup change', function () {
+                var $input = $(this);
+                clearTimeout(searchTimeout);
+                var val = $input.val();
+                searchTimeout = setTimeout(function () {
+                    console.log("searching ...");
+                    http.getJSON(dataRefreshUrl + '?search=' + val, function (data) {
+                        var val = $select.val();
+                        $select.find('option').remove();
+                        $.each(data.records, function (key, val) {
+                            if (typeof val == 'object' || typeof val == 'array') {
+                                var optgroup = '<optgroup label="' + key + '">';
+                                $.each(val, function (k, v) {
+                                    optgroup += '<option value="' + (k === 0 ? '' : k) + '">' + v + '</option>';
+                                });
+                                optgroup += '</optgroup>';
+                                $select.append(optgroup);
+                            } else {
+                                $select.append('<option value="' + (key === 0 ? '' : key) + '">' + val + '</option>');
+                            }
+                        });
+                        $select.val(val);
+                        $select.selectpicker('refresh');
+                    });
+                }, 500);
+            });
+        }
+    });
+};
+
 $(document).ready(function () {
 
     $('[data-toggle="popover"]').popover({
@@ -349,36 +387,5 @@ $(document).ready(function () {
         }
     });
 
-    $('.pckg-selectpicker').each(function () {
-        var $select = $(this);
-        $select.selectpicker();
-        if ($select.hasClass('ajax')) {
-            var searchTimeout;
-            $select.parent().find('.bs-searchbox input').on('keydown keyup change', function () {
-                var $input = $(this);
-                clearTimeout(searchTimeout);
-                var val = $input.val();
-                searchTimeout = setTimeout(function () {
-                    http.getJSON($select.attr('data-refresh-url') + '?search=' + val, function (data) {
-                        var val = $select.val();
-                        $select.find('option').remove();
-                        $.each(data.records, function (key, val) {
-                            if (typeof val == 'object' || typeof val == 'array') {
-                                var optgroup = '<optgroup label="' + key + '">';
-                                $.each(val, function(k, v){
-                                    optgroup += '<option value="' + (k === 0 ? '' : k) + '">' + v + '</option>';
-                                });
-                                optgroup += '</optgroup>';
-                                $select.append(optgroup);
-                            } else {
-                                $select.append('<option value="' + (key === 0 ? '' : key) + '">' + val + '</option>');
-                            }
-                        });
-                        $select.val(val);
-                        $select.selectpicker('refresh');
-                    });
-                }, 500);
-            });
-        }
-    });
+    initUninitialiedSelectpicker();
 });

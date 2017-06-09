@@ -259,39 +259,17 @@ class Filter extends AbstractService
     public function getTypeMethods()
     {
         return [
-            'equals'          => [
-                'label' => '=',
-            ],
-            'greater'         => [
-                'label' => '>',
-            ],
-            'greaterOrEquals' => [
-                'label' => '>=',
-            ],
-            'lower'           => [
-                'label' => '<',
-            ],
-            'lowerOrEquals'   => [
-                'label' => '<=',
-            ],
-            'not'             => [
-                'label' => 'NOT',
-            ],
-            'in'              => [
-                'label' => 'IN',
-            ],
-            'notIn'           => [
-                'label' => 'NOT IN',
-            ],
-            'like'            => [
-                'label' => 'LIKE',
-            ],
-            'isNull'          => [
-                'label' => 'NULL',
-            ],
-            'notNull'         => [
-                'label' => 'NOT NULL',
-            ],
+            'equals'          => '=',
+            'greater'         => '>',
+            'greaterOrEquals' => '>=',
+            'lower'           => '<',
+            'lowerOrEquals'   => '<=',
+            'not'             => 'NOT',
+            'in'              => 'IN',
+            'notIn'           => 'NOT IN',
+            'like'            => 'LIKE',
+            'isNull'          => 'NULL',
+            'notNull'         => 'NOT NULL',
         ];
     }
 

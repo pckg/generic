@@ -72,6 +72,12 @@ class Fields extends AbstractService
                     'filterValue'   => $filtered['value'] ?? null,
                     'filterField'   => $filtered['field'] ?? null,
                     'group'         => $grouped ?? null,
+                    'filterUrl'     => url(
+                        'dynamic.records.field.selectList.none',
+                        [
+                            'table' => $relation->on_table_id,
+                        ]
+                    ),
                 ];
             }
         );
@@ -81,8 +87,9 @@ class Fields extends AbstractService
     protected function makeFields(CollectionInterface $fields, $deep = 0)
     {
         $sessionFields = $this->getSession()['fields'] ?? [];
+        $tableId = $fields->first()->dynamic_table_id;
         $relations = (new Relations())->where('on_field_id', $fields->map('id'))
-                                      ->where('on_table_id', $fields->first()->dynamic_table_id)
+                                      ->where('on_table_id', $tableId)
                                       ->withOnField()
                                       ->withForeignField()
                                       ->withShowTable(function(BelongsTo $showTable) {
@@ -93,7 +100,7 @@ class Fields extends AbstractService
                                       ->keyBy('on_field_id');
 
         return $fields->map(
-            function(Field $field) use ($sessionFields, $deep, $relations) {
+            function(Field $field) use ($sessionFields, $deep, $relations, $tableId) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
                 $grouped = (new Collection($sessionFields['groups'] ?? []))->filter('field', $field->id)->first();
@@ -121,6 +128,13 @@ class Fields extends AbstractService
                     'options'      => $options,
                     'fields'       => $fields,
                     'group'        => $grouped ?? null,
+                    'filterUrl'    => url(
+                        'dynamic.records.field.selectList.none',
+                        [
+                            'table' => $tableId,
+                            'field' => $field,
+                        ]
+                    ),
                 ];
             }
         )->keyBy('field');

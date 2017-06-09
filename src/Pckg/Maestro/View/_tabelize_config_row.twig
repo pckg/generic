@@ -15,18 +15,23 @@
             <div class="col-sm-4 filter-method">
                 <select v-model="field.filterMethod" class="form-control">
                     <option></option>
-                    <option v-for="(option,key) in filterMethods" :value="key">${ option.label }</option>
+                    <option v-for="(option,key) in filterMethods" :value="key">${ option }</option>
                 </select>
             </div>
             <div class="col-sm-8 filter-value" v-if="field.filterMethod">
                 <template
                         v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
-                    <select v-model="field.filterValue" class="form-control"
-                            :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1 ? 'multiple' : null">
+
+                    <pckg-select v-model="field.filterValue" :refresh-url="field.filterUrl"
+                                 :initial-multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1"
+                    :initialOptions="field.options"></pckg-select>
+                    <!--<select v-model="field.filterValue" class="form-control pckg-selectpicker"
+                            :data-refresh-url="field.filterUrl"
+                            :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1">
                         <option v-for="(option,key) in field.options"
                                 :value="key">${ option }
                         </option>
-                    </select>
+                    </select>-->
                 </template>
                 <template v-else-if="['isNull', 'notNull'].indexOf(field.filterMethod) == -1">
                     <input type="text" v-model="field.filterValue" class="form-control"/>
@@ -53,7 +58,7 @@
             <div class="col-sm-4">
                 <select v-model="relation.filterMethod" class="form-control">
                     <option></option>
-                    <option v-for="(option,key) in filterMethods" :value="key">${ option.label }</option>
+                    <option v-for="(option,key) in filterMethods" :value="key">${ option }</option>
                 </select>
             </div>
             <template v-if="!relation.filterSubField && relationFilterSelectField(relation) && relation.filterMethod">
@@ -65,8 +70,8 @@
                     </select>
                 </div>
             </template>
-            <template v-else-if="relation.filterMethod">>
-                <div if="relation.filterField || ['greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like'].indexOf(relation.filterMethod) > -1"
+            <template v-else-if="relation.filterMethod">
+                <div v-if="relation.filterField || ['greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like'].indexOf(relation.filterMethod) > -1"
                      class="col-sm-4">
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>
