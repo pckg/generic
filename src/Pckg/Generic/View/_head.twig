@@ -24,19 +24,19 @@
 
 <script type="text/x-template" id="vue-pckg-select">
     <div class="pckg-select">
-        <select v-if="multiple" class="form-control pckg-selectpicker" multiple v-model="selectedMultiple"
+        <select v-if="multiple" class="form-control" multiple v-model="selectedMultiple"
                 data-live-search="true">
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
         </select>
-        <select v-else class="form-control pckg-selectpicker" v-model="selectedSingle"
+        <select v-else class="form-control" v-model="selectedSingle"
                 data-live-search="true">
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
         </select>
     </div>
 </script>
@@ -63,13 +63,18 @@
                 default: true
             },
             initialOptions: {
-                default: []
+                default: function(){
+                    return [];
+                }
             },
             selected: {
-                default: []
+                default: function(){
+                    return [];
+                }
             },
             initialMultiple: {
-                default: false
+                default: true,
+                type: Boolean
             },
             refreshUrl: {
                 type: String,
@@ -117,7 +122,7 @@
                 this.$emit('input', newVal);
             },
             options: function (newVal) {
-                console.log('options changed');
+                console.log('options watcher: options changed');
                 Vue.nextTick(function () {
                     console.log('refreshing selectpicker');
                     $(this.$el).find('select').selectpicker('refresh');
@@ -139,14 +144,25 @@
             }
         },
         mounted: function () {
-            $(this.$el).find('select').selectpicker();
+            $(this.$el).find('select').selectpicker({
+                liveSearch: true
+            });
+
+            /*$(this.$el).find('select').on('change', function () {
+                console.log('changing', $(this.$el).find('select').val());
+                this.$emit('input', $(this.$el).find('select').val());
+            }.bind(this));*/
+
             $(this.$el).find('.bs-searchbox input').on('keyup', function () {
                 this.refreshList();
             }.bind(this));
-            $(this.$el).on('change', function () {
-                console.log('changing');
-                this.$emit('input', $(this.$el).val());
-            }.bind(this));
+
+            /**
+             * Initial fetch.
+             */
+            if (this.options.length == 0 && this.refreshUrl.length > 0) {
+                this.refreshList();
+            }
         }
     });
 </script>

@@ -234,6 +234,13 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
+                        '/dynamic/tables/select-list/[table]'                                           => [
+                            'name'      => 'dynamic.record.selectList',
+                            'view'      => 'selectList',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
                     ]
                 ) + array_merge_array(
                     [

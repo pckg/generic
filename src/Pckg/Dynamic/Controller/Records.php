@@ -10,6 +10,7 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
 use Pckg\Dynamic\Entity\Entity;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
@@ -49,19 +50,23 @@ class Records extends Controller
 
     public function getSelectListAction(
         Table $table,
-        Field $field,
+        Field $field = null,
         Record $record = null,
         DynamicService $dynamicService
     ) {
         $collection = new Collection();
-        $collection->push(' -- select value --', null);
         $search = get('search');
         $dynamicService->setTable($table);
+        if (!$field) {
+            $field = (new Relations())->where('show_table_id', $table->id)->one()->onField;
+        }
+
         if ($search) {
             $relation = $field->getFilteredRelationForSelect($record, null, $dynamicService);
         } else {
             $relation = $field->getRelationForSelect($record);
         }
+
         foreach ($relation as $id => $value) {
             $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
         }

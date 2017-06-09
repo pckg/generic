@@ -28,13 +28,7 @@ class Relation extends DatabaseRecord
             return;
         }
 
-        $evalResult = $this->eval($this->filter, $foreignRecord);
-
-        if (!$evalResult) {
-            return;
-        }
-
-        $entity->where(Raw::raw($evalResult));
+        $entity->where(Raw::raw($this->filter));
     }
 
     public function applyRecordFilterOnEntity(Record $record, Entity $entity)
