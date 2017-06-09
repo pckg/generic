@@ -550,7 +550,24 @@ class Dynamic extends Bootstrap
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
                 $element->addOption(null, ' -- select value -- ');
-                if (count($relation) > 500) {
+
+                $value = $this->record->{$field->field};
+                $foundValue = false;
+
+                foreach ($relation as $id => $value) {
+                    if (is_array($value)) {
+                        $optgroup = $element->addOptionGroup($id);
+                        foreach ($value as $k => $v) {
+                            $optgroup->addOption($k, str_replace(['<br />', '<br/>', '<br>'], ' - ', $v));
+                            $foundValue = $foundValue || $k == $value;
+                        }
+                    } else {
+                        $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                        $foundValue = $foundValue || $id == $value;
+                    }
+                }
+
+                if (!$foundValue && $value) {
                     $element->addOption(
                         $this->record->{$field->field},
                         str_replace(
@@ -563,17 +580,6 @@ class Dynamic extends Bootstrap
                             )
                         )
                     );
-                } else {
-                    foreach ($relation as $id => $value) {
-                        if (is_array($value)) {
-                            $optgroup = $element->addOptionGroup()->setAttribute('label', $id);
-                            foreach ($value as $k => $v) {
-                                $optgroup->addOption($k, str_replace(['<br />', '<br/>', '<br>'], ' - ', $v));
-                            }
-                        } else {
-                            $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
-                        }
-                    }
                 }
 
                 $element->setAttribute(

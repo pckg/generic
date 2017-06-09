@@ -28,7 +28,13 @@ class Relation extends DatabaseRecord
             return;
         }
 
-        $entity->where(Raw::raw($this->filter));
+        $filter = $this->filter;
+
+        if (strpos($filter, '"') === 0 && strpos(strrev($filter), '"') === 0) {
+            $filter = substr($filter, 1, -1);
+        }
+
+        $entity->where(Raw::raw($filter));
     }
 
     public function applyRecordFilterOnEntity(Record $record, Entity $entity)
