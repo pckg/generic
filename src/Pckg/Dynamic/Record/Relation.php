@@ -66,10 +66,14 @@ class Relation extends DatabaseRecord
         $relation = $this;
 
         if ($relation->filter) {
-            $entity->whereRaw(substr($relation->filter, 1, -1)); // remove "
+            $filter = $relation->filter;
+            if (strpos($filter, '"') === 0 && strpos(strrev($filter), '"') === 0) {
+                $filter = substr($filter, 1, -1);
+            }
+            $entity->whereRaw($filter);
         }
 
-        $data = $entity->limit(500)
+        $data = $entity->limit(100)
                        ->all()
                        ->keyBy(function($record) use ($relation) {
                            return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};

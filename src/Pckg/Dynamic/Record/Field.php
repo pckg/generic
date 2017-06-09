@@ -147,7 +147,7 @@ class Field extends DatabaseRecord
             return [];
         }
 
-        $entity->limit(500);
+        $entity->limit(100);
 
         return $this->fetchAndPrepareResultsForSelect($entity);
     }
