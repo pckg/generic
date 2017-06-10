@@ -74,7 +74,7 @@ class Dynamic extends Provider
                             ],
                         ],
                         '/dynamic/tables/list/[table]/configure'                                        => [
-                            'name'      => 'dynamic.record.list',
+                            'name'      => 'dynamic.record.listConfigure',
                             'view'      => 'configureTableView',
                             'resolvers' => [
                                 'table' => TableResolver::class,
@@ -83,6 +83,14 @@ class Dynamic extends Provider
                         '/dynamic/tables/list/[table]/[tableView]'                                      => [
                             'name'      => 'dynamic.record.listView',
                             'view'      => 'viewTableView',
+                            'resolvers' => [
+                                'table'     => TableResolver::class,
+                                'tableView' => ViewResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/list/[table]/[tableView]/configure'                             => [
+                            'name'      => 'dynamic.record.listViewConfigure',
+                            'view'      => 'configureTableView',
                             'resolvers' => [
                                 'table'     => TableResolver::class,
                                 'tableView' => ViewResolver::class,

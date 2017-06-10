@@ -10,7 +10,6 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Database\Relation\MorphsMany;
 use Pckg\Dynamic\Entity\Entity;
-use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
@@ -91,17 +90,19 @@ class Records extends Controller
         $dynamicService->setView($tableView);
         $tableView->loadToSession();
 
-        return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType);
+        return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, false, null, null, null,
+                                         $tableView);
     }
 
     public function getConfigureTableViewAction(
         Table $tableRecord,
         DynamicService $dynamicService,
         DatabaseEntity $entity = null,
-        $viewType = 'full'
+        $viewType = 'full',
+        TableView $tableView
     ) {
         $dynamicService->setTable($tableRecord);
-        $dynamicService->setTable($tableRecord);
+        $dynamicService->setView($tableView);
         $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
 
         $fields = $dynamicService->getFieldsService()->getAvailableFields();
@@ -141,7 +142,8 @@ class Records extends Controller
         $returnTabelize = false,
         Tab $tab = null,
         $dynamicRecord = null,
-        $dynamicRelation = null
+        $dynamicRelation = null,
+        TableView $tableView = null
     ) {
         /**
          * Set table so sub-services can reuse it later.
@@ -229,7 +231,8 @@ class Records extends Controller
                          ->setDynamicRelation($dynamicRelation)
                          ->setViewData([
                                            'view' => $dynamicService->getView(),
-                                       ]);
+                                       ])
+                         ->setTableView($tableView);
 
         if ($returnTabelize) {
             return $tabelize;

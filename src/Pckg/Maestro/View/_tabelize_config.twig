@@ -90,7 +90,7 @@
             },
             fetchData: function () {
                 this.fetching = true;
-                http.getJSON('{{ tabelize.getTable().getViewUrl() }}/configure', function (data) {
+                http.getJSON('{{ tabelize.getViewUrl() }}/configure', function (data) {
                     var self = this;
                     this.fetching = false;
                     var keys = [

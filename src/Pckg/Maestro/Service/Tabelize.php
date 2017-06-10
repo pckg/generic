@@ -6,6 +6,7 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
+use Pckg\Dynamic\Record\TableView;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
 use Pckg\Maestro\Service\Tabelize\Cloner;
@@ -89,6 +90,11 @@ class Tabelize
     protected $listableRelations = [];
 
     protected $viewData = [];
+
+    /**
+     * @var TableView
+     */
+    protected $tableView;
 
     public function __construct(Entity $entity = null, $fields = [])
     {
@@ -763,6 +769,24 @@ class Tabelize
                 'record' => $this->dynamicRecord,
             ]
         );
+    }
+
+    public function getViewUrl()
+    {
+        return url(
+            'dynamic.record.list' . ($this->tableView ? 'View' : ''),
+            [
+                'table'     => $this->table,
+                'tableView' => $this->tableView,
+            ]
+        );
+    }
+
+    public function setTableView(TableView $tableView = null)
+    {
+        $this->tableView = $tableView;
+
+        return $this;
     }
 
 }
