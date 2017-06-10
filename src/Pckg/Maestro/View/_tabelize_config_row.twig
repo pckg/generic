@@ -21,17 +21,9 @@
             <div class="col-sm-8 filter-value" v-if="field.filterMethod">
                 <template
                         v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
-
                     <pckg-select v-model="field.filterValue" :refresh-url="field.filterUrl"
                                  :initial-multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1"
                     :initialOptions="field.options"></pckg-select>
-                    <!--<select v-model="field.filterValue" class="form-control pckg-selectpicker"
-                            :data-refresh-url="field.filterUrl"
-                            :multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1">
-                        <option v-for="(option,key) in field.options"
-                                :value="key">${ option }
-                        </option>
-                    </select>-->
                 </template>
                 <template v-else-if="['isNull', 'notNull'].indexOf(field.filterMethod) == -1">
                     <input type="text" v-model="field.filterValue" class="form-control"/>

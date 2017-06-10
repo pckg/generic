@@ -54,7 +54,7 @@
         data: function () {
             return {
                 options: this.initialOptions,
-                selectedMultiple: [this.selected],
+                selectedMultiple: Array.isArray(this.selected) ? this.selected : [this.selected],
                 selectedSingle: this.selected,
             };
         },
@@ -63,12 +63,12 @@
                 default: true
             },
             initialOptions: {
-                default: function(){
+                default: function () {
                     return [];
                 }
             },
             selected: {
-                default: function(){
+                default: function () {
                     return [];
                 }
             },
@@ -144,18 +144,22 @@
             }
         },
         mounted: function () {
-            $(this.$el).find('select').selectpicker({
-                liveSearch: true
+            this.$nextTick(function () {
+                $(this.$el).find('select').selectpicker({
+                    liveSearch: true
+                });
+
+                $(this.$el).find('select').selectpicker('refresh');
+
+                /*$(this.$el).find('select').on('change', function () {
+                 console.log('changing', $(this.$el).find('select').val());
+                 this.$emit('input', $(this.$el).find('select').val());
+                 }.bind(this));*/
+
+                $(this.$el).find('.bs-searchbox input').on('keyup', function () {
+                    this.refreshList();
+                }.bind(this));
             });
-
-            /*$(this.$el).find('select').on('change', function () {
-                console.log('changing', $(this.$el).find('select').val());
-                this.$emit('input', $(this.$el).find('select').val());
-            }.bind(this));*/
-
-            $(this.$el).find('.bs-searchbox input').on('keyup', function () {
-                this.refreshList();
-            }.bind(this));
 
             /**
              * Initial fetch.
