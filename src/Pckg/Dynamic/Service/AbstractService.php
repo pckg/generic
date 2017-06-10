@@ -6,6 +6,9 @@ use Pckg\Dynamic\Record\TableView;
 abstract class AbstractService
 {
 
+    /**
+     * @var Table
+     */
     protected $table;
 
     protected $view;
@@ -22,7 +25,8 @@ abstract class AbstractService
 
     public function getSession($key = null)
     {
-        $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' . ($this->view->id ?? '')]['view'] ?? [];
+        $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' .
+                                                        ($this->view->id ?? '')]['view'] ?? [];
 
         if (!$key) {
             return $session;

@@ -53,7 +53,6 @@ class Records extends Controller
         Record $record = null,
         DynamicService $dynamicService
     ) {
-        $collection = new Collection();
         $dynamicService->setTable($table);
         if (!$field) {
             $field = (new Relations())->where('show_table_id', $table->id)->one()->onField;
@@ -66,13 +65,9 @@ class Records extends Controller
 
         $relation = $field->getRelationForSelect($record, null, $entity);
 
-        foreach ($relation as $id => $value) {
-            $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
-        }
-
         return $this->response()->respondWithSuccess(
             [
-                'records' => $collection->all(),
+                'records' => $relation,
             ]
         );
     }

@@ -138,7 +138,7 @@ class Field extends DatabaseRecord
             return [];
         }
 
-        $entity->limit(100);
+        $entity->limit(250);
 
         return $this->fetchAndPrepareResultsForSelect($entity);
     }
@@ -154,7 +154,9 @@ class Field extends DatabaseRecord
         $entity->all()->each(
             function($record) use ($relation, &$values, $foreignField) {
                 $value = $this->eval($relation->value, $record, $relation);
-                $groupValue = $relation->group_value ? $this->eval($relation->group_value, $record, $relation) : null;
+                $groupValue = $relation->group_value
+                    ? $this->eval($relation->group_value, $record, $relation)
+                    : null;
                 $values[$groupValue][$record->{$foreignField}] = $value;
             }
         );

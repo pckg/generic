@@ -33,6 +33,18 @@ class Tables extends DatabaseEntity implements MaestroEntity
                     ->foreignKey('dynamic_table_id');
     }
 
+    public function searchableFields()
+    {
+        return $this->hasMany(
+            Fields::class,
+            function(HasMany $fields) {
+                $fields->where('searchable');
+                //$hasMany->joinPermissionTo('view');
+            }
+        )
+                    ->foreignKey('dynamic_table_id');
+    }
+
     public function actions()
     {
         return $this->hasMany(TableActions::class)

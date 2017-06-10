@@ -8,6 +8,7 @@ use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
+use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Framework\Request\Data\Get;
@@ -236,11 +237,11 @@ class Filter extends AbstractService
             $where = new Parenthesis();
             $where->setGlue('OR');
             foreach ($tables as $alias => $table) {
-                /**
-                 * @T00D00
-                 * Here we need to reduce list of filterable fields!
-                 */
+                $searchableFields = (new Tables())->where('table', $table)->one()->searchableFields->keyBy('field');
                 foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
+                    if (!$searchableFields->hasKey($field)) {
+                        continue;
+                    }
                     $where->push($alias . '.' . $field . ' LIKE ?');
                     $query->bind('%' . $search . '%', 'where');
                 }
