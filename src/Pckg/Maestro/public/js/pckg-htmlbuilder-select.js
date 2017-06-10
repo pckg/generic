@@ -4,7 +4,9 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
         url: null,
         refreshUrl: null,
         initialOptions: {
-            default: []
+            default: function () {
+                return [];
+            }
         }
     },
     data: function () {
