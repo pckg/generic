@@ -128,20 +128,11 @@ class Field extends DatabaseRecord
         return $entity->one();
     }
 
-    public function getRelationForSelect($record = null, $foreignRecord = null)
+    public function getRelationForSelect($record = null, $foreignRecord = null, Entity $entity = null)
     {
-        $entity = $this->getEntityForSelect($record, $foreignRecord);
-
         if (!$entity) {
-            return [];
+            $entity = $this->getEntityForSelect($record, $foreignRecord);
         }
-
-        return $this->fetchAndPrepareResultsForSelect($entity);
-    }
-
-    public function getFilteredRelationForSelect($record = null, $foreignRecord = null, Dynamic $dynamic)
-    {
-        $entity = $this->getEntityForSelect($record, $foreignRecord);
 
         if (!$entity) {
             return [];

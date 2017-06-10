@@ -54,17 +54,17 @@ class Records extends Controller
         DynamicService $dynamicService
     ) {
         $collection = new Collection();
-        $search = get('search');
         $dynamicService->setTable($table);
         if (!$field) {
             $field = (new Relations())->where('show_table_id', $table->id)->one()->onField;
         }
 
-        if ($search) {
-            $relation = $field->getFilteredRelationForSelect($record, null, $dynamicService);
-        } else {
-            $relation = $field->getRelationForSelect($record);
+        $entity = $field->getEntityForSelect($record, null);
+        if ($search = get('search')) {
+            $dynamicService->getFilterService()->filterByGet($entity);
         }
+
+        $relation = $field->getRelationForSelect($record, null, $entity);
 
         foreach ($relation as $id => $value) {
             $collection->push(str_replace(['<br />', '<br/>', '<br>'], ' - ', $value), $id);
