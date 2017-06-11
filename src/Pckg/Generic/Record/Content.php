@@ -38,6 +38,10 @@ class Content extends Record
         if ($key == 'heading') {
             return 'h2';
         }
+
+        if ($key == 'contentWidth') {
+            return 'col-xs-12';
+        }
     }
 
     public function getContentAttribute()
