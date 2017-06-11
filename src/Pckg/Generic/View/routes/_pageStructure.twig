@@ -40,288 +40,29 @@
         {% endembed %}
 
         <div v-for="variable in variables" v-if="route.id" class="variable">
-            <h3>${ variable.slug }</h3>
+            <h3>
+                ${ variable.slug }
 
-            <pckg-generic-pageVariable :variable="variable"></pckg-generic-pageVariable>
+                <a href="#" class="btn btn-info btn-primary pull-right" @click.prevent="addWrapper(variable)">
+                    <i class="fa fa-plus"></i> Add wrapper
+                </a>
+            </h3>
+
+            <draggable v-model="variable.actions"
+                       :options="{handle:'.move-handle'}"
+                       @end="onEnd($event, variable)">
+                <pckg-generic-pageElement v-for="action in variable.actions" :variable="variable" :action="action"
+                                          :key="action.pivot.id"></pckg-generic-pageElement>
+            </draggable>
         </div>
     </div>
 </script>
 
-<script type="text/x-template" id="pckg-generic-pageWrapper">
-    <div class="pckg-generic-pageWrapper">
+<script type="text/x-template" id="pckg-generic-pageElement">
+    <div class="pckg-generic-pageElement">
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation">
-                <a href="#" class="move-handle move-handle-wrapper" @click.prevent>
-                    <i class="fa fa-arrows"></i>
-                </a>
-            </li>
-            <li role="presentation" class="active">
-                <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
-                   data-toggle="tab">
-                    wrapper
-                </a>
-            </li>
-            <li role="presentation">
-                <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-th"></i></a>
-            </li>
-            <li role="presentation">
-                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-wrench"></i></a>
-            </li>
-            <li role="presentation">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
-                   aria-expanded="false"><i class="fa fa-plus"></i></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" @click.prevent="addContainer(action)">Add container</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
-                           @end="onEnd($event, action)">
-                    <pckg-generic-pageContainer v-for="action in action.actions" :key="action.pivot.id"
-                                                :action="action"></pckg-generic-pageContainer>
-                </draggable>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Container</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.container"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option>normal - .container</option>
-                                <option>fluid - .container-fluid</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                {% include '_pageStructure-background.twig' %}
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
-                Advanced
-            </div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-template" id="pckg-generic-pageContainer">
-    <div class="pckg-generic-pageContainer">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-                <a href="#" class="move-handle move-handle-container" @click.prevent>
-                    <i class="fa fa-arrows"></i>
-                </a>
-            </li>
-            <li role="presentation" class="active">
-                <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
-                   data-toggle="tab">
-                    container
-                </a>
-            </li>
-            <li role="presentation">
-                <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-th"></i></a>
-            </li>
-            <li role="presentation">
-                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-wrench"></i></a>
-            </li>
-            <li role="presentation">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
-                   aria-expanded="false"><i class="fa fa-plus"></i></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" @click.prevent="addRow(action)">Add row</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <draggable v-model="action.actions" :options="{handle:'.move-handle-row',group:'row'}"
-                           @end="onEnd($event, action)">
-                    <pckg-generic-pageRow v-for="action in action.actions" :key="action.pivot.id"
-                                          :action="action"></pckg-generic-pageRow>
-                </draggable>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Container</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.container"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option>normal - .container</option>
-                                <option>fluid - .container-fluid</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                {% include '_pageStructure-background.twig' %}
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
-                Advanced
-            </div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-template" id="pckg-generic-pageRow">
-    <div class="pckg-generic-pageRow">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-                <a href="#" class="move-handle move-handle-row" @click.prevent>
-                    <i class="fa fa-arrows"></i>
-                </a>
-            </li>
-            <li role="presentation" class="active">
-                <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
-                   data-toggle="tab">
-                    row
-                </a>
-            </li>
-            <li role="presentation">
-                <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-th"></i></a>
-            </li>
-            <li role="presentation">
-                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-wrench"></i></a>
-            </li>
-            <li role="presentation">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
-                   aria-expanded="false"><i class="fa fa-plus"></i></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" @click.prevent="addColumn(action)">Add column</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <draggable v-model="action.actions" :options="{handle:'.move-handle-column',group:'column'}"
-                           @end="onEnd($event, action)">
-                    <pckg-generic-pageColumn v-for="action in action.actions"
-                                             :key="action.pivot.id"
-                                             :action="action"></pckg-generic-pageColumn>
-                </draggable>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Padding</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.container"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option>normal</option>
-                                <option>no - .no-padding</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
-                Advanced
-            </div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-template" id="pckg-generic-pageColumn">
-    <div class="pckg-generic-pageColumn">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-                <a href="#" class="move-handle move-handle-column" @click.prevent>
-                    <i class="fa fa-arrows"></i>
-                </a>
-            </li>
-            <li role="presentation" class="active">
-                <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
-                   data-toggle="tab">
-                    column
-                </a>
-            </li>
-            <li role="presentation">
-                <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-th"></i></a>
-            </li>
-            <li role="presentation">
-                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-wrench"></i></a>
-            </li>
-            <li role="presentation">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
-                   aria-expanded="false"><i class="fa fa-plus"></i></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" @click.prevent="addAction(action)">Add action</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <draggable v-model="action.actions" :options="{handle:'.move-handle-action',group:'action'}"
-                           @end="onEnd($event, action)">
-                    <pckg-generic-pageAction v-for="action in action.actions"
-                                             :key="action.pivot.key"
-                                             :action="action"></pckg-generic-pageAction>
-                </draggable>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Width</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.container"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option>col-md-1</option>
-                                <option>col-md-2</option>
-                                <option>col-md-3</option>
-                                <option>col-md-4</option>
-                                <option>col-md-5</option>
-                                <option>col-md-6</option>
-                                <option>col-md-7</option>
-                                <option>col-md-8</option>
-                                <option>col-md-9</option>
-                                <option>col-md-10</option>
-                                <option>col-md-11</option>
-                                <option>col-md-12</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
-                Advanced
-            </div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-template" id="pckg-generic-pageAction">
-    <div class="pckg-generic-pageAction">
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-                <a href="#" class="move-handle move-handle-action" @click.prevent>
+                <a href="#" class="move-handle" @click.prevent>
                     <i class="fa fa-arrows"></i>
                 </a>
             </li>
@@ -330,13 +71,17 @@
                    data-toggle="tab">
                     <i v-if="action.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'"
                        class="fa fa-lock"></i>
-                    ${ action.title && action.title.length > 0 ? action.title : action.slug }
+                    ${ action.pivot.type }: ${ action.title && action.title.length > 0 ? action.title : action.slug }
                 </a>
             </li>
             <li role="presentation">
                 <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
+                   data-toggle="tab" @click="openDeleteActionModal(action)"><i class="fa fa-th"></i></a>
+            </li>
+            <li role="presentation">
+                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
                    data-toggle="tab"><i
-                            class="fa fa-th"></i></a>
+                            class="fa fa-wrench"></i></a>
             </li>
             <li role="presentation">
                 <a :href="'#layout' + action.pivot.id" aria-controls="layout" role="tab"
@@ -350,49 +95,104 @@
                             class="fa fa-users"></i></a>
             </li>
             <li role="presentation">
-                <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
-                   data-toggle="tab"><i
-                            class="fa fa-wrench"></i></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents"
+                   aria-expanded="false"><i class="fa fa-plus"></i></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a v-if="action.pivot.type == 'wrapper'" href="#" @click.prevent="addContainer(action)">Add container</a>
+                        <a v-if="action.pivot.type == 'container'" href="#" @click.prevent="addRow(action)">Add row</a>
+                        <a v-if="action.pivot.type == 'row'" href="#" @click.prevent="addColumn(action)">Add column</a>
+                        <a href="#" @click.prevent="addAction(action)">Add action</a>
+                        <a href="#" @click.prevent="openDeleteActionModal(action)">Remove</a>
+                    </li>
+                </ul>
             </li>
         </ul>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" :id="'home' + action.pivot.id">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-md-3">Content</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.content_id"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option v-for="content in contents"
-                                        :value="content.id">#${ content.id } - ${
-                                    content.title }
-                                </option>
-                            </select>
+                <template v-if="action.pivot.type == 'action'">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-3">Content</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="action.pivot.content_id"
+                                        @change="saveActionsMorph(action.pivot)">
+                                    <option v-for="content in contents"
+                                            :value="content.id">#${ content.id } - ${
+                                        content.title }
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button v-if="action.pivot.content_id"
-                        @click="openEditContentPopup(action.pivot.content_id)"
-                        class="btn btn-primary">
-                    Edit content
-                </button>
+                    <button v-if="action.pivot.content_id"
+                            @click="openEditContentPopup(action.pivot.content_id)"
+                            class="btn btn-primary">
+                        Edit content
+                    </button>
 
-                <div class="form-horizontal">
-                    <div class="form-group" v-if="getActionTemplates(action.id).length > 0">
-                        <label class="col-md-3">Template</label>
-                        <div class="col-md-9">
-                            <select class="form-control" v-model="action.pivot.template"
-                                    @change="saveActionsMorph(action.pivot)">
-                                <option v-for="template in getActionTemplates(action.id)"
-                                        :value="template">${ template }
-                                </option>
-                            </select>
+                    <div class="form-horizontal">
+                        <div class="form-group" v-if="getActionTemplates(action.id).length > 0">
+                            <label class="col-md-3">Template</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="action.pivot.template"
+                                        @change="saveActionsMorph(action.pivot)">
+                                    <option v-for="template in getActionTemplates(action.id)"
+                                            :value="template">${ template }
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </template>
+                <draggable v-model="action.actions"
+                           :options="{handle:'.move-handle'}"
+                           @end="onEnd($event, action)" @start="onStart($event, action)">
+                    <pckg-generic-pageElement v-for="action in action.actions" :action="action" :variable="variable"
+                                              :key="action.pivot.id"></pckg-generic-pageElement>
+                </draggable>
             </div>
             <div role="tabpanel" class="tab-pane" :id="'settings' + action.pivot.id">
+                <template v-if="action.pivot.type == 'container'">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-3">Container</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="action.pivot.container"
+                                        @change="saveActionsMorph(action.pivot)">
+                                    <option>normal - .container</option>
+                                    <option>fluid - .container-fluid</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-else-if="action.pivot.type == 'column'">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-3">Width</label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="action.pivot.container"
+                                        @change="saveActionsMorph(action.pivot)">
+                                    <option>col-md-1</option>
+                                    <option>col-md-2</option>
+                                    <option>col-md-3</option>
+                                    <option>col-md-4</option>
+                                    <option>col-md-5</option>
+                                    <option>col-md-6</option>
+                                    <option>col-md-7</option>
+                                    <option>col-md-8</option>
+                                    <option>col-md-9</option>
+                                    <option>col-md-10</option>
+                                    <option>col-md-11</option>
+                                    <option>col-md-12</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                {% include '_pageStructure-background.twig' %}
                 {{ _formService.open() | raw }}
                 {{ _formService.addText('padding').setLabel('Padding') | raw }}
                 {{ _formService.addText('margin').setLabel('Margin') | raw }}
@@ -402,13 +202,28 @@
                 {{ _formService.addText('background_size').setLabel('Background size') | raw }}
                 {{ _formService.addText('class').setLabel('Class') | raw }}
                 {{ _formService.close() | raw }}
+
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3">Padding</label>
+                        <div class="col-md-9">
+                            <select class="form-control" v-model="action.pivot.container"
+                                    @change="saveActionsMorph(action.pivot)">
+                                <option>normal</option>
+                                <option>no - .no-padding</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div role="tabpanel" class="tab-pane" :id="'layout' + action.pivot.id">
                 <template v-if="action.slug == 'pckg-generic-content-simple'">
                     {{ simpleContentForm | raw }}
                     <button class="btn btn-success" @click="saveActionsMorph">Save settings</button>
                 </template>
             </div>
+
             <div role="tabpanel" class="tab-pane" :id="'permissions' + action.pivot.id">
                 <table class="table table-condensed table-hover">
                     <thead>
@@ -430,40 +245,7 @@
                     permissions
                 </button>
             </div>
-            <div role="tabpanel" class="tab-pane" :id="'advanced' + action.pivot.id">
-                <a href="#" @click.prevent="openDeleteActionModal(action)"
-                   class="btn btn-danger">Delete
-                    action</a>
-            </div>
         </div>
-    </div>
-</script>
-
-<script type="text/x-template" id="pckg-generic-pageVariable">
-    <div class="pckg-generic-pageVariable">
-        <a href="#" class="btn btn-info btn-block btn-primary" @click.prevent="addWrapper(variable)">
-            <i class="fa fa-plus"></i> Add wrapper
-        </a>
-        <draggable v-model="variable.actions" :options="{handle:'.move-handle-container',group:'container'}"
-                   @end="onEnd($event, variable)">
-            <div v-for="act in variable.actions" class="action">
-                <template v-if="act.pivot.type == 'wrapper'">
-                    <pckg-generic-pageWrapper :action="act"></pckg-generic-pageWrapper>
-                </template>
-                <template v-else-if="act.pivot.type == 'container'">
-                    <pckg-generic-pageContainer :action="act"></pckg-generic-pageContainer>
-                </template>
-                <template v-else-if="act.pivot.type == 'row'">
-                    <pckg-generic-pageRow :action="act"></pckg-generic-pageRow>
-                </template>
-                <template v-else-if="act.pivot.type == 'column'">
-                    <pckg-generic-pageColumn :action="act"></pckg-generic-pageColumn>
-                </template>
-                <template v-else>
-                    <pckg-generic-pageAction :action="act"></pckg-generic-pageAction>
-                </template>
-            </div>
-        </draggable>
     </div>
 </script>
 
@@ -513,86 +295,70 @@
                     route_id: store.state.route.id,
                     action_id: config.action
                 };
+                console.log(config, postData);
 
                 http.post('{{ url('pckg.generic.pageStructure.addActionsMorph') }}', postData, function (data) {
+                    console.log('action created, pushing');
                     pageStructureStore.dispatch('pushAction', data.action);
                 });
             },
             pushAction: function (store, action) {
                 action.actions = [];
-                if (action.pivot.type == 'wrapper') {
-                    $.each(store.state.variables, function (i, variable) {
-                        if (variable.id == action.pivot.variable_id) {
-                            store.state.variables[i].actions.push(action);
+                $.each(store.state.variables, function (i, variable) {
+                    if (variable.id == action.pivot.variable_id) {
+                        console.log("to variable");
+                        store.state.variables[i].actions.push(action);
+                        store.commit('variables', store.state.variables);
+                    }
+                });
+                $.each(store.state.variables, function (i, variable) {
+                    $.each(variable.actions, function (m, wrapper) {
+                        if (wrapper.pivot.id == action.pivot.parent_id) {
+                            console.log("to wrapper");
+                            store.state.variables[i].actions[m].actions.push(action);
                             store.commit('variables', store.state.variables);
                         }
                     });
-                } else if (action.pivot.type == 'container') {
-                    $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (m, wrapper) {
-                            if (variable.id == action.pivot.variable_id) {
-                                store.state.variables[i].actions[m].actions.push(action);
+                });
+                $.each(store.state.variables, function (i, variable) {
+                    $.each(variable.actions, function (m, wrapper) {
+                        $.each(wrapper.actions, function (j, container) {
+                            if (container.pivot.id == action.pivot.parent_id) {
+                                console.log("to container");
+                                store.state.variables[i].actions[m].actions[j].actions.push(action);
                                 store.commit('variables', store.state.variables);
                             }
                         });
                     });
-                } else if (action.pivot.type == 'row') {
-                    $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (m, wrapper) {
-                            $.each(wrapper.actions, function (j, container) {
-                                if (container.pivot.id == action.pivot.parent_id) {
-                                    store.state.variables[i].actions[m].actions[j].actions.push(action);
+                });
+                $.each(store.state.variables, function (i, variable) {
+                    $.each(variable.actions, function (m, wrapper) {
+                        $.each(wrapper.actions, function (j, container) {
+                            $.each(container.actions, function (k, row) {
+                                if (row.pivot.id == action.pivot.parent_id) {
+                                    console.log("to row");
+                                    store.state.variables[i].actions[m].actions[j].actions[k].actions.push(action);
                                     store.commit('variables', store.state.variables);
                                 }
                             });
                         });
                     });
-                } else if (action.pivot.type == 'column') {
-                    $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (m, wrapper) {
-                            $.each(wrapper.actions, function (j, container) {
-                                $.each(container.actions, function (k, row) {
-                                    if (row.pivot.id == action.pivot.parent_id) {
-                                        store.state.variables[i].actions[m].actions[j].actions[k].actions.push(action);
+                });
+                $.each(store.state.variables, function (i, variable) {
+                    $.each(variable.actions, function (m, wrapper) {
+                        $.each(wrapper.actions, function (j, container) {
+                            $.each(container.actions, function (k, row) {
+                                $.each(row.actions, function (l, column) {
+                                    if (column.pivot.id == action.pivot.parent_id) {
+                                        console.log("to column");
+                                        store.state.variables[i].actions[m].actions[j].actions[k].actions[l].actions.push(action);
                                         store.commit('variables', store.state.variables);
                                     }
                                 });
                             });
                         });
                     });
-                } else if (action.pivot.type == 'action') {
-                    $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (m, wrapper) {
-                            $.each(wrapper.actions, function (j, container) {
-                                $.each(container.actions, function (k, row) {
-                                    $.each(row.actions, function (l, column) {
-                                        if (column.pivot.id == action.pivot.parent_id) {
-                                            store.state.variables[i].actions[m].actions[j].actions[k].actions[l].actions.push(action);
-                                            store.commit('variables', store.state.variables);
-                                        }
-                                    });
-                                });
-                            });
-                        });
-                    });
-                } else if (action.pivot.type == 'action') {
-                    $.each(store.state.variables, function (i, variable) {
-                        $.each(variable.actions, function (m, wrapper) {
-                            $.each(wrapper.actions, function (j, container) {
-                                $.each(container.actions, function (k, row) {
-                                    $.each(row.actions, function (l, column) {
-                                        if (column.pivot.id == action.pivot.parent_id) {
-                                            store.state.variables[i].actions[m].actions[j].actions[k].actions[l].actions.push(action);
-                                            store.commit('variables', store.state.variables);
-                                        }
-                                    });
-                                });
-                            });
-                        });
-                    });
-                } else {
-                    console.log('unknown action type');
-                }
+                });
             },
             setParent: function (store, parent) {
                 store.commit('parent', parent);
@@ -669,9 +435,14 @@
                         orders[action.pivot.id] = i;
                     }
                 });
+                console.log(orders, "will NOT post");
+                return;
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.postActionsMorphsOrders') }}'), {orders: orders}, function (data) {
 
                 });
+            },
+            onStart: function (event, variable) {
+                console.log('started', event, variable);
             },
             pushAction: function (action) {
                 pageStructureStore.dispatch('addBox', {
@@ -718,16 +489,47 @@
         }
     };
 
-    Vue.component('pckg-generic-pageAction', {
+    Vue.component('pckg-generic-pageElement', {
         mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageAction',
-        template: '#pckg-generic-pageAction',
+        name: 'pckg-generic-pageElement',
+        template: '#pckg-generic-pageElement',
         props: {
             action: {
                 type: Object
-            }
+            },
+            variable: {
+                type: Object
+            },
         },
         methods: {
+            addContainer: function (wrapper) {
+                pageStructureStore.dispatch('addBox', {
+                    type: 'container',
+                    variable: null, // @T00D00 - determine variable
+                    parent: wrapper.pivot.id
+                });
+            },
+            addRow: function (container) {
+                pageStructureStore.dispatch('addBox', {
+                    type: 'row',
+                    variable: null, // @T00D00 - determine variable
+                    parent: container.pivot.id
+                });
+            },
+            addColumn: function (row) {
+                pageStructureStore.dispatch('addBox', {
+                    type: 'column',
+                    variable: null, // @T00D00 - determine variable
+                    parent: row.pivot.id
+                });
+            },
+            addAction: function (parent) {
+                pageStructureStore.dispatch('setParent', parent);
+                $('#pageStructureModal').modal('show');
+            },
+            openDeleteActionModal: function (action) {
+                $dispatcher.$emit('openDeleteActionModal', action);
+            },
             getActionTemplates: function (actionId) {
                 var action = null;
 
@@ -777,109 +579,6 @@
         }
     });
 
-    Vue.component('pckg-generic-pageColumn', {
-        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageColumn',
-        template: '#pckg-generic-pageColumn',
-        props: {
-            action: {
-                type: Object
-            }
-        },
-        methods: {
-            addAction: function (parent) {
-                pageStructureStore.dispatch('setParent', parent);
-                $('#pageStructureModal').modal('show');
-            }
-        }
-    });
-
-    Vue.component('pckg-generic-pageRow', {
-        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageRow',
-        template: '#pckg-generic-pageRow',
-        props: {
-            action: {
-                type: Object
-            }
-        },
-        methods: {
-            addColumn: function (row) {
-                pageStructureStore.dispatch('addBox', {
-                    type: 'column',
-                    variable: null, // @T00D00 - determine variable
-                    parent: row.pivot.id
-                });
-            }
-        }
-    });
-
-    Vue.component('pckg-generic-pageContainer', {
-        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageContainer',
-        template: '#pckg-generic-pageContainer',
-        props: {
-            action: {
-                type: Object
-            }
-        },
-        methods: {
-            addRow: function (container) {
-                pageStructureStore.dispatch('addBox', {
-                    type: 'row',
-                    variable: null, // @T00D00 - determine variable
-                    parent: container.pivot.id
-                });
-            }
-        }
-    });
-
-    Vue.component('pckg-generic-pageWrapper', {
-        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageWrapper',
-        template: '#pckg-generic-pageWrapper',
-        props: {
-            action: {
-                type: Object
-            }
-        },
-        methods: {
-            addContainer: function (wrapper) {
-                pageStructureStore.dispatch('addBox', {
-                    type: 'container',
-                    variable: null, // @T00D00 - determine variable
-                    parent: wrapper.pivot.id
-                });
-            }
-        }
-    });
-
-    Vue.component('pckg-generic-pageVariable', {
-        mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
-        name: 'pckg-generic-pageVariable',
-        template: '#pckg-generic-pageVariable',
-        props: {
-            variable: {
-                type: Object
-            },
-            action: {
-                type: Object
-            }
-        },
-        data: function () {
-            return {};
-        },
-        methods: {
-            addWrapper: function (variable) {
-                pageStructureStore.dispatch('addBox', {
-                    type: 'wrapper',
-                    variable: variable.id,
-                    parent: null
-                });
-            }
-        }
-    });
-
     Vue.component('pckg-generic-page-structure', {
         mixins: [pckgDelimiters, pckgTimeout, pageStructureMixin],
         template: '#pckg-generic-page-structure',
@@ -899,6 +598,13 @@
             };
         },
         methods: {
+            addWrapper: function (variable) {
+                pageStructureStore.dispatch('addBox', {
+                    type: 'wrapper',
+                    variable: variable.id,
+                    parent: null
+                });
+            },
             fetchRoute: function () {
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getRoute') }}', {route: this.selectedRoute}), function (data) {
                     pageStructureStore.dispatch('setRoute', data.route);
@@ -993,6 +699,12 @@
                     }
                 }
             }
+        },
+        mounted: function () {
+            $dispatcher.$on('openDeleteActionModal', this.openDeleteActionModal);
+        },
+        beforeDestroy: function () {
+            $dispatcher.$off('openDeleteActionModal', this.openDeleteActionModal);
         },
         created: function () {
             this.$store.registerModule('pageStructure', pageStructureStore);
