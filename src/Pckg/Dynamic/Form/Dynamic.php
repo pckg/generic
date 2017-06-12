@@ -551,7 +551,7 @@ class Dynamic extends Bootstrap
                  */
                 $element->addOption(null, ' -- select value -- ');
 
-                $value = $this->record->{$field->field};
+                $rawValue = $this->record->{$field->field};
                 $foundValue = false;
 
                 foreach ($relation as $id => $value) {
@@ -559,25 +559,27 @@ class Dynamic extends Bootstrap
                         $optgroup = $element->addOptionGroup($id);
                         foreach ($value as $k => $v) {
                             $optgroup->addOption($k, str_replace(['<br />', '<br/>', '<br>'], ' - ', $v));
-                            $foundValue = $foundValue || $k == $value;
+                            $foundValue = $foundValue || $k == $rawValue;
                         }
                     } else {
                         $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
-                        $foundValue = $foundValue || $id == $value;
+                        $foundValue = $foundValue || $id == $rawValue;
                     }
                 }
 
-                if (!$foundValue && $value) {
+                if (!$foundValue && $rawValue) {
+                    $item = $field->getItemForSelect(
+                        $this->record,
+                        null,
+                        $this->record->{$field->field}
+                    );
+                    
                     $element->addOption(
-                        $this->record->{$field->field},
+                        $rawValue,
                         str_replace(
                             ['<br />', '<br/>', '<br>'],
                             ' - ',
-                            $field->getItemForSelect(
-                                $this->record,
-                                null,
-                                $this->record->{$field->field}
-                            )
+                            $item
                         )
                     );
                 }
