@@ -782,6 +782,17 @@ class Tabelize
         );
     }
 
+    public function getConfigureUrl()
+    {
+        return url(
+            'dynamic.record.list' . ($this->tableView ? 'View' : '') . 'Configure',
+            [
+                'table'     => $this->table,
+                'tableView' => $this->tableView,
+            ]
+        );
+    }
+
     public function setTableView(TableView $tableView = null)
     {
         $this->tableView = $tableView;

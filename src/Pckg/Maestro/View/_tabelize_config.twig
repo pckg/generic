@@ -90,7 +90,7 @@
             },
             fetchData: function () {
                 this.fetching = true;
-                http.getJSON('{{ tabelize.getViewUrl() }}/configure', function (data) {
+                http.getJSON('{{ tabelize.getConfigureUrl() }}', function (data) {
                     var self = this;
                     this.fetching = false;
                     var keys = [
@@ -171,7 +171,7 @@
                     }
                 });
 
-                http.post('{{ tabelize.getTable().getViewUrl() }}/configure', data, function (json) {
+                http.post('{{ tabelize.getConfigureUrl() }}', data, function (json) {
                     $dispatcher.$emit('notification:success', 'Ok, saved');
                     utils.closeAndRefresh();
                 });

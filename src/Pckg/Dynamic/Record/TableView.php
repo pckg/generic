@@ -38,10 +38,22 @@ class TableView extends DatabaseRecord
      */
     public function loadToSession()
     {
-        $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' . $this->id]['view'] = json_decode(
+        $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
+                                             $this->id]['view'] = json_decode(
             $this->settings,
             true
         );
+    }
+
+    public function loadToSessionIfNotLoaded()
+    {
+        if (!isset($_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
+                                                        $this->id]['view'])
+        ) {
+            d('loading');
+            $this->loadToSession();
+            dd('loaded');
+        }
     }
 
     /**

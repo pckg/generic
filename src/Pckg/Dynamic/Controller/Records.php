@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use Pckg\Concept\Reflect;
-use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record as DatabaseRecord;
@@ -83,7 +82,11 @@ class Records extends Controller
          * Set view.
          */
         $dynamicService->setView($tableView);
-        $tableView->loadToSession();
+        if (get('force')) {
+            $tableView->loadToSession();
+        } else {
+            $tableView->loadToSessionIfNotLoaded();
+        }
 
         return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, false, null, null, null,
                                          $tableView);
@@ -111,9 +114,11 @@ class Records extends Controller
         ];
     }
 
-    public function postConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService)
-    {
-        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_']['view'] = post()->all();
+    public function postConfigureTableViewAction(
+        Table $tableRecord, TableView $tableView = null, DynamicService $dynamicService
+    ) {
+        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_' .
+                                             ($tableView ? $tableView->id : '')]['view'] = post()->all();
 
         return [
             'message' => 'ok',
