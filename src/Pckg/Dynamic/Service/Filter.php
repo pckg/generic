@@ -155,10 +155,11 @@ class Filter extends AbstractService
 
             if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
                 $field = null;
+
                 if (isset($relationFilter['field'])) {
                     $field = (new Fields())->where('id', $relationFilter['field'])->one();
                     $relation->joinToEntity($entity, $field);
-                    $entity->where($field->field, $relationFilter['value'],
+                    $entity->where($field->table->table . '.' . $field->field, $relationFilter['value'],
                                    $signMapper[$relationFilter['method']]);
                 } else {
                     $entity->where(
