@@ -67,13 +67,11 @@ class Relation extends DatabaseRecord
 
         if ($relation->filter) {
             $filter = $relation->filter;
-            if (strpos($filter, '"') === 0 && strpos(strrev($filter), '"') === 0) {
-                $filter = substr($filter, 1, -1);
-            }
-            $entity->whereRaw($filter);
+            if (strpos($filter, '"') === 0)
+            $entity->whereRaw(substr($relation->filter, 1, -1)); // remove "
         }
 
-        $data = $entity->limit(100)
+        $data = $entity->limit(500)
                        ->all()
                        ->keyBy(function($record) use ($relation) {
                            return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
@@ -123,10 +121,18 @@ class Relation extends DatabaseRecord
         $entity->with($belongsToRelation);
     }
 
-    public function joinToEntity(Entity $entity, Field $field)
+    public function joinToEntity(Entity $entity, $alias = null, $subalias = null)
     {
-        $entity->join('INNER JOIN ' . $this->showTable->table,
-                      $this->showTable->table . '.id = ' . $this->onTable->table . '.' . $this->onField->field);
+        if (!$alias) {
+            $alias = $this->showTable->table;
+        }
+
+        if (!$subalias) {
+            $subalias = $this->onTable->table;
+        }
+
+        $entity->join('INNER JOIN ' . $this->showTable->table . ' AS ' . $alias,
+                      $alias . '.id = ' . $subalias . '.' . $this->onField->field);
     }
 
 }

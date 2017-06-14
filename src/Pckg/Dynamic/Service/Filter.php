@@ -155,32 +155,47 @@ class Filter extends AbstractService
 
             if ($relation->dynamic_relation_type_id == 1 || !isset($relationFilter['field'])) {
                 $field = null;
+                $alias = null;
 
+                /**
+                 * When listing orders users we filter by orders.status_id
+                 */
                 if (isset($relationFilter['field'])) {
-                    $field = (new Fields())->where('id', $relationFilter['field'])->one();
-                    $relation->joinToEntity($entity, $field);
-                    $entity->where($field->table->table . '.' . $field->field, $relationFilter['value'],
+                    $field = Field::getOrFail(['id' => $relationFilter['field']]);
+                    $alias = 'relation_' . $relation->id . '_' . $relation->showTable->table;
+
+                    $relation->joinToEntity($entity, $alias);
+
+                    if (!$relationFilter['subfield']) {
+                        $entity->where($alias . '.' . $field->field, $relationFilter['value'],
+                                       $signMapper[$relationFilter['method']]);
+                    }
+                }
+
+                /**
+                 * When listing orders users we filter by orders_users.units.unit_group_id
+                 */
+                if ($relationFilter['subfield']) {
+                    $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
+                    $subrelation = (new Relations())->withOnField()
+                                                    ->withShowTable()
+                                                    ->withOnTable()
+                                                    ->where('show_table_id', $field->dynamic_table_id)
+                                                    ->where('on_table_id', $relation->show_table_id)
+                                                    ->one();
+
+                    $subalias = 'relation_' . $subrelation->id . '_' . $subrelation->showTable->table;
+                    $subrelation->joinToEntity($entity, $subalias, $alias);
+
+                    $entity->where($subalias . '.' . $field->field, $relationFilter['value'],
                                    $signMapper[$relationFilter['method']]);
-                } else {
+                }
+
+                if (!$relationFilter['field'] && !$relationFilter['subfield']) {
                     $entity->where(
                         $relation->onField->field,
                         $relationFilter['value'],
                         $signMapper[$relationFilter['method']]
-                    );
-                }
-
-                if ($relationFilter['subfield']) {
-                    $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
-
-                    $f = $relation->showTable->table . '.' . $field->field . ' ' .
-                         $signMapper[$relationFilter['method']] . ' ' .
-                         $entity->getRepository()->getConnection()->quote($relationFilter['value']);
-
-                    $entity->join(
-                        'INNER JOIN ' . $relation->showTable->table,
-                        $relation->onTable->table . '.' . $relation->onField->field . ' = ' .
-                        $relation->showTable->table . '.id',
-                        $f
                     );
                 }
             } else if ($relation->dynamic_relation_type_id == 2) {
@@ -238,7 +253,8 @@ class Filter extends AbstractService
             $where = new Parenthesis();
             $where->setGlue('OR');
             foreach ($tables as $alias => $table) {
-                $searchableFields = (new Tables())->where('table', str_replace('_i18n', '', $table))->one()->searchableFields->keyBy('field');
+                $searchableFields = (new Tables())->where('table', str_replace('_i18n', '', $table))
+                                                  ->one()->searchableFields->keyBy('field');
                 foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
                     if (!$searchableFields->hasKey($field)) {
                         continue;
