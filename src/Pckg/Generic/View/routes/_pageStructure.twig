@@ -49,8 +49,8 @@
             </h3>
 
             <draggable v-model="variable.actions"
-                       :options="{handle:'.move-handle'}"
-                       @end="onEnd($event, variable)">
+                       :options="{handle:'.move-handle',group:'all'}"
+                       @end="onEnd($event)">
                 <pckg-generic-pageElement v-for="action in variable.actions" :variable="variable" :action="action"
                                           :key="action.pivot.id"></pckg-generic-pageElement>
             </draggable>
@@ -61,22 +61,22 @@
 <script type="text/x-template" id="pckg-generic-pageElement">
     <div class="pckg-generic-pageElement">
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-                <a href="#" class="move-handle" @click.prevent>
-                    <i class="fa fa-arrows"></i>
-                </a>
-            </li>
             <li role="presentation" class="active">
                 <a :href="'#home' + action.pivot.id" aria-controls="home" role="tab"
                    data-toggle="tab">
-                    <i v-if="action.pivot.morph_id == 'Pckg\\Generic\\Entity\\Layout'"
-                       class="fa fa-lock"></i>
                     ${ action.pivot.type }: ${ action.title && action.title.length > 0 ? action.title : action.slug }
+                    #${ action.pivot.id }
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#" class="move-handle" @click.prevent title="Move">
+                    <i class="fa fa-arrows"></i>
                 </a>
             </li>
             <li role="presentation">
                 <a :href="'#settings' + action.pivot.id" aria-controls="settings" role="tab"
-                   data-toggle="tab" @click="openDeleteActionModal(action)"><i class="fa fa-th"></i></a>
+                   data-toggle="tab"><i
+                            class="fa fa-th"></i></a>
             </li>
             <li role="presentation">
                 <a :href="'#advanced' + action.pivot.id" aria-controls="advanced" role="tab"
@@ -99,7 +99,8 @@
                    aria-expanded="false"><i class="fa fa-plus"></i></a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a v-if="action.pivot.type == 'wrapper'" href="#" @click.prevent="addContainer(action)">Add container</a>
+                        <a v-if="action.pivot.type == 'wrapper'" href="#" @click.prevent="addContainer(action)">Add
+                            container</a>
                         <a v-if="action.pivot.type == 'container'" href="#" @click.prevent="addRow(action)">Add row</a>
                         <a v-if="action.pivot.type == 'row'" href="#" @click.prevent="addColumn(action)">Add column</a>
                         <a href="#" @click.prevent="addAction(action)">Add action</a>
@@ -147,8 +148,8 @@
                     </div>
                 </template>
                 <draggable v-model="action.actions"
-                           :options="{handle:'.move-handle'}"
-                           @end="onEnd($event, action)" @start="onStart($event, action)">
+                           :options="{handle:'.move-handle',group:'all'}"
+                           @end="onEnd($event)" @start="onStart($event, action)">
                     <pckg-generic-pageElement v-for="action in action.actions" :action="action" :variable="variable"
                                               :key="action.pivot.id"></pckg-generic-pageElement>
                 </draggable>
@@ -428,15 +429,25 @@
 
     var pageStructureMixin = {
         methods: {
-            onEnd: function (event, variable) {
+            onEnd: function (event) {
                 var orders = {};
-                $.each(variable.actions, function (i, action) {
-                    if (i <= event.newIndex || i <= event.oldIndex) {
-                        orders[action.pivot.id] = i;
-                    }
+                order = 1;
+                $.each(this.variable.actions, function (i, action1) {
+                    orders[action1.pivot.id] = {order: ++order, parent: null};
+                    $.each(action1.actions, function (j, action2) {
+                        orders[action2.pivot.id] = {order: ++order, parent: action1.pivot.id};
+                        $.each(action2.actions, function (k, action3) {
+                            orders[action3.pivot.id] = {order: ++order, parent: action2.pivot.id};
+                            $.each(action3.actions, function (l, action4) {
+                                orders[action4.pivot.id] = {order: ++order, parent: action3.pivot.id};
+                                $.each(action4.actions, function (m, action5) {
+                                    orders[action5.pivot.id] = {order: ++order, parent: action4.pivot.id};
+                                });
+                            });
+                        });
+                    });
                 });
-                console.log(orders, "will NOT post");
-                return;
+
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.postActionsMorphsOrders') }}'), {orders: orders}, function (data) {
 
                 });
@@ -576,6 +587,13 @@
                     type: 'iframe'
                 });
             }
+        },
+        mounted: function () {
+            $(this.$el).on('mouseenter', function () {
+                $(this.$el).addClass('hover');
+            }.bind(this)).on('mouseleave', function () {
+                $(this.$el).removeClass('hover');
+            }.bind(this));
         }
     });
 

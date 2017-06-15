@@ -233,7 +233,10 @@ class PageStructure
         $orders = post('orders', []);
         $actionsMorphs = (new ActionsMorphs())->where('id', array_keys($orders))->all();
         $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders) {
-            $actionsMorph->setAndSave(['order' => $orders[$actionsMorph->id]]);
+            $actionsMorph->setAndSave([
+                                          'order'     => $orders[$actionsMorph->id]['order'],
+                                          'parent_id' => $orders[$actionsMorph->id]['parent'],
+                                      ]);
         });
 
         return response()->respondWithSuccess();
