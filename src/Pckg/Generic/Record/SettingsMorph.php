@@ -28,4 +28,9 @@ class SettingsMorph extends Record
         return $this;
     }
 
+    public function getJsonValueAttribute()
+    {
+        return json_decode($this->value, true);
+    }
+
 }

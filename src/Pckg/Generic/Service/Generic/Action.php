@@ -2,7 +2,9 @@
 
 namespace Pckg\Generic\Service\Generic;
 
+use Derive\Basket\Resolver\Offer;
 use Exception;
+use Pckg\Concept\Reflect;
 use Pckg\Framework\Router\Command\ResolveDependencies;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
@@ -135,6 +137,17 @@ class Action
                 $resolved = (new ResolveDependencies(router(), $args['resolvers']))->execute();
                 foreach ($resolved as $key => $val) {
                     $args[$key] = $val;
+                }
+            }
+
+            /**
+             * Proper resolve by setting implementation, remove others.
+             */
+            $actionsMorphResolver = $this->action->pivot->settings->keyBy('slug')
+                                                                  ->getKey('pckg.generic.actionsMorph.resolver');
+            if ($actionsMorphResolver) {
+                foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
+                    $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
                 }
             }
 
