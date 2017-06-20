@@ -1,3 +1,6 @@
+{% do _metaManager.addViewport() %}
+{% do _metaManager.addContentType() %}
+
 {{ _gtmManager | raw }}
 
 {{ _metaManager.getMeta('header.first') | raw }}

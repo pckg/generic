@@ -37,9 +37,6 @@ class Generic
         SeoManager $seoManager,
         GenericService $genericService
     ) {
-        $metaManager->addViewport();
-        $metaManager->addContentType();
-
         $this->genericService = $genericService;
     }
 
