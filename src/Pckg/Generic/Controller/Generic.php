@@ -1,17 +1,12 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Database\Query;
 use Pckg\Framework\Inter\Entity\Languages;
-use Pckg\Framework\Response;
-use Pckg\Framework\Router;
-use Pckg\Framework\View;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
 use Pckg\Manager\Asset as AssetManager;
-use Pckg\Manager\Meta as MetaManager;
 use Pckg\Manager\Seo as SeoManager;
 
 /**
@@ -33,8 +28,6 @@ class Generic
     protected $route;
 
     public function __construct(
-        MetaManager $metaManager,
-        SeoManager $seoManager,
         GenericService $genericService
     ) {
         $this->genericService = $genericService;
