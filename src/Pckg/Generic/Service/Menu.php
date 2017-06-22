@@ -8,7 +8,7 @@ use Pckg\Generic\Entity\Menus;
 class Menu
 {
 
-    public function build($slug, $repository = null, $language = null)
+    public function build($slug, $repository = null, $language = null, $permissions = false)
     {
         $menus = new Menus();
 
@@ -17,10 +17,12 @@ class Menu
         }
 
         $menu = runInLocale(
-            function() use ($menus, $slug) {
+            function() use ($menus, $slug, $permissions) {
                 return $menus->withMenuItems(
-                    function(HasMany $relation) {
-                        // $relation->joinPermissionTo('read');
+                    function(HasMany $relation) use ($permissions) {
+                        if ($permissions) {
+                            $relation->joinPermissionTo('read');
+                        }
                     }
                 )->where('slug', $slug)->one();
             },
