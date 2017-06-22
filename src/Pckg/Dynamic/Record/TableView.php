@@ -30,6 +30,16 @@ class TableView extends DatabaseRecord
         );
     }
 
+    public function getDeleteViewUrlAttribute()
+    {
+        return url(
+            'dynamic.record.deleteView',
+            [
+                'view' => $this,
+            ]
+        );
+    }
+
     /**
      * Load settings from database into session:
      *  - filters

@@ -88,11 +88,18 @@ class Dynamic extends Provider
                                 'tableView' => ViewResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/list/[table]/[tableView]/configure'                             => [
+                        '/dynamic/tables/list/[table]/[tableView]/configure'                            => [
                             'name'      => 'dynamic.record.listViewConfigure',
                             'view'      => 'configureTableView',
                             'resolvers' => [
                                 'table'     => TableResolver::class,
+                                'tableView' => ViewResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/tableview/[view]/delete'                                       => [
+                            'name'      => 'dynamic.record.deleteView',
+                            'view'      => 'deleteView',
+                            'resolvers' => [
                                 'tableView' => ViewResolver::class,
                             ],
                         ],

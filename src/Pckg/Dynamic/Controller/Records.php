@@ -891,4 +891,12 @@ class Records extends Controller
             'url'     => img($filename, null, true, $dir),
         ];
     }
+
+    public function deleteDeleteViewAction(TableView $tableView)
+    {
+        $tableView->delete();
+
+        return $this->response()->respondWithSuccess();
+    }
+
 }

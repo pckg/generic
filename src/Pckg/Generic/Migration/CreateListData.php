@@ -47,12 +47,23 @@ class CreateListData extends Migration
                     'custom'       => 'Custom',
                 ],
             ],
+            [
+                'id'    => 'feedbacks.statuses',
+                'title' => 'Feedback statuses',
+                'items' => [
+                    'opened'    => 'Opened',
+                    'resolving' => 'Resolving',
+                    'closed'    => 'Closed',
+                    'resolved'  => 'Resolved',
+                ],
+            ],
         ];
 
         foreach ($lists as $listConfig) {
             $list = (new Lists())->where('slug', $listConfig['id'])->one();
 
             if (!$list) {
+                $this->output('Creating list ' . $listConfig['id']);
                 $list = ListRecord::create([
                                                'id'    => $listConfig['id'],
                                                'slug'  => $listConfig['id'],
@@ -66,6 +77,7 @@ class CreateListData extends Migration
                                              ->one();
 
                 if (!$listItem) {
+                    $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
                     ListItem::create([
                                          'list_id' => $list->id,
                                          'slug'    => $key,
