@@ -118,7 +118,7 @@ class Filter extends AbstractService
             'notIn'           => 'NOT IN',
             'like'            => 'LIKE',
             'isNull'          => 'IS NULL',
-            'notNull'         => 'NOT NULL',
+            'notNull'         => 'IS NOT NULL',
         ];
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
@@ -140,12 +140,13 @@ class Filter extends AbstractService
                 continue;
             }
 
-            $entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
+            $entity->where($field->field, $filter['value'] ?? null, $signMapper[$filter['method']]);
         }
 
         /**
          * @T00D00 - join translations
          */
+        $joined = false;
         foreach ($session['relations']['filters'] ?? [] as $relationFilter) {
             $relation = (new Relations())->withOnField()
                                          ->withShowTable()
@@ -164,6 +165,7 @@ class Filter extends AbstractService
                     $field = Field::getOrFail(['id' => $relationFilter['field']]);
                     $alias = 'relation_' . $relation->id . '_' . $relation->showTable->table;
 
+                    $joined = true;
                     $relation->joinToEntity($entity, $alias);
 
                     if (!$relationFilter['subfield']) {
@@ -185,6 +187,7 @@ class Filter extends AbstractService
                                                     ->one();
 
                     $subalias = 'relation_' . $subrelation->id . '_' . $subrelation->showTable->table;
+                    $joined = true;
                     $subrelation->joinToEntity($entity, $subalias, $alias);
 
                     $entity->where($subalias . '.' . $field->field, $relationFilter['value'],
@@ -201,6 +204,7 @@ class Filter extends AbstractService
             } else if ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
+                $joined = true;
                 $entity->join(
                     'INNER JOIN ' . $relation->showTable->table,
                     $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
@@ -209,6 +213,10 @@ class Filter extends AbstractService
 
                 $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'],
                                $signMapper[$relationFilter['method']]);
+            }
+
+            if ($joined) {
+                $entity->groupBy($entity->getTable() . '.id');
             }
         }
     }
@@ -286,8 +294,8 @@ class Filter extends AbstractService
             'in'              => 'IN',
             'notIn'           => 'NOT IN',
             'like'            => 'LIKE',
-            'isNull'          => 'NULL',
-            'notNull'         => 'NOT NULL',
+            'isNull'          => 'IS NULL',
+            'notNull'         => 'IS NOT NULL',
         ];
     }
 
