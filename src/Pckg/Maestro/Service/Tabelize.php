@@ -46,6 +46,8 @@ class Tabelize
         'clone',
     ];
 
+    protected $listActions = [];
+
     /**
      * @var array
      */
@@ -294,6 +296,13 @@ class Tabelize
         return $this;
     }
 
+    public function setListActions($listActions = [])
+    {
+        $this->listActions = $listActions;
+
+        return $this;
+    }
+
     /**
      * @param Field|string $field
      * @param Record       $originalRecord
@@ -426,55 +435,57 @@ class Tabelize
         /**
          * Then parse all additional views (custom actions).
          */
-        foreach ($this->views as $key => $view) {
-            /**
-             * @T00D00 - this should be automatic ...
-             */
+        foreach ([$this->views, $this->listActions] as $data) {
+            foreach ($data as $key => $view) {
+                /**
+                 * @T00D00 - this should be automatic ...
+                 */
 
-            if (is_string($key) && in_array($key, ['delete', 'clone'])) {
-                $view = $key;
-            }
+                if (is_string($key) && in_array($key, ['delete', 'clone'])) {
+                    $view = $key;
+                }
 
-            $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
+                $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
-            $wasObject = false;
-            if (is_object($view)) {
-                if ($view instanceof View\Twig) {
-                    $view = $view->autoparse();
-                    $wasObject = true;
+                $wasObject = false;
+                if (is_object($view)) {
+                    if ($view instanceof View\Twig) {
+                        $view = $view->autoparse();
+                        $wasObject = true;
+                    } else {
+                        $view = $view->template;
+                    }
+                }
+
+                if (!is_string($view)) {
+                    $string .= "\n" . '<!-- entity view (string) -->';
+                    $string .= $view;
+                } elseif (!$wasObject && strpos($view, '@')) {
+                    list($class, $method) = explode('@', $view);
+                    if (strpos($method, ':')) {
+                        list($method, $view) = explode(':', $method);
+                    }
+
+                    $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
+                    $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
+                } elseif (!$wasObject && $view) {
+                    $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
+                    if ($view === 'delete') {
+                        $delete = new Delete();
+                        $string .= $delete->getListAction($this);
+                    } elseif ($view === 'clone') {
+                        $cloner = new Cloner();
+                        $string .= $cloner->getListAction($this);
+                    } else {
+                        $string .= view('tabelize/listActions/' . $view)->autoparse();
+                    }
                 } else {
-                    $view = $view->template;
+                    $string .= "\n" . '<!-- entity view (else) -->';
+                    $string .= $view;
                 }
+
+                $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
             }
-
-            if (!is_string($view)) {
-                $string .= "\n" . '<!-- entity view (string) -->';
-                $string .= $view;
-            } elseif (!$wasObject && strpos($view, '@')) {
-                list($class, $method) = explode('@', $view);
-                if (strpos($method, ':')) {
-                    list($method, $view) = explode(':', $method);
-                }
-
-                $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
-                $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
-            } elseif (!$wasObject && $view) {
-                $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                if ($view === 'delete') {
-                    $delete = new Delete();
-                    $string .= $delete->getListAction($this);
-                } elseif ($view === 'clone') {
-                    $cloner = new Cloner();
-                    $string .= $cloner->getListAction($this);
-                } else {
-                    $string .= view('tabelize/listActions/' . $view)->autoparse();
-                }
-            } else {
-                $string .= "\n" . '<!-- entity view (else) -->';
-                $string .= $view;
-            }
-
-            $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
         }
 
         return $string;
