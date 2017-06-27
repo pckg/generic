@@ -847,7 +847,10 @@ class Records extends Controller
             ];
         }
 
-        $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
+        $dir = $field->getAbsoluteDir(
+            $field->getSetting('pckg.dynamic.field.dir'),
+            $field->getSetting('pckg.dynamic.field.privateUpload')
+        );
         $upload->save($dir);
         $filename = $upload->getUploadedFilename();
 
