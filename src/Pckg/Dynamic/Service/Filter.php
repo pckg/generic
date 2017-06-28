@@ -140,7 +140,11 @@ class Filter extends AbstractService
                 continue;
             }
 
-            $entity->where($field->field, $filter['value'] ?? null, $signMapper[$filter['method']]);
+            $entity->where(
+                $field->field,
+                $filter['value'],
+                $signMapper[$filter['method']]
+            );
         }
 
         /**
