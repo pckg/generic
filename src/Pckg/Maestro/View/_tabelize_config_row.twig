@@ -9,7 +9,7 @@
 <td class="field">
     <nobr>${ {{ type }}.title }</nobr>
 </td>
-<td class="filter {{ type }}" :class="['field-' + {{ type }}.id]" style="min-width: 360px;">
+<td class="filter {{ type }}" :class="['field-' + {{ type }}.id]" style="min-width: 360px;max-width: 360px;">
     <div class="form-group">
         {% if type == 'field' %}
             <div class="col-sm-4 filter-method">
@@ -55,11 +55,9 @@
             </div>
             <template v-if="!relation.filterSubField && relationFilterSelectField(relation) && relation.filterMethod">
                 <div class="col-sm-12">
-                    <select v-model="relation.filterValue" class="form-control"
-                            :multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
-                        <option v-for="(option,key) in relationFilterSelectField(relation).options" :value="key">${ option }
-                        </option>
-                    </select>
+                    <pckg-select v-model="relation.filterValue"
+                                 :initialMultiple="true"
+                                 :initialOptions="relationFilterSelectField(relation).options"></pckg-select>
                 </div>
             </template>
             <template v-else-if="relation.filterMethod">

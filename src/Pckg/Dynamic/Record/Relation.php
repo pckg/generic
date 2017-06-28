@@ -14,7 +14,7 @@ class Relation extends DatabaseRecord
 
     protected $entity = Relations::class;
 
-    public function applyFilterOnEntity($entity, $foreignRecord)
+    public function applyFilterOnEntity(Entity $entity, $foreignRecord = null)
     {
         /**
          * Is this correct? || !$foreignRecord?
@@ -59,38 +59,66 @@ class Relation extends DatabaseRecord
         }
     }
 
+    protected function evalRelationValue($relation, $record)
+    {
+        $eval = null;
+        try {
+            return eval(' return ' . $relation->value . '; ');
+        } catch (Throwable $e) {
+            if (prod()) {
+                return null;
+            }
+
+            $eval = exception($e);
+        }
+
+        return $eval;
+    }
+
+    public function evalRecordAndRelation($eval, $record = null, $relation = null)
+    {
+        try {
+            return eval(' return ' . $eval . '; ');
+        } catch (Throwable $e) {
+            if (prod()) {
+                return null;
+            }
+
+            return exception($e);
+        }
+    }
+
     public function getOptions()
     {
         $entity = $this->showTable->createEntity();
         Field::automaticallyApplyRelation($entity, $this->value);
         $relation = $this;
+        $relation->applyFilterOnEntity($entity);
+        $foreignField = $relation->foreign_field_id
+            ? $relation->foreignField->field
+            : 'id';
 
-        if ($relation->filter) {
-            $filter = $relation->filter;
-            if (strpos($filter, '"') === 0)
-            $entity->whereRaw(substr($relation->filter, 1, -1)); // remove "
+        $values = [];
+        $records = $entity->limit(500)->all();
+        $records->keyBy(function($record) use ($relation) {
+            return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
+        })->each(
+            function($record) use ($relation, $entity, $foreignField, &$values) {
+                $relationValue = $this->evalRelationValue($relation, $record);
+
+                $groupValue = $relation->group_value
+                    ? $this->evalRecordAndRelation($relation->group_value, $record, $relation)
+                    : null;
+
+                $values[$groupValue][$record->{$foreignField}] = $relationValue;
+            }
+        );
+
+        if (count($values) == 1) {
+            $values = end($values);
         }
 
-        $data = $entity->limit(500)
-                       ->all()
-                       ->keyBy(function($record) use ($relation) {
-                           return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
-                       })
-                       ->map(
-                           function($record) use ($relation, $entity) {
-                               try {
-                                   $eval = eval(' return ' . $relation->value . '; ');
-                               } catch (Throwable $e) {
-                                   $eval = exception($e);
-                               }
-
-                               return $eval;
-                           }
-                       );
-
-        //}
-
-        return $data;
+        return $values;
     }
 
     public function loadOnEntity(Entity $entity, Dynamic $dynamicService)

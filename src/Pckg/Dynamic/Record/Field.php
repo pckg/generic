@@ -3,7 +3,6 @@
 use Pckg\Database\Entity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Fields;
-use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
 
 class Field extends DatabaseRecord
@@ -55,8 +54,6 @@ class Field extends DatabaseRecord
 
         $showTable = $relation->showTable;
         $entity = $showTable->createEntity();
-        resolve(Dynamic::class)->joinTranslationsIfTranslatable($entity);
-
         $this->automaticallyApplyRelation($entity, $relation->value);
 
         /**
@@ -151,7 +148,8 @@ class Field extends DatabaseRecord
             : 'id';
 
         $values = [];
-        $entity->all()->each(
+        $records = $entity->all();
+        $records->each(
             function($record) use ($relation, &$values, $foreignField) {
                 $value = $this->eval($relation->value, $record, $relation);
                 $groupValue = $relation->group_value
