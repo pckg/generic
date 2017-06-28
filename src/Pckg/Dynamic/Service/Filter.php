@@ -219,8 +219,9 @@ class Filter extends AbstractService
                                $signMapper[$relationFilter['method']]);
             }
 
-            if ($joined) {
-                $entity->groupBy($entity->getTable() . '.id');
+            if ($joined && !$entity->getQuery()->getGroupBy()) {
+                $entity->distinct();
+                //$entity->addGroupBy($entity->getTable() . '.id');
             }
         }
     }

@@ -210,6 +210,15 @@ class Records extends Controller
         if ($groups) {
             $entity->addCount();
             $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
+
+            if ($tableRecord->id == 26) {
+                $entity->addSelect(['sumPrice' => 'SUM(orders_bills.price)', 'sumPayed' => 'SUM(orders_bills.payed)']);
+                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
+                $listedFields->push(['field' => 'sumPayed', 'title' => 'Sum payed', 'type' => 'decimal']);
+            } elseif ($tableRecord->id == 76) {
+                $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
+                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
+            }
         }
 
         $records = $entity->count()->all();
