@@ -167,7 +167,12 @@ class Records extends Controller
         /**
          * Apply entity extension.
          */
-        $dynamicService->applyOnEntity($entity);
+        if ($viewType != 'related') {
+            /**
+             * Dont activate filters, group bys etc. in tabs.
+             */
+            $dynamicService->applyOnEntity($entity);
+        }
 
         /**
          * Join extensions.
