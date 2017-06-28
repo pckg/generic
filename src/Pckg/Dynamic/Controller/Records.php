@@ -84,6 +84,7 @@ class Records extends Controller
         $dynamicService->setView($tableView);
         if (get('force')) {
             $tableView->loadToSession();
+            $this->response()->redirect();
         } else {
             $tableView->loadToSessionIfNotLoaded();
         }
