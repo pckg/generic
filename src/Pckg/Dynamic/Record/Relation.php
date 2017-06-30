@@ -141,6 +141,7 @@ class Relation extends DatabaseRecord
         $belongsToRelation = (new BelongsTo($entity, $relationEntity, $alias))
             ->foreignKey($this->onField->field)
             ->fill('relation_' . $this->onField->field)
+            ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
             ->after(
                 function($record) use ($relation) {
                     $record->setRelation('select_relation_' . $relation->onField->field, $relation);
