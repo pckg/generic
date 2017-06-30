@@ -38,6 +38,7 @@ class CreateDynamicTables extends Migration
         $dynamicTables->varchar('table');
         $dynamicTables->varchar('framework_entity');
         $dynamicTables->varchar('repository');
+        $dynamicTables->varchar('order');
 
         $dynamicTablesI18n = $this->translatable('dynamic_tables');
         $dynamicTablesI18n->title();
