@@ -55,6 +55,11 @@ class Dynamic
         return $this->groupService;
     }
 
+    public function getPaginateService()
+    {
+        return $this->paginateService;
+    }
+
     public function getFilterService()
     {
         return $this->filterService;

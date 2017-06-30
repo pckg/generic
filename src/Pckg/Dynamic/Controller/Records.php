@@ -172,6 +172,8 @@ class Records extends Controller
              * Dont activate filters, group bys etc. in tabs.
              */
             $dynamicService->applyOnEntity($entity);
+        } else {
+            $dynamicService->getPaginateService()->applyOnEntity($entity);
         }
 
         /**
