@@ -60,9 +60,7 @@ class TableView extends DatabaseRecord
         if (!isset($_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
                                                         $this->id]['view'])
         ) {
-            d('loading');
             $this->loadToSession();
-            dd('loaded');
         }
     }
 
