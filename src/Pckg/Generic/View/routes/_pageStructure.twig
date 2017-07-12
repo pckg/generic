@@ -750,7 +750,11 @@
             if (search.length > 0) {
                 this.selectedRoute = this.getQueryVariable('route');
                 var action = this.getQueryVariable('action');
-                setTimeout(function () {
+                var interval = setInterval(function () {
+                    if (!$('#home' + action).length) {
+                        return;
+                    }
+                    clearInterval(interval);
                     $('html, body').animate({scrollTop: $('#home' + action).offset().top - 40}, 200);
                 }, 1000);
             }
