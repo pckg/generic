@@ -2,7 +2,6 @@
 
 namespace Pckg\Generic\Service\Generic;
 
-use Derive\Basket\Resolver\Offer;
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Framework\Router\Command\ResolveDependencies;
@@ -12,6 +11,7 @@ use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Throwable;
 
 /**
  * Class Action
@@ -155,7 +155,14 @@ class Action
              * Get plugin output.
              */
             $pluginService = new Plugin();
-            $result = $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
+            $result = null;
+            try {
+                $result = $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
+            } catch (Throwable $e) {
+                if (!prod()) {
+                    throw new Exception(exception($e) . ':' . $this->getClass() . ' ' . $this->getMethod());
+                }
+            }
 
             /**
              * Array should be returned directly.
