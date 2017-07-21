@@ -571,8 +571,12 @@ class Dynamic extends Bootstrap
                     $item = $field->getItemForSelect(
                         $this->record,
                         null,
-                        $this->record->{$field->field}
+                        $rawValue
                     );
+
+                    if (!trim($item)) {
+                        $item = $rawValue;
+                    }
                     
                     $element->addOption(
                         $rawValue,
