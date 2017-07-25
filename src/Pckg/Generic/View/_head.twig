@@ -194,8 +194,8 @@
             dateMoment: 'LL',
             timeMoment: 'LT'
         },
-        currency: 'EUR',
-        currencySign: '€'
+        currency: '{{ config('pckg.payment.currency') }}',
+        currencySign: '{{ config('pckg.payment.currencySign') }}'
     };
 
     {% if _env.isDev() %}
