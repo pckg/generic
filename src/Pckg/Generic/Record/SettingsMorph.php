@@ -22,6 +22,10 @@ class SettingsMorph extends Record
 
     public function registerToConfig()
     {
+        if ($this->setting->slug == 'derive.fiscalization.settings') {
+            return $this;
+        }
+
         config()->set($this->setting->slug,
                       $this->setting->type == 'array' ? json_decode($this->value, true) : $this->value);
 
