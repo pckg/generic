@@ -124,7 +124,7 @@
                     }
 
                     if (field.filterMethod) {
-                        if (field.type == 'select' && (field.filterMethod == 'equals' || field.filterMethod == 'in')) {
+                        if (field.type == 'select' && field.filterMethod == 'equals') {
                             data.fields.filters.push({
                                 field: field.id,
                                 method: field.filterMethod,

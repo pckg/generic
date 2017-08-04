@@ -20,9 +20,9 @@
             </div>
             <div class="col-sm-8 filter-value" v-if="field.filterMethod">
                 <template
-                        v-if="field.type == 'select' && ['equals', 'not', 'in', 'notIn'].indexOf(field.filterMethod) > -1">
+                        v-if="field.type == 'select' && ['equals', 'not'].indexOf(field.filterMethod) > -1">
                     <pckg-select v-model="field.filterValue" :refresh-url="field.filterUrl"
-                                 :initial-multiple="['in', 'notIn'].indexOf(field.filterMethod) > -1"
+                                 :initial-multiple="true"
                     :initialOptions="field.options"></pckg-select>
                 </template>
                 <template v-else-if="['isNull', 'notNull'].indexOf(field.filterMethod) == -1">
@@ -67,7 +67,7 @@
                 </div>
                 <div v-else class="col-sm-4">
                     <select v-model="relation.filterValue" class="form-control"
-                            :multiple="['in', 'notIn'].indexOf(relation.filterMethod) > -1 ? 'multiple' : null">
+                            :multiple="true">
                         <option v-for="(option,key) in relation.filterOptions" :value="key">${ option }
                         </option>
                     </select>

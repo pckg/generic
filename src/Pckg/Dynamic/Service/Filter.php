@@ -113,9 +113,7 @@ class Filter extends AbstractService
             'greaterOrEquals' => '>=',
             'lower'           => '<',
             'lowerOrEquals'   => '<=',
-            'not'             => '!=',
-            'in'              => 'IN',
-            'notIn'           => 'NOT IN',
+            'not'             => 'NOT',
             'like'            => 'LIKE',
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
@@ -296,8 +294,6 @@ class Filter extends AbstractService
             'lower'           => '<',
             'lowerOrEquals'   => '<=',
             'not'             => 'NOT',
-            'in'              => 'IN',
-            'notIn'           => 'NOT IN',
             'like'            => 'LIKE',
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
@@ -312,12 +308,6 @@ class Filter extends AbstractService
             ],
             'not'    => [
                 'label' => 'NOT',
-            ],
-            'in'     => [
-                'label' => 'IN',
-            ],
-            'notIn'  => [
-                'label' => 'NOT IN',
             ],
         ];
     }
