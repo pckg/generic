@@ -29,7 +29,12 @@ class EncapsulateResponse
             ) {
                 $tags = router()->get('tags', []);
                 $template = config('pckg.generic.layouts.default', 'Pckg/Generic:backend');
+                $disable = false;
                 foreach ($tags as $tag) {
+                    if ($tag == EncapsulateResponse::class . '.disable') {
+                        $disable = true;
+                        break;
+                    }
                     if (strpos($tag, 'layout:') !== 0) {
                         continue;
                     }
@@ -37,9 +42,11 @@ class EncapsulateResponse
                     $key = substr($tag, strlen('layout:'));
                     $template = config('pckg.generic.layouts.' . $key, $template);
                 }
-                
-                $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
-                $this->response->setOutput($output);
+
+                if (!$disable) {
+                    $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
+                    $this->response->setOutput($output);
+                }
             }
         }
 
