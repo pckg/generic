@@ -107,17 +107,7 @@ class Filter extends AbstractService
     {
         $session = $this->getSession();
 
-        $signMapper = [
-            'equals'          => '=',
-            'greater'         => '>',
-            'greaterOrEquals' => '>=',
-            'lower'           => '<',
-            'lowerOrEquals'   => '<=',
-            'not'             => 'NOT',
-            'like'            => 'LIKE',
-            'isNull'          => 'IS NULL',
-            'notNull'         => 'IS NOT NULL',
-        ];
+        $signMapper = $this->getTypeMethods();
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
             $field = (new Fields())->where('id', $filter['field'])->oneOrFail();
@@ -293,7 +283,7 @@ class Filter extends AbstractService
             'greaterOrEquals' => '>=',
             'lower'           => '<',
             'lowerOrEquals'   => '<=',
-            'not'             => 'NOT',
+            'not'             => '!=',
             'like'            => 'LIKE',
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
