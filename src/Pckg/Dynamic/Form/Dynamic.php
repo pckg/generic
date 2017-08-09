@@ -329,12 +329,18 @@ class Dynamic extends Bootstrap
             }
         } elseif ($field->getSetting('pckg.dynamic.field.iframe')) {
             $tempValue = $value;
-            $value = '<iframe id="iframe-field-' . $field->id . '" style="border: 0; width: 100%;"></iframe>';
-            $value .= '<script type="text/x-template" id="iframe-field-div-' . $field->id .
-                      '" style="display: none;">' . $tempValue . '</script>';
-            $value .= '<script type="text/javascript">$(document).ready(function(){
-    $("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
+            $htmlValue = '<script type="text/x-template" id="iframe-field-div-' . $field->id .
+                      '">' . $tempValue . '</script>';
+            $htmlValue .= '<script type="text/javascript">$(document).ready(function(){
+    var ifrm = document.getElementById(\'iframe-field-' . $field->id . '\');
+    ifrm = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
+ifrm.document.open();
+ifrm.document.write($("#iframe-field-div-' . $field->id . '").html());
+ifrm.document.close();
+    //$("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
 });</script>';
+            vueManager()->addStringView($htmlValue);
+            $value = '<iframe id="iframe-field-' . $field->id . '" style="border: 0; width: 100%; min-height: 360px;"></iframe>';
         } elseif (in_array($type, ['file', 'pdf'])) {
             if ($this->record->{$field->field}) {
                 $dir = $field->getAbsoluteDir(
