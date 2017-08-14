@@ -243,6 +243,48 @@
     </div>
 </script>
 
+<script type="text/x-template" id="pckg-editor">
+    <div class="pckg-editor" :class="'pckg-editor-type-' + type">
+        <a href="#"
+           class="btn btn-xs" @click.prevent="openEditModal">${ type }</a>
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true} %}
+            {% block header %}
+                Edit block
+            {% endblock %}
+            {% block body %}
+                pckg.generic.pageStructure.container
+
+                pckg.generic.pageStructure.padding
+                pckg.generic.pageStructure.class
+                pckg.generic.pageStructure.margin
+
+                pckg.generic.pageStructure.bgColor
+                pckg.generic.pageStructure.bgImage
+                pckg.generic.pageStructure.bgAttachment
+                pckg.generic.pageStructure.bgPosition
+                pckg.generic.pageStructure.bgRepeat
+                pckg.generic.pageStructure.bgSize
+
+
+                <div v-if="type == 'wrapper'">
+                </div>
+                <div v-else-if="type == 'container'">
+
+                </div>
+                <div v-else-if="type == 'row'">
+
+                </div>
+                <div v-else-if="type == 'column'">
+
+                </div>
+                <div v-else-if="type == 'action'">
+
+                </div>
+                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + actionsMorphId">Edit in /maestro page structure</a>
+            {% endblock %}
+        {% endembed %}
+    </div>
+</script>
 <script>
     Vue.component('pckg-dispatcher-notifications', {
         name: 'pckg-dispatcher-notifications',
@@ -279,6 +321,28 @@
                     this.removeNotification(notification);
                 }.bind(this), 5000, notification);
             }.bind(this));
+        }
+    });
+
+    Vue.component('pckg-editor', {
+        props: {
+            routeId: {
+                type: Number
+            },
+            actionsMorphId: {
+                type: Number
+            },
+            type: {
+                type: String
+            }
+        },
+        name: 'pckg-editor',
+        template: '#pckg-editor',
+        mixins: [pckgDelimiters],
+        methods: {
+            openEditModal: function(){
+                $(this.$el).find('.modal').modal('show');
+            }
         }
     });
 </script>

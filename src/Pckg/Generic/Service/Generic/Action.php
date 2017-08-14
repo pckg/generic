@@ -112,7 +112,7 @@ class Action
         $return = null;
         if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
             return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' .
-                   $this->getSubHtml() . '</div>';
+                   $this->attachDevHtml(null) . $this->getSubHtml() . '</div>';
         }
 
         $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">';
@@ -184,27 +184,30 @@ class Action
             $result = (string)$result;
 
             /**
-             * Prepare comments for dev environment.
-             */
-            $devPrefix = null;
-            $devSuffix = null;
-            if (dev() || implicitDev()) {
-                $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
-                $devPrefix .= '<a href="/dev.php/tools/page-structure?route=' . router()->resolved('route')->id .
-                              '&action=' .
-                              $this->action->pivot->id .
-                              '" style="position: absolute; z-index: 9999;" class="btn btn-xs btn-info popup-iframe" target="_blank">Edit action</a>';
-                $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $method . ' -->' . "\n";
-            }
-
-            /**
              * Return built output.
              */
-            $return .= $devPrefix . $result . $devSuffix;
+            $return .= $this->attachDevHtml($result);
         }
         $return .= '</div>';
 
         return $return;
+    }
+
+    protected function attachDevHtml($html)
+    {
+        /**
+         * Prepare comments for dev environment.
+         */
+        $devPrefix = null;
+        $devSuffix = null;
+        if (dev() || implicitDev()) {
+            $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
+            $devPrefix .= '<pckg-editor :route-id="' . router()->resolved('route')->id . '" :actions-morph-id="' .
+                          $this->action->pivot->id . '" :type="\'' . $this->getType() . '\'"></pckg-editor>';
+            $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
+        }
+
+        return $devPrefix . $html . $devSuffix;
     }
 
 }

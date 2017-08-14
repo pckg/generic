@@ -82,7 +82,7 @@ class Generic
          */
         $resolvers = [];
         if ($route->resolvers) {
-            foreach (json_decode($route->resolvers) as $key => $resolver) {
+            foreach (json_decode($route->resolvers, true) as $key => $resolver) {
                 $resolvers[$key] = $resolver;
             }
         }
