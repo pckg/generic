@@ -252,24 +252,41 @@
                 Edit block
             {% endblock %}
             {% block body %}
-                pckg.generic.pageStructure.container
+                <h4>Box</h4>
+                <label>Padding</label>
+                <input class="form-control" v-model="settings.padding"/>
 
-                pckg.generic.pageStructure.padding
-                pckg.generic.pageStructure.class
-                pckg.generic.pageStructure.margin
+                <label>Margin</label>
+                <input class="form-control" v-model="settings.margin"/>
 
-                pckg.generic.pageStructure.bgColor
-                pckg.generic.pageStructure.bgImage
-                pckg.generic.pageStructure.bgAttachment
-                pckg.generic.pageStructure.bgPosition
-                pckg.generic.pageStructure.bgRepeat
-                pckg.generic.pageStructure.bgSize
+                <label>Class</label>
+                <input class="form-control" v-model="settings.class"/>
+
+                <h4>Background</h4>
+                <label>Color</label>
+                <input class="form-control" v-model="settings.bgColor"/>
+
+                <label>Image</label>
+                <input class="form-control" v-model="settings.bgImage"/>
+
+                <label>Attachment</label>
+                <input class="form-control" v-model="settings.bgAttachment"/>
+
+                <label>Position</label>
+                <input class="form-control" v-model="settings.bgPosition"/>
+
+                <label>Repeat</label>
+                <input class="form-control" v-model="settings.bgRepeat"/>
+
+                <label>Size</label>
+                <input class="form-control" v-model="settings.bgSize"/>
 
 
                 <div v-if="type == 'wrapper'">
                 </div>
                 <div v-else-if="type == 'container'">
-
+                    <label>Container</label>
+                    <input class="form-control" v-model="settings.container"/>
                 </div>
                 <div v-else-if="type == 'row'">
 
@@ -280,7 +297,8 @@
                 <div v-else-if="type == 'action'">
 
                 </div>
-                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + actionsMorphId">Edit in /maestro page structure</a>
+                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + actionsMorphId">Edit in
+                    /maestro page structure</a>
             {% endblock %}
         {% endembed %}
     </div>
@@ -339,9 +357,27 @@
         name: 'pckg-editor',
         template: '#pckg-editor',
         mixins: [pckgDelimiters],
+        data: function () {
+            return {
+                settings: {
+                    padding: '',
+                    margin: '',
+                    'class': '',
+                    bgColor: '',
+                    bgImage: '',
+                    bgAttachment: '',
+                    bgPosition: '',
+                    bgRepeat: '',
+                    bgSize: '',
+                },
+            };
+        },
         methods: {
-            openEditModal: function(){
+            openEditModal: function () {
                 $(this.$el).find('.modal').modal('show');
+                /*http.get('', function (data) {
+
+                });*/
             }
         }
     });
