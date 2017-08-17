@@ -8,7 +8,6 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
-use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Route;
@@ -96,7 +95,7 @@ class Generic
             }
         );
 
-        $actions = $actions->sortBy(function($item){
+        $actions = $actions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
             return $action->pivot->parent_id;
@@ -113,7 +112,6 @@ class Generic
                 );
             }
         );
-
         /*if ($route->layout) {
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
@@ -264,15 +262,27 @@ class Generic
              * Add route to router.
              */
             $url = $route->getRoute(false);
-            $existingRoute = router()->getRoute($url);
+            $existingRouteByUrl = router()->getRoute($url);
+            $existingRouteByName = router()->getRouteByName($route->slug);
 
-            if ($existingRoute) {
+            $resolvers = [
+                'route' => RouteResolver::class,
+            ];
+            if ($existingRouteByName) {
+                /**
+                 * Route already exists, remove and replace it.
+                 */
+                foreach ($existingRouteByName['resolvers'] ?? [] as $key => $res) {
+                    $resolvers[$key] = $res;
+                }
+                router()->removeRouteByName($route->slug);
+            }
+
+            if (!$existingRouteByName && $existingRouteByUrl) {
                 $router->replace($url, [
                     "controller" => GenericController::class,
                     "view"       => "generic",
-                    'resolvers'  => [
-                        'route' => RouteResolver::class,
-                    ],
+                    'resolvers'  => $resolvers,
                     'tags'       => explode(',', $route->tags),
                 ]);
             } else {
@@ -281,9 +291,7 @@ class Generic
                     [
                         "controller" => GenericController::class,
                         "view"       => "generic",
-                        'resolvers'  => [
-                            'route' => RouteResolver::class,
-                        ],
+                        'resolvers'  => $resolvers,
                         'tags'       => explode(',', $route->tags),
                     ],
                     $route->slug
