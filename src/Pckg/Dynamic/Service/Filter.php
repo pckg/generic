@@ -107,7 +107,7 @@ class Filter extends AbstractService
     {
         $session = $this->getSession();
 
-        $signMapper = $this->getTypeMethods();
+        $signMapper = $this->getTypeMethods(true);
 
         foreach ($session['fields']['filters'] ?? [] as $filter) {
             $field = (new Fields())->where('id', $filter['field'])->oneOrFail();
@@ -275,9 +275,9 @@ class Filter extends AbstractService
         }
     }
 
-    public function getTypeMethods()
+    public function getTypeMethods($backwardsCompatible = false)
     {
-        return [
+        $data = [
             'equals'          => '=',
             'greater'         => '>',
             'greaterOrEquals' => '>=',
@@ -288,6 +288,12 @@ class Filter extends AbstractService
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
         ];
+
+        if ($backwardsCompatible) {
+            $data['in'] = 'IN';
+        }
+
+        return $data;
     }
 
     public function getRelationMethods()
