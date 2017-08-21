@@ -48,6 +48,10 @@ class PageStructure extends Provider
                                                                                    'actionsMorph'))->resolvers([
                                                                                                                    'actionsMorph' => ActionsMorph::class,
                                                                                                                ]),
+                                       '.actionsMorphSettings'       => (new Route('/actionsMorph/[actionsMorph]/settings',
+                                                                                   'actionsMorphSettings'))->resolvers([
+                                                                                                                           'actionsMorph' => ActionsMorph::class,
+                                                                                                                       ]),
                                    ]),
         ];
     }

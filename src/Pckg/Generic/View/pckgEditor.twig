@@ -1,0 +1,152 @@
+
+
+<script type="text/x-template" id="pckg-editor">
+    <div class="pckg-editor" :class="'pckg-editor-type-' + type">
+        <a href="#"
+           class="btn btn-xs" @click.prevent="openEditModal">${ type }</a>
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true} %}
+            {% block header %}
+                Edit block
+            {% endblock %}
+            {% block body %}
+                <h4>Style</h4>
+                <label>Padding</label>
+                <input class="form-control" v-model="settings.padding"/>
+
+                <label>Margin</label>
+                <input class="form-control" v-model="settings.margin"/>
+
+                <label>Class</label>
+                <input class="form-control" v-model="settings.class"/>
+
+                <label>Scopes</label>
+                <pckg-select v-model="settings.scopesArr" :initial-options="availableScopes"></pckg-select>
+
+                <h4>Background</h4>
+                <label>Color</label>
+                <input class="form-control" v-model="settings.bgColor"/>
+
+                <label>Image</label>
+                <input class="form-control" v-model="settings.bgImage"/>
+
+                <label>Attachment</label>
+                <input class="form-control" v-model="settings.bgAttachment"/>
+
+                <label>Position</label>
+                <input class="form-control" v-model="settings.bgPosition"/>
+
+                <label>Repeat</label>
+                <input class="form-control" v-model="settings.bgRepeat"/>
+
+                <label>Size</label>
+                <input class="form-control" v-model="settings.bgSize"/>
+
+                <h4>Generic content module</h4>
+
+                <label>No padding</label>
+                <input class="form-control" v-model="settings.noPadding"/>
+
+                <label>Picture position</label>
+                <input class="form-control" v-model="settings.picturePosition"/>
+
+                <label>Picture width</label>
+                <input class="form-control" v-model="settings.pictureWidth"/>
+
+                <label>Picture offset</label>
+                <input class="form-control" v-model="settings.pictureOffset"/>
+
+                <label>Content width</label>
+                <input class="form-control" v-model="settings.contentWidth"/>
+
+                <label>Content offset</label>
+                <input class="form-control" v-model="settings.contentOffset"/>
+
+                <label>Heading</label>
+                <input class="form-control" v-model="settings.heading"/>
+
+                <h4>Offer gallery module</h4>
+
+                <label>Offer</label>
+                <input class="form-control">
+
+                <h4>Gallery module</h4>
+
+                <label>Gallery</label>
+                <input class="form-control">
+
+                <div v-if="type == 'wrapper'">
+                </div>
+                <div v-else-if="type == 'container'">
+                    <label>Container</label>
+                    <input class="form-control" v-model="settings.container"/>
+                </div>
+                <div v-else-if="type == 'row'">
+
+                </div>
+                <div v-else-if="type == 'column'">
+
+                </div>
+                <div v-else-if="type == 'action'">
+
+                </div>
+                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + actionsMorphId">Edit in
+                    /maestro page structure</a>
+            {% endblock %}
+            {% block footer %}
+                <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings" />
+            {% endblock %}
+        {% endembed %}
+    </div>
+</script>
+
+<script type="text/javascript">
+
+    Vue.component('pckg-editor', {
+        props: {
+            routeId: {
+                type: Number
+            },
+            actionsMorphId: {
+                type: Number
+            },
+            type: {
+                type: String
+            }
+        },
+        name: 'pckg-editor',
+        template: '#pckg-editor',
+        mixins: [pckgDelimiters],
+        data: function () {
+            return {
+                settings: {
+                    padding: '',
+                    margin: '',
+                    'class': '',
+                    scopes: [],
+                    bgColor: '',
+                    bgImage: '',
+                    bgAttachment: '',
+                    bgPosition: '',
+                    bgRepeat: '',
+                    bgSize: '',
+                },
+                availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }}
+            };
+        },
+        methods: {
+            openEditModal: function () {
+                $(this.$el).find('.modal').modal('show');
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.actionsMorphId}), function (data) {
+                    console.log(data);
+                    this.settings = data.settings;
+                }.bind(this));
+            },
+            saveSettings: function () {
+                console.log(this.settings);
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.actionsMorphId}), {settings: this.settings}, function (data) {
+                    console.log(data);
+                });
+            }
+        }
+    });
+</script>

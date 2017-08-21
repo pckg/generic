@@ -14,6 +14,7 @@ use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Route;
+use Pckg\Generic\Record\Setting;
 
 class PageStructure
 {
@@ -237,6 +238,34 @@ class PageStructure
                                           'order'     => $orders[$actionsMorph->id]['order'],
                                           'parent_id' => $orders[$actionsMorph->id]['parent'],
                                       ]);
+        });
+
+        return response()->respondWithSuccess();
+    }
+
+    public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
+    {
+        return response()->respondWithSuccess([
+                                                  'settings' => $actionsMorph->settings->map(function(
+                                                      Setting $settingsMorph
+                                                  ) {
+                                                      return [
+                                                          'slug'  => str_replace('pckg.generic.pageStructure.', '',
+                                                                                 $settingsMorph->slug),
+                                                          'value' => $settingsMorph->pivot->value,
+                                                      ];
+                                                  })->keyBy('slug')->map('value'),
+                                              ]);
+    }
+
+    public function postActionsMorphSettingsAction(ActionsMorph $actionsMorph)
+    {
+        collect(array_merge([
+                                'padding' => null,
+                                'margin'  => null,
+                                'class'   => null,
+                            ], post('settings')))->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
         return response()->respondWithSuccess();
