@@ -90,6 +90,27 @@ class Action
         return $this->args['content'] ?? null;
     }
 
+    public function getTree()
+    {
+        if (!$this->action) {
+            return;
+        }
+
+        $tree = [
+            'id'      => $this->action->pivot->id,
+            'title'   => $this->action->title,
+            'type'    => $this->getType(),
+            'actions' => [],
+        ];
+
+        foreach ($this->action->getChildren as $action) {
+            $genericAction = new Action($action, $this->args['route'], $this->args['resolvers']);
+            $tree['actions'][] = $genericAction->getTree();
+        }
+
+        return $tree;
+    }
+
     public function getSubHtml()
     {
         $html = [];
@@ -111,16 +132,13 @@ class Action
     {
         $return = null;
         if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
-            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">' .
+            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '">' .
                    $this->attachDevHtml(null) . $this->getSubHtml() . '</div>';
         }
 
-        $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '">';
+        $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '">';
         if ($this->getClass() && $this->getMethod()) {
-            $prefix = strtolower(request()->method());
-
             $args = array_merge($this->args, ['action' => $this, 'content' => $this->getContent()]);
-            $method = ($prefix ? $prefix . ucfirst($this->getMethod()) : $this->getMethod()) . 'Action';
 
             if (isset($args['settings'])) {
                 /**
@@ -202,8 +220,8 @@ class Action
         $devSuffix = null;
         if (dev() || implicitDev()) {
             $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
-            $devPrefix .= '<pckg-editor :route-id="' . router()->resolved('route')->id . '" :actions-morph-id="' .
-                          $this->action->pivot->id . '" :type="\'' . $this->getType() . '\'"></pckg-editor>';
+            /*$devPrefix .= '<pckg-editor :route-id="' . router()->resolved('route')->id . '" :actions-morph-id="' .
+                          $this->action->pivot->id . '" :type="\'' . $this->getType() . '\'"></pckg-editor>';*/
             $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
         }
 

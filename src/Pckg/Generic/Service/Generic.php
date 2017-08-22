@@ -157,7 +157,11 @@ class Generic
      */
     public function getVariables()
     {
-        return $this->mergeVariables($this->getVariablesFromOrder($this->makeOrderFromBlocks()));
+        $order = $this->makeOrderFromBlocks();
+        $variables = $this->getVariablesFromOrder($order);
+        $variables['actionsTree'] = $this->getTreeFromOrder($order);
+
+        return $this->mergeVariables($variables);
     }
 
     /**
@@ -175,6 +179,20 @@ class Generic
         ksort($order);
 
         return $order;
+    }
+
+    private function getTreeFromOrder($order)
+    {
+        $tree = [];
+        foreach ($order as $ord => $blocks) {
+            foreach ($blocks as $block => $actions) {
+                foreach ($actions as $action) {
+                    $tree[] = $action->getTree();
+                }
+            }
+        }
+
+        return $tree;
     }
 
     /**

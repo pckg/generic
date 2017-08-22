@@ -1,7 +1,5 @@
 <script type="text/x-template" id="pckg-editor">
-    <div class="pckg-editor" :class="'pckg-editor-type-' + type">
-        <a href="#"
-           class="btn btn-xs" @click.prevent="openEditModal">${ type }</a>
+    <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true} %}
             {% block header %}
                 Edit block
@@ -72,17 +70,17 @@
                 <label>Gallery</label>
                 <input class="form-control">
 
-                <div v-if="type == 'wrapper'">
+                <div v-if="action.type == 'wrapper'">
                 </div>
-                <div v-else-if="type == 'container'">
+                <div v-else-if="action.type == 'container'">
                     <h4>Container</h4>
                     <label>Container</label>
                     <pckg-select v-model="settings.container" :initial-options="availableContainers"></pckg-select>
                 </div>
-                <div v-else-if="type == 'row'">
+                <div v-else-if="action.type == 'row'">
 
                 </div>
-                <div v-else-if="type == 'column'">
+                <div v-else-if="action.type == 'column'">
                     <h4>Column</h4>
 
                     <label>Width</label>
@@ -91,10 +89,10 @@
                     <label>Offset</label>
                     <pckg-select v-model="settings.offset" :initial-options="availableOffsets"></pckg-select>
                 </div>
-                <div v-else-if="type == 'action'">
+                <div v-else-if="action.type == 'action'">
 
                 </div>
-                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + actionsMorphId">Edit in
+                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + action.id">Edit in
                     /maestro page structure</a>
             {% endblock %}
             {% block footer %}
@@ -110,12 +108,6 @@
         props: {
             routeId: {
                 type: Number
-            },
-            actionsMorphId: {
-                type: Number
-            },
-            type: {
-                type: String
             }
         },
         name: 'pckg-editor',
@@ -136,20 +128,25 @@
                     bgSize: '',
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
-                availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'}
+                availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'},
+                action: {}
             };
         },
+        created: function(){
+            $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
+        },
         methods: {
-            openEditModal: function () {
+            openEditModal: function (action) {
+                this.action = action;
                 $(this.$el).find('.modal').modal('show');
-                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.actionsMorphId}), function (data) {
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
                     console.log(data);
                     this.settings = data.settings;
                 }.bind(this));
             },
             saveSettings: function () {
                 console.log(this.settings);
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.actionsMorphId}), {settings: this.settings}, function (data) {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
                     console.log(data);
                 });
             }
