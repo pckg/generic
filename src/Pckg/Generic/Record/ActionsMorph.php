@@ -25,4 +25,24 @@ class ActionsMorph extends Record
         return $this;
     }
 
+    public function export()
+    {
+        /**
+         * @T00D00 - export permissions
+         *         - export contents
+         */
+        $data = $this->data();
+        $settings = $this->settings;
+
+        return [
+            'data'     => $data,
+            'settings' => $settings,
+            'content'  => $this->content,
+        ];
+    }
+
+    public function import($export)
+    {
+    }
+
 }

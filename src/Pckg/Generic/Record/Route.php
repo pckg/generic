@@ -3,8 +3,6 @@
 namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
-use Pckg\Framework\Response;
-use Pckg\Framework\Router;
 use Pckg\Generic\Entity\Routes;
 
 /**
@@ -38,6 +36,13 @@ class Route extends Record
          * @T00D00 - use permissions on route level!
          *         Currently user has permissions if there are contents defined.
          */
+    }
+
+    public function export()
+    {
+        return $this->actions->map(function(Action $action) {
+            return $action->pivot->export();
+        });
     }
 
 }

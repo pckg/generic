@@ -1,0 +1,75 @@
+<script type="text/x-template" id="pckg-generic-routes-importexport">
+    {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'importExportModal'} %}
+        {% block header %}
+            Import & export route
+        {% endblock %}
+        {% block body %}
+            <div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#import" aria-controls="import" role="tab"
+                                                              data-toggle="tab">Import</a></li>
+                    <li role="presentation"><a href="#export" aria-controls="export" role="tab"
+                                               data-toggle="tab">Export</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="import">
+                        <p>Click on button to export route layout structure, actions, contents and settings and then
+                            copy output.</p>
+                        <button @click.prevent="exportRoute" class="btn btn-success">Export</button>
+                        <br/><br/><textarea v-if="structure.length" v-model="structure" class="form-control"></textarea>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="export">
+                        <p>Paste exported data and click on button to import layout structure, actions, contents and
+                            settings.</p>
+                        <textarea v-model="structure" class="form-control"></textarea>
+                        <br/>
+                        <button @click.prevent="importRoute" class="btn btn-success">Import</button>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-generic-routes-importexport', {
+        mixins: [pckgDelimiters],
+        name: 'pckg-generic-routes-importexport',
+        template: '#pckg-generic-routes-importexport',
+        data: function () {
+            return {
+                record: {},
+                structure: ''
+            };
+        },
+        methods: {
+            exportRoute: function () {
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.routeExport') }}', {route: this.record.id}), function (data) {
+                    this.structure = JSON.stringify(data.export);
+                    $dispatcher.$emit('notification:success', 'Route exported');
+                }.bind(this));
+            },
+            importRoute: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.routeImport') }}', {route: this.record.id}), {'export': this.structure}, function (data) {
+                    $dispatcher.$emit('notification:success', 'Route imported');
+                }.bind(this));
+            },
+            importExport: function (record) {
+                this.record = record;
+
+                $('#importExportModal').modal('show');
+            }
+        },
+        created: function () {
+            $dispatcher.$on('record:importExport', this.importExport);
+        },
+        beforeDestroy: function () {
+            $dispatcher.$off('record:importExport', this.importExport);
+        }
+    });
+</script>
+
+<pckg-generic-routes-importexport></pckg-generic-routes-importexport>

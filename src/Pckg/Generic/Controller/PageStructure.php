@@ -91,6 +91,22 @@ class PageStructure
         ];
     }
 
+    public function getRouteExportAction($route)
+    {
+        $route = (new Routes())->where('id', $route)->one();
+
+        return [
+            'export' => $route->export(),
+        ];
+    }
+
+    public function postRouteImportAction()
+    {
+        return [
+            'ok',
+        ];
+    }
+
     public function getRouteActionsAction($route)
     {
         $route = (new Routes())->where('id', $route)->one();
