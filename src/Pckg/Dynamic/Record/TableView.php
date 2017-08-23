@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Record as DatabaseRecord;
+use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
 
 class TableView extends DatabaseRecord
@@ -24,7 +25,7 @@ class TableView extends DatabaseRecord
         return url(
             'dynamic.record.listView',
             [
-                'table'     => $this->table,
+                'table'     => (new Tables())->where('id', $this->dynamic_table_id)->one(),
                 'tableView' => $this,
             ]
         );

@@ -11,8 +11,6 @@ class TableViews extends DatabaseEntity
 
     protected $record = TableView::class;
 
-    protected $repositoryName = Repository::class . '.dynamic';
-
     public function boot()
     {
         $this->joinTranslations();

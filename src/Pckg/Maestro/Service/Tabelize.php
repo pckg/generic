@@ -4,6 +4,7 @@ use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\TableView;
@@ -754,7 +755,7 @@ class Tabelize
 
     public function getSavedViews()
     {
-        return $this->getDynamicTable()->views;
+        return (new TableViews())->where('dynamic_table_id', $this->getDynamicTable()->id)->all();
     }
 
     public function getDynamicTable()
