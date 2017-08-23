@@ -25,12 +25,8 @@ $(document).ready(function () {
             }
         });
 
-        /**
-         * This should be read from config? But how do we do it properly in .js file?
-         */
-        var pckgVariables = Pckg.config.editor.variables || {};
         var menus = [];
-        $.each(pckgVariables, function(parentName, subVariables){
+        $.each(Pckg.config.editor.variables || {}, function(parentName, subVariables){
             var submenus = [];
             $.each(subVariables, function(name, key){
                 submenus.push({
