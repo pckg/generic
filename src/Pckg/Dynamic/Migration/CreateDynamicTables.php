@@ -27,7 +27,6 @@ class CreateDynamicTables extends Migration
         $this->dynamicTableTabsUp();
         $this->dynamicFunctionsUp();
         $this->dynamicTableActionsUp();
-        $this->dynamicTableViewsUp();
 
         $this->save();
     }
@@ -152,18 +151,6 @@ class CreateDynamicTables extends Migration
         $dynamicTableActionsI18n->title();
 
         $dynamicTableActionsP17n = $this->permissiontable('dynamic_table_actions');
-    }
-
-    protected function dynamicTableViewsUp()
-    {
-        $dynamicTableViews = $this->table('dynamic_table_views');
-        $dynamicTableViews->integer('dynamic_table_id')->references('dynamic_tables');
-        $dynamicTableViews->text('settings');
-
-        $dynamicTableViewsI18n = $this->translatable('dynamic_table_views');
-        $dynamicTableViewsI18n->title();
-
-        $dynamicTableViewsP17n = $this->permissiontable('dynamic_table_views');
     }
 
 }
