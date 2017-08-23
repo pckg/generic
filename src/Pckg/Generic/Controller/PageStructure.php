@@ -100,8 +100,12 @@ class PageStructure
         ];
     }
 
-    public function postRouteImportAction()
+    public function postRouteImportAction($route)
     {
+        $route = (new Routes())->where('id', $route)->one();
+
+        $route->import(json_decode(post('export'), true));
+
         return [
             'ok',
         ];

@@ -40,9 +40,18 @@ class Route extends Record
 
     public function export()
     {
-        return $this->actions->map(function(Action $action) {
-            return $action->pivot->export();
-        });
+        return $this->actions
+            ->map(function(Action $action) {
+                return $action->pivot->export();
+            })
+            ->tree('parent_id', 'id', 'actions');
+    }
+
+    public function import($export)
+    {
+        foreach ($export as $action) {
+            ActionsMorph::import($action);
+        }
     }
 
 }

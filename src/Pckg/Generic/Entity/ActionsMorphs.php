@@ -36,4 +36,10 @@ class ActionsMorphs extends Entity
                     ->rightForeignKey('setting_id');
     }
 
+    public function subActions()
+    {
+        return $this->hasChildren(ActionsMorphs::class)
+                    ->foreignKey('parent_id');
+    }
+
 }
