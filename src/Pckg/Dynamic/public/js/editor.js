@@ -1,3 +1,4 @@
+var pckgEditors = {}, initTinymce;
 $(document).ready(function () {
 
     /**
@@ -97,7 +98,7 @@ $(document).ready(function () {
      */
     tinymce.baseURL = '/bower_components/tinymce/';
 
-    function initTinymce(selector) {
+    initTinymce = function (selector) {
         var selected = $('#' + selector);
         selected.append('<div class="manual-dropzone"></div>');
         var manualDropzone = selected.parent().find('.manual-dropzone');
@@ -192,18 +193,21 @@ $(document).ready(function () {
         } else {
             selector = 'html-editor-' + Math.round((Math.random() * 100000));
             $(this).attr('id', selector);
-
         }
     });
 
-    var editors = {};
+    $('.pckg-editor-enabled').each(function(){
+        var id = $(this).attr('id');
+        pckgEditors[id] = initTinymce(id);
+    });
+
     $('.pckg-editor-toggle').on('click', function () {
         var id = $(this).closest('div').find('textarea.editor').attr('id');
-        if (editors[id]) {
+        if (pckgEditors[id]) {
             tinymce.remove('#' + id);
-            delete editors[id];
+            delete pckgEditors[id];
         } else {
-            editors[id] = initTinymce(id);
+            pckgEditors[id] = initTinymce(id);
         }
     });
 });
