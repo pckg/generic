@@ -4,6 +4,8 @@
         <i class="fa fa-bars" aria-hidden="true"></i> {{ __('pckg.generic.btn.viewOptions') }}
     </a>
     <ul class="dropdown-menu dropdown-menu-right">
+        <li><a href="#" class="customizeView" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('pckg.generic.btn.customizeView') }}</a></li>
+        <li><a href="{{ tabelize.getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('pckg.generic.btn.saveView') }}</a></li>
         <li><a href="{{ tabelize.getResetViewUrl() }}">{{ __('pckg.generic.btn.resetView') }}</a></li>
         {% if tabelize.getSavedViews() %}
             <li role="separator" class="divider"></li>
@@ -14,8 +16,5 @@
                 </li>
             {% endfor %}
         {% endif %}
-        <li role="separator" class="divider"></li>
-        <li><a href="#" class="customizeView" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('pckg.generic.btn.customizeView') }}</a></li>
-        <li><a href="{{ tabelize.getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('pckg.generic.btn.saveView') }}</a></li>
     </ul>
 </div>
