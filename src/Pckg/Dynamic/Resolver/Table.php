@@ -1,14 +1,10 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
 use Impero\Apache\Record\Site;
-use Pckg\Concept\Reflect;
-use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Framework\Response;
-use Pckg\Framework\Router;
 
 class Table implements RouteResolver
 {
@@ -47,16 +43,17 @@ class Table implements RouteResolver
                                   }
                               )
                               ->withActions()
-                              ->withViews(
-                                  function(HasMany $views) {
-                                      $views->withTable();
-                                  }
-                              )
+                    // removed because we moved view scope to project database
+                    /*->withViews(
+                        function(HasMany $views) {
+                            $views->withTable();
+                        }
+                    )*/
                               ->oneOrFail(
-                                  function() {
-                                      response()->unauthorized('Table not found');
-                                  }
-                              );
+                        function() {
+                            response()->unauthorized('Table not found');
+                        }
+                    );
             },
             'en_GB'
         );
