@@ -254,14 +254,16 @@ class Tabelize
 
             if (is_string($item)) {
                 return new DatabaseRecord([
-                                              'title' => $item,
-                                              'field' => $item,
+                                              'title'                 => $item,
+                                              'field'                 => $item,
+                                              'dynamic_field_type_id' => 1,
                                           ]);
             }
 
             return new DatabaseRecord([
-                                          'title' => $item['title'] ?? null,
-                                          'field' => $item['field'] ?? null,
+                                          'title'                 => $item['title'] ?? null,
+                                          'field'                 => $item['field'] ?? null,
+                                          'dynamic_field_type_id' => 1,
                                       ]);
         });
     }
