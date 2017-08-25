@@ -3,8 +3,8 @@
 <head>
     {% include '_head.twig' %}
 </head>
-<body id="vue-app">
-<div class="container-fluid">
+<body>
+<div class="container-fluid" id="vue-app">
     {% block content %}{{ content | raw }}{% endblock %}
 </div>
 
