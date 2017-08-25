@@ -29,16 +29,22 @@ class CreateListData extends Migration
                 $listItem = (new ListItems())->where('list_id', $list->id)
                                              ->where('slug', $key)
                                              ->one();
+                $deleted = strpos($title, '**deleted**') === 0;
 
-                if (!$listItem) {
+                if (!$listItem && !$deleted) {
                     $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
                     ListItem::create([
                                          'list_id' => $list->id,
                                          'slug'    => $key,
                                          'value'   => $title,
                                      ]);
-                } else {
-                    $listItem->setAndSave(['value' => $title]);
+                } else if ($listItem) {
+                    if ($deleted) {
+                        $this->output('Deleting item ' . $listConfig['id'] . '.' . $key);
+                        $listItem->delete();
+                    } else {
+                        $listItem->setAndSave(['value' => $title]);
+                    }
                 }
             }
         }
