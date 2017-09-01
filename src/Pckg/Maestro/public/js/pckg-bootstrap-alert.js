@@ -3,8 +3,14 @@ var pckgBootstrapAlertComponent = Vue.component('pckg-bootstrap-alert', {
     name: 'pckg-bootstrap-alert',
     template: '#pckg-bootstrap-alert',
     props: {
-        style: null,
-        text: null,
+        style: {
+            type: String,
+            default: 'success'
+        },
+        text: {
+            type: String,
+            default: ''
+        },
         dismissable: {
             type: Boolean,
             default: true
