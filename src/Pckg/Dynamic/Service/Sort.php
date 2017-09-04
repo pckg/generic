@@ -85,7 +85,7 @@ class Sort extends AbstractService
     {
         if (!$entity->getQuery()->getOrderBy()) {
             $cache = $entity->getRepository()->getCache();
-            if ($this->table->order) {
+            if ($this->table && $this->table->order) {
                 $entity->orderBy($this->table->order);
 
             } else if ($cache->tableHasField($entity->getTable(), 'order')) {

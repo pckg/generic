@@ -25,6 +25,10 @@ abstract class AbstractService
 
     public function getSession($key = null)
     {
+        if (!$this->table) {
+            return [];
+        }
+
         $session = $_SESSION['pckg']['dynamic']['view']['table_' . $this->table->id . '_' .
                                                         ($this->view->id ?? '')]['view'] ?? [];
 
