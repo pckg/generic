@@ -5,95 +5,135 @@
                 Edit block
             {% endblock %}
             {% block body %}
-                <h4>Style</h4>
-                <label>Padding</label>
-                <input class="form-control" v-model="settings.padding"/>
+                <div>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#style" aria-controls="style" role="tab"
+                               data-toggle="tab">Style</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#background" aria-controls="background" role="tab"
+                               data-toggle="tab">Background</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#module" aria-controls="module" role="tab"
+                               data-toggle="tab">Module</a>
+                        </li>
+                    </ul>
 
-                <label>Margin</label>
-                <input class="form-control" v-model="settings.margin"/>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="style">
+                            <label>Padding</label>
+                            <input class="form-control" v-model="settings.padding"/>
 
-                <label>Class</label>
-                <input class="form-control" v-model="settings.class"/>
+                            <label>Margin</label>
+                            <input class="form-control" v-model="settings.margin"/>
 
-                <label>Scopes</label>
-                <pckg-select v-model="settings.scopesArr" :initial-options="availableScopes"></pckg-select>
+                            <label>Class</label>
+                            <input class="form-control" v-model="settings.class"/>
 
-                <h4>Background</h4>
-                <label>Color</label>
-                <input class="form-control" v-model="settings.bgColor"/>
+                            <label>Scopes</label>
+                            <pckg-select v-model="settings.scopesArr" :initial-options="availableScopes"></pckg-select>
 
-                <label>Image</label>
-                <input class="form-control" v-model="settings.bgImage"/>
+                            <div v-if="action.type == 'wrapper'">
+                            </div>
+                            <div v-else-if="action.type == 'container'">
+                                <h4>Container</h4>
+                                <label>Container</label>
+                                <pckg-select v-model="settings.container"
+                                             :initial-options="availableContainers"></pckg-select>
+                            </div>
+                            <div v-else-if="action.type == 'row'">
 
-                <label>Attachment</label>
-                <input class="form-control" v-model="settings.bgAttachment"/>
+                            </div>
+                            <div v-else-if="action.type == 'column'">
+                                <h4>Column</h4>
 
-                <label>Position</label>
-                <input class="form-control" v-model="settings.bgPosition"/>
+                                <label>Width</label>
+                                <pckg-select v-model="settings.width" :initial-options="availableWidths"></pckg-select>
 
-                <label>Repeat</label>
-                <input class="form-control" v-model="settings.bgRepeat"/>
+                                <label>Offset</label>
+                                <pckg-select v-model="settings.offset"
+                                             :initial-options="availableOffsets"></pckg-select>
+                            </div>
+                            <div v-else-if="action.type == 'action'">
 
-                <label>Size</label>
-                <input class="form-control" v-model="settings.bgSize"/>
+                            </div>
+                            <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + action.id">Edit in
+                                /maestro page structure</a>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="background">
+                            <h4>Background</h4>
+                            <label>Color</label>
+                            <input class="form-control" v-model="settings.bgColor"/>
 
-                <h4>Generic content module</h4>
+                            <label>Image</label>
+                            <pckg-htmlbuilder-dropzone
+                                    :current="settings.bgImage"
+                                    :url="backgroundImageUploadUrl"
+                                    id="pckg-editor-dropzone"
+                                    v-model="settings.bgImage"></pckg-htmlbuilder-dropzone>
 
-                <label>No padding</label>
-                <input class="form-control" v-model="settings.noPadding"/>
+                            <template v-if="settings.bgImage.length">
+                                <label>Attachment</label>
+                                <pckg-select v-model="settings.bgAttachment"
+                                             :initial-options="availableBackgroundAttachments"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Picture position</label>
-                <input class="form-control" v-model="settings.picturePosition"/>
+                                <label>Position</label>
+                                <pckg-select v-model="settings.bgPosition"
+                                             :initial-options="availableBackgroundPositions"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Picture width</label>
-                <input class="form-control" v-model="settings.pictureWidth"/>
+                                <label>Repeat</label>
+                                <pckg-select v-model="settings.bgRepeat"
+                                             :initial-options="availableBackgroundRepeats"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Picture offset</label>
-                <input class="form-control" v-model="settings.pictureOffset"/>
+                                <label>Size</label>
+                                <pckg-select v-model="settings.bgSize"
+                                             :initial-options="availableBackgroundSizes"
+                                             :initial-multiple="false"></pckg-select>
+                            </template>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="module">
+                            <h4>Generic content module</h4>
 
-                <label>Content width</label>
-                <input class="form-control" v-model="settings.contentWidth"/>
+                            <label>No padding</label>
+                            <input class="form-control" v-model="settings.noPadding"/>
 
-                <label>Content offset</label>
-                <input class="form-control" v-model="settings.contentOffset"/>
+                            <label>Picture position</label>
+                            <input class="form-control" v-model="settings.picturePosition"/>
 
-                <label>Heading</label>
-                <input class="form-control" v-model="settings.heading"/>
+                            <label>Picture width</label>
+                            <input class="form-control" v-model="settings.pictureWidth"/>
 
-                <h4>Offer gallery module</h4>
+                            <label>Picture offset</label>
+                            <input class="form-control" v-model="settings.pictureOffset"/>
 
-                <label>Offer</label>
-                <input class="form-control">
+                            <label>Content width</label>
+                            <input class="form-control" v-model="settings.contentWidth"/>
 
-                <h4>Gallery module</h4>
+                            <label>Content offset</label>
+                            <input class="form-control" v-model="settings.contentOffset"/>
 
-                <label>Gallery</label>
-                <input class="form-control">
+                            <label>Heading</label>
+                            <input class="form-control" v-model="settings.heading"/>
 
-                <div v-if="action.type == 'wrapper'">
+                            <h4>Offer gallery module</h4>
+
+                            <label>Offer</label>
+                            <input class="form-control">
+
+                            <h4>Gallery module</h4>
+
+                            <label>Gallery</label>
+                            <input class="form-control">
+                        </div>
+                    </div>
                 </div>
-                <div v-else-if="action.type == 'container'">
-                    <h4>Container</h4>
-                    <label>Container</label>
-                    <pckg-select v-model="settings.container" :initial-options="availableContainers"></pckg-select>
-                </div>
-                <div v-else-if="action.type == 'row'">
-
-                </div>
-                <div v-else-if="action.type == 'column'">
-                    <h4>Column</h4>
-
-                    <label>Width</label>
-                    <pckg-select v-model="settings.width" :initial-options="availableWidths"></pckg-select>
-
-                    <label>Offset</label>
-                    <pckg-select v-model="settings.offset" :initial-options="availableOffsets"></pckg-select>
-                </div>
-                <div v-else-if="action.type == 'action'">
-
-                </div>
-                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + action.id">Edit in
-                    /maestro page structure</a>
             {% endblock %}
             {% block footer %}
                 <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
@@ -125,14 +165,23 @@
                     bgAttachment: '',
                     bgPosition: '',
                     bgRepeat: '',
-                    bgSize: '',
+                    bgSize: ''
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
                 availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'},
+                availableBackgroundSizes: {'contain': 'Contain', 'cover': 'Cover'},
+                availableBackgroundRepeats: {
+                    'no-repeat': 'No repeat',
+                    'repeat-x': 'Repeat X',
+                    'repeat-y': 'Repeat Y',
+                    'repeat': 'Repeat'
+                },
+                availableBackgroundAttachments: {'fixed': 'Fixed', 'scroll': 'Scroll', 'local': 'Local'},
+                availableBackgroundPositions: {'top-center': 'Top center', 'center-center': 'Center center'},
                 action: {}
             };
         },
-        created: function(){
+        created: function () {
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
         methods: {
@@ -140,41 +189,46 @@
                 this.action = action;
                 $(this.$el).find('.modal').modal('show');
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
-                    console.log(data);
                     this.settings = data.settings;
                 }.bind(this));
             },
             saveSettings: function () {
-                console.log(this.settings);
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
                     console.log(data);
                 });
             }
         },
         computed: {
-            availableWidths: function(){
+            availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {return i + 1;});
+                var range = Array.apply(null, Array(9)).map(function (_, i) {
+                    return i + 1;
+                });
 
-                $.each(sizes, function(i, size){
-                    $.each(range, function(j, range){
+                $.each(sizes, function (i, size) {
+                    $.each(range, function (j, range) {
                         sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
                     });
                 });
 
                 return sizes;
             },
-            availableOffsets: function(){
+            availableOffsets: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {return i + 1;});
+                var range = Array.apply(null, Array(9)).map(function (_, i) {
+                    return i + 1;
+                });
 
-                $.each(sizes, function(i, size){
-                    $.each(range, function(j, range){
+                $.each(sizes, function (i, size) {
+                    $.each(range, function (j, range) {
                         sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
                     });
                 });
 
                 return sizes;
+            },
+            backgroundImageUploadUrl: function () {
+                return utils.url('{{ url('pckg.generic.pageStructure.actionsMorphBackgroundImage') }}', {actionsMorph: this.action.id});
             }
         }
     });

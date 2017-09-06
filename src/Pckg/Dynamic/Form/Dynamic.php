@@ -389,6 +389,7 @@ ifrm.document.close();
                 $field->getSetting('pckg.dynamic.field.dir'),
                 $field->getSetting('pckg.dynamic.field.privateUpload')
             );
+            $fullPath = null;
             if ($this->record) {
                 $fullPath = $this->record->{$field->field}
                     ? media($this->record->{$field->field}, null, true, $dir)

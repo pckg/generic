@@ -88,13 +88,16 @@
             }
         },
         watch: {
-            selected: function (newVal) {
+            selected: function (newVal, oldVal) {
+                console.log("emiting selected", newVal, oldVal);
                 this.$emit('input', newVal);
             },
             selectedMultiple: function (newVal) {
+                console.log("emiting selectedMultiple");
                 this.$emit('input', newVal);
             },
             selectedSingle: function (newVal) {
+                console.log("emiting selectedSingle");
                 this.$emit('input', newVal);
             },
             options: function (newVal) {

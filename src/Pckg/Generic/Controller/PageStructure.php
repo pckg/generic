@@ -15,6 +15,7 @@ use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Pckg\Manager\Upload;
 
 class PageStructure
 {
@@ -265,30 +266,88 @@ class PageStructure
 
     public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
+        $settings = $actionsMorph->settings
+            ->map(function(
+                Setting $settingsMorph
+            ) {
+                return [
+                    'slug'  => str_replace('pckg.generic.pageStructure.', '',
+                                           $settingsMorph->slug),
+                    'value' => $settingsMorph->pivot->value,
+                ];
+            })->keyBy('slug')->map('value');
+
+        /**
+         * Add defaults.
+         */
+        $defaults = [
+            'class'        => '',
+            'padding'      => '',
+            'margin'       => '',
+            'scopes'       => '',
+            'bgColor'      => '',
+            'bgImage'      => '',
+            'bgSize'       => '',
+            'bgAttachment' => '',
+            'bgRepeat'     => '',
+        ];
+        foreach ($defaults as $key => $val) {
+            if ($settings->hasKey($key)) {
+                continue;
+            }
+
+            $settings->push($val, $key);
+        }
+
+        /**
+         * Add path before image.
+         */
+        $settings->push(media($settings->getKey('bgImage'), null, true, path('app_uploads')) ?? '', 'bgImage');
+
         return response()->respondWithSuccess([
-                                                  'settings' => $actionsMorph->settings->map(function(
-                                                      Setting $settingsMorph
-                                                  ) {
-                                                      return [
-                                                          'slug'  => str_replace('pckg.generic.pageStructure.', '',
-                                                                                 $settingsMorph->slug),
-                                                          'value' => $settingsMorph->pivot->value,
-                                                      ];
-                                                  })->keyBy('slug')->map('value'),
+                                                  'settings' => $settings,
                                               ]);
     }
 
     public function postActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
         collect(array_merge([
-                                'padding' => null,
-                                'margin'  => null,
-                                'class'   => null,
+                                'padding'      => null,
+                                'margin'       => null,
+                                'class'        => null,
+                                'bgAttachment' => null,
+                                'bgPosition'   => null,
+                                'bgRepeat'     => null,
+                                'bgSize'       => null,
                             ], post('settings')))->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
         return response()->respondWithSuccess();
+    }
+
+    public function postActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
+    {
+        $upload = new Upload('file');
+        $success = $upload->validateUpload();
+
+        if ($success !== true) {
+            return [
+                'success' => false,
+                'message' => $success,
+            ];
+        }
+
+        $dir = path('app_uploads');
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
+
+        $actionsMorph->saveSetting('pckg.generic.pageStructure.bgImage', $filename);
+
+        return response()->respondWithSuccess([
+                                                  'success' => true,
+                                                  'url'     => img($filename, null, true, $dir),
+                                              ]);
     }
 
 }
