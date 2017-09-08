@@ -44,13 +44,14 @@ class Route extends Record
             ->map(function(Action $action) {
                 return $action->pivot->export();
             })
-            ->tree('parent_id', 'id', 'actions');
+            ->tree('parent_id', 'id', 'actions')
+            ->all();
     }
 
     public function import($export)
     {
         foreach ($export as $action) {
-            ActionsMorph::import($action);
+            ActionsMorph::import($action, $this);
         }
     }
 

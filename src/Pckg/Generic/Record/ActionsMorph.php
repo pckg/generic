@@ -29,21 +29,21 @@ class ActionsMorph extends Record
     {
         /**
          * @T00D00 - export permissions
-         *         - export contents
+         *         - export contents (translations)
          */
         $data = $this->data();
-        $settings = $this->settings;
+        $settings = $this->settings->toArray();
 
         return [
             'parent_id' => $this->parent_id,
             'id'        => $this->id,
             'data'      => $data,
             'settings'  => $settings,
-            'content'   => $this->content,
+            'content'   => $this->content_id ? $this->content->data() : [],
         ];
     }
 
-    public static function import($export)
+    public static function import($export, Route $route)
     {
         $data = $export['data'];
         unset($data['id']);
@@ -57,6 +57,11 @@ class ActionsMorph extends Record
             $content = Content::create($content);
             $data['content_id'] = $content->id;
         }
+
+        /**
+         * Set new route id.
+         */
+        $data['poly_id'] = $route->id;
 
         /**
          * Clone actions morph.
@@ -76,8 +81,8 @@ class ActionsMorph extends Record
          * Clone subactions.
          */
         foreach ($export['actions'] ?? [] as $subaction) {
-            $subaction['parent_id'] = $subaction['data']['parent_id'] = $actionsMorph->id;
-            ActionsMorph::import($subaction);
+            $subaction['data']['parent_id'] = $actionsMorph->id;
+            ActionsMorph::import($subaction, $route);
         }
 
         return $actionsMorph;
