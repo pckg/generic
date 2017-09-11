@@ -34,6 +34,13 @@ class Routes extends Entity
                     ->rightForeignKey('action_id');
     }
 
+    public function actionsMorphs()
+    {
+        return $this->hasMany(ActionsMorphs::class)
+                    ->foreignKey('poly_id')
+                    ->where('morph_id', Routes::class);
+    }
+
     public function settings()
     {
         return $this->morphedBy(Settings::class)

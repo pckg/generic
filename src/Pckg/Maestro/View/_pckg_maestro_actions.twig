@@ -17,6 +17,18 @@
             recordAction: function (record, action) {
                 $dispatcher.$emit('record:' + action, record, record.id);
             }
+        },
+        created: function () {
+            /**
+             * This is annoying
+             */
+            /*Vue.nextTick(function () {
+                $(this.$el).find('.dropdown-toggle').each(function () {
+                    $(this).on('mouseenter', function () {
+                        $(this).click();
+                    });
+                });
+            }.bind(this));*/
         }
     });
 </script>
