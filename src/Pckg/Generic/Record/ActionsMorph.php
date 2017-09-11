@@ -77,7 +77,7 @@ class ActionsMorph extends Record
         foreach ($export['settings'] ?? [] as $setting) {
             $setting['poly_id'] = $actionsMorph->id;
             unset($setting['id']);
-            SettingsMorph::create($setting['data']);
+            SettingsMorph::create($setting);
         }
 
         /**
