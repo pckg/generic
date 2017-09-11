@@ -33,7 +33,7 @@ class ActionsMorph extends Record
          *         - export contents (translations)
          */
         $data = $this->data();
-        $settings = $this->settings->toArray();
+        $settings = $this->settings->map('pivot')->toArray();
 
         return [
             'parent_id' => $this->parent_id,
