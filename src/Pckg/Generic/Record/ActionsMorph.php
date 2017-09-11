@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Generic\Entity\ActionsMorphs;
 
 class ActionsMorph extends Record
@@ -39,7 +40,9 @@ class ActionsMorph extends Record
             'id'        => $this->id,
             'data'      => $data,
             'settings'  => $settings,
-            'content'   => $this->content_id ? $this->content->data() : [],
+            'content'   => $this->content_id
+                ? $this->content(function(BelongsTo $content) { $content->joinTranslations(); })->data()
+                : [],
         ];
     }
 
@@ -52,7 +55,7 @@ class ActionsMorph extends Record
          * Clone content.
          */
         if ($data['content_id']) {
-            $content = $data['content'];
+            $content = $export['content'];
             unset($content['id']);
             $content = Content::create($content);
             $data['content_id'] = $content->id;
