@@ -75,8 +75,8 @@ class ActionsMorph extends Record
          * Clone settings.
          */
         foreach ($export['settings'] ?? [] as $setting) {
-            $setting['data']['poly_id'] = $actionsMorph->id;
-            unset($setting['data']['id']);
+            $setting['poly_id'] = $actionsMorph->id;
+            unset($setting['id']);
             SettingsMorph::create($setting['data']);
         }
 
