@@ -264,6 +264,33 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
+    protected function getDefaultSettings()
+    {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        return [
+            'class'           => '',
+            'padding'         => '',
+            'margin'          => '',
+            'scopes'          => '',
+            'bgColor'         => '',
+            'bgImage'         => '',
+            'bgSize'          => '',
+            'bgAttachment'    => '',
+            'bgRepeat'        => '',
+            'bgVideo'         => '',
+            'bgVideoSource'   => '',
+            'bgVideoDisplay'  => '',
+            'bgVideoAutoplay' => '',
+            'bgVideoControls' => '',
+            'bgVideoLoop'     => '',
+        ];
+    }
+
     public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
         $settings = $actionsMorph->settings
@@ -277,20 +304,7 @@ class PageStructure
                 ];
             })->keyBy('slug')->map('value');
 
-        /**
-         * Add defaults.
-         */
-        $defaults = [
-            'class'        => '',
-            'padding'      => '',
-            'margin'       => '',
-            'scopes'       => '',
-            'bgColor'      => '',
-            'bgImage'      => '',
-            'bgSize'       => '',
-            'bgAttachment' => '',
-            'bgRepeat'     => '',
-        ];
+        $defaults = $this->getDefaultSettings();
         foreach ($defaults as $key => $val) {
             if ($settings->hasKey($key)) {
                 continue;
@@ -311,15 +325,20 @@ class PageStructure
 
     public function postActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
-        collect(array_merge([
-                                'padding'      => null,
-                                'margin'       => null,
-                                'class'        => null,
-                                'bgAttachment' => null,
-                                'bgPosition'   => null,
-                                'bgRepeat'     => null,
-                                'bgSize'       => null,
-                            ], post('settings')))->each(function($value, $key) use ($actionsMorph) {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        $values = array_merge($this->getDefaultSettings(), post('settings'));
+        $values = only($values, array_keys($this->getDefaultSettings()));
+        unset($values['bgImage']);
+        /**
+         * Add scopes.
+         */
+        $values['class'] .= ' ' . implode(' ', post('settings.scopesArr', []));
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 

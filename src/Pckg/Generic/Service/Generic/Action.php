@@ -101,6 +101,7 @@ class Action
             'title'   => $this->action->title,
             'type'    => $this->getType(),
             'actions' => [],
+            'slug'    => $this->action->slug,
         ];
 
         foreach ($this->action->getChildren as $action) {
@@ -114,7 +115,6 @@ class Action
     public function getSubHtml()
     {
         $html = [];
-
         foreach ($this->action->getChildren as $action) {
             $genericAction = new Action($action, $this->args['route'], $this->args['resolvers']);
 
@@ -132,11 +132,20 @@ class Action
     {
         $return = null;
         if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
-            return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '">' .
-                   $this->attachDevHtml(null) . $this->getSubHtml() . '</div>';
+            $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
+                      '" data-action-id="' . $this->action->pivot->id . '">' .
+                      $this->attachDevHtml(null);
+            $return .= $this->getBackgroundVideoHtml();
+            $return .= $this->getSubHtml() . '</div>';
+
+            return $return;
         }
 
-        $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '">';
+        $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
+                  '" data-action-id="' . $this->action->pivot->id . '">';
+
+        $return .= $this->getBackgroundVideoHtml();
+
         if ($this->getClass() && $this->getMethod()) {
             $args = array_merge($this->args, ['action' => $this, 'content' => $this->getContent()]);
 
@@ -226,6 +235,46 @@ class Action
         }
 
         return $devPrefix . $html . $devSuffix;
+    }
+
+    public function getBackgroundVideoHtml()
+    {
+        $settings = $this->action->pivot->settings->keyBy('slug');
+        $url = $settings->getKey('pckg.generic.pageStructure.bgVideo')->pivot->value ?? null;
+        $source = $settings->getKey('pckg.generic.pageStructure.bgVideoSource')->pivot->value ?? null;
+
+        if (!$url || !$source) {
+            return;
+        }
+
+        $autoplay = $settings->getKey('pckg.generic.pageStructure.bgVideoAutoplay')->pivot->value ?? 'no';
+        $display = $settings->getKey('pckg.generic.pageStructure.bgVideoDisplay')->pivot->value ?? 'background';
+        $controls = $settings->getKey('pckg.generic.pageStructure.bgVideoControls')->pivot->value ?? 'yes';
+        $loop = $settings->getKey('pckg.generic.pageStructure.bgVideoLoop')->pivot->value ?? 'yes';
+
+        if ($source == 'youtube') {
+            if ($display == 'background') {
+                $youtubeUrl = 'https://www.youtube.com/embed/'
+                              . $url . '?controls='
+                              . ($controls == 'yes' ? 1 : 0)
+                              . '&showinfo=0&rel=0&autoplay='
+                              . ($autoplay == 'yes' ? 1 : 0) . '&loop='
+                              . ($loop == 'yes' ? 1 : 0) . '&playlist=' . $url;
+
+                return '<div class="video-background">
+    <div class="video-foreground">
+      <iframe src="' . $youtubeUrl . '" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>';
+            } else if ($display == 'popup') {
+                /**
+                 * We should add some trigger or link or something? :)
+                 */
+                $youtubeUrl = 'https://www.youtube.com/watch?v=' . $url . '&rel=0&autoplay=1';
+
+                return '<a href="' . $youtubeUrl . '" class="popup-iframe"></a>';
+            }
+        }
     }
 
 }

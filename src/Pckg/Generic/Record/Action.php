@@ -31,6 +31,10 @@ class Action extends Record
             $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->pivot->value;
         }
 
+        if ($keyedBySlug->getKey('pckg.generic.pageStructure.bgVideo')->pivot->value ?? null) {
+            $typeSuffix .= ' has-video-background';
+        }
+
         $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',

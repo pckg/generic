@@ -76,7 +76,7 @@
                                     id="pckg-editor-dropzone"
                                     v-model="settings.bgImage"></pckg-htmlbuilder-dropzone>
 
-                            <template v-if="settings.bgImage.length">
+                            <template v-if="settings.bgImage && settings.bgImage.length">
                                 <label>Attachment</label>
                                 <pckg-select v-model="settings.bgAttachment"
                                              :initial-options="availableBackgroundAttachments"
@@ -97,40 +97,83 @@
                                              :initial-options="availableBackgroundSizes"
                                              :initial-multiple="false"></pckg-select>
                             </template>
+
+                            <label>Video</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <pckg-select v-model="settings.bgVideoSource"
+                                                 :initial-options="availableBgVideoSources"
+                                                 :initial-multiple="false"></pckg-select>
+                                </div>
+                                <div class="col-md-6" v-if="settings.bgVideoSource && settings.bgVideoSource.length">
+                                    <input class="form-control" v-model="settings.bgVideo" placeholder="Video ID"/>
+                                </div>
+                            </div>
+                            <template v-if="settings.bgVideo && settings.bgVideo.length">
+                                <label>Display</label>
+                                <pckg-select v-model="settings.bgVideoDisplay"
+                                             :initial-options="availableVideoDisplays"
+                                             :initial-multiple="false"></pckg-select>
+
+                                <label>Autoplay</label>
+                                <pckg-select v-model="settings.bgVideoAutoplay"
+                                             :initial-options="availableVideoAutoplays"
+                                             :initial-multiple="false"></pckg-select>
+
+                                <label>Loop</label>
+                                <pckg-select v-model="settings.bgVideoLoop"
+                                             :initial-options="availableVideoLoops"
+                                             :initial-multiple="false"></pckg-select>
+
+                                <label>Controls</label>
+                                <pckg-select v-model="settings.bgVideoControls"
+                                             :initial-options="availableVideoControls"
+                                             :initial-multiple="false"></pckg-select>
+                            </template>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="module">
-                            <h4>Generic content module</h4>
+                            <template v-if="action.slug == 'pckg-generic-content-simple'">
+                                <h4>Generic content module</h4>
 
-                            <label>No padding</label>
-                            <input class="form-control" v-model="settings.noPadding"/>
+                                {{ _formService.addCheckbox('settings[noPadding]').setLabel('No padding')
+                                .setAttribute('v-model', 'settings.noPadding') | raw }}
 
-                            <label>Picture position</label>
-                            <input class="form-control" v-model="settings.picturePosition"/>
+                                {{ _formService.addSelect('settings[picturePosition]').setLabel('Picture position')
+                                .setAttribute('v-model', 'settings.picturePosition')
+                                .addOptions({'':'None','left':'Left','right':'Right'}) | raw }}
 
-                            <label>Picture width</label>
-                            <input class="form-control" v-model="settings.pictureWidth"/>
+                                <label>Picture width</label>
+                                <pckg-select v-model="settings.pictureWidth"
+                                             :initial-options="availableWidths"></pckg-select>
 
-                            <label>Picture offset</label>
-                            <input class="form-control" v-model="settings.pictureOffset"/>
+                                <label>Picture offset</label>
+                                <pckg-select v-model="settings.pictureOffset"
+                                             :initial-options="availableOffsets"></pckg-select>
 
-                            <label>Content width</label>
-                            <input class="form-control" v-model="settings.contentWidth"/>
+                                <label>Content width</label>
+                                <pckg-select v-model="settings.contentWidth"
+                                             :initial-options="availableWidths"></pckg-select>
 
-                            <label>Content offset</label>
-                            <input class="form-control" v-model="settings.contentOffset"/>
+                                <label>Content offset</label>
+                                <pckg-select v-model="settings.contentOffset"
+                                             :initial-options="availableOffsets"></pckg-select>
 
-                            <label>Heading</label>
-                            <input class="form-control" v-model="settings.heading"/>
+                                <label>Heading</label>
+                                <pckg-select v-model="settings.contentHeading"
+                                             :initial-options="availableHeadings"></pckg-select>
+                            </template>
+                            <template v-else-if="action.slug == 'offer-gallery'">
+                                <h4>Offer gallery module</h4>
 
-                            <h4>Offer gallery module</h4>
+                                <label>Offer</label>
+                                <input class="form-control">
+                            </template>
+                            <template v-else-if="action.slug == 'gallery'">
+                                <h4>Gallery module</h4>
 
-                            <label>Offer</label>
-                            <input class="form-control">
-
-                            <h4>Gallery module</h4>
-
-                            <label>Gallery</label>
-                            <input class="form-control">
+                                <label>Gallery</label>
+                                <input class="form-control">
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -165,7 +208,13 @@
                     bgAttachment: '',
                     bgPosition: '',
                     bgRepeat: '',
-                    bgSize: ''
+                    bgSize: '',
+                    bgVideoSource: '',
+                    bgVideo: '',
+                    bgVideoDisplay: '',
+                    bgVideoAutoplay: '',
+                    bgVideoLoop: '',
+                    bgVideoControls: ''
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
                 availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'},
@@ -178,6 +227,12 @@
                 },
                 availableBackgroundAttachments: {'fixed': 'Fixed', 'scroll': 'Scroll', 'local': 'Local'},
                 availableBackgroundPositions: {'top-center': 'Top center', 'center-center': 'Center center'},
+                availableBgVideoSources: {'': 'None', 'vimeo': 'Vimeo', 'youtube': 'Youtube'},
+                availableVideoDisplays: {'popup': 'Popup', 'background': 'Background'},
+                availableVideoControls: {'yes': 'Yes', 'no': 'No'},
+                availableVideoLoops: {'yes': 'Yes', 'no': 'No'},
+                availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
+                availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
                 action: {}
             };
         },
@@ -201,7 +256,7 @@
         computed: {
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {
+                var range = Array.apply(null, Array(12)).map(function (_, i) {
                     return i + 1;
                 });
 
@@ -215,13 +270,13 @@
             },
             availableOffsets: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {
+                var range = Array.apply(null, Array(12)).map(function (_, i) {
                     return i + 1;
                 });
 
                 $.each(sizes, function (i, size) {
                     $.each(range, function (j, range) {
-                        sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
+                        sizes[i]['col-' + i + '-offset-' + range] = 'col-' + i + '-offset-' + range;
                     });
                 });
 
