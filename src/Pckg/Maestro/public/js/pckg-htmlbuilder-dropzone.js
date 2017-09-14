@@ -5,6 +5,10 @@ var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
             type: String,
             default: ''
         },
+        prev: {
+            type: String,
+            default: ''
+        },
         url: {
             type: String,
             default: ''
@@ -77,6 +81,11 @@ var pckgTabelizeFieldEditor = Vue.component('pckg-htmlbuilder-dropzone', {
                     this.$emit('input', data.url);
                 }.bind(this)
             });
+        },
+        deleteFile: function () {
+            http.deleteJSON(this.url, function () {
+                this.current = '';
+            }.bind(this));
         }
     },
     created: function () {

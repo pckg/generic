@@ -833,21 +833,45 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function postUploadAction(
-        Table $table, Record $record = null, Field $field
-    ) {
+    public function deleteUploadAction(Table $table, Record $record = null, Field $field)
+    {
+        $this->processDelete($table, $record, $field, '');
+    }
+
+    public function deleteUploadNewAction(Table $table, Field $field)
+    {
+        $this->processDelete($table, null, $field, '');
+    }
+
+    public function deleteUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
+    {
+        $this->processDelete($table, $record, $field, '');
+    }
+
+    protected function processDelete(Table $table, Record $record = null, Field $field, $filename)
+    {
+        $entity = $table->createEntity();
+        $record->setEntity($entity);
+        $record->{$field->field} = $filename;
+        $record->save($entity);
+
+        return [
+            'success' => true,
+        ];
+    }
+
+    public function postUploadAction(Table $table, Record $record = null, Field $field)
+    {
         return $this->processUpload($table, $record, $field);
     }
 
-    public function postUploadNewAction(
-        Table $table, Field $field
-    ) {
+    public function postUploadNewAction(Table $table, Field $field)
+    {
         return $this->processUpload($table, null, $field);
     }
 
-    public function postUploadNewForeignAction(
-        Table $table, Field $field, Record $record, Relation $relation
-    ) {
+    public function postUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
+    {
         return $this->processUpload($table, null, $field, $relation, $record);
     }
 

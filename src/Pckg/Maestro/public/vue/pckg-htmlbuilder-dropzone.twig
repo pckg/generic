@@ -14,7 +14,7 @@
                     original file.
                 </p>
                 <p v-if="current">
-                    <button type="button" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-danger" @click.prevent="deleteFile">Delete</button>
                     current file.
                 </p>
 
