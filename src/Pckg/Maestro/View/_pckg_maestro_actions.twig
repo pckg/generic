@@ -21,14 +21,18 @@
         created: function () {
             /**
              * This is annoying
+             * .dropdown-backdrop should have display: none
              */
-            /*Vue.nextTick(function () {
+            Vue.nextTick(function () {
                 $(this.$el).find('.dropdown-toggle').each(function () {
                     $(this).on('mouseenter', function () {
                         $(this).click();
+                        $(this).parent().on('mouseleave', function () {
+                            $("body").trigger("click");
+                        });
                     });
                 });
-            }.bind(this));*/
+            }.bind(this));
         }
     });
 </script>
