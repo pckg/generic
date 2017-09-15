@@ -90,15 +90,15 @@
         watch: {
             selected: function (newVal, oldVal) {
                 console.log("emiting selected", newVal, oldVal);
-                this.$emit('input', newVal);
+                this.refreshPicker(newVal);
             },
             selectedMultiple: function (newVal) {
                 console.log("emiting selectedMultiple");
-                this.$emit('input', newVal);
+                this.refreshPicker(newVal);
             },
             selectedSingle: function (newVal) {
                 console.log("emiting selectedSingle");
-                this.$emit('input', newVal);
+                this.refreshPicker(newVal);
             },
             options: function (newVal) {
                 console.log('options watcher: options changed');
@@ -109,6 +109,9 @@
             }
         },
         methods: {
+            refreshPicker: function (val) {
+                this.$emit('input', val);
+            },
             refreshList: function () {
                 this.timeout('refreshList', function () {
                     if (this.refreshUrl.length == 0) {
@@ -120,10 +123,8 @@
                         this.options = data.records;
                     }.bind(this));
                 }.bind(this), 333);
-            }
-        },
-        mounted: function () {
-            this.$nextTick(function () {
+            },
+            initPicker: function(){
                 $(this.$el).find('select').selectpicker({
                     liveSearch: true
                 });
@@ -138,7 +139,10 @@
                 $(this.$el).find('.bs-searchbox input').on('keyup', function () {
                     this.refreshList();
                 }.bind(this));
-            });
+            }
+        },
+        mounted: function () {
+            this.$nextTick(this.initPicker);
 
             /**
              * Initial fetch.
