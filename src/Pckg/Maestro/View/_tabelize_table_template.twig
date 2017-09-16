@@ -54,7 +54,7 @@
             <tr v-for="record in records"
                 :class="record.tabelizeClass ? record.tabelizeClass : ''">
                 <td v-for="field in fields"
-                    :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
+                    :class="[field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                     <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"
                                         :table="table"></pckg-maestro-field>
                 </td>
