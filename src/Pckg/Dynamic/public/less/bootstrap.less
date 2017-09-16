@@ -83,27 +83,43 @@ Derive
 Style tds
 **/
 table.table {
+  th {
+    white-space: nowrap;
+  }
   td,
   th {
+    &.boolean,
+    &.order,
+    &.date,
+    &.time,
+    &.datetime {
+      text-align: center;
+    }
 
     &.integer,
-    &.decimal,
-    &.order {
+    &.decimal {
       text-align: right;
     }
   }
   td {
+    max-width: 360px;
+    &.actions,
+    &.checkboxes {
+      vertical-align: middle;
+    }
     &:not(.actions) {
       position: relative;
       overflow: hidden;
-      & > div {
+      > div {
         min-height: 5rem;
-        max-height: 5rem;
+        max-height: 7.5rem;
         overflow: visible;
       }
       &.long {
-        overflow-y: scroll;
-        max-height: 10rem;
+        &:hover {
+          overflow-y: scroll;
+          max-height: 15rem;
+        }
       }
     }
     &.num,
@@ -133,8 +149,8 @@ table.table {
     &.pdf {
       min-width: 120px;
     }
-    &.php,
-    &.select {
+    &.select,
+    &.php {
       min-width: 120px;
       max-width: 240px;
     }
@@ -151,6 +167,29 @@ table.table {
         height: 26px;
         width: 60px;
         text-align: center;
+      }
+    }
+
+    &.boolean {
+      > div {
+        text-align: center;
+      }
+    }
+
+    &.boolean,
+    &.order,
+    &.date,
+    &.time,
+    &.datetime {
+      vertical-align: middle;
+      > div {
+        display: inline;
+      }
+    }
+
+    &.order {
+      input {
+        margin: 0 auto;
       }
     }
   }
