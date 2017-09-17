@@ -79,6 +79,12 @@ div.row {
 Derive
 */
 
+table.table.table-middle {
+  >tbody>tr>td {
+    vertical-align: middle;
+  }
+}
+
 /**
 Style tds
 **/
@@ -149,8 +155,10 @@ table.table {
     &.pdf {
       min-width: 120px;
     }
-    &.select,
     &.php {
+      max-width: 240px;
+    }
+    &.select {
       min-width: 120px;
       max-width: 240px;
     }
