@@ -26,6 +26,13 @@ class SettingsMorph extends Record
             return $this;
         }
 
+        if (!config()->hasKey($this->setting->slug)) {
+            /**
+             * Don't allow unexistent settings.
+             */
+            return $this;
+        }
+
         config()->set($this->setting->slug,
                       $this->setting->type == 'array' ? json_decode($this->value, true) : $this->value);
 
