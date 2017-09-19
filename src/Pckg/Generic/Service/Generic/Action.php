@@ -278,7 +278,7 @@ class Action
                 /**
                  * We should add some trigger or link or something? :)
                  */
-                $youtubeUrl = 'https://www.youtube.com/watch?v=' . $url . '&rel=0&autoplay=1';
+                $youtubeUrl = 'https://www.youtube.com/watch?v=' . $url;
 
                 return '<a href="' . $youtubeUrl . '" class="popup-iframe"></a>';
             }
