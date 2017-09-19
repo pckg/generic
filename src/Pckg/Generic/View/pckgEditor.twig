@@ -1,6 +1,12 @@
+<script type="text/x-template" id="pckg-htmleditor">
+    <div class="pckg-htmleditor">
+        <textarea class="form-control" v-model="value" :id="id"></textarea>
+    </div>
+</script>
+
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true} %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg'} %}
             {% block header %}
                 Edit block
             {% endblock %}
@@ -19,6 +25,10 @@
                         <li role="presentation">
                             <a href="#module" aria-controls="module" role="tab"
                                data-toggle="tab">Module</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#content" aria-controls="content" role="tab"
+                               data-toggle="tab">Content</a>
                         </li>
                     </ul>
 
@@ -175,6 +185,15 @@
                                 <input class="form-control">
                             </template>
                         </div>
+                        <div role="tabpanel" class="tab-pane" id="content">
+                            <br /><pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"></pckg-htmleditor><br />
+
+                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }</button>
+                            <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
+                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
+                                edit</a>
+                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                        </div>
                     </div>
                 </div>
             {% endblock %}
@@ -186,6 +205,39 @@
 </script>
 
 <script type="text/javascript">
+    Vue.component('pckg-htmleditor', {
+        name: 'pckg-htmleditor',
+        template: '#pckg-htmleditor',
+        mixins: [pckgDelimiters],
+        props: {
+            value: {
+                default: '',
+                type: String
+            },
+            id: {
+                default: 'pckg-htmleditor',
+                type: String
+            }
+        },
+        /*model: {
+         prop: 'value',
+         event: 'input'
+         },*/
+        watch: {
+            value: function () {
+                this.$nextTick(this.initEditor);
+            }
+        },
+        methods: {
+            initEditor: function () {
+                initTinymce(this.id);
+                tinymce.get(this.id).setContent(this.value);
+                this.$emit('input', this.value);
+            }
+        },
+        created: function () {
+        }
+    });
 
     Vue.component('pckg-editor', {
         props: {
@@ -233,7 +285,10 @@
                 availableVideoLoops: {'yes': 'Yes', 'no': 'No'},
                 availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
                 availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
-                action: {}
+                action: {},
+                content: {
+                    content: ''
+                }
             };
         },
         created: function () {
@@ -246,11 +301,29 @@
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
                     this.settings = data.settings;
                 }.bind(this));
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphContent') }}', {actionsMorph: this.action.id}), function (data) {
+                    this.content = data.content;
+                }.bind(this));
             },
             saveSettings: function () {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
                     console.log(data);
                 });
+            },
+            duplicateContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.duplicateActionsMorphContent') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
+            },
+            createContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.createActionsMorphContent') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
+            },
+            saveContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.content') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
             }
         },
         computed: {

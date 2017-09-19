@@ -13,6 +13,7 @@ use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
+use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Manager\Upload;
@@ -289,6 +290,39 @@ class PageStructure
             'bgVideoControls' => '',
             'bgVideoLoop'     => '',
         ];
+    }
+
+    public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
+    {
+        return response()->respondWithSuccess([
+                                                  'content' => $actionsMorph->content(function(BelongsTo $content) {
+                                                      $content->joinTranslations();
+                                                  }),
+                                              ]);
+    }
+
+    public function postDuplicateActionsMorphContentAction(ActionsMorph $actionsMorph)
+    {
+        $content = $actionsMorph->content(function(BelongsTo $content) {
+            $content->joinTranslations();
+        })->saveAs();
+
+        $actionsMorph->setAndSave(['content_id' => $content->id]);
+
+        return response()->respondWithSuccess([
+                                                  'content' => $content,
+                                              ]);
+    }
+
+    public function postCreateActionsMorphContentAction(ActionsMorph $actionsMorph)
+    {
+        $content = Content::create();
+
+        $actionsMorph->setAndSave(['content_id' => $content->id]);
+
+        return response()->respondWithSuccess([
+                                                  'content' => $content,
+                                              ]);
     }
 
     public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)

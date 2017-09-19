@@ -55,14 +55,7 @@ class DynamicAssets extends Provider
              * Help popover
              */
             'js/bootstrap.js',
-            'js/editor.js',
             'less/bootstrap.less',
-            /**
-             * Vue.js
-             */
-            'footer' => [
-                'js/vue.js',
-            ],
         ];
     }
 

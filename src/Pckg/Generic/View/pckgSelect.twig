@@ -147,7 +147,7 @@
             /**
              * Initial fetch.
              */
-            if (this.options.length == 0 && this.refreshUrl.length > 0) {
+            if ((!this.options || this.options.length == 0) && (!this.refreshUrl || this.refreshUrl.length > 0)) {
                 this.refreshList();
             }
         }
