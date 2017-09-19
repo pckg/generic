@@ -1,0 +1,62 @@
+<script type="text/x-template" id="pckg-htmleditor">
+    <div class="pckg-htmleditor">
+        <textarea class="form-control" v-model="value" :id="id"></textarea>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-htmleditor', {
+        name: 'pckg-htmleditor',
+        template: '#pckg-htmleditor',
+        mixins: [pckgDelimiters],
+        props: {
+            value: {
+                default: '',
+                type: String
+            },
+            id: {
+                default: 'pckg-htmleditor',
+                type: String
+            }
+        },
+        /*model: {
+         prop: 'value',
+         event: 'input'
+         },*/
+        watch: {
+            value: function (n, o) {
+                console.log('value updated', n, o);
+                this.$nextTick(this.updateEditorValue);
+            }
+        },
+        methods: {
+            updateEditorValue: function () {
+                var editor = tinymce.get(this.id);
+                if (editor) {
+                    editor.setContent(this.value);
+                }
+            },
+            initEditor: function () {
+                console.log('initializing');
+                var editor = initTinymce(this.id, function (editor) {
+                    editor.on('Change', function (e) {
+                        console.log('changed');
+                        this.$emit('input', tinymce.get(this.id).getContent())
+                        //this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                    }.bind(this));
+                }.bind(this));
+
+                //console.log(editor);
+                //tinymce.get(this.id).setContent(this.value);
+                //this.$emit('input', this.value);
+            }
+        },
+        created: function () {
+            console.log('created');
+            this.$nextTick(function () {
+                console.log('created nextTick');
+                this.initEditor();
+            }.bind(this));
+        }
+    });
+</script>
