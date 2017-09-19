@@ -52,21 +52,6 @@ class Action
         return $this->action->pivot->order;
     }
 
-    public function getWidth()
-    {
-        return $this->action->pivot->width;
-    }
-
-    public function getContainer()
-    {
-        return $this->action->pivot->container;
-    }
-
-    public function getBackground()
-    {
-        return $this->action->pivot->background;
-    }
-
     public function getClass()
     {
         return $this->action->class;
