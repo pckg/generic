@@ -174,7 +174,15 @@ class Action
                                                                   ->getKey('pckg.generic.actionsMorph.resolver');
             if ($actionsMorphResolver) {
                 foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
-                    $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
+                    if (isset($conf['resolver'])) {
+                        /**
+                         * @deprecated
+                         */
+                        $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
+                    } elseif (is_array($conf)) {
+                        $resolver = array_keys($conf)[0];
+                        $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                    }
                 }
             }
 
