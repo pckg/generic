@@ -5,6 +5,7 @@ use Pckg\Framework\Router\Route\Group;
 use Pckg\Framework\Router\Route\Route;
 use Pckg\Generic\Controller\PageStructure as PageStructureController;
 use Pckg\Generic\Resolver\ActionsMorph;
+use Pckg\Generic\Resolver\Content;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 
 class PageStructure extends Provider
@@ -52,6 +53,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorph'))->resolvers([
                                                                                                                      'actionsMorph' => ActionsMorph::class,
                                                                                                                  ]),
+                                       '.content'                      => (new Route('/content/[content]', 'content'))
+                                           ->resolvers([
+                                                           'content' => Content::class,
+                                                       ]),
                                        '.actionsMorphSettings'         => (new Route('/actionsMorph/[actionsMorph]/settings',
                                                                                      'actionsMorphSettings'))->resolvers([
                                                                                                                              'actionsMorph' => ActionsMorph::class,

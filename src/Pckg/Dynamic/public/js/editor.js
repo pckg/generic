@@ -1,10 +1,11 @@
 var pckgEditors = {};
-var initTinymce = function (selector) {
+var initTinymce = function (selector, setup) {
     var selected = $('#' + selector);
     console.log('initializing', selector, selected.length);
     selected.append('<div class="manual-dropzone"></div>');
     var manualDropzone = selected.parent().find('.manual-dropzone');
     return tinymce.init({
+        setup: setup,
         content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
         selector: '#' + selector,
         height: 500,

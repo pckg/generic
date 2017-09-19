@@ -403,4 +403,11 @@ class PageStructure
                                               ]);
     }
 
+    public function postContentAction(Content $content)
+    {
+        $content->setAndSave(['content' => post('content.content', null)]);
+
+        return response()->respondWithSuccess(['content' => $content]);
+    }
+
 }

@@ -186,13 +186,16 @@
                             </template>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="content">
-                            <br /><pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"></pckg-htmleditor><br />
+                            <br/>
+                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"></pckg-htmleditor>
+                            <br/>
 
-                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }</button>
+                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
+                            </button>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                             <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
                                 edit</a>
-                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
                         </div>
                     </div>
                 </div>
@@ -224,18 +227,39 @@
          event: 'input'
          },*/
         watch: {
-            value: function () {
-                this.$nextTick(this.initEditor);
+            value: function (n, o) {
+                console.log('value updated', n, o);
+                this.$nextTick(this.updateEditorValue);
             }
         },
         methods: {
+            updateEditorValue: function () {
+                var editor = tinymce.get(this.id);
+                if (editor) {
+                    editor.setContent(this.value);
+                }
+            },
             initEditor: function () {
-                initTinymce(this.id);
-                tinymce.get(this.id).setContent(this.value);
-                this.$emit('input', this.value);
+                console.log('initializing');
+                var editor = initTinymce(this.id, function (editor) {
+                    editor.on('Change', function (e) {
+                        console.log('changed');
+                        this.$emit('input', tinymce.get(this.id).getContent())
+                        //this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                    }.bind(this));
+                }.bind(this));
+
+                //console.log(editor);
+                //tinymce.get(this.id).setContent(this.value);
+                //this.$emit('input', this.value);
             }
         },
         created: function () {
+            console.log('created');
+            this.$nextTick(function () {
+                console.log('created nextTick');
+                this.initEditor();
+            }.bind(this));
         }
     });
 
@@ -321,7 +345,7 @@
                 }.bind(this));
             },
             saveContent: function () {
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.content') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.content') }}', {content: this.content.id}), {content: this.content}, function (data) {
                     this.content = data.content;
                 }.bind(this));
             }
