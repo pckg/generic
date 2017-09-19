@@ -147,7 +147,7 @@ class Action
         $return .= $this->getBackgroundVideoHtml();
 
         if ($this->getClass() && $this->getMethod()) {
-            $args = array_merge($this->args, ['action' => $this, 'content' => $this->getContent()]);
+            $args = array_merge($this->args, ['action' => $this]);
 
             if (isset($args['settings'])) {
                 /**
@@ -282,6 +282,28 @@ class Action
 
                 return '<a href="' . $youtubeUrl . '" class="popup-iframe"></a>';
             }
+        }
+    }
+
+    public function getSetting($key = null)
+    {
+        $key = 'pckg.generic.pageStructure.' . $key;
+        $settings = $this->action->pivot->settings->keyBy('slug');
+
+        if ($settings->hasKey($key)) {
+            return $settings->pivot->value;
+        }
+
+        if ($key == 'content') {
+            return true;
+        }
+
+        if ($key == 'heading') {
+            return 'h2';
+        }
+
+        if ($key == 'contentWidth') {
+            return 'col-xs-12';
         }
     }
 

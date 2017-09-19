@@ -1,18 +1,17 @@
 <div class="pckg-generic-content-simple">
-    <div class="row {{ content.getSetting('noPadding') ? 'no-padding' : '' }}">
-        {% if content.getSetting('picture') and content.getSetting('picturePosition') == 'left' %}
-            <div class="{{ content.getSetting('pictureWidth') }} {{ content.getSetting('pictureOffset') }}">
+    <div class="row {{ action.getSetting('noPadding') ? 'no-padding' : '' }}">
+        {% if action.getSetting('picture') and action.getSetting('picturePosition') == 'left' %}
+            <div class="{{ action.getSetting('pictureWidth') }} {{ action.getSetting('pictureOffset') }}">
                 <img src="{{ content.picture }}" class="img-responsive"/>
             </div>
         {% endif %}
-        {% if content.getSetting('content') %}
-            <div class="{{ content.getSetting('contentWidth') }} {{ content.getSetting('contentOffset') }}">
-                <{{ content.getSetting('heading') }}>{{ content.title | raw }}</{{ content.getSetting('heading') }}>
+        {% if action.getSetting('content') %}
+            <div class="{{ action.getSetting('contentWidth') }} {{ action.getSetting('contentOffset') }}">
                 {{ content.content | raw }}
             </div>
         {% endif %}
-        {% if content.getSetting('picture') and content.getSetting('picturePosition') == 'right' %}
-            <div class="{{ content.getSetting('pictureWidth') }} {{ content.getSetting('pictureOffset') }}">
+        {% if action.getSetting('picture') and action.getSetting('picturePosition') == 'right' %}
+            <div class="{{ action.getSetting('pictureWidth') }} {{ action.getSetting('pictureOffset') }}">
                 <img src="{{ content.picture }}" class="img-responsive"/>
             </div>
         {% endif %}
