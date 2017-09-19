@@ -272,13 +272,6 @@ class Action
 
     public function getSetting($key = null)
     {
-        $key = 'pckg.generic.pageStructure.' . $key;
-        $settings = $this->action->pivot->settings->keyBy('slug');
-
-        if ($settings->hasKey($key)) {
-            return $settings->pivot->value;
-        }
-
         if ($key == 'content') {
             return true;
         }
@@ -289,6 +282,13 @@ class Action
 
         if ($key == 'contentWidth') {
             return 'col-xs-12';
+        }
+
+        $key = 'pckg.generic.pageStructure.' . $key;
+        $settings = $this->action->pivot->settings->keyBy('slug');
+
+        if ($settings->hasKey($key)) {
+            return $settings->pivot->value;
         }
     }
 
