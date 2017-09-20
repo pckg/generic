@@ -25,7 +25,8 @@ class Contents extends Entity
 
     public function contents()
     {
-        return $this->hasMany(Contents::class);
+        return $this->hasMany(Contents::class)
+            ->foreignKey('parent_id');
     }
 
 }
