@@ -288,7 +288,7 @@ class Action
         $settings = $this->action->pivot->settings->keyBy('slug');
 
         if ($settings->hasKey($key)) {
-            return $settings->pivot->value;
+            return $settings->getKey($key)->pivot->value;
         }
     }
 
