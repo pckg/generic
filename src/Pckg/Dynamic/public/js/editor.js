@@ -6,11 +6,73 @@ var initTinymce = function (selector, setup) {
     var manualDropzone = selected.parent().find('.manual-dropzone');
     return tinymce.init({
         setup: setup,
-        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
+        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css?' + new Date().getTime(),
         selector: '#' + selector,
         height: 500,
         convert_urls: false,
         theme: 'modern',
+        link_class_list: [
+            {title: 'Link', value: ''},
+            {title: 'Primary color', value: 'button color-primary'},
+            {title: 'Secondary color', value: 'button color-secondary'},
+            {title: 'Black', value: 'button color-dark'},
+            {title: 'White', value: 'button color-light'},
+        ],
+        style_formats: [
+            {title: 'Headings', items: [
+                {title: 'Heading 1', format: 'h1'},
+                {title: 'Heading 2', format: 'h2'},
+                {title: 'Heading 3', format: 'h3'},
+                {title: 'Heading 4', format: 'h4'},
+                {title: 'Heading 5', format: 'h5'},
+                {title: 'Heading 6', format: 'h6'}
+            ]},
+
+            {title: 'Inline', items: [
+                {title: 'Bold', icon: 'bold', format: 'bold'},
+                {title: 'Italic', icon: 'italic', format: 'italic'},
+                {title: 'Underline', icon: 'underline', format: 'underline'},
+                {title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
+                {title: 'Superscript', icon: 'superscript', format: 'superscript'},
+                {title: 'Subscript', icon: 'subscript', format: 'subscript'},
+                {title: 'Code', icon: 'code', format: 'code'}
+            ]},
+
+            {title: 'Blocks', items: [
+                {title: 'Paragraph', format: 'p'},
+                {title: 'Blockquote', format: 'blockquote'},
+                {title: 'Div', format: 'div'},
+                {title: 'Pre', format: 'pre'}
+            ]},
+
+            {title: 'Alignment', items: [
+                {title: 'Left', icon: 'alignleft', format: 'alignleft'},
+                {title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
+                {title: 'Right', icon: 'alignright', format: 'alignright'},
+                {title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
+            ]},
+
+            {title: 'Font sizes', items: [
+                {title: 'XS', format : 'font_size_xs'},
+                {title: 'S', format : 'font_size_s'},
+                {title: 'M', format : 'font_size_m'},
+                {title: 'L', format : 'font_size_l'},
+                {title: 'XL', format : 'font_size_xl'},
+                {title: 'XXL', format : 'font_size_xxl'},
+            ]},
+        ],
+        formats: {
+            font_size_xs: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xs'},
+            font_size_s: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-s'},
+            font_size_m: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-m'},
+            font_size_l: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-l'},
+            font_size_xl: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xl'},
+            font_size_xxl: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'},
+            alignleft: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-left'},
+            aligncenter: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-center'},
+            alignright: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-right'},
+            alignjustify: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'},
+        },
         extended_valid_elements: 'pc-kg',
         custom_elements: 'pc-kg',
         plugins: [
@@ -24,7 +86,7 @@ var initTinymce = function (selector, setup) {
         image_advtab: true,
         allow_html_in_named_anchor: true,
         allow_unsafe_link_target: true,
-        forced_root_block: false,
+        forced_root_block: 'p',
         protect: [
             // /{{[^}]+}}/g,  // Protect {{ }}
             // /{%[^}]+%}/g,  // Protect {% %}
