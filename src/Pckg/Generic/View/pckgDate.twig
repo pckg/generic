@@ -1,0 +1,64 @@
+<script type="text/x-template" id="pckg-date">
+    <div class="pckg-date">
+        <input type="text" v-model="value"/>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-date', {
+        name: 'pckg-date',
+        template: '#pckg-date',
+        mixins: [pckgDelimiters],
+        props: {
+            value: {
+                default: '',
+                type: String
+            }
+        },
+        watch: {
+            value: function (n, o) {
+                console.log('value updated', n, o);
+                this.$nextTick(this.updateEditorValue);
+            }
+        },
+        methods: {
+            updateEditorValue: function () {
+                /*
+                 var editor = tinymce.get(this.id);
+                 if (editor) {
+                 editor.setContent(this.value);
+                 }
+                 */
+            },
+            initPicker: function () {
+                console.log('initializing');
+
+                $(this.$el).find('input').datetimepicker({
+                    format: 'YYYY-MM-DD'
+                }).on('dp.change', function (ev) {
+                    console.log('changed');
+                    //$(this).datetimepicker('hide');
+                });
+
+                /*var editor = initTinymce(this.id, function (editor) {
+                    editor.on('Change', function (e) {
+                        console.log('changed');
+                        this.$emit('input', tinymce.get(this.id).getContent())
+                        //this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                    }.bind(this));
+                }.bind(this));*/
+
+                //console.log(editor);
+                //tinymce.get(this.id).setContent(this.value);
+                //this.$emit('input', this.value);
+            }
+        },
+        created: function () {
+            console.log('created');
+            this.$nextTick(function () {
+                console.log('created nextTick');
+                this.initPicker();
+            }.bind(this));
+        }
+    });
+</script>
