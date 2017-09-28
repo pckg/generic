@@ -523,7 +523,9 @@ button[type=button] {
     top: 5rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 2000;
+    min-width: 240px;
+    text-align: center;
   }
 }
 
@@ -737,8 +739,20 @@ li.double-link {
   color: #fff;
 }
 
-.modal-content {
+/**
+  * This is causing issues with large dropdowns in popups/modals.
+ **/
+/*.modal-content {
   overflow: hidden;
+}*/
+
+.modal-xl {
+  @media (min-width: 992px) {
+    width: 900px;
+  }
+  @media (min-width: 1200px) {
+    width: 1170px;
+  }
 }
 
 button.close {
@@ -750,4 +764,8 @@ button.close {
 
 p.label {
   font-size: 95%;
+}
+
+.pckg-datetime {
+  min-width: 13.5rem;
 }

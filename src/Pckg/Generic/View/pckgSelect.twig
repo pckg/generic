@@ -1,15 +1,19 @@
 <script type="text/x-template" id="vue-pckg-select">
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selectedMultiple">
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+            <option v-for="(option, key) in finalOptions" :value="getId(option, key)"
+                    v-html="getTitle(option, key)"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+                <option v-for="(option, key) in optgroup" :value="getId(option, key)"
+                        v-html="getTitle(option, key)"></option>
             </optgroup>
         </select>
         <select v-else class="form-control" v-model="selectedSingle">
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+            <option v-for="(option, key) in finalOptions" :value="getId(option, key)"
+                    v-html="getTitle(option, key)"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+                <option v-for="(option, key) in optgroup" :value="getId(option, key)"
+                        v-html="getTitle(option, key)"></option>
             </optgroup>
         </select>
     </div>
@@ -27,12 +31,19 @@
         },
         data: function () {
             return {
-                options: this.initialOptions,
                 selectedMultiple: Array.isArray(this.selected) ? this.selected : [this.selected],
                 selectedSingle: this.selected
             };
         },
         props: {
+            title: {
+                default: '',
+                type: String
+            },
+            id: {
+                default: '',
+                type: String
+            },
             withEmpty: {
                 default: true
             },
@@ -60,6 +71,9 @@
             }
         },
         computed: {
+            options: function () {
+                return this.initialOptions;
+            },
             finalOptions: function () {
                 var options = {'': ' -- select value -- '};
 
@@ -111,7 +125,21 @@
             }
         },
         methods: {
-            changed: function(){
+            getTitle: function (option, key) {
+                if (!this.title.length) {
+                    return option;
+                }
+
+                return option[this.title];
+            },
+            getId: function (option, id) {
+                if (!this.id.length) {
+                    return id;
+                }
+
+                return option[this.id] || option;
+            },
+            changed: function () {
                 console.log('pckg select changed: ' + this.selected);
                 this.refreshPicker(this.selected);
             },
@@ -132,16 +160,19 @@
                     }.bind(this));
                 }.bind(this), 333);
             },
-            initPicker: function(){
+            initPicker: function () {
                 $(this.$el).find('select').selectpicker({
                     liveSearch: true
                 });
 
-                $(this.$el).find('select').selectpicker('refresh');
+                setTimeout(function(){
+                    $(this.$el).find('select').selectpicker('refresh');
 
-                $(document).ready(function(){
+                }.bind(this), 100);
+
+                $(document).ready(function () {
                     $(this.$el).find('select').on('change', function () {
-                        this.$nextTick(function(){
+                        this.$nextTick(function () {
                             console.log('changing js and emiting:', $(this.$el).find('select').val());
                             this.$emit('input', $(this.$el).find('select').val());
                         }.bind(this));

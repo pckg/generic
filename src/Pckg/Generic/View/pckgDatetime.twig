@@ -1,13 +1,13 @@
-<script type="text/x-template" id="pckg-date">
-    <div class="pckg-date">
+<script type="text/x-template" id="pckg-datetime">
+    <div class="pckg-datetime">
         <input type="text" v-model="value" class="form-control"/>
     </div>
 </script>
 
 <script type="text/javascript">
-    Vue.component('pckg-date', {
-        name: 'pckg-date',
-        template: '#pckg-date',
+    Vue.component('pckg-datetime', {
+        name: 'pckg-datetime',
+        template: '#pckg-datetime',
         mixins: [pckgDelimiters],
         props: {
             value: {
@@ -18,8 +18,8 @@
         methods: {
             initPicker: function () {
                 var $this = this;
-                $(this.$el).find('input').datepicker({
-                    format: 'YYYY-MM-DD'
+                $(this.$el).find('input').datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm'
                 }).on('dp.change', function (ev) {
                     $this.$emit('input', $(this).val());
                 });
