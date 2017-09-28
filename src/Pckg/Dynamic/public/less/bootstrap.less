@@ -80,7 +80,7 @@ Derive
 */
 
 table.table.table-middle {
-  >tbody>tr>td {
+  > tbody > tr > td {
     vertical-align: middle;
   }
 }
@@ -622,10 +622,34 @@ img.editor-img {
         > label {
           display: block;
           width: 100%;
+          padding-left: 0;
         }
         > div {
           display: block;
           width: 100%;
+        }
+      }
+      &.with-operator {
+        display: table;
+        position: relative;
+        margin-top: 3rem;
+        > .pckg-select,
+        > .form-group {
+          display: table-cell;
+          vertical-align: bottom;
+        }
+        > .form-group {
+          > label {
+            position: absolute;
+            left: 0;
+            top: -3rem;
+            padding-left: 0;
+          }
+        }
+      }
+      &:not(.with-operator) .form-group {
+        > div {
+          padding-left: 0;
         }
       }
     }
