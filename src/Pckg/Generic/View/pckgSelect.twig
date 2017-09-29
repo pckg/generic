@@ -1,19 +1,15 @@
 <script type="text/x-template" id="vue-pckg-select">
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selectedMultiple">
-            <option v-for="(option, key) in finalOptions" :value="getId(option, key)"
-                    v-html="getTitle(option, key)"></option>
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="getId(option, key)"
-                        v-html="getTitle(option, key)"></option>
+                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
         <select v-else class="form-control" v-model="selectedSingle">
-            <option v-for="(option, key) in finalOptions" :value="getId(option, key)"
-                    v-html="getTitle(option, key)"></option>
+            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="getId(option, key)"
-                        v-html="getTitle(option, key)"></option>
+                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
     </div>
@@ -43,6 +39,10 @@
             id: {
                 default: '',
                 type: String
+            },
+            flat: {
+                default: false,
+                type: Boolean
             },
             withEmpty: {
                 default: true
@@ -75,27 +75,38 @@
                 return this.initialOptions;
             },
             finalOptions: function () {
-                var options = {'': ' -- select value -- '};
+                var options = {null: ' -- select value -- '};
 
                 $.each(this.options, function (key, item) {
+                    if (this.flat) {
+                        options[this.getId(item, key)] = this.getTitle(item, key);
+                        return;
+                    }
+
                     if (typeof item != 'string') {
                         return;
                     }
 
-                    options[key] = item;
-                });
+                    options[this.getId(item, key)] = this.getTitle(item, key);
+                }.bind(this));
+
+                console.log(options);
 
                 return options;
             },
             finalOptionGroups: function () {
+                if (this.flat) {
+                    return {};
+                }
+
                 var options = {};
                 $.each(this.options, function (key, item) {
                     if (typeof item == 'string') {
                         return;
                     }
 
-                    options[key] = item;
-                });
+                    options[this.getId(item, key)] = this.getTitle(item, key);
+                }.bind(this));
 
                 return options;
             },
@@ -108,14 +119,14 @@
                 console.log("selected changed", newVal);
                 this.refreshPicker(newVal);
             },
-            selectedMultiple: function (newVal) {
-                console.log("selectedMultiple changed", newVal);
-                this.refreshPicker(newVal);
-            },
-            selectedSingle: function (newVal) {
-                console.log("selectedSingle changed", newVal);
-                this.refreshPicker(newVal);
-            },
+            /*selectedMultiple: function (newVal) {
+             console.log("selectedMultiple changed", newVal);
+             this.refreshPicker(newVal);
+             },
+             selectedSingle: function (newVal) {
+             console.log("selectedSingle changed", newVal);
+             this.refreshPicker(newVal);
+             },*/
             options: function (newVal) {
                 console.log('options watcher: options changed');
                 Vue.nextTick(function () {
@@ -126,6 +137,10 @@
         },
         methods: {
             getTitle: function (option, key) {
+                if (typeof option == 'string') {
+                    return option;
+                }
+
                 if (!this.title.length) {
                     return option;
                 }
@@ -137,7 +152,11 @@
                     return id;
                 }
 
-                return option[this.id] || option;
+                if (typeof option != 'object') {
+                    return option;
+                }
+
+                return option[this.id];
             },
             changed: function () {
                 console.log('pckg select changed: ' + this.selected);
@@ -145,7 +164,8 @@
             },
             refreshPicker: function (val) {
                 console.log('emiting: ' + val);
-                this.$emit('input', val);
+                this.$emit('input', val); // v-model
+                this.$emit('change', val); // change event
                 $(this.$el).find('select').trigger('vue.change', val);
             },
             refreshList: function () {
@@ -165,9 +185,8 @@
                     liveSearch: true
                 });
 
-                setTimeout(function(){
+                setTimeout(function () {
                     $(this.$el).find('select').selectpicker('refresh');
-
                 }.bind(this), 100);
 
                 $(document).ready(function () {
