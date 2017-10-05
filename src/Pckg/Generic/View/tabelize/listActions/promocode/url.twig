@@ -5,7 +5,8 @@
                 Promo code link
             {% endblock %}
             {% block body %}
-                {{ config('url') }}/?promocode=${record.code}
+                <p>{{ __('pckg.generic.promocode.show_uri') }}:</p>
+                <code>/?ref=${record.code}</code>
             {% endblock %}
         {% endembed %}
     </div>
