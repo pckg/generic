@@ -118,7 +118,6 @@ Style tds
       overflow: hidden;
       > div {
         min-height: 5rem;
-        max-height: 7.5rem;
         overflow: visible;
       }
       &.long {
@@ -153,19 +152,19 @@ Style tds
     }
 
     &.pdf {
-      min-width: 120px;
+      min-width: 60px; // 120px;
     }
     &.php {
       max-width: 240px;
     }
     &.select {
-      min-width: 120px;
+      min-width: 60px; // 120px;
       max-width: 240px;
     }
 
     &.editor,
     &.textarea {
-      min-width: 240px;
+      min-width: 60px; // 240px
     }
 
     &.order {
@@ -184,11 +183,7 @@ Style tds
       }
     }
 
-    &.boolean,
-    &.order,
-    &.date,
-    &.time,
-    &.datetime {
+    &.id {
       vertical-align: middle;
       > div {
         display: inline;
