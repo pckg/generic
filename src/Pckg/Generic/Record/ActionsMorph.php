@@ -33,7 +33,12 @@ class ActionsMorph extends Record
          *         - export contents (translations)
          */
         $data = $this->data();
-        $settings = $this->settings->map('pivot')->toArray();
+        $settings = $this->settings->map(function(Setting $setting) {
+            $data = $setting->pivot->data();
+            $data['slug'] = $this->slug;
+
+            return $data;
+        })->toArray();
 
         return [
             'parent_id' => $this->parent_id,
@@ -75,6 +80,7 @@ class ActionsMorph extends Record
          * Clone settings.
          */
         foreach ($export['settings'] ?? [] as $setting) {
+            $setting['setting_id'] = Setting::getOrCreate(['slug' => $setting['slug']])->id;
             $setting['poly_id'] = $actionsMorph->id;
             unset($setting['id']);
             SettingsMorph::create($setting);
