@@ -363,6 +363,10 @@ class Tabelize
 
                     $eval = $this->eval($relation->value, $record, $originalRecord, $relation);
 
+                    if (!trim($eval)) {
+                        $eval = '#' . $originalRecord->{$field->field};
+                    }
+
                     return $this->dataOnly
                         ? $eval
                         : ('<a href="' . $relation->showTable->getEditUrl($record) . '">' . $eval . '</a>');
