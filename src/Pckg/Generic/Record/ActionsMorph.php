@@ -35,7 +35,7 @@ class ActionsMorph extends Record
         $data = $this->data();
         $settings = $this->settings->map(function(Setting $setting) {
             $data = $setting->pivot->data();
-            $data['slug'] = $this->slug;
+            $data['slug'] = $setting->slug;
 
             return $data;
         })->toArray();
