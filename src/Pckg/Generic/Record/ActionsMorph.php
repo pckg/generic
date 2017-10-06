@@ -2,6 +2,7 @@
 
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
+use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 
 class ActionsMorph extends Record
@@ -33,6 +34,7 @@ class ActionsMorph extends Record
          *         - export contents (translations)
          */
         $data = $this->data();
+        $data['action_slug'] = $this->action->slug;
         $settings = $this->settings->map(function(Setting $setting) {
             $data = $setting->pivot->data();
             $data['slug'] = $setting->slug;
@@ -70,6 +72,7 @@ class ActionsMorph extends Record
          * Set new route id.
          */
         $data['poly_id'] = $route->id;
+        $data['action_id'] = Action::getOrCreate(['slug' => $data['action_slug']])->id;
 
         /**
          * Clone actions morph.
