@@ -6,8 +6,8 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Service\Filter as FilterService;
 use Pckg\Dynamic\Service\Group as GroupService;
 use Pckg\Dynamic\Service\Sort as OrderService;
-use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Request\Data\Session;
+use Pckg\Locale\Lang;
 
 class Dynamic
 {
