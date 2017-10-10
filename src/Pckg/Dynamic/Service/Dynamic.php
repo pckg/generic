@@ -7,7 +7,7 @@ use Pckg\Dynamic\Service\Filter as FilterService;
 use Pckg\Dynamic\Service\Group as GroupService;
 use Pckg\Dynamic\Service\Sort as OrderService;
 use Pckg\Framework\Request\Data\Session;
-use Pckg\Locale\LangInterface;
+use Pckg\Locale\Lang;
 
 class Dynamic
 {
@@ -89,7 +89,7 @@ class Dynamic
                 return;
             }
 
-            $entity->setTranslatableLang((new LangInterface($_SESSION['pckg_dynamic_lang_id'])));
+            $entity->setTranslatableLang((new Lang($_SESSION['pckg_dynamic_lang_id'])));
             $entity->joinTranslations();
         }
     }
