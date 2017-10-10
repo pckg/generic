@@ -1,6 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Framework\Inter\Entity\Languages;
+use Pckg\Locale\Entity\Languages;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;

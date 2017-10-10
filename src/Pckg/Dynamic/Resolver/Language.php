@@ -1,6 +1,6 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
-use Pckg\Framework\Inter\Entity\Languages;
+use Pckg\Locale\Entity\Languages;
 use Pckg\Framework\Provider\RouteResolver;
 
 class Language implements RouteResolver
