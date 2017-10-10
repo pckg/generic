@@ -80,11 +80,16 @@ class Generic
         /**
          * Route resolvers.
          */
-        $resolved = [];
+        $resolved = [];//(new Router\Command\ResolveDependencies(json_decode($route->resolvers, true)));
         if ($route->resolvers) {
+            $router = router()->get();
             foreach (json_decode($route->resolvers, true) as $key => $conf) {
-                $resolver = array_keys($conf)[0];
-                $resolved[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                if (is_array($conf)) {
+                    $resolver = array_keys($conf)[0];
+                    $resolved[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                } else {
+                    $resolved[$key] = Reflect::create($conf)->resolve($router[$key] ?? router()->getCleanUri());
+                }
             }
         }
 

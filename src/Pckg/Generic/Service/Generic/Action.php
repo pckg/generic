@@ -146,14 +146,6 @@ class Action
                     );
                 }
 
-                if (isset($args['resolvers'])) {
-                    die("resolving action 1");
-                    $resolved = (new ResolveDependencies(router(), $args['resolvers']))->execute();
-                    foreach ($resolved as $key => $val) {
-                        $args[$key] = $val;
-                    }
-                }
-
                 foreach ($args['resolved'] as $key => $val) {
                     $args[$key] = $val;
                 }
