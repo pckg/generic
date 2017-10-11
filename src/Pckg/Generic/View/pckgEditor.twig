@@ -1,6 +1,7 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg'} %}
+
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal'} %}
             {% block header %}
                 Edit block
             {% endblock %}
@@ -207,7 +208,9 @@
                             <p>... are waiting to be copied from backend</p>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="structure">
-                            <p>... add child, add parent, add before, add after</p>
+                            <button class="btn btn-primary" @click.prevent="addChild">Add child</button>
+                            <button class="btn btn-primary" @click.prevent="addChild">Add after</button>
+                            <button class="btn btn-primary" @click.prevent="addChild">Add before</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="danger">
                             <button class="btn btn-danger">Delete</button>
@@ -221,6 +224,606 @@
             {% endblock %}
             {% block footer %}
                 <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
+            {% endblock %}
+        {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-max', id: 'addNewActionModal'} %}
+            {% block header %}
+                Add new action
+            {% endblock %}
+            {% block body %}
+                <div class="pckg-icons">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2>Elements</h2>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Text</div>
+                                    <span class="line big"></span>
+                                    <span class="line"></span>
+                                    <span class="line"></span>
+                                    <span class="line"></span>
+                                    <span class="line"></span>
+                                    <span class="line"></span>
+                                    <span class="line"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Image</div>
+                                    <span class="image"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Text + image</div>
+                                    <div class="half">
+                                        <span class="line big"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                    </div>
+                                    <div class="half">
+                                        <span class="image vertical"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Video</div>
+                                    <span class="video"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Double text</div>
+                                    <div class="half">
+                                        <span class="line big"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                    </div>
+                                    <div class="half">
+                                        <span class="line big"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Heading</div>
+                                    <span class="text horizontal-center">&lt;h*&gt;</span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Hero</div>
+                                    <div class="image auto-height">
+                                        <div class="half horizontal-center horizontal-padding">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="btn horizontal-center"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Box</div>
+                                    <div class="box">
+                                        <span class="line big"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                        <span class="line"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Double box</div>
+                                    <div class="half">
+                                        <div class="box">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <div class="half">
+                                        <div class="box inverted">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Listing</div>
+                                    <span class="line dot"></span>
+                                    <span class="line dot"></span>
+                                    <span class="line dot"></span>
+                                    <span class="line dot"></span>
+                                    <span class="line dot"></span>
+                                    <span class="line dot"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Background video</div>
+                                    <span class="video"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Gallery</div>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="image"></span>
+                                        </div>
+                                        <div>
+                                            <span class="image"></span>
+                                        </div>
+                                        <div>
+                                            <span class="image"></span>
+                                        </div>
+                                        <div>
+                                            <span class="image"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Line separator</div>
+                                    <span class="line"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Block separator</div>
+                                    <span class="line big"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Contents list</div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="btn horizontal-center"></span>
+                                        </div>
+                                    </div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="btn horizontal-center"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">News list</div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Offers list</div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="btn"></span>
+                                        </div>
+                                    </div>
+                                    <div class="block">
+                                        <div class="half">
+                                            <span class="image"></span>
+                                        </div>
+                                        <div class="half">
+                                            <span class="line big"></span>
+                                            <span class="line"></span>
+                                            <span class="btn"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Link</div>
+                                    <span class="link horizontal-center"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Link group</div>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="link block"></span>
+                                        </div>
+                                        <div>
+                                            <span class="link block"></span>
+                                        </div>
+                                        <div>
+                                            <span class="link block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Button</div>
+                                    <span class="btn horizontal-center"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Button group</div>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="btn block"></span>
+                                        </div>
+                                        <div>
+                                            <span class="btn block"></span>
+                                        </div>
+                                        <div>
+                                            <span class="btn block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Steps</div>
+                                    <span class="line big"></span>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Signup form</div>
+                                    <div class="image auto-height">
+                                        <div class="as-fixed-table with-padding horizontal-padding vertical-padding">
+                                            <div>
+                                                <span class="line"></span>
+                                            </div>
+                                            <div>
+                                                <span class="input"></span>
+                                            </div>
+                                            <div>
+                                                <span class="line big"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Contact form</div>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <span class="btn"></span>
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="icon">
+                                    <div class="title">Inquiry form</div>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="input big"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <span class="btn"></span>
+                                </div>
+                            </div>
+
+                            <h2>Pages</h2>
+
+                            <div class="page">
+                                <div class="icon">
+                                    <div class="title">Blank</div>
+                                    <span class="line big"></span>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page">
+                                <div class="icon">
+                                    <div class="title">Homepage</div>
+                                    <span class="line big"></span>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page">
+                                <div class="icon">
+                                    <div class="title">Landing page</div>
+                                    <span class="line big"></span>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page">
+                                <div class="icon">
+                                    <div class="title">Contact page</div>
+                                    <span class="line big"></span>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="as-fixed-table with-padding">
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                        <div>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                            <span class="line"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             {% endblock %}
         {% endembed %}
     </div>
@@ -283,9 +886,12 @@
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
         methods: {
+            addChild: function () {
+                $('#addNewActionModal').modal('show');
+            },
             openEditModal: function (action) {
                 this.action = action;
-                $(this.$el).find('.modal').modal('show');
+                $('#editBlockModal').modal('show');
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
                     this.settings = data.settings;
                 }.bind(this));
