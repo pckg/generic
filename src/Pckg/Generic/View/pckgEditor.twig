@@ -9,6 +9,14 @@
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
+                            <a href="#content" aria-controls="content" role="tab"
+                               data-toggle="tab">Content</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#module" aria-controls="module" role="tab"
+                               data-toggle="tab">Module</a>
+                        </li>
+                        <li role="presentation">
                             <a href="#style" aria-controls="style" role="tab"
                                data-toggle="tab">Style</a>
                         </li>
@@ -17,12 +25,16 @@
                                data-toggle="tab">Background</a>
                         </li>
                         <li role="presentation">
-                            <a href="#module" aria-controls="module" role="tab"
-                               data-toggle="tab">Module</a>
+                            <a href="#permissions" aria-controls="permissions" role="tab"
+                               data-toggle="tab">Permissions</a>
+                        </li>
+                        <li role="structure">
+                            <a href="#structure" aria-controls="structure" role="tab"
+                               data-toggle="tab">Permissions</a>
                         </li>
                         <li role="presentation">
-                            <a href="#content" aria-controls="content" role="tab"
-                               data-toggle="tab">Content</a>
+                            <a href="#danger" aria-controls="danger" role="tab"
+                               data-toggle="tab">Danger zone</a>
                         </li>
                     </ul>
 
@@ -190,6 +202,19 @@
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                             <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
                                 edit</a>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="permissions">
+                            <p>... are waiting to be copied from backend</p>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="structure">
+                            <p>... add child, add parent, add before, add after</p>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="danger">
+                            <button class="btn btn-danger">Delete</button>
+                            <p>Click on this button will delete this and sub-actions and contents if used only here.</p>
+
+                            <button class="btn btn-primary">Export</button>
+                            <button class="btn btn-info">Import</button>
                         </div>
                     </div>
                 </div>
