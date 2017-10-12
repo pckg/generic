@@ -8,7 +8,7 @@
             {% block body %}
                 <div>
                     <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
+                    <ul class="nav nav-pills" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#content" aria-controls="content" role="tab"
                                data-toggle="tab">Content</a>
@@ -29,19 +29,11 @@
                             <a href="#permissions" aria-controls="permissions" role="tab"
                                data-toggle="tab">Permissions</a>
                         </li>
-                        <li role="structure">
-                            <a href="#structure" aria-controls="structure" role="tab"
-                               data-toggle="tab">Structure</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#danger" aria-controls="danger" role="tab"
-                               data-toggle="tab">Danger zone</a>
-                        </li>
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="style">
+                        <div role="tabpanel" class="tab-pane" id="style">
                             <label>Padding</label>
                             <input class="form-control" v-model="settings.padding"/>
 
@@ -192,7 +184,7 @@
                                 <input class="form-control">
                             </template>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="content">
+                        <div role="tabpanel" class="tab-pane active" id="content">
                             <br/>
                             <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"></pckg-htmleditor>
                             <br/>
@@ -207,22 +199,39 @@
                         <div role="tabpanel" class="tab-pane" id="permissions">
                             <p>... are waiting to be copied from backend</p>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="structure">
-                            <button class="btn btn-primary" @click.prevent="addChild">Add child</button>
-                            <button class="btn btn-primary" @click.prevent="addChild">Add after</button>
-                            <button class="btn btn-primary" @click.prevent="addChild">Add before</button>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="danger">
-                            <button class="btn btn-danger">Delete</button>
-                            <p>Click on this button will delete this and sub-actions and contents if used only here.</p>
-
-                            <button class="btn btn-primary">Export</button>
-                            <button class="btn btn-info">Import</button>
-                        </div>
                     </div>
                 </div>
             {% endblock %}
             {% block footer %}
+                <div role="group" class="btn-group pull-left" style="text-align: right;">
+                    <a type="button" href="#" title="Add child" class="btn btn-success" @click.prevent="addChild">
+                        <i aria-hidden="true" class="fa fa-plus"></i> Add child
+                    </a>
+                    <div class="btn-group pull-left dropup">
+                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                title="More" class="btn btn-danger dropdown-toggle">
+                            <span class="caret"></span> <span class="sr-only">More</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a href="#" @click.prevent>
+                                    <i aria-hidden="true" class="fa fa-download"></i> Export
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" @click.prevent>
+                                    <i aria-hidden="true" class="fa fa-upload"></i> Import
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" @click.prevent>
+                                    <i aria-hidden="true" class="fa fa-trash-o danger"></i> Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
             {% endblock %}
         {% endembed %}
@@ -243,163 +252,24 @@
                                 </div>
                             </div>
 
-                            <!--
+                            <h2>Structures</h2>
+
+                            <div class="item" v-for="partial in structures">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
+                                </div>
+                            </div>
+
                             <h2>Pages</h2>
 
-                            <div class="page">
-                                <div class="icon">
-                                    <div class="title">Blank</div>
-                                    <span class="line big"></span>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="page">
-                                <div class="icon">
-                                    <div class="title">Homepage</div>
-                                    <span class="line big"></span>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="page">
-                                <div class="icon">
-                                    <div class="title">Landing page</div>
-                                    <span class="line big"></span>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                -->
-                            </div>
-
-                            <div class="page">
-                                <div class="icon">
-                                    <div class="title">Contact page</div>
-                                    <span class="line big"></span>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="as-fixed-table with-padding">
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                        <div>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                            <span class="line"></span>
-                                        </div>
-                                    </div>
+                            <div class="item" v-for="partial in pages">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             {% endblock %}
@@ -458,7 +328,9 @@
                 content: {
                     content: ''
                 },
-                partials: {{ partials | json_encode | raw }}
+                partials: {{ partials | json_encode | raw }},
+                structures: {{ structures | json_encode | raw }},
+                pages: {{ pages | json_encode | raw }}
             };
         },
         created: function () {
@@ -468,10 +340,10 @@
             addChild: function () {
                 $('#addNewActionModal').modal('show');
             },
-            addAction: function(c){
+            addAction: function (c) {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph.addPartial') }}', {actionsMorph: this.action.id}), {
                     partial: c
-                }, function(data){
+                }, function (data) {
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
                     }
