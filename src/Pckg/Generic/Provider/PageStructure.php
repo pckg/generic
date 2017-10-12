@@ -65,6 +65,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorphContent'))->resolvers([
                                                                                                                             'actionsMorph' => ActionsMorph::class,
                                                                                                                         ]),
+                                       '.actionsMorph.addPartial'          => (new Route('/actionsMorph/[actionsMorph]/addPartial',
+                                                                                     'actionsMorphAddPartial'))->resolvers([
+                                                                                                                            'actionsMorph' => ActionsMorph::class,
+                                                                                                                        ]),
                                        '.duplicateActionsMorphContent' => (new Route('/actionsMorph/[actionsMorph]/duplicateContent',
                                                                                      'duplicateActionsMorphContent'))->resolvers([
                                                                                                                                      'actionsMorph' => ActionsMorph::class,

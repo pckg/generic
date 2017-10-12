@@ -410,4 +410,11 @@ class PageStructure
         return response()->respondWithSuccess(['content' => $content]);
     }
 
+    public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
+    {
+        $actionsMorph->addPartial(post('partial', null));
+
+        return response()->respondWithSuccess();
+    }
+
 }

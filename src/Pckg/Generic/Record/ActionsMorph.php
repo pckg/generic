@@ -1,8 +1,10 @@
 <?php namespace Pckg\Generic\Record;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Generic\Entity\ActionsMorphs;
+use Pckg\Generic\Service\Partials\AbstractPartial;
 
 class ActionsMorph extends Record
 {
@@ -103,7 +105,10 @@ class ActionsMorph extends Record
     {
         if (!$content) {
             $content = [];
+        } else if (is_string($content)) {
+            $content = ['content' => $content];
         }
+
         $content = array_merge([
                                    'title' => 'Content #' . $this->id,
                                ], $content);
@@ -111,6 +116,22 @@ class ActionsMorph extends Record
         $content = Content::create($content);
 
         $this->setAndSave(['content_id' => $content->id]);
+    }
+
+    public function addPartial($partial)
+    {
+        $partial = $this->preparePartial($partial);
+        $partial->add($this);
+    }
+
+    /**
+     * @param $partial
+     *
+     * @return object|AbstractPartial
+     */
+    protected function preparePartial($partial)
+    {
+        return Reflect::create($partial);
     }
 
 }
