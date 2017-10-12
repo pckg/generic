@@ -2,7 +2,6 @@
 
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
-use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 
 class ActionsMorph extends Record
@@ -98,6 +97,20 @@ class ActionsMorph extends Record
         }
 
         return $actionsMorph;
+    }
+
+    public function createNewContent($content = null)
+    {
+        if (!$content) {
+            $content = [];
+        }
+        $content = array_merge([
+                                   'title' => 'Content #' . $this->id,
+                               ], $content);
+
+        $content = Content::create($content);
+
+        $this->setAndSave(['content_id' => $content->id]);
     }
 
 }
