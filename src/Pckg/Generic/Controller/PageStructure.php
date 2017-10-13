@@ -278,6 +278,7 @@ class PageStructure
             'padding'         => '',
             'margin'          => '',
             'scopes'          => '',
+            'scopesArr'          => [],
             'bgColor'         => '',
             'bgImage'         => '',
             'bgSize'          => '',

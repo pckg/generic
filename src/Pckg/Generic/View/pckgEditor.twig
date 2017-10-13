@@ -34,17 +34,22 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane" id="style">
-                            <label>Padding</label>
+                            <template v-for="(scopes, title) in availableScopes">
+                                <label v-text="title"></label>
+                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                    <a class="btn" :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                       v-for="(title, css) in scopes" v-text="title" @click.prevent="toggleScope(css)"></a>
+                                </div>
+                            </template>
+
+                            <label>Padding (@deprecated - use scopes)</label>
                             <input class="form-control" v-model="settings.padding"/>
 
-                            <label>Margin</label>
+                            <label>Margin (@deprecated - use scopes)</label>
                             <input class="form-control" v-model="settings.margin"/>
 
-                            <label>Class</label>
+                            <label>Class (@deprecated - use scopes)</label>
                             <input class="form-control" v-model="settings.class"/>
-
-                            <label>Scopes</label>
-                            <pckg-select v-model="settings.scopesArr" :initial-options="availableScopes"></pckg-select>
 
                             <div v-if="action.type == 'wrapper'">
                             </div>
@@ -293,6 +298,7 @@
                     margin: '',
                     'class': '',
                     scopes: [],
+                    scopesArr: [],
                     bgColor: '',
                     bgImage: '',
                     bgAttachment: '',
@@ -336,6 +342,16 @@
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
         methods: {
+            scopeSelected: function (scope) {
+                return this.settings.scopesArr.indexOf(scope) >= 0;
+            },
+            toggleScope: function (scope, group) {
+                if (this.scopeSelected(scope)) {
+                    utils.splice(this.settings.scopesArr, scope);
+                } else {
+                    this.settings.scopesArr.push(scope);
+                }
+            },
             addChild: function () {
                 $('#addNewActionModal').modal('show');
             },
