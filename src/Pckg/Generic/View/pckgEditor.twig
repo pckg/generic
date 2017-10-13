@@ -34,13 +34,16 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane" id="style">
-                            <template v-for="(scopes, title) in availableScopes">
-                                <label v-text="title"></label>
-                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                    <a class="btn" :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                       v-for="(title, css) in scopes" v-text="title" @click.prevent="toggleScope(css)"></a>
+                            <div class="row row-grid">
+                                <div v-for="(scopes, title) in availableScopes" class="col-md-6">
+                                    <label v-text="title"></label>
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                        <a class="btn" :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                           v-for="(title, css) in scopes" v-text="title"
+                                           @click.prevent="toggleScope(css)"></a>
+                                    </div>
                                 </div>
-                            </template>
+                            </div>
 
                             <label>Padding (@deprecated - use scopes)</label>
                             <input class="form-control" v-model="settings.padding"/>

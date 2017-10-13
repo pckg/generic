@@ -278,7 +278,7 @@ class PageStructure
             'padding'         => '',
             'margin'          => '',
             'scopes'          => '',
-            'scopesArr'          => [],
+            'scopesArr'       => [],
             'bgColor'         => '',
             'bgImage'         => '',
             'bgSize'          => '',
@@ -347,6 +347,8 @@ class PageStructure
 
             $settings->push($val, $key);
         }
+
+        $settings->push(explode(' ', $settings->getKey('class')), 'scopesArr');
 
         /**
          * Add path before image.
