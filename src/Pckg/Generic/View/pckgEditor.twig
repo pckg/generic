@@ -1,7 +1,7 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal'} %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
             {% block header %}
                 Edit block
             {% endblock %}
@@ -9,7 +9,7 @@
                 <div>
                     <!-- Nav tabs -->
                     <ul class="nav nav-pills" role="tablist">
-                        <li role="presentation" class="active">
+                        <li role="presentation" v-if="action.type == 'action'">
                             <a href="#content" aria-controls="content" role="tab"
                                data-toggle="tab">Content</a>
                         </li>
@@ -35,35 +35,39 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane" id="style">
                             <div class="row row-grid">
-                                <div v-for="(scopes, title) in availableScopes" class="col-md-6">
-                                    <label v-text="title"></label>
-                                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                        <a class="btn" :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                           v-for="(title, css) in scopes" v-text="title"
-                                           @click.prevent="toggleScope(css)"></a>
-                                    </div>
+                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes">
+                                    <label v-text="sectionTitle"></label>
+                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                            <a class="btn"
+                                               v-for="(title, css) in scopes"
+                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                               @click.prevent="toggleScope(css)">${ title }</a>
+                                        </div>
+                                    </template>
+                                    <template v-else v-for="(scopes, css) in scopes">
+                                        <label v-text="css"></label>
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                            <a class="btn"
+                                               v-for="(title, css) in scopes"
+                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                               @click.prevent="toggleScope(css)">${ title }</a>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
 
-                            <label>Padding (@deprecated - use scopes)</label>
-                            <input class="form-control" v-model="settings.padding"/>
-
-                            <label>Margin (@deprecated - use scopes)</label>
-                            <input class="form-control" v-model="settings.margin"/>
-
-                            <label>Class (@deprecated - use scopes)</label>
+                            <label>Class</label>
                             <input class="form-control" v-model="settings.class"/>
 
-                            <div v-if="action.type == 'wrapper'">
-                            </div>
-                            <div v-else-if="action.type == 'container'">
+                            <label>Style</label>
+                            <input class="form-control" v-model="settings.style"/>
+
+                            <div v-if="action.type == 'container'">
                                 <h4>Container</h4>
                                 <label>Container</label>
                                 <pckg-select v-model="settings.container"
                                              :initial-options="availableContainers"></pckg-select>
-                            </div>
-                            <div v-else-if="action.type == 'row'">
-
                             </div>
                             <div v-else-if="action.type == 'column'">
                                 <h4>Column</h4>
@@ -75,11 +79,6 @@
                                 <pckg-select v-model="settings.offset"
                                              :initial-options="availableOffsets"></pckg-select>
                             </div>
-                            <div v-else-if="action.type == 'action'">
-
-                            </div>
-                            <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + action.id">Edit in
-                                /maestro page structure</a>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="background">
                             <h4>Background</h4>
@@ -192,19 +191,17 @@
                                 <input class="form-control">
                             </template>
                         </div>
-                        <div role="tabpanel" class="tab-pane active" id="content">
-                            <template v-if="content">
-                                <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
-                                                 v-if="content"></pckg-htmleditor>
-                                <br/>
+                        <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
+                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
+                                             v-if="content"></pckg-htmleditor>
+                            <br/>
 
-                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
-                                <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
-                                </button>
+                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
+                            </button>
 
-                                <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
-                                    edit</a>
-                            </template>
+                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
+                                edit</a>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="permissions">
@@ -304,8 +301,9 @@
                     padding: '',
                     margin: '',
                     'class': '',
+                    width: [],
+                    offset: [],
                     scopes: [],
-                    scopesArr: [],
                     bgColor: '',
                     bgImage: '',
                     bgAttachment: '',
@@ -348,17 +346,37 @@
         created: function () {
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
+        watch: {
+            settings: function (oldVal, newVal) {
+                if (oldVal.width != newVal.width) {
+                    console.log("changing");
+                    $.each(oldVal.widths, function(width, i){
+                        this.removeActionClass(width);
+                    }.bind(this));
+
+                    $.each(newVal.widths, function(width, i){
+                        this.addActionClass(width);
+                    }.bind(this));
+                }
+            }
+        },
         methods: {
             scopeSelected: function (scope) {
-                return this.settings.scopesArr.indexOf(scope) >= 0;
+                return this.settings.scopes.indexOf(scope) >= 0;
+            },
+            removeActionClass: function (c) {
+                $('.' + this.action.type + '-' + this.action.id).removeClass(c);
+            },
+            addActionClass: function (c) {
+                $('.' + this.action.type + '-' + this.action.id).addClass(c);
             },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
-                    utils.splice(this.settings.scopesArr, scope);
-                    $('.' + this.action.type + '-' + this.action.id).removeClass(scope);
+                    utils.splice(this.settings.scopes, scope);
+                    this.removeActionClass(scope);
                 } else {
-                    this.settings.scopesArr.push(scope);
-                    $('.' + this.action.type + '-' + this.action.id).addClass(scope);
+                    this.settings.scopes.push(scope);
+                    this.addActionClass(scope);
                 }
             },
             addChild: function () {

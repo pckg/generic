@@ -276,10 +276,9 @@ class PageStructure
          */
         return [
             'class'           => '',
-            'padding'         => '',
-            'margin'          => '',
-            'scopes'          => '',
-            'scopesArr'       => [],
+            'style'           => '',
+            'width'           => [], // column
+            'offset'          => [], // column
             'bgColor'         => '',
             'bgImage'         => '',
             'bgSize'          => '',
@@ -355,21 +354,43 @@ class PageStructure
                                                                  ->all();
         $scopeClasses = [];
         $otherClasses = [];
+        $widthClasses = [];
+        $offsetClasses = [];
         foreach ($allClasses as $class) {
             $found = false;
             foreach (config('pckg.generic.scopes') as $title => $scopes) {
-                if (array_key_exists($class, $scopes)) {
-                    $scopeClasses[] = $class;
-                    $found = true;
-                    break;
+                if (in_array($title, ['Padding', 'Margin'])) {
+                    foreach ($scopes as $scps) {
+                        if (array_key_exists($class, $scps)) {
+                            $scopeClasses[] = $class;
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                } else {
+                    if (array_key_exists($class, $scopes)) {
+                        $scopeClasses[] = $class;
+                        $found = true;
+                        break;
+                    }
                 }
             }
             if (!$found) {
-                $otherClasses[] = $class;
+                if (strpos($class, 'col-') === 0) {
+                    if (strpos($class, '-offset-')) {
+                        $offsetClasses[] = $class;
+                    } else {
+                        $widthClasses[] = $class;
+                    }
+                } else {
+                    $otherClasses[] = $class;
+                }
             }
         }
 
-        $settings->push($scopeClasses, 'scopesArr');
+        $settings->push($scopeClasses, 'scopes');
+        $settings->push($offsetClasses, 'offset');
+        $settings->push($widthClasses, 'width');
         $settings->push(implode(' ', $otherClasses), 'class');
 
         /**
@@ -396,12 +417,14 @@ class PageStructure
         /**
          * Add scopes.
          */
-        $values['class'] .= ' ' . implode(' ', post('settings.scopesArr', []));
+        $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
+                            . ' ' . implode(' ', post('settings.width', []))
+                            . ' ' . implode(' ', post('settings.offset', []));
         $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
                                                             ->unique()
                                                             ->removeEmpty()
                                                             ->implode(' ');
-        collect($values)->removeKeys(['scopesArr', 'scopes'])->each(function($value, $key) use ($actionsMorph) {
+        collect($values)->removeKeys(['scopes', 'width', 'offset'])->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 

@@ -1,12 +1,12 @@
 <script type="text/x-template" id="vue-pckg-select">
     <div class="pckg-select" :class="styleClass">
-        <select v-if="multiple" class="form-control" multiple v-model="selectedMultiple">
+        <select v-if="multiple" class="form-control" multiple v-model="selected">
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
-        <select v-else class="form-control" v-model="selectedSingle">
+        <select v-else class="form-control" v-model="selected">
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
@@ -26,10 +26,7 @@
             event: 'input'
         },
         data: function () {
-            return {
-                selectedMultiple: Array.isArray(this.selected) ? this.selected : [this.selected],
-                selectedSingle: this.selected
-            };
+            return {};
         },
         props: {
             title: {
@@ -116,7 +113,7 @@
         },
         watch: {
             selected: function (newVal, oldVal) {
-                console.log("selected changed", newVal);
+                console.log("selected changed", newVal, oldVal);
                 this.refreshPicker(newVal);
             },
             /*selectedMultiple: function (newVal) {
@@ -163,10 +160,13 @@
                 this.refreshPicker(this.selected);
             },
             refreshPicker: function (val) {
-                console.log('emiting: ' + val);
+                console.log('@refreshPicker emiting: ', val);
                 this.$emit('input', val); // v-model
                 this.$emit('change', val); // change event
-                $(this.$el).find('select').trigger('vue.change', val);
+                Vue.nextTick(function () {
+                    $(this.$el).find('select').trigger('vue.change', val);
+                    $(this.$el).find('select').selectpicker('refresh');
+                }.bind(this));
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
