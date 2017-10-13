@@ -193,15 +193,19 @@
                             </template>
                         </div>
                         <div role="tabpanel" class="tab-pane active" id="content">
-                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"></pckg-htmleditor>
-                            <br/>
+                            <template v-if="content">
+                                <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
+                                                 v-if="content"></pckg-htmleditor>
+                                <br/>
 
-                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
-                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
-                            </button>
+                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                                <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
+                                </button>
+
+                                <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
+                                    edit</a>
+                            </template>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
-                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
-                                edit</a>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="permissions">
                             <p>... are waiting to be copied from backend</p>
@@ -351,8 +355,10 @@
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
                     utils.splice(this.settings.scopesArr, scope);
+                    $('.' + this.action.type + '-' + this.action.id).removeClass(scope);
                 } else {
                     this.settings.scopesArr.push(scope);
+                    $('.' + this.action.type + '-' + this.action.id).addClass(scope);
                 }
             },
             addChild: function () {
@@ -379,7 +385,12 @@
             },
             saveSettings: function () {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
-                    console.log(data);
+                    if (data.success) {
+                        $('#editBlockModal').modal('hide');
+                        return;
+                    }
+
+                    $dispatcher.$emit('notification:error', 'Error saving data');
                 });
             },
             duplicateContent: function () {

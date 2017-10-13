@@ -17,6 +17,7 @@ use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Manager\Upload;
+use Pckg\Stringify;
 
 class PageStructure
 {
@@ -348,7 +349,28 @@ class PageStructure
             $settings->push($val, $key);
         }
 
-        $settings->push(explode(' ', $settings->getKey('class')), 'scopesArr');
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
+                                                                 ->unique()
+                                                                 ->removeEmpty()
+                                                                 ->all();
+        $scopeClasses = [];
+        $otherClasses = [];
+        foreach ($allClasses as $class) {
+            $found = false;
+            foreach (config('pckg.generic.scopes') as $title => $scopes) {
+                if (array_key_exists($class, $scopes)) {
+                    $scopeClasses[] = $class;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $otherClasses[] = $class;
+            }
+        }
+
+        $settings->push($scopeClasses, 'scopesArr');
+        $settings->push(implode(' ', $otherClasses), 'class');
 
         /**
          * Add path before image.
@@ -375,7 +397,11 @@ class PageStructure
          * Add scopes.
          */
         $values['class'] .= ' ' . implode(' ', post('settings.scopesArr', []));
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
+        $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
+                                                            ->unique()
+                                                            ->removeEmpty()
+                                                            ->implode(' ');
+        collect($values)->removeKeys(['scopesArr', 'scopes'])->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
