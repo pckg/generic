@@ -347,17 +347,29 @@
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
         watch: {
-            settings: function (oldVal, newVal) {
-                if (oldVal.width != newVal.width) {
-                    console.log("changing");
-                    $.each(oldVal.widths, function(width, i){
+            'settings.width': {
+                handler: function (newVal, oldVal) {
+                    $.each(oldVal, function (i, width) {
                         this.removeActionClass(width);
                     }.bind(this));
 
-                    $.each(newVal.widths, function(width, i){
+                    $.each(newVal, function (i, width) {
                         this.addActionClass(width);
                     }.bind(this));
-                }
+                },
+                deep: true
+            },
+            'settings.offset': {
+                handler: function (newVal, oldVal) {
+                    $.each(oldVal, function (i, width) {
+                        this.removeActionClass(width);
+                    }.bind(this));
+
+                    $.each(newVal, function (i, width) {
+                        this.addActionClass(width);
+                    }.bind(this));
+                },
+                deep: true
             }
         },
         methods: {
@@ -365,10 +377,12 @@
                 return this.settings.scopes.indexOf(scope) >= 0;
             },
             removeActionClass: function (c) {
-                $('.' + this.action.type + '-' + this.action.id).removeClass(c);
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                $action.removeClass(c);
             },
             addActionClass: function (c) {
-                $('.' + this.action.type + '-' + this.action.id).addClass(c);
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                $action.addClass(c);
             },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
