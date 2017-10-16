@@ -4,7 +4,6 @@ namespace Pckg\Generic\Service\Generic;
 
 use Exception;
 use Pckg\Concept\Reflect;
-use Pckg\Framework\Router\Command\ResolveDependencies;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
 use Pckg\Generic\Record\Action as ActionRecord;
@@ -39,10 +38,10 @@ class Action
     public function __construct(ActionRecord $action, Route $route, $resolved = [])
     {
         $this->args = [
-            'content'   => $action->pivot->content,
-            'settings'  => $action->pivot->settings,
-            'route'     => $route,
-            'resolved'  => $resolved,
+            'content'  => $action->pivot->content,
+            'settings' => $action->pivot->settings,
+            'route'    => $route,
+            'resolved' => $resolved,
         ];
         $this->action = $action;
     }
@@ -133,7 +132,8 @@ class Action
             $return .= $this->getBackgroundVideoHtml();
 
             if ($this->getClass() && $this->getMethod()) {
-                $args = array_merge($this->args, ['action' => $this]);
+                $data = array_merge(['action' => $this], router()->get('data'));
+                $args = array_merge($this->args, $data);
 
                 if (isset($args['settings'])) {
                     /**
