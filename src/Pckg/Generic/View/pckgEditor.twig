@@ -1,6 +1,7 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
 
+        {# change to <pckg-modal title="Edit block"><slot name="content">...</slot></pckg-modal> #}
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
             {% block header %}
                 Edit block

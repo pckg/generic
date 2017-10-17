@@ -199,7 +199,9 @@ class Action
                 /**
                  * Parse view to string in all cases.
                  */
+                startMeasure('Parsing to string');
                 $result = (string)$result;
+                stopMeasure('Parsing to string');
 
                 /**
                  * Return built output.
