@@ -34,7 +34,7 @@
                 console.log('updating', this.id, this.value);
                 var editor = tinymce.get(this.id);
                 if (editor) {
-                    editor.setContent(this.value);
+                    editor.setContent(this.value || '');
                 }
             },
             initEditor: function () {
