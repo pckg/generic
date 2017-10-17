@@ -33,7 +33,7 @@
             updateEditorValue: function () {
                 var editor = tinymce.get(this.id);
                 if (editor) {
-                    editor.setContent(this.value);
+                    editor.setContent(this.value || '');
                 }
             },
             initEditor: function () {
