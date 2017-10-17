@@ -26,11 +26,12 @@
         watch: {
             value: function (n, o) {
                 console.log('value updated', n, o);
-                this.$nextTick(this.updateEditorValue);
+                this.$nextTick(this.updateEditorValue.bind(this));
             }
         },
         methods: {
             updateEditorValue: function () {
+                console.log('updating', this.id, this.value);
                 var editor = tinymce.get(this.id);
                 if (editor) {
                     editor.setContent(this.value);
