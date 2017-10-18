@@ -1,5 +1,5 @@
 <div class="pckg-generic-content-simple">
-    <div class="row {{ action.getSetting('noPadding') ? 'no-padding' : '' }}">
+    <div class="row {{ action.getSetting('noPadding') ? 'row-no-padding' : '' }}">
         {% if action.getSetting('picture') and action.getSetting('picturePosition') == 'left' %}
             <div class="{{ action.getSetting('pictureWidth') }} {{ action.getSetting('pictureOffset') }}">
                 <img src="{{ content.picture }}" class="img-responsive"/>

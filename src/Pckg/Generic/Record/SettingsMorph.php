@@ -44,9 +44,10 @@ class SettingsMorph extends Record
         return json_decode($this->value, true);
     }
 
-    public static function makeItHappen($key, $value, $morph, $poly)
+    public static function makeItHappen($key, $value, $morph, $poly, $type)
     {
         $setting = Setting::getOrCreate(['slug' => $key]);
+        $setting->setAndSave(['type' => $type]);
         $settingsMorph = SettingsMorph::getOrCreate([
                                                         'setting_id' => $setting->id,
                                                         'poly_id'    => $poly,
