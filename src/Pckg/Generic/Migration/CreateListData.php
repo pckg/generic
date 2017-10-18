@@ -14,6 +14,7 @@ class CreateListData extends Migration
         $lists = config('pckg.generic.lists', []);
 
         foreach ($lists as $listConfig) {
+            $skipWhenExisting = $listConfig['skipWhenExisting'] ?? false;
             $list = (new Lists())->where('slug', $listConfig['id'])->one();
 
             if (!$list) {
@@ -23,6 +24,8 @@ class CreateListData extends Migration
                                                'slug'  => $listConfig['id'],
                                                'title' => $listConfig['title'],
                                            ]);
+            } elseif ($skipWhenExisting) {
+                continue;
             }
 
             foreach ($listConfig['items'] as $key => $title) {
