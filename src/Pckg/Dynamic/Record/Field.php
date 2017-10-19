@@ -137,6 +137,10 @@ class Field extends DatabaseRecord
 
         $entity->limit(250);
 
+        if ($entity->isDeletable()) {
+            $entity->nonDeleted();
+        }
+
         return $this->fetchAndPrepareResultsForSelect($entity);
     }
 
