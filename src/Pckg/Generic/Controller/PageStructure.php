@@ -1,6 +1,5 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
@@ -406,6 +405,7 @@ class PageStructure
         $values = array_merge($this->getDefaultSettings(), post('settings'));
         $values = only($values, array_keys($this->getDefaultSettings()));
         unset($values['bgImage']);
+
         /**
          * Add scopes.
          */
@@ -419,6 +419,21 @@ class PageStructure
         collect($values)->removeKeys(['scopes', 'width', 'offset'])->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
+
+        /**
+         * Other settings, available for plugin.
+         *
+         * @T00D00
+         */
+        $values = only(post('settings'), ['dataScope']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
+        });
+
+        /**
+         * Set template.
+         */
+        $actionsMorph->setAndSave(['template' => post('template')]);
 
         return response()->respondWithSuccess();
     }

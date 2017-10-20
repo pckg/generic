@@ -162,6 +162,25 @@
                             </template>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="module">
+
+                            <template v-if="actionTemplates.length > 0">
+                                <label class="col-md-3">Template</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="action.template">
+                                        <option v-for="template in actionTemplates" :value="template">${ template }
+                                        </option>
+                                    </select>
+                                </div>
+                            </template>
+
+                            <template v-if="action.slug == 'derive-offers-list'">
+                                <h4>Derive offer lsit</h4>
+
+                                {{ _formService.addSelect('settings[dataScope]').setLabel('Data scope')
+                                .setAttribute('v-model', 'settings.dataScope')
+                                .addOptions({'forHomepage':'Homepage','forListing':'All'}) | raw }}
+                            </template>
+
                             <template v-if="action.slug == 'pckg-generic-content-simple'">
                                 <h4>Generic content module</h4>
 
@@ -211,10 +230,12 @@
                             <br/>
 
                             <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
-                            <button class="btn btn-warning" @click.prevent="duplicateContent">Copy #${ content.id }
+                            <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy #${
+                                content.id }
                             </button>
 
-                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id">Full
+                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
+                               v-if="content">Full
                                 edit</a>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                         </div>
@@ -358,7 +379,8 @@
                 },
                 partials: {{ partials | json_encode | raw }},
                 structures: {{ structures | json_encode | raw }},
-                pages: {{ pages | json_encode | raw }}
+                pages: {{ pages | json_encode | raw }},
+                templates: {{ config('pckg.generic.templates') | json_encode | raw }}
             };
         },
         created: function () {
@@ -455,7 +477,10 @@
                 }.bind(this));
             },
             saveSettings: function () {
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {
+                    settings: this.settings,
+                    template: this.action.template
+                }, function (data) {
                     if (data.success) {
                         $('#editBlockModal').modal('hide');
                         return;
@@ -481,6 +506,17 @@
             }
         },
         computed: {
+            actionTemplates: function () {
+                if (!this.action) {
+                    return [];
+                }
+
+                if (!this.templates[this.action.class] || !this.templates[this.action.class][this.action.method]) {
+                    return [];
+                }
+
+                return this.templates[this.action.class][this.action.method];
+            },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
                 var range = Array.apply(null, Array(13)).map(function (_, i) {

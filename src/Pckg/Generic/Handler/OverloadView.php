@@ -9,23 +9,23 @@ class OverloadView
     {
         $parts = collect(explode('/', $view));
         $controller = $parts->slice(0, 2)->implode('\\');
-        $subview = $parts->slice(3)->implode('\\');
+        $controller2 = $parts->slice(0, 2)->implode('/');
+        $subview = $parts->slice(3)->implode('/');
 
         foreach (config('pckg.generic.templates') as $ctrl => $views) {
             if (strpos($ctrl, $controller) !== 0) {
                 continue;
             }
 
-            foreach ($views as $view => $tpls) {
-                if (in_array($controller . ':' . $subview, $tpls)) {
+            foreach ($views as $v => $tpls) {
+                if (in_array($controller2 . ':' . $subview, $tpls)) {
                     // exact match was found, allowed
                     break 2;
                 }
 
                 $foundSimilar = false;
                 foreach ($tpls as $tpl) {
-                    $tpl = str_replace('/', '\\', $tpl);
-                    if (strpos($tpl, $controller . ':' . $subview) === 0) {
+                    if (strpos($tpl, $controller2 . ':' . $subview) === 0) {
                         $foundSimilar = true;
                         break;
                     }
@@ -36,7 +36,8 @@ class OverloadView
                 }
 
                 // set to new view
-                $twig->setFile(str_replace(':', '/View/', end($tpls)));
+                $file = str_replace(':', '/View/', end($tpls));
+                $twig->setFile($file);
                 break 2;
             }
         }

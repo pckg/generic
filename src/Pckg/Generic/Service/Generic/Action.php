@@ -81,11 +81,14 @@ class Action
         }
 
         $tree = [
-            'id'      => $this->action->pivot->id,
-            'title'   => $this->action->title,
-            'type'    => $this->getType(),
-            'actions' => [],
-            'slug'    => $this->action->slug,
+            'id'       => $this->action->pivot->id,
+            'title'    => $this->action->title,
+            'type'     => $this->getType(),
+            'class'    => $this->getClass(),
+            'method'   => $this->getMethod(),
+            'actions'  => [],
+            'slug'     => $this->action->slug,
+            'template' => $this->action->pivot->template,
         ];
 
         foreach ($this->action->getChildren as $action) {
