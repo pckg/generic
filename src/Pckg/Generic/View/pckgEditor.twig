@@ -483,8 +483,8 @@
         computed: {
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(12)).map(function (_, i) {
-                    return i + 1;
+                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                    return i;
                 });
 
                 $.each(sizes, function (i, size) {
@@ -497,8 +497,8 @@
             },
             availableOffsets: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(12)).map(function (_, i) {
-                    return i + 1;
+                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                    return i;
                 });
 
                 $.each(sizes, function (i, size) {

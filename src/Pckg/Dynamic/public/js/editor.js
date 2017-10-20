@@ -111,10 +111,12 @@ var initTinymce = function (selector, setup) {
                     }
                 ]
             },
-
             {
                 title: 'Font sizes',
                 items: [
+                    {
+                        title: 'XXS', format: 'font_size_xxs'
+                    },
                     {
                         title: 'XS', format: 'font_size_xs'
                     },
@@ -135,8 +137,28 @@ var initTinymce = function (selector, setup) {
                     },
                 ]
             },
+            {
+                title: 'Font colors',
+                items: [
+                    {
+                        title: 'Darken', format: 'colordarken'
+                    },
+                    {
+                        title: 'Darken+', format: 'colordarkenplus'
+                    },
+                    {
+                        title: 'Lighten', format: 'colorlighten'
+                    },
+                    {
+                        title: 'Lighten+', format: 'colorlightenplus'
+                    }
+                ]
+            },
         ],
         formats: {
+            font_size_xxs: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxs'
+            },
             font_size_xs: {
                 selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xs'
             },
@@ -166,6 +188,18 @@ var initTinymce = function (selector, setup) {
             },
             alignjustify: {
                 selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'
+            },
+            colordarken: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-darken'
+            },
+            colorlighten: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-lighten'
+            },
+            colordarkenplus: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-darken-plus'
+            },
+            colorlightenplus: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-lighten-plus'
             },
             button: {
                 selector: 'a', classes: 'button'
