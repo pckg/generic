@@ -49,7 +49,7 @@ class ActionsMorph extends Record
             'data'      => $data,
             'settings'  => $settings,
             'content'   => $this->content_id
-                ? $this->content(function(BelongsTo $content) { $content->joinTranslations(); })->data()
+                ? $this->content->data()
                 : [],
         ];
     }

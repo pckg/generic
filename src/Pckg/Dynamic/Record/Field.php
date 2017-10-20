@@ -86,7 +86,9 @@ class Field extends DatabaseRecord
                 $entity->{'with' . ucfirst($explodedEval[1])}(
                     function($relation) {
                         if ($relation->getRightEntity()->isTranslatable()) {
-                            $relation->getRightEntity()->joinTranslations();
+                            if (!$relation->getRightEntity()->isTranslated()) {
+                                $relation->getRightEntity()->joinTranslations();
+                            }
                         }
                     }
                 );

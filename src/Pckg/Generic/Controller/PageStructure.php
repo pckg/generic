@@ -62,7 +62,7 @@ class PageStructure
     public function getContentsAction()
     {
         return [
-            'contents' => (new Contents())->joinTranslations()->all(),
+            'contents' => (new Contents())->all(),
         ];
     }
 
@@ -292,17 +292,13 @@ class PageStructure
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         return response()->respondWithSuccess([
-                                                  'content' => $actionsMorph->content(function(BelongsTo $content) {
-                                                      $content->joinTranslations();
-                                                  }),
+                                                  'content' => $actionsMorph->content,
                                               ]);
     }
 
     public function postDuplicateActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
-        $content = $actionsMorph->content(function(BelongsTo $content) {
-            $content->joinTranslations();
-        })->saveAs();
+        $content = $actionsMorph->content->saveAs();
 
         $actionsMorph->setAndSave(['content_id' => $content->id]);
 
