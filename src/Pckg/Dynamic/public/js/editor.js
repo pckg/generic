@@ -1,12 +1,11 @@
 var pckgEditors = {};
 var initTinymce = function (selector, setup) {
     var selected = $('#' + selector);
-    console.log('initializing', selector, selected.length);
     selected.append('<div class="manual-dropzone"></div>');
     var manualDropzone = selected.parent().find('.manual-dropzone');
     return tinymce.init({
         setup: setup,
-        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css?' + new Date().getTime(),
+        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css?',
         selector: '#' + selector,
         height: 500,
         convert_urls: false,
@@ -19,59 +18,148 @@ var initTinymce = function (selector, setup) {
             {title: 'White', value: 'button color-light'},
         ],
         style_formats: [
-            {title: 'Headings', items: [
-                {title: 'Heading 1', format: 'h1'},
-                {title: 'Heading 2', format: 'h2'},
-                {title: 'Heading 3', format: 'h3'},
-                {title: 'Heading 4', format: 'h4'},
-                {title: 'Heading 5', format: 'h5'},
-                {title: 'Heading 6', format: 'h6'}
-            ]},
+            {
+                title: 'Headings',
+                items: [
+                    {
+                        title: 'Heading 1', format: 'h1'
+                    },
+                    {
+                        title: 'Heading 2', format: 'h2'
+                    },
+                    {
+                        title: 'Heading 3', format: 'h3'
+                    },
+                    {
+                        title: 'Heading 4', format: 'h4'
+                    },
+                    {
+                        title: 'Heading 5', format: 'h5'
+                    },
+                    {
+                        title: 'Heading 6', format: 'h6'
+                    }
+                ]
+            },
 
-            {title: 'Inline', items: [
-                {title: 'Bold', icon: 'bold', format: 'bold'},
-                {title: 'Italic', icon: 'italic', format: 'italic'},
-                {title: 'Underline', icon: 'underline', format: 'underline'},
-                {title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'},
-                {title: 'Superscript', icon: 'superscript', format: 'superscript'},
-                {title: 'Subscript', icon: 'subscript', format: 'subscript'},
-                {title: 'Code', icon: 'code', format: 'code'}
-            ]},
+            {
+                title: 'Inline',
+                items: [
+                    {
+                        title: 'Bold', icon: 'bold', format: 'bold'
+                    },
+                    {
+                        title: 'Italic', icon: 'italic', format: 'italic'
+                    },
+                    {
+                        title: 'Underline', icon: 'underline', format: 'underline'
+                    },
+                    {
+                        title: 'Strikethrough', icon: 'strikethrough', format: 'strikethrough'
+                    },
+                    {
+                        title: 'Superscript', icon: 'superscript', format: 'superscript'
+                    },
+                    {
+                        title: 'Subscript', icon: 'subscript', format: 'subscript'
+                    },
+                    {
+                        title: 'Code', icon: 'code', format: 'code'
+                    }
+                ]
+            },
 
-            {title: 'Blocks', items: [
-                {title: 'Paragraph', format: 'p'},
-                {title: 'Blockquote', format: 'blockquote'},
-                {title: 'Div', format: 'div'},
-                {title: 'Pre', format: 'pre'}
-            ]},
+            {
+                title: 'Blocks',
+                items: [
+                    {
+                        title: 'Paragraph', format: 'p'
+                    },
+                    {
+                        title: 'Blockquote', format: 'blockquote'
+                    },
+                    {
+                        title: 'Div', format: 'div'
+                    },
+                    {
+                        title: 'Pre', format: 'pre'
+                    }
+                ]
+            },
 
-            {title: 'Alignment', items: [
-                {title: 'Left', icon: 'alignleft', format: 'alignleft'},
-                {title: 'Center', icon: 'aligncenter', format: 'aligncenter'},
-                {title: 'Right', icon: 'alignright', format: 'alignright'},
-                {title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
-            ]},
+            {
+                title: 'Alignment',
+                items: [
+                    {
+                        title: 'Left', icon: 'alignleft', format: 'alignleft'
+                    },
+                    {
+                        title: 'Center', icon: 'aligncenter', format: 'aligncenter'
+                    },
+                    {
+                        title: 'Right', icon: 'alignright', format: 'alignright'
+                    },
+                    {
+                        title: 'Justify', icon: 'alignjustify', format: 'alignjustify'
+                    }
+                ]
+            },
 
-            {title: 'Font sizes', items: [
-                {title: 'XS', format : 'font_size_xs'},
-                {title: 'S', format : 'font_size_s'},
-                {title: 'M', format : 'font_size_m'},
-                {title: 'L', format : 'font_size_l'},
-                {title: 'XL', format : 'font_size_xl'},
-                {title: 'XXL', format : 'font_size_xxl'},
-            ]},
+            {
+                title: 'Font sizes',
+                items: [
+                    {
+                        title: 'XS', format: 'font_size_xs'
+                    },
+                    {
+                        title: 'S', format: 'font_size_s'
+                    },
+                    {
+                        title: 'M', format: 'font_size_m'
+                    },
+                    {
+                        title: 'L', format: 'font_size_l'
+                    },
+                    {
+                        title: 'XL', format: 'font_size_xl'
+                    },
+                    {
+                        title: 'XXL', format: 'font_size_xxl'
+                    },
+                ]
+            },
         ],
         formats: {
-            font_size_xs: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xs'},
-            font_size_s: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-s'},
-            font_size_m: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-m'},
-            font_size_l: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-l'},
-            font_size_xl: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xl'},
-            font_size_xxl: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'},
-            alignleft: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-left'},
-            aligncenter: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-center'},
-            alignright: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-right'},
-            alignjustify: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'},
+            font_size_xs: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xs'
+            },
+            font_size_s: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-s'
+            },
+            font_size_m: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-m'
+            },
+            font_size_l: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-l'
+            },
+            font_size_xl: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xl'
+            },
+            font_size_xxl: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'
+            },
+            alignleft: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-left'
+            },
+            aligncenter: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-center'
+            },
+            alignright: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-right'
+            },
+            alignjustify: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'
+            },
         },
         extended_valid_elements: 'pc-kg',
         custom_elements: 'pc-kg',
@@ -86,7 +174,7 @@ var initTinymce = function (selector, setup) {
         image_advtab: true,
         allow_html_in_named_anchor: true,
         allow_unsafe_link_target: true,
-        forced_root_block: 'p',
+        forced_root_block: false, // 'p',
         protect: [
             // /{{[^}]+}}/g,  // Protect {{ }}
             // /{%[^}]+%}/g,  // Protect {% %}
@@ -103,8 +191,6 @@ var initTinymce = function (selector, setup) {
         images_upload_url: '/dynamic/uploader',
         automatic_uploads: false,
         file_picker_callback: function (cb, value, meta) {
-            console.log(cb, value, meta);
-
             manualDropzone.dropzone({
                 url: '/dynamic/uploader',
                 previewsContainer: null,
@@ -112,7 +198,6 @@ var initTinymce = function (selector, setup) {
                 maxFilesize: 8,
                 success: function (file, data) {
                     data = $.parseJSON(data);
-                    console.log(file, data);
 
                     cb(data.url, {title: null, class: 'pckg-img'});
                 }
@@ -179,9 +264,9 @@ $(document).ready(function () {
         });
 
         var menus = [];
-        $.each(Pckg.config.editor.variables || {}, function(parentName, subVariables){
+        $.each(Pckg.config.editor.variables || {}, function (parentName, subVariables) {
             var submenus = [];
-            $.each(subVariables, function(name, key){
+            $.each(subVariables, function (name, key) {
                 submenus.push({
                     text: name,
                     onclick: function () {
@@ -202,41 +287,41 @@ $(document).ready(function () {
             text: 'Variables',
             context: 'tools',
             menu: menus/*[
-                {
-                    text: 'Order',
-                    menu: [
-                        {
-                            text: 'ID',
-                            onclick: function () {
-                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:id</span>');
-                            }
-                        },
-                        {
-                            text: 'Hash',
-                            onclick: function () {
-                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:hash</span>');
-                            }
-                        }
-                    ]
-                },
-                {
-                    text: 'Company',
-                    menu: [
-                        {
-                            text: 'Short name',
-                            onclick: function () {
-                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:short_name</span>');
-                            }
-                        },
-                        {
-                            text: 'Long name',
-                            onclick: function () {
-                                editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:long_name</span>');
-                            }
-                        }
-                    ]
-                }
-            ]*/
+             {
+             text: 'Order',
+             menu: [
+             {
+             text: 'ID',
+             onclick: function () {
+             editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:id</span>');
+             }
+             },
+             {
+             text: 'Hash',
+             onclick: function () {
+             editor.insertContent('<span class="tinymce-pckg mceNonEditable">order:hash</span>');
+             }
+             }
+             ]
+             },
+             {
+             text: 'Company',
+             menu: [
+             {
+             text: 'Short name',
+             onclick: function () {
+             editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:short_name</span>');
+             }
+             },
+             {
+             text: 'Long name',
+             onclick: function () {
+             editor.insertContent('<span class="tinymce-pckg mceNonEditable">company:long_name</span>');
+             }
+             }
+             ]
+             }
+             ]*/
         });
     });
 
@@ -260,7 +345,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.pckg-editor-enabled').each(function(){
+    $('.pckg-editor-enabled').each(function () {
         var id = $(this).attr('id');
         pckgEditors[id] = initTinymce(id);
     });
@@ -279,7 +364,7 @@ $(document).ready(function () {
      * this workaround makes magic happen
      * thanks @harry: http://stackoverflow.com/questions/18111582/tinymce-4-links-plugin-modal-in-not-editable
      */
-    $(document).on('focusin', function(e) {
+    $(document).on('focusin', function (e) {
         if ($(e.target).closest(".mce-window").length) {
             e.stopImmediatePropagation();
         }
