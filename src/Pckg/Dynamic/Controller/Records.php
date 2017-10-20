@@ -21,10 +21,10 @@ use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
-use Pckg\Framework\Inter\Record\Language;
-use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
+use Pckg\Locale\Lang;
+use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
@@ -713,7 +713,11 @@ class Records extends Controller
             $lang = (new Lang())->setLangId($record->language_id);
             $entity->setTranslatableLang($lang);
         }
-        $record->save($entity);
+        if (post('as_new')) {
+            $record = $record->saveAs();
+        } else {
+            $record->save($entity);
+        }
 
         if ($this->post()->p17n) {
             $this->saveP17n($record, $entity);
@@ -721,7 +725,10 @@ class Records extends Controller
 
         flash('dynamic.records.edit.success', __('dynamic.records.edit.success'));
 
-        return $this->response()->respondWithSuccessRedirect();
+        return $this->response()->respondWithSuccessRedirect(post('as_new') ? url('dynamic.record.edit', [
+            'table'  => $table,
+            'record' => $record,
+        ]) : null);
     }
 
     protected function saveP17n(

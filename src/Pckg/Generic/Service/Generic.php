@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
+use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
@@ -77,21 +78,25 @@ class Generic
         $this->route = $route;
 
         /**
-         * Custom resolvers.
+         * Route resolvers.
          */
-        $resolvers = [];
+        $resolved = [];//(new Router\Command\ResolveDependencies(json_decode($route->resolvers, true)));
         if ($route->resolvers) {
-            foreach (json_decode($route->resolvers, true) as $key => $resolver) {
-                $resolvers[$key] = $resolver;
+            $router = router()->get();
+            foreach (json_decode($route->resolvers, true) as $key => $conf) {
+                if (is_array($conf)) {
+                    $resolver = array_keys($conf)[0];
+                    $resolved[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                } else {
+                    $resolved[$key] = Reflect::create($conf)->resolve($router[$key] ?? router()->getCleanUri());
+                }
             }
         }
 
         $actions = $route->actions(
             function(MorphedBy $actions) {
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             }
         );
 
@@ -104,11 +109,11 @@ class Generic
         });
 
         $actions->each(
-            function(ActionRecord $action) use ($resolvers) {
+            function(ActionRecord $action) use ($resolved) {
                 $this->addAction(
                     $action,
                     $this->route,
-                    $resolvers
+                    $resolved
                 );
             }
         );
@@ -143,11 +148,11 @@ class Generic
     public function addAction(
         \Pckg\Generic\Record\Action $action,
         Route $route,
-        $resolvers = []
+        $resolved = []
     ) {
         $block = $this->touchBlock($action->pivot->variable_id ? $action->pivot->variable->slug : null);
 
-        $block->addAction($action = new Action($action, $route, $resolvers));
+        $block->addAction($action = new Action($action, $route, $resolved));
 
         return $action;
     }

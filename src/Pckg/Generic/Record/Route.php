@@ -41,7 +41,12 @@ class Route extends Record
     public function export()
     {
         $route = $this->data();
-        $route['settings'] = $this->settings->map('pivot')->toArray();
+        $route['settings'] = $this->settings->map(function(Setting $setting) {
+            $data = $setting->pivot->data();
+            $data['slug'] = $setting->slug;
+
+            return $data;
+        })->toArray();
 
         return [
             'route'   => $route,
@@ -57,6 +62,7 @@ class Route extends Record
     public function import($export)
     {
         foreach ($export['route']['settings'] ?? [] as $setting) {
+            $setting['setting_id'] = Setting::getOrCreate(['slug' => $setting['slug']])->id;
             $setting['poly_id'] = $this->id;
             unset($setting['id']);
             SettingsMorph::create($setting);

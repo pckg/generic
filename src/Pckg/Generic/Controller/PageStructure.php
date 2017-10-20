@@ -17,6 +17,7 @@ use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Manager\Upload;
+use Pckg\Stringify;
 
 class PageStructure
 {
@@ -61,7 +62,7 @@ class PageStructure
     public function getContentsAction()
     {
         return [
-            'contents' => (new Contents())->joinTranslations()->all(),
+            'contents' => (new Contents())->all(),
         ];
     }
 
@@ -77,9 +78,7 @@ class PageStructure
         return [
             'actionsMorphs' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
             })
@@ -120,9 +119,7 @@ class PageStructure
         return [
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })
                                     ->sortBy(function(Action $action) {
                                         return $action->pivot->order;
@@ -275,9 +272,9 @@ class PageStructure
          */
         return [
             'class'           => '',
-            'padding'         => '',
-            'margin'          => '',
-            'scopes'          => '',
+            'style'           => '',
+            'width'           => [], // column
+            'offset'          => [], // column
             'bgColor'         => '',
             'bgImage'         => '',
             'bgSize'          => '',
@@ -295,17 +292,13 @@ class PageStructure
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         return response()->respondWithSuccess([
-                                                  'content' => $actionsMorph->content(function(BelongsTo $content) {
-                                                      $content->joinTranslations();
-                                                  }),
+                                                  'content' => $actionsMorph->content,
                                               ]);
     }
 
     public function postDuplicateActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
-        $content = $actionsMorph->content(function(BelongsTo $content) {
-            $content->joinTranslations();
-        })->saveAs();
+        $content = $actionsMorph->content->saveAs();
 
         $actionsMorph->setAndSave(['content_id' => $content->id]);
 
@@ -347,6 +340,51 @@ class PageStructure
             $settings->push($val, $key);
         }
 
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
+                                                                 ->unique()
+                                                                 ->removeEmpty()
+                                                                 ->all();
+        $scopeClasses = [];
+        $otherClasses = [];
+        $widthClasses = [];
+        $offsetClasses = [];
+        foreach ($allClasses as $class) {
+            $found = false;
+            foreach (config('pckg.generic.scopes') as $title => $scopes) {
+                if (in_array($title, ['Padding', 'Margin'])) {
+                    foreach ($scopes as $scps) {
+                        if (array_key_exists($class, $scps)) {
+                            $scopeClasses[] = $class;
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                } else {
+                    if (array_key_exists($class, $scopes)) {
+                        $scopeClasses[] = $class;
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+            if (!$found) {
+                if (strpos($class, 'col-') === 0) {
+                    if (strpos($class, '-offset-')) {
+                        $offsetClasses[] = $class;
+                    } else {
+                        $widthClasses[] = $class;
+                    }
+                } else {
+                    $otherClasses[] = $class;
+                }
+            }
+        }
+
+        $settings->push($scopeClasses, 'scopes');
+        $settings->push($offsetClasses, 'offset');
+        $settings->push($widthClasses, 'width');
+        $settings->push(implode(' ', $otherClasses), 'class');
+
         /**
          * Add path before image.
          */
@@ -371,8 +409,14 @@ class PageStructure
         /**
          * Add scopes.
          */
-        $values['class'] .= ' ' . implode(' ', post('settings.scopesArr', []));
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
+        $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
+                            . ' ' . implode(' ', post('settings.width', []))
+                            . ' ' . implode(' ', post('settings.offset', []));
+        $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
+                                                            ->unique()
+                                                            ->removeEmpty()
+                                                            ->implode(' ');
+        collect($values)->removeKeys(['scopes', 'width', 'offset'])->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
@@ -408,6 +452,13 @@ class PageStructure
         $content->setAndSave(['content' => post('content.content', null)]);
 
         return response()->respondWithSuccess(['content' => $content]);
+    }
+
+    public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
+    {
+        $actionsMorph->addPartial(post('partial', null));
+
+        return response()->respondWithSuccess();
     }
 
 }

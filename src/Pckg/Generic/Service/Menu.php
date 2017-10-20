@@ -10,11 +10,12 @@ class Menu
 
     public function build($slug, $repository = null, $language = null, $permissions = false)
     {
-        $menus = new Menus();
-
+        $repositoryObject = null;
         if ($repository) {
-            $menus->setRepository(context()->get(Repository::class . ($repository ? '.' . $repository : '')));
+            $repositoryObject = context()->get(Repository::class . ($repository ? '.' . $repository : ''));
         }
+
+        $menus = new Menus($repositoryObject);
 
         $menu = runInLocale(
             function() use ($menus, $slug, $permissions) {

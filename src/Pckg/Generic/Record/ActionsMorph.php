@@ -1,8 +1,10 @@
 <?php namespace Pckg\Generic\Record;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Generic\Entity\ActionsMorphs;
+use Pckg\Generic\Service\Partials\AbstractPartial;
 
 class ActionsMorph extends Record
 {
@@ -33,7 +35,13 @@ class ActionsMorph extends Record
          *         - export contents (translations)
          */
         $data = $this->data();
-        $settings = $this->settings->map('pivot')->toArray();
+        $data['action_slug'] = $this->action->slug;
+        $settings = $this->settings->map(function(Setting $setting) {
+            $data = $setting->pivot->data();
+            $data['slug'] = $setting->slug;
+
+            return $data;
+        })->toArray();
 
         return [
             'parent_id' => $this->parent_id,
@@ -41,7 +49,7 @@ class ActionsMorph extends Record
             'data'      => $data,
             'settings'  => $settings,
             'content'   => $this->content_id
-                ? $this->content(function(BelongsTo $content) { $content->joinTranslations(); })->data()
+                ? $this->content->data()
                 : [],
         ];
     }
@@ -65,6 +73,7 @@ class ActionsMorph extends Record
          * Set new route id.
          */
         $data['poly_id'] = $route->id;
+        $data['action_id'] = Action::getOrCreate(['slug' => $data['action_slug']])->id;
 
         /**
          * Clone actions morph.
@@ -75,6 +84,7 @@ class ActionsMorph extends Record
          * Clone settings.
          */
         foreach ($export['settings'] ?? [] as $setting) {
+            $setting['setting_id'] = Setting::getOrCreate(['slug' => $setting['slug']])->id;
             $setting['poly_id'] = $actionsMorph->id;
             unset($setting['id']);
             SettingsMorph::create($setting);
@@ -89,6 +99,39 @@ class ActionsMorph extends Record
         }
 
         return $actionsMorph;
+    }
+
+    public function createNewContent($content = null)
+    {
+        if (!$content) {
+            $content = [];
+        } else if (is_string($content)) {
+            $content = ['content' => $content];
+        }
+
+        $content = array_merge([
+                                   'title' => 'Content #' . $this->id,
+                               ], $content);
+
+        $content = Content::create($content);
+
+        $this->setAndSave(['content_id' => $content->id]);
+    }
+
+    public function addPartial($partial)
+    {
+        $partial = $this->preparePartial($partial);
+        $partial->add($this);
+    }
+
+    /**
+     * @param $partial
+     *
+     * @return object|AbstractPartial
+     */
+    protected function preparePartial($partial)
+    {
+        return Reflect::create($partial);
     }
 
 }

@@ -18,6 +18,11 @@ class Contents extends Entity
      */
     protected $record = Content::class;
 
+    public function boot()
+    {
+        $this->joinTranslations();
+    }
+
     public function actions()
     {
         return $this->morphedBy(Actions::class);
@@ -26,7 +31,7 @@ class Contents extends Entity
     public function contents()
     {
         return $this->hasMany(Contents::class)
-            ->foreignKey('parent_id');
+                    ->foreignKey('parent_id');
     }
 
 }

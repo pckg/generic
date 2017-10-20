@@ -25,24 +25,33 @@
          },*/
         watch: {
             value: function (n, o) {
-                console.log('value updated', n, o);
-                this.$nextTick(this.updateEditorValue);
+                if (n != o) {
+                    console.log('value updated', n, o);
+                    this.$nextTick(this.updateEditorValue.bind(this));
+                }
             }
         },
         methods: {
             updateEditorValue: function () {
+                console.log('updating', this.id, this.value);
                 var editor = tinymce.get(this.id);
                 if (editor) {
-                    editor.setContent(this.value);
+                    var currentContent = editor.getContent();
+                    if (this.value != currentContent) {
+                        editor.setContent(this.value || '');
+                    }
                 }
             },
             initEditor: function () {
                 console.log('initializing');
                 var editor = initTinymce(this.id, function (editor) {
                     editor.on('Change', function (e) {
-                        console.log('changed');
-                        this.$emit('input', tinymce.get(this.id).getContent())
-                        //this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                        console.log('changed, emiting input');
+                        this.$emit('input', tinymce.get(this.id).getContent());
+                        this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                    }.bind(this)).on('KeyDown', function (e) {
+                        console.log('down, emiting input');
+                        this.$emit('input', tinymce.get(this.id).getContent());
                     }.bind(this));
                 }.bind(this));
 

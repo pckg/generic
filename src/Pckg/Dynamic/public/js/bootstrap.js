@@ -137,22 +137,28 @@ $(document).ready(function () {
             if (collapsed) {
                 //show submenu
                 $(target).addClass('in');
+
                 //add class to parent
                 $(target).parent().addClass('hoveractive');
+
                 //show submenu background
                 //$('.maestro-sidebar-submenu-background').show();
             }
+
             //when user leaves the submenu with mouse
             $(target).parent().on('mouseleave', function () {
                 if (collapsed) {
                     //hide submenu
                     $(target).removeClass('in');
+
                     //remove class from parent
                     $(target).parent().removeClass('hoveractive');
+
                     //hide  submenu background
                     //$('.maestro-sidebar-submenu-background').hide();
                 }
             })
+
             //prevent click action on menu
                 .on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
                     if (collapsed) {
