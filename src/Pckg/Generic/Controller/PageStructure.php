@@ -78,9 +78,7 @@ class PageStructure
         return [
             'actionsMorphs' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
             })
@@ -121,9 +119,7 @@ class PageStructure
         return [
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })
                                     ->sortBy(function(Action $action) {
                                         return $action->pivot->order;

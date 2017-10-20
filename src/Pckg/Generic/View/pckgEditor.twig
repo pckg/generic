@@ -23,6 +23,10 @@
                                data-toggle="tab">Style</a>
                         </li>
                         <li role="presentation">
+                            <a href="#box" aria-controls="style" role="tab"
+                               data-toggle="tab">Box</a>
+                        </li>
+                        <li role="presentation">
                             <a href="#background" aria-controls="background" role="tab"
                                data-toggle="tab">Background</a>
                         </li>
@@ -36,26 +40,19 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane" id="style">
                             <div class="row row-grid">
-                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes">
-                                    <label v-text="sectionTitle"></label>
+                                <template v-for="(scopes, sectionTitle) in availableScopes">
                                     <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
-                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                            <a class="btn"
-                                               v-for="(title, css) in scopes"
-                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                               @click.prevent="toggleScope(css)">${ title }</a>
+                                        <div :class="scopes.length > 5 ? 'col-md-12' : 'col-md-6'">
+                                            <label v-text="sectionTitle"></label>
+                                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                                <a class="btn"
+                                                   v-for="(title, css) in scopes"
+                                                   :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                                   @click.prevent="toggleScope(css)">${ title }</a>
+                                            </div>
                                         </div>
                                     </template>
-                                    <template v-else v-for="(scopes, css) in scopes">
-                                        <label v-text="css"></label>
-                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                            <a class="btn"
-                                               v-for="(title, css) in scopes"
-                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                               @click.prevent="toggleScope(css)">${ title }</a>
-                                        </div>
-                                    </template>
-                                </div>
+                                </template>
                             </div>
 
                             <label>Class</label>
@@ -63,7 +60,8 @@
 
                             <label>Style</label>
                             <input class="form-control" v-model="settings.style"/>
-
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="box">
                             <div v-if="action.type == 'container'">
                                 <h4>Container</h4>
                                 <label>Container</label>
@@ -79,6 +77,21 @@
                                 <label>Offset</label>
                                 <pckg-select v-model="settings.offset"
                                              :initial-options="availableOffsets"></pckg-select>
+                            </div>
+
+                            <div class="row row-grid">
+                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes">
+                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1"
+                                              v-for="(scopes, css) in scopes">
+                                        <label v-text="sectionTitle + ' ' + css"></label>
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                            <a class="btn"
+                                               v-for="(title, css) in scopes"
+                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                               @click.prevent="toggleScope(css)">${ title }</a>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="background">
@@ -239,6 +252,10 @@
                             </li>
                         </ul>
                     </div>
+                    <a type="button" href="#" title="Toggle transparency" class="btn btn-default"
+                       @click.prevent="toggleTransparency">
+                        <i aria-hidden="true" class="fa fa-plus"></i> Toggle transparency
+                    </a>
                 </div>
 
                 <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
@@ -371,11 +388,32 @@
                     }.bind(this));
                 },
                 deep: true
+            },
+            'content.content': {
+                handler: function (newVal, oldVal) {
+                    this.changeContent(newVal);
+                },
+                deep: true
             }
         },
         methods: {
+            toggleTransparency: function () {
+                $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
+            },
             scopeSelected: function (scope) {
                 return this.settings.scopes.indexOf(scope) >= 0;
+            },
+            changeContent: function (content) {
+                if (this.action.type != 'action') {
+                    return;
+                }
+
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                var $content = $action.find('.bind-content');
+
+                if ($content.length > 0) {
+                    $content.html(content);
+                }
             },
             removeActionClass: function (c) {
                 var $action = $('.' + this.action.type + '-' + this.action.id);

@@ -57,11 +57,7 @@ class Routes extends Entity
                     ->withActions(
                         function(MorphsMany $relation) {
                             $relation->getMiddleEntity()->withVariable();
-                            $relation->withContents(
-                                function(HasMany $relation) {
-                                    $relation->joinTranslations();
-                                }
-                            );
+                            $relation->withContents();
                         }
                     );
     }

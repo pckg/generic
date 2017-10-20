@@ -96,9 +96,7 @@ class Generic
         $actions = $route->actions(
             function(MorphedBy $actions) {
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             }
         );
 
