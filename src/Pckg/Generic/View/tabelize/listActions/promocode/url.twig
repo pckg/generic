@@ -1,0 +1,50 @@
+<script type="text/x-template" id="derive-promocode-tabelize-url">
+    <div>
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'promoCodeUrl'} %}
+            {% block header %}
+                Promo code link
+            {% endblock %}
+            {% block body %}
+                <p>{{ __('pckg.generic.promocode.show_uri') }}:</p>
+                <code>/?ref=${record.code}</code>
+            {% endblock %}
+        {% endembed %}
+    </div>
+</script>
+
+<script>
+    (function (Vue, $, utils, data) {
+
+        Vue.component('derive-promocode-tabelize-url', {
+            mixins: [pckgDelimiters],
+            name: 'derive-promocode-tabelize-url',
+            template: '#derive-promocode-tabelize-url',
+            methods: {
+                init: function (records) {
+                    this.record = utils.collect(records)[0];
+
+                    $('#promoCodeUrl').modal('show');
+                }
+            },
+            computed: {
+
+            },
+            data: function () {
+                return {
+                    record: {}
+                };
+            },
+            created: function () {
+                $dispatcher.$on('record:url', this.init);
+                $dispatcher.$on('entity:url', this.init);
+            },
+            beforeDestroy: function () {
+                $dispatcher.$off('record:url', this.init);
+                $dispatcher.$off('entity:url', this.init);
+            }
+        });
+
+    })(Vue, jQuery, utils, data);
+</script>
+
+<derive-promocode-tabelize-url></derive-promocode-tabelize-url>
