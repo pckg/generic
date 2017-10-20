@@ -5,17 +5,21 @@ var initTinymce = function (selector, setup) {
     var manualDropzone = selected.parent().find('.manual-dropzone');
     return tinymce.init({
         setup: setup,
-        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css?',
+        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
         selector: '#' + selector,
         height: 500,
         convert_urls: false,
         theme: 'modern',
         link_class_list: [
             {title: 'Link', value: ''},
+            {title: 'Button', value: 'button'},
+            {title: 'Bordered button', value: 'button button-bordered'},
+            {title: 'No shadow button', value: 'button no-shadow'},
+            {title: 'Shadow button', value: 'button shadow'},
             {title: 'Primary color', value: 'button color-primary'},
             {title: 'Secondary color', value: 'button color-secondary'},
-            {title: 'Black', value: 'button color-dark'},
-            {title: 'White', value: 'button color-light'},
+            {title: 'Dark button', value: 'button color-dark'},
+            {title: 'Light button', value: 'button color-light'}
         ],
         style_formats: [
             {
@@ -83,6 +87,9 @@ var initTinymce = function (selector, setup) {
                     },
                     {
                         title: 'Pre', format: 'pre'
+                    },
+                    {
+                        title: 'Button', format: 'button'
                     }
                 ]
             },
@@ -160,6 +167,9 @@ var initTinymce = function (selector, setup) {
             alignjustify: {
                 selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'
             },
+            button: {
+                selector: 'a', classes: 'button'
+            }
         },
         extended_valid_elements: 'pc-kg',
         custom_elements: 'pc-kg',
