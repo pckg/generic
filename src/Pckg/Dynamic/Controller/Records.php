@@ -146,6 +146,10 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
+        if ($viewType == 'full') {
+            $this->seoManager()->setTitle($tableRecord->title . ' - ' . config('site.title'));
+        }
+
         /**
          * Set table so sub-services can reuse it later.
          */
@@ -430,6 +434,9 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
     {
+        $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' .
+                                      $record->id . ' - ' . config('site.title'));
+
         $listableFields = $table->listableFields;
         if (!$listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');

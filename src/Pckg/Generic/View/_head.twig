@@ -38,6 +38,7 @@
     Pckg.config = {};
     Pckg.config.locale = {
         current: '{{ _localeManager.getCurrent() }}',
+        decimals: {{ config('pckg.locale.decimals') }},
         format: {
             dateMoment: 'LL',
             timeMoment: 'LT'
