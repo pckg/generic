@@ -27,6 +27,10 @@ class Contents extends Entity
     {
         return $this->morphedBy(Actions::class);
     }
+    public function contents()
+    {
+        return $this->hasMany(Contents::class)->foreignKey("parent_id");
+    }
 
     public function contents()
     {
