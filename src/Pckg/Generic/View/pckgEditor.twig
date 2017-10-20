@@ -174,11 +174,19 @@
                             </template>
 
                             <template v-if="action.slug == 'derive-offers-list'">
-                                <h4>Derive offer lsit</h4>
+                                <h4>Derive offer list</h4>
 
                                 {{ _formService.addSelect('settings[dataScope]').setLabel('Data scope')
                                 .setAttribute('v-model', 'settings.dataScope')
                                 .addOptions({'forHomepage':'Homepage','forListing':'All'}) | raw }}
+                            </template>
+
+                            <template v-if="action.slug == 'derive-content-hero'">
+                                <h4>Hero</h4>
+
+                                {{ _formService.addSelect('settings[viewStyle]').setLabel('View style')
+                                .setAttribute('v-model', 'settings.viewStyle')
+                                .addOptions({'hero-large-title':'Large title','hero-large-content':'Large content','hero-small-title':'Small title'}) | raw }}
                             </template>
 
                             <template v-if="action.slug == 'pckg-generic-content-simple'">

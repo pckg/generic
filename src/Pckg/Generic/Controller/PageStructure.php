@@ -425,7 +425,7 @@ class PageStructure
          *
          * @T00D00
          */
-        $values = only(post('settings'), ['dataScope']);
+        $values = only(post('settings'), ['dataScope', 'viewStyle']);
         collect($values)->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
