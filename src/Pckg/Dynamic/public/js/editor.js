@@ -1,9 +1,10 @@
 var pckgEditors = {};
-var initTinymce = function (selector, setup) {
+var initTinymce = function (selector, setup, config) {
     var selected = $('#' + selector);
     selected.append('<div class="manual-dropzone"></div>');
     var manualDropzone = selected.parent().find('.manual-dropzone');
-    return tinymce.init({
+
+    var defaultConfig = {
         setup: setup,
         content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
         selector: '#' + selector,
@@ -277,7 +278,15 @@ var initTinymce = function (selector, setup) {
             /*
              console.log(callback, value, meta);*/
         }
-    });
+    };
+
+    if (config) {
+        $.each(config, function (key, val) {
+            defaultConfig[key] = val;
+        });
+    }
+
+    return tinymce.init(defaultConfig);
 };
 
 $(document).ready(function () {

@@ -10,7 +10,7 @@ class OverloadView
         if (!$view) {
             return;
         }
-        
+
         $parts = collect(explode('/', $view));
         $controller = $parts->slice(0, 2)->implode('\\');
         $controller2 = $parts->slice(0, 2)->implode('/');

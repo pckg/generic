@@ -233,7 +233,7 @@
                             </template>
                         </div>
                         <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
-                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
+                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor" forced-root-block="p"
                                              v-if="content"></pckg-htmleditor>
                             <br/>
 

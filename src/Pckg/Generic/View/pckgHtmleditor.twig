@@ -17,6 +17,10 @@
             id: {
                 default: 'pckg-htmleditor',
                 type: String
+            },
+            forcedRootBlock: {
+                type: Boolean,
+                default: false
             }
         },
         /*model: {
@@ -53,7 +57,7 @@
                         console.log('down, emiting input');
                         this.$emit('input', tinymce.get(this.id).getContent());
                     }.bind(this));
-                }.bind(this));
+                }.bind(this), {forced_root_block: this.forcedRootBlock});
 
                 //console.log(editor);
                 //tinymce.get(this.id).setContent(this.value);
