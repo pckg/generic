@@ -163,7 +163,7 @@ class PageStructure
 
     public function deleteActionsMorphAction(ActionsMorph $actionsMorph)
     {
-        $actionsMorph->delete();
+        $actionsMorph->deleteWidely();
 
         return response()->respondWithAjaxSuccess();
     }

@@ -275,7 +275,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" @click.prevent>
+                                <a href="#" @click.prevent="openDeleteActionModal">
                                     <i aria-hidden="true" class="fa fa-trash-o danger"></i> Delete
                                 </a>
                             </li>
@@ -327,6 +327,15 @@
                         </div>
                     </div>
                 </div>
+            {% endblock %}
+        {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal'} %}
+            {% block header %}
+                Delete action
+            {% endblock %}
+            {% block body %}
+                Do you really want to delete action #${ action.id }?
+                <button class="btn btn-danger" @click.prevent="deleteAction">Yes, delete action</button>
             {% endblock %}
         {% endembed %}
     </div>
@@ -427,6 +436,11 @@
             }
         },
         methods: {
+            deleteAction: function () {
+                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}), function (data) {
+                    $('.modal').modal('hide');
+                });
+            },
             toggleTransparency: function () {
                 $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
             },
@@ -461,6 +475,9 @@
                     this.settings.scopes.push(scope);
                     this.addActionClass(scope);
                 }
+            },
+            openDeleteActionModal: function () {
+                $('#deleteActionModal').modal('show');
             },
             addChild: function () {
                 $('#addNewActionModal').modal('show');

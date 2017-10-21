@@ -2,9 +2,8 @@
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Generic\Entity\ActionsMorphs;
-use Pckg\Generic\Service\Partials\AbstractPartial;
+use Pckg\Generic\Service\Partial\AbstractPartial;
 
 class ActionsMorph extends Record
 {
@@ -12,6 +11,29 @@ class ActionsMorph extends Record
     protected $entity = ActionsMorphs::class;
 
     protected $toArray = ['variable'];
+
+    public function deleteWidely()
+    {
+        /**
+         * Delete content only if only usage.
+         */
+        if ($this->content_id) {
+            $usages = (new ActionsMorphs())->where('content_id', $this->content_id)->total();
+            if (!$usages == 1) {
+                $this->content->delete();
+            }
+        }
+
+        /**
+         * Delete all child actions with contents.
+         */
+        (new ActionsMorphs())->where('parent_id', $this->id)->all()->each->deleteWidely();
+
+        /**
+         * Delete this action
+         */
+        $this->delete();
+    }
 
     public function saveSetting($key, $value)
     {
