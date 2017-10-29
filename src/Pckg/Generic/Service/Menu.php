@@ -20,9 +20,9 @@ class Menu
         $menu = runInLocale(
             function() use ($menus, $slug, $permissions) {
                 return $menus->withMenuItems(
-                    function(HasMany $relation) use ($permissions) {
+                    function(HasMany $menuItems) use ($permissions) {
                         if ($permissions) {
-                            $relation->joinPermissionTo('read');
+                            $menuItems->joinPermissionTo('read');
                         }
                     }
                 )->where('slug', $slug)->one();
@@ -45,7 +45,7 @@ class Menu
 
     protected function buildTree(Collection $menuItems)
     {
-        return $menuItems->getTree('parent_id');
+        return $menuItems->tree('parent_id', 'id');
     }
 
 }
