@@ -438,6 +438,15 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
+    public function deleteActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
+    {
+        $actionsMorph->saveSetting('pckg.generic.pageStructure.bgImage', null);
+
+        return response()->respondWithSuccess([
+                                                  'success' => true,
+                                              ]);
+    }
+
     public function postActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
     {
         $upload = new Upload('file');
