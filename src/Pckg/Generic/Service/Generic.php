@@ -282,7 +282,7 @@ class Generic
             return;
         }
 
-        $arrRoutes = $routes->joinTranslation()->all();
+        $arrRoutes = $routes->nonDeleted()->joinTranslation()->all();
 
         foreach ($arrRoutes AS $route) {
             /**
