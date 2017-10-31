@@ -152,6 +152,18 @@ var initTinymce = function (selector, setup, config) {
                     },
                     {
                         title: 'Lighten+', format: 'colorlightenplus'
+                    },
+                    {
+                        title: 'Light', format: 'colorlight'
+                    },
+                    {
+                        title: 'Dark', format: 'colordark'
+                    },
+                    {
+                        title: 'Primary', format: 'colorprimary'
+                    },
+                    {
+                        title: 'Secondary', format: 'colorsecondary'
                     }
                 ]
             },
@@ -201,6 +213,18 @@ var initTinymce = function (selector, setup, config) {
             },
             colorlightenplus: {
                 selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-lighten-plus'
+            },
+            colorlight: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-light'
+            },
+            colordark: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-dark'
+            },
+            colorprimary: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-primary'
+            },
+            colorsecondary: {
+                selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-secondary'
             },
             button: {
                 selector: 'a', classes: 'button'
