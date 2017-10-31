@@ -162,7 +162,6 @@
                             </template>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="module">
-
                             <template v-if="actionTemplates.length > 0">
                                 <label class="col-md-3">Template</label>
                                 <div class="col-md-9">
@@ -171,80 +170,35 @@
                                         </option>
                                     </select>
                                 </div>
+                                <div class="clearfix clear"></div>
                             </template>
 
-                            <template v-if="action.slug == 'derive-offers-list'">
-                                <h4>Derive offer list</h4>
-
-                                {{ _formService.addSelect('settings[dataScope]').setLabel('Data scope')
-                                .setAttribute('v-model', 'settings.dataScope')
-                                .addOptions({'forHomepage':'Homepage','forListing':'All'}) | raw }}
-                            </template>
-
-                            <template v-if="action.slug == 'derive-content-hero'">
-                                <h4>Hero</h4>
-
-                                {{ _formService.addSelect('settings[viewStyle]').setLabel('View style')
-                                .setAttribute('v-model', 'settings.viewStyle')
-                                .addOptions({'hero-large-title':'Large title','hero-large-content':'Large content','hero-small-title':'Small title'}) | raw }}
-                            </template>
-
-                            <template v-if="action.slug == 'pckg-generic-content-simple'">
-                                <h4>Generic content module</h4>
-
-                                {{ _formService.addCheckbox('settings[noPadding]').setLabel('No padding')
-                                .setAttribute('v-model', 'settings.noPadding') | raw }}
-
-                                {{ _formService.addSelect('settings[picturePosition]').setLabel('Picture position')
-                                .setAttribute('v-model', 'settings.picturePosition')
-                                .addOptions({'':'None','left':'Left','right':'Right'}) | raw }}
-
-                                <label>Picture width</label>
-                                <pckg-select v-model="settings.pictureWidth"
-                                             :initial-options="availableWidths"></pckg-select>
-
-                                <label>Picture offset</label>
-                                <pckg-select v-model="settings.pictureOffset"
-                                             :initial-options="availableOffsets"></pckg-select>
-
-                                <label>Content width</label>
-                                <pckg-select v-model="settings.contentWidth"
-                                             :initial-options="availableWidths"></pckg-select>
-
-                                <label>Content offset</label>
-                                <pckg-select v-model="settings.contentOffset"
-                                             :initial-options="availableOffsets"></pckg-select>
-
-                                <label>Heading</label>
-                                <pckg-select v-model="settings.contentHeading"
-                                             :initial-options="availableHeadings"></pckg-select>
-                            </template>
-                            <template v-else-if="action.slug == 'offer-gallery'">
-                                <h4>Offer gallery module</h4>
-
-                                <label>Offer resolver</label>
-                                <input class="form-control">
-                            </template>
-                            <template v-else-if="action.slug == 'gallery'">
-                                <h4>Gallery module</h4>
-
-                                <label>Gallery</label>
-                                <input class="form-control">
-                            </template>
+                            {% for slug, form in actionForms %}
+                                <template v-if="action.slug == '{{ slug }}'">
+                                    {{ form | raw }}
+                                </template>
+                            {% endfor %}
                         </div>
                         <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
-                            <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor" forced-root-block="p"
-                                             v-if="content"></pckg-htmleditor>
-                            <br/>
+                            <template v-if="content && content.id">
+                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
 
-                            <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
-                            <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy #${
-                                content.id }
-                            </button>
+                                <br/><br/>
 
-                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
-                               v-if="content">Full
-                                edit</a>
+                                <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
+                                                 forced-root-block="p"></pckg-htmleditor>
+                                <br/>
+
+                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                                <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
+                                    #${
+                                    content.id }
+                                </button>
+
+                                <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
+                                   v-if="content">Full
+                                    edit</a>
+                            </template>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="permissions">

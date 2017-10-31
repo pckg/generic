@@ -209,7 +209,7 @@ var initTinymce = function (selector, setup, config) {
         extended_valid_elements: 'pc-kg',
         custom_elements: 'pc-kg',
         plugins: [
-            'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            'advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
             'searchreplace wordcount visualblocks visualchars code fullscreen',
             'insertdatetime media nonbreaking save table contextmenu directionality',
             'emoticons template paste textcolor colorpicker textpattern imagetools codesample pckg noneditable'
@@ -235,6 +235,7 @@ var initTinymce = function (selector, setup, config) {
         ],
         images_upload_url: '/dynamic/uploader',
         automatic_uploads: false,
+        autoresize_min_height: '160px',
         file_picker_callback: function (cb, value, meta) {
             manualDropzone.dropzone({
                 url: '/dynamic/uploader',
