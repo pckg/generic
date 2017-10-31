@@ -8,7 +8,7 @@ use Pckg\Generic\Entity\Menus;
 class Menu
 {
 
-    public function build($slug, $repository = null, $language = null, $permissions = false)
+    public function build($slug, $repository = null, $language = null, $permissions = false, $params = [])
     {
         $repositoryObject = null;
         if ($repository) {
@@ -39,6 +39,7 @@ class Menu
             [
                 'menu'      => $menu,
                 'menuItems' => $this->buildTree($menu->menuItems),
+                'params'    => $params,
             ]
         );
     }

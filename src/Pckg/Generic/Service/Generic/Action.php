@@ -6,6 +6,7 @@ use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
+use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
@@ -48,7 +49,7 @@ class Action
 
     public function getOrder()
     {
-        return $this->action->pivot->order;
+        return $this->action->pivot->order + ($this->action->pivot->morph_id == Routes::class ? 0 : 10000);
     }
 
     public function getClass()
