@@ -4,7 +4,6 @@ namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Concept\Reflect;
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
@@ -117,25 +116,30 @@ class Generic
                 );
             }
         );
-        /*if ($route->layout) {
+        if ($route->layout) {
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
                     // $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                        $content->joinTranslations();
-                    });
+                    $actions->getMiddleEntity()->withContent();
                 }
             );
+            $layoutActions = $layoutActions->sortBy(function($item) {
+                return $item->pivot->order;
+            })->tree(function($action) {
+                return $action->pivot->parent_id;
+            }, function($action) {
+                return $action->pivot->id;
+            });
             $layoutActions->each(
-                function(ActionRecord $action) use ($resolvers) {
+                function(ActionRecord $action) use ($resolved) {
                     $this->addAction(
                         $action,
                         $this->route,
-                        $resolvers
+                        $resolved
                     );
                 }
             );
-        }*/
+        }
     }
 
     /**
