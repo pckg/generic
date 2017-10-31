@@ -136,6 +136,9 @@ var initTinymce = function (selector, setup, config) {
                     {
                         title: 'XXL', format: 'font_size_xxl'
                     },
+                    {
+                        title: 'XXXL', format: 'font_size_xxxl'
+                    },
                 ]
             },
             {
@@ -189,6 +192,9 @@ var initTinymce = function (selector, setup, config) {
             },
             font_size_xxl: {
                 selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'
+            },
+            font_size_xxxl: {
+                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxxl'
             },
             alignleft: {
                 selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-left'
