@@ -75,8 +75,7 @@ class Action extends Record
             if ($setting->slug == 'pckg.generic.pageStructure.style') {
                 $value = $setting->pivot->value . ';';
             } else if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = $mapper[$setting->slug] . ': url(' . cdn('/storage/uploads/' . config('app') . '/' .
-                                                                  $setting->pivot->value) . ')';
+                $value = $mapper[$setting->slug] . ': url(' . cdn('/storage/uploads/' . $setting->pivot->value) . ')';
             } else {
                 $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
             }
