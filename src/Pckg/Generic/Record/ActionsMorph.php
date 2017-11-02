@@ -20,7 +20,7 @@ class ActionsMorph extends Record
         if ($this->content_id) {
             $usages = (new ActionsMorphs())->where('content_id', $this->content_id)->total();
             if (!$usages == 1) {
-                $this->content->delete();
+                //$this->content->delete();
             }
         }
 
