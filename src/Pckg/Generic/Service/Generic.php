@@ -4,6 +4,7 @@ namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
@@ -95,7 +96,9 @@ class Generic
         $actions = $route->actions(
             function(MorphedBy $actions) {
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent();
+                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                    $content->withContents();
+                })->withSettings();
             }
         );
 
@@ -120,7 +123,9 @@ class Generic
             $layoutActions = $route->layout->actions(
                 function(MorphedBy $actions) {
                     // $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent();
+                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                        $content->withContents();
+                    })->withSettings();
                 }
             );
             $layoutActions = $layoutActions->sortBy(function($item) {

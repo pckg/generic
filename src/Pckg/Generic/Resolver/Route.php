@@ -14,6 +14,7 @@ class Route implements RouteResolver
     {
         return (new Routes())->where($this->field, router()->get($this->routeName))
                              ->joinTranslation()
+                             ->withLayout()
                              ->oneOrFail(
                                  function() use ($value) {
                                      response()->notFound('Route ' . $value . ' not found in generic routes');
