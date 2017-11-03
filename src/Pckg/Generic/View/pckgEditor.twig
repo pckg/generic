@@ -1,109 +1,301 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true} %}
+
+        {# change to <pckg-modal title="Edit block"><slot name="content">...</slot></pckg-modal> #}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
             {% block header %}
                 Edit block
             {% endblock %}
             {% block body %}
-                <h4>Style</h4>
-                <label>Padding</label>
-                <input class="form-control" v-model="settings.padding"/>
+                <div>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills" role="tablist">
+                        <li role="presentation" v-if="action.type == 'action'">
+                            <a href="#content" aria-controls="content" role="tab"
+                               data-toggle="tab">Content</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#module" aria-controls="module" role="tab"
+                               data-toggle="tab">Module</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#style" aria-controls="style" role="tab"
+                               data-toggle="tab">Style</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#box" aria-controls="style" role="tab"
+                               data-toggle="tab">Box</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#background" aria-controls="background" role="tab"
+                               data-toggle="tab">Background</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#permissions" aria-controls="permissions" role="tab"
+                               data-toggle="tab">Permissions</a>
+                        </li>
+                    </ul>
 
-                <label>Margin</label>
-                <input class="form-control" v-model="settings.margin"/>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane" id="style">
+                            <div class="row row-grid">
+                                <template v-for="(scopes, sectionTitle) in availableScopes">
+                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
+                                        <div :class="scopes.length > 5 ? 'col-md-12' : 'col-md-6'">
+                                            <label v-text="sectionTitle"></label>
+                                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                                <a class="btn"
+                                                   v-for="(title, css) in scopes"
+                                                   :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                                   @click.prevent="toggleScope(css)">${ title }</a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                            </div>
 
-                <label>Class</label>
-                <input class="form-control" v-model="settings.class"/>
+                            <label>Class</label>
+                            <input class="form-control" v-model="settings.class"/>
 
-                <label>Scopes</label>
-                <pckg-select v-model="settings.scopesArr" :initial-options="availableScopes"></pckg-select>
+                            <label>Style</label>
+                            <input class="form-control" v-model="settings.style"/>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="box">
+                            <div v-if="action.type == 'container'">
+                                <h4>Container</h4>
+                                <label>Container</label>
+                                <pckg-select v-model="settings.container"
+                                             :initial-options="availableContainers"></pckg-select>
+                            </div>
+                            <div v-else-if="action.type == 'column'">
+                                <h4>Column</h4>
 
-                <h4>Background</h4>
-                <label>Color</label>
-                <input class="form-control" v-model="settings.bgColor"/>
+                                <label>Width</label>
+                                <pckg-select v-model="settings.width" :initial-options="availableWidths"></pckg-select>
 
-                <label>Image</label>
-                <input class="form-control" v-model="settings.bgImage"/>
+                                <label>Offset</label>
+                                <pckg-select v-model="settings.offset"
+                                             :initial-options="availableOffsets"></pckg-select>
+                            </div>
 
-                <label>Attachment</label>
-                <input class="form-control" v-model="settings.bgAttachment"/>
+                            <div class="row row-grid">
+                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes">
+                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1"
+                                              v-for="(scopes, css) in scopes">
+                                        <label v-text="sectionTitle + ' ' + css"></label>
+                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                            <a class="btn"
+                                               v-for="(title, css) in scopes"
+                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                               @click.prevent="toggleScope(css)">${ title }</a>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="background">
+                            <h4>Background</h4>
+                            <label>Color</label>
+                            <input class="form-control" v-model="settings.bgColor"/>
 
-                <label>Position</label>
-                <input class="form-control" v-model="settings.bgPosition"/>
+                            <label>Image</label>
+                            <pckg-htmlbuilder-dropzone
+                                    :current="settings.bgImage"
+                                    :url="backgroundImageUploadUrl"
+                                    id="pckg-editor-dropzone"
+                                    v-model="settings.bgImage"></pckg-htmlbuilder-dropzone>
 
-                <label>Repeat</label>
-                <input class="form-control" v-model="settings.bgRepeat"/>
+                            <template v-if="settings.bgImage && settings.bgImage.length">
+                                <label>Attachment</label>
+                                <pckg-select v-model="settings.bgAttachment"
+                                             :initial-options="availableBackgroundAttachments"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Size</label>
-                <input class="form-control" v-model="settings.bgSize"/>
+                                <label>Position</label>
+                                <pckg-select v-model="settings.bgPosition"
+                                             :initial-options="availableBackgroundPositions"
+                                             :initial-multiple="false"></pckg-select>
 
-                <h4>Generic content module</h4>
+                                <label>Repeat</label>
+                                <pckg-select v-model="settings.bgRepeat"
+                                             :initial-options="availableBackgroundRepeats"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>No padding</label>
-                <input class="form-control" v-model="settings.noPadding"/>
+                                <label>Size</label>
+                                <pckg-select v-model="settings.bgSize"
+                                             :initial-options="availableBackgroundSizes"
+                                             :initial-multiple="false"></pckg-select>
+                            </template>
 
-                <label>Picture position</label>
-                <input class="form-control" v-model="settings.picturePosition"/>
+                            <label>Video</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <pckg-select v-model="settings.bgVideoSource"
+                                                 :initial-options="availableBgVideoSources"
+                                                 :initial-multiple="false"></pckg-select>
+                                </div>
+                                <div class="col-md-6" v-if="settings.bgVideoSource && settings.bgVideoSource.length">
+                                    <input class="form-control" v-model="settings.bgVideo" placeholder="Video ID"/>
+                                </div>
+                            </div>
+                            <template v-if="settings.bgVideo && settings.bgVideo.length">
+                                <label>Display</label>
+                                <pckg-select v-model="settings.bgVideoDisplay"
+                                             :initial-options="availableVideoDisplays"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Picture width</label>
-                <input class="form-control" v-model="settings.pictureWidth"/>
+                                <label>Autoplay</label>
+                                <pckg-select v-model="settings.bgVideoAutoplay"
+                                             :initial-options="availableVideoAutoplays"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Picture offset</label>
-                <input class="form-control" v-model="settings.pictureOffset"/>
+                                <label>Loop</label>
+                                <pckg-select v-model="settings.bgVideoLoop"
+                                             :initial-options="availableVideoLoops"
+                                             :initial-multiple="false"></pckg-select>
 
-                <label>Content width</label>
-                <input class="form-control" v-model="settings.contentWidth"/>
+                                <label>Controls</label>
+                                <pckg-select v-model="settings.bgVideoControls"
+                                             :initial-options="availableVideoControls"
+                                             :initial-multiple="false"></pckg-select>
+                            </template>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="module">
+                            <template v-if="actionTemplates.length > 0">
+                                <label class="col-md-3">Template</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="action.template">
+                                        <option v-for="template in actionTemplates" :value="template">${ template }
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="clearfix clear"></div>
+                            </template>
 
-                <label>Content offset</label>
-                <input class="form-control" v-model="settings.contentOffset"/>
+                            {% for slug, form in actionForms %}
+                                <template v-if="action.slug == '{{ slug }}'">
+                                    {{ form | raw }}
+                                </template>
+                            {% endfor %}
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
+                            <template v-if="content && content.id">
+                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
 
-                <label>Heading</label>
-                <input class="form-control" v-model="settings.heading"/>
+                                <br/><br/>
 
-                <h4>Offer gallery module</h4>
+                                <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
+                                                 forced-root-block="p"></pckg-htmleditor>
+                                <br/>
 
-                <label>Offer</label>
-                <input class="form-control">
+                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
+                                <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
+                                    #${
+                                    content.id }
+                                </button>
 
-                <h4>Gallery module</h4>
-
-                <label>Gallery</label>
-                <input class="form-control">
-
-                <div v-if="action.type == 'wrapper'">
+                                <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
+                                   v-if="content">Full
+                                    edit</a>
+                            </template>
+                            <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="permissions">
+                            <p>... are waiting to be copied from backend</p>
+                        </div>
+                    </div>
                 </div>
-                <div v-else-if="action.type == 'container'">
-                    <h4>Container</h4>
-                    <label>Container</label>
-                    <pckg-select v-model="settings.container" :initial-options="availableContainers"></pckg-select>
-                </div>
-                <div v-else-if="action.type == 'row'">
-
-                </div>
-                <div v-else-if="action.type == 'column'">
-                    <h4>Column</h4>
-
-                    <label>Width</label>
-                    <pckg-select v-model="settings.width" :initial-options="availableWidths"></pckg-select>
-
-                    <label>Offset</label>
-                    <pckg-select v-model="settings.offset" :initial-options="availableOffsets"></pckg-select>
-                </div>
-                <div v-else-if="action.type == 'action'">
-
-                </div>
-                <a :href="'/dev.php/tools/page-structure?route=' + routeId + '&action=' + action.id">Edit in
-                    /maestro page structure</a>
             {% endblock %}
             {% block footer %}
+                <div role="group" class="btn-group pull-left" style="text-align: right;">
+                    <a type="button" href="#" title="Add child" class="btn btn-success" @click.prevent="addChild">
+                        <i aria-hidden="true" class="fa fa-plus"></i> Add child
+                    </a>
+                    <div class="btn-group pull-left dropup">
+                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                title="More" class="btn btn-danger dropdown-toggle">
+                            <span class="caret"></span> <span class="sr-only">More</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a href="#" @click.prevent>
+                                    <i aria-hidden="true" class="fa fa-download"></i> Export
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" @click.prevent>
+                                    <i aria-hidden="true" class="fa fa-upload"></i> Import
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" @click.prevent="openDeleteActionModal">
+                                    <i aria-hidden="true" class="fa fa-trash-o danger"></i> Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a type="button" href="#" title="Toggle transparency" class="btn btn-default"
+                       @click.prevent="toggleTransparency">
+                        <i aria-hidden="true" class="fa fa-plus"></i> Toggle transparency
+                    </a>
+                </div>
+
                 <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
+            {% endblock %}
+        {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-max', id: 'addNewActionModal'} %}
+            {% block header %}
+                Add new action
+            {% endblock %}
+            {% block body %}
+                <div class="pckg-icons">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h2>Elements</h2>
+
+                            <div class="item" v-for="partial in partials">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
+                                </div>
+                            </div>
+
+                            <h2>Structures</h2>
+
+                            <div class="item" v-for="partial in structures">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
+                                </div>
+                            </div>
+
+                            <h2>Pages</h2>
+
+                            <div class="item" v-for="partial in pages">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal'} %}
+            {% block header %}
+                Delete action
+            {% endblock %}
+            {% block body %}
+                Do you really want to delete action #${ action.id }?
+                <button class="btn btn-danger" @click.prevent="deleteAction">Yes, delete action</button>
             {% endblock %}
         {% endembed %}
     </div>
 </script>
 
 <script type="text/javascript">
-
     Vue.component('pckg-editor', {
         props: {
             routeId: {
@@ -119,6 +311,8 @@
                     padding: '',
                     margin: '',
                     'class': '',
+                    width: [],
+                    offset: [],
                     scopes: [],
                     bgColor: '',
                     bgImage: '',
@@ -126,55 +320,213 @@
                     bgPosition: '',
                     bgRepeat: '',
                     bgSize: '',
+                    bgVideoSource: '',
+                    bgVideo: '',
+                    bgVideoDisplay: '',
+                    bgVideoAutoplay: '',
+                    bgVideoLoop: '',
+                    bgVideoControls: '',
+                    viewStyle: ''
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
                 availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'},
-                action: {}
+                availableBackgroundSizes: {'contain': 'Contain', 'cover': 'Cover'},
+                availableBackgroundRepeats: {
+                    'no-repeat': 'No repeat',
+                    'repeat-x': 'Repeat X',
+                    'repeat-y': 'Repeat Y',
+                    'repeat': 'Repeat'
+                },
+                availableBackgroundAttachments: {'fixed': 'Fixed', 'scroll': 'Scroll', 'local': 'Local'},
+                availableBackgroundPositions: {'top-center': 'Top center', 'center-center': 'Center center'},
+                availableBgVideoSources: {'': 'None', 'vimeo': 'Vimeo', 'youtube': 'Youtube'},
+                availableVideoDisplays: {'popup': 'Popup', 'background': 'Background'},
+                availableVideoControls: {'yes': 'Yes', 'no': 'No'},
+                availableVideoLoops: {'yes': 'Yes', 'no': 'No'},
+                availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
+                availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
+                action: {},
+                content: {
+                    content: ''
+                },
+                partials: {{ partials | json_encode | raw }},
+                structures: {{ structures | json_encode | raw }},
+                pages: {{ pages | json_encode | raw }},
+                templates: {{ config('pckg.generic.templates') | json_encode | raw }}
             };
         },
-        created: function(){
+        created: function () {
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
+        watch: {
+            'settings.width': {
+                handler: function (newVal, oldVal) {
+                    $.each(oldVal, function (i, width) {
+                        this.removeActionClass(width);
+                    }.bind(this));
+
+                    $.each(newVal, function (i, width) {
+                        this.addActionClass(width);
+                    }.bind(this));
+                },
+                deep: true
+            },
+            'settings.offset': {
+                handler: function (newVal, oldVal) {
+                    $.each(oldVal, function (i, width) {
+                        this.removeActionClass(width);
+                    }.bind(this));
+
+                    $.each(newVal, function (i, width) {
+                        this.addActionClass(width);
+                    }.bind(this));
+                },
+                deep: true
+            },
+            'content.content': {
+                handler: function (newVal, oldVal) {
+                    this.changeContent(newVal);
+                },
+                deep: true
+            }
+        },
         methods: {
+            deleteAction: function () {
+                http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}), function (data) {
+                    $('.modal').modal('hide');
+                });
+            },
+            toggleTransparency: function () {
+                $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
+            },
+            scopeSelected: function (scope) {
+                return this.settings.scopes.indexOf(scope) >= 0;
+            },
+            changeContent: function (content) {
+                if (this.action.type != 'action') {
+                    return;
+                }
+
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                var $content = $action.find('.bind-content');
+
+                if ($content.length > 0) {
+                    $content.html(content);
+                }
+            },
+            removeActionClass: function (c) {
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                $action.removeClass(c);
+            },
+            addActionClass: function (c) {
+                var $action = $('.' + this.action.type + '-' + this.action.id);
+                $action.addClass(c);
+            },
+            toggleScope: function (scope, group) {
+                if (this.scopeSelected(scope)) {
+                    utils.splice(this.settings.scopes, scope);
+                    this.removeActionClass(scope);
+                } else {
+                    this.settings.scopes.push(scope);
+                    this.addActionClass(scope);
+                }
+            },
+            openDeleteActionModal: function () {
+                $('#deleteActionModal').modal('show');
+            },
+            addChild: function () {
+                $('#addNewActionModal').modal('show');
+            },
+            addAction: function (c) {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph.addPartial') }}', {actionsMorph: this.action.id}), {
+                    partial: c
+                }, function (data) {
+                    if (data.success) {
+                        $dispatcher.$emit('notification:success', 'Action added');
+                    }
+                });
+            },
             openEditModal: function (action) {
                 this.action = action;
-                $(this.$el).find('.modal').modal('show');
+                $('#editBlockModal').modal('show');
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
-                    console.log(data);
                     this.settings = data.settings;
+                }.bind(this));
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphContent') }}', {actionsMorph: this.action.id}), function (data) {
+                    this.content = data.content;
                 }.bind(this));
             },
             saveSettings: function () {
-                console.log(this.settings);
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {settings: this.settings}, function (data) {
-                    console.log(data);
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {
+                    settings: this.settings,
+                    template: this.action.template
+                }, function (data) {
+                    if (data.success) {
+                        $('#editBlockModal').modal('hide');
+                        return;
+                    }
+
+                    $dispatcher.$emit('notification:error', 'Error saving data');
                 });
+            },
+            duplicateContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.duplicateActionsMorphContent') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
+            },
+            createContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.createActionsMorphContent') }}', {actionsMorph: this.action.id}), {}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
+            },
+            saveContent: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.content') }}', {content: this.content.id}), {content: this.content}, function (data) {
+                    this.content = data.content;
+                }.bind(this));
             }
         },
         computed: {
-            availableWidths: function(){
-                var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {return i + 1;});
+            actionTemplates: function () {
+                if (!this.action) {
+                    return [];
+                }
 
-                $.each(sizes, function(i, size){
-                    $.each(range, function(j, range){
+                if (!this.templates[this.action.class] || !this.templates[this.action.class][this.action.method]) {
+                    return [];
+                }
+
+                return this.templates[this.action.class][this.action.method];
+            },
+            availableWidths: function () {
+                var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
+                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                    return i;
+                });
+
+                $.each(sizes, function (i, size) {
+                    $.each(range, function (j, range) {
                         sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
                     });
                 });
 
                 return sizes;
             },
-            availableOffsets: function(){
+            availableOffsets: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(9)).map(function (_, i) {return i + 1;});
+                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                    return i;
+                });
 
-                $.each(sizes, function(i, size){
-                    $.each(range, function(j, range){
-                        sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
+                $.each(sizes, function (i, size) {
+                    $.each(range, function (j, range) {
+                        sizes[i]['col-' + i + '-offset-' + range] = 'col-' + i + '-offset-' + range;
                     });
                 });
 
                 return sizes;
+            },
+            backgroundImageUploadUrl: function () {
+                return utils.url('{{ url('pckg.generic.pageStructure.actionsMorphBackgroundImage') }}', {actionsMorph: this.action.id});
             }
         }
     });

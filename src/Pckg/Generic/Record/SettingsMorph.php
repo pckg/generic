@@ -26,6 +26,13 @@ class SettingsMorph extends Record
             return $this;
         }
 
+        if (!config()->hasKey($this->setting->slug)) {
+            /**
+             * Don't allow unexistent settings.
+             */
+            return $this;
+        }
+
         config()->set($this->setting->slug,
                       $this->setting->type == 'array' ? json_decode($this->value, true) : $this->value);
 
@@ -35,6 +42,20 @@ class SettingsMorph extends Record
     public function getJsonValueAttribute()
     {
         return json_decode($this->value, true);
+    }
+
+    public static function makeItHappen($key, $value, $morph, $poly, $type = null)
+    {
+        $setting = Setting::getOrCreate(['slug' => $key]);
+        $setting->setAndSave(['type' => $type]);
+        $settingsMorph = SettingsMorph::getOrCreate([
+                                                        'setting_id' => $setting->id,
+                                                        'poly_id'    => $poly,
+                                                        'morph_id'   => $morph,
+                                                    ]);
+        $settingsMorph->setAndSave([
+                                       'value' => is_array($value) ? json_encode($value) : $value,
+                                   ]);
     }
 
 }

@@ -107,7 +107,7 @@ class CreateDynamicTables extends Migration
         $dynamicRelations->varchar('alias')->nullable();
         $dynamicRelations->integer('over_table_id')->references('dynamic_tables')->nullable();
         $dynamicRelations->integer('left_foreign_key_id')->references('dynamic_fields')->nullable();
-        $dynamicRelations->integer('right_foreign_key_')->references('dynamic_fields')->nullable();
+        $dynamicRelations->integer('right_foreign_key_id')->references('dynamic_fields')->nullable();
         $dynamicRelations->boolean('preload');
 
         $dynamicRelationsI18n = $this->translatable('dynamic_relations');

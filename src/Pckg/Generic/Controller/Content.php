@@ -7,7 +7,7 @@ use Pckg\Generic\Service\Generic\Action;
 class Content
 {
 
-    public function getSimpleAction(ContentRecord $content = null)
+    public function getSimpleAction(ContentRecord $content = null, Action $action)
     {
         /**
          * Get content, set it to proper view.
@@ -16,6 +16,7 @@ class Content
             'Pckg/Generic:content/simple',
             [
                 'content' => $content,
+                'action'  => $action,
             ]
         );
     }

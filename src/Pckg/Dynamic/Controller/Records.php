@@ -21,10 +21,10 @@ use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
-use Pckg\Framework\Inter\Record\Language;
-use Pckg\Framework\Locale\Lang;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
+use Pckg\Locale\Lang;
+use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
@@ -146,6 +146,10 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
+        if ($viewType == 'full') {
+            $this->seoManager()->setTitle($tableRecord->title . ' - ' . config('site.title'));
+        }
+
         /**
          * Set table so sub-services can reuse it later.
          */
@@ -430,6 +434,9 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
     {
+        $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' .
+                                      $record->id . ' - ' . config('site.title'));
+
         $listableFields = $table->listableFields;
         if (!$listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
@@ -713,7 +720,11 @@ class Records extends Controller
             $lang = (new Lang())->setLangId($record->language_id);
             $entity->setTranslatableLang($lang);
         }
-        $record->save($entity);
+        if (post('as_new')) {
+            $record = $record->saveAs();
+        } else {
+            $record->save($entity);
+        }
 
         if ($this->post()->p17n) {
             $this->saveP17n($record, $entity);
@@ -721,7 +732,10 @@ class Records extends Controller
 
         flash('dynamic.records.edit.success', __('dynamic.records.edit.success'));
 
-        return $this->response()->respondWithSuccessRedirect();
+        return $this->response()->respondWithSuccessRedirect(post('as_new') ? url('dynamic.record.edit', [
+            'table'  => $table,
+            'record' => $record,
+        ]) : null);
     }
 
     protected function saveP17n(
@@ -833,21 +847,45 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function postUploadAction(
-        Table $table, Record $record = null, Field $field
-    ) {
+    public function deleteUploadAction(Table $table, Record $record = null, Field $field)
+    {
+        $this->processDelete($table, $record, $field, '');
+    }
+
+    public function deleteUploadNewAction(Table $table, Field $field)
+    {
+        $this->processDelete($table, null, $field, '');
+    }
+
+    public function deleteUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
+    {
+        $this->processDelete($table, $record, $field, '');
+    }
+
+    protected function processDelete(Table $table, Record $record = null, Field $field, $filename)
+    {
+        $entity = $table->createEntity();
+        $record->setEntity($entity);
+        $record->{$field->field} = $filename;
+        $record->save($entity);
+
+        return [
+            'success' => true,
+        ];
+    }
+
+    public function postUploadAction(Table $table, Record $record = null, Field $field)
+    {
         return $this->processUpload($table, $record, $field);
     }
 
-    public function postUploadNewAction(
-        Table $table, Field $field
-    ) {
+    public function postUploadNewAction(Table $table, Field $field)
+    {
         return $this->processUpload($table, null, $field);
     }
 
-    public function postUploadNewForeignAction(
-        Table $table, Field $field, Record $record, Relation $relation
-    ) {
+    public function postUploadNewForeignAction(Table $table, Field $field, Record $record, Relation $relation)
+    {
         return $this->processUpload($table, null, $field, $relation, $record);
     }
 

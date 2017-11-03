@@ -34,6 +34,20 @@ class Routes extends Entity
                     ->rightForeignKey('action_id');
     }
 
+    public function actionsMorphs()
+    {
+        return $this->hasMany(ActionsMorphs::class)
+                    ->foreignKey('poly_id')
+                    ->where('morph_id', Routes::class);
+    }
+
+    public function settings()
+    {
+        return $this->morphedBy(Settings::class)
+                    ->over(SettingsMorphs::class)
+                    ->rightForeignKey('setting_id');
+    }
+
     /**
      * @return $this
      */
@@ -43,11 +57,7 @@ class Routes extends Entity
                     ->withActions(
                         function(MorphsMany $relation) {
                             $relation->getMiddleEntity()->withVariable();
-                            $relation->withContents(
-                                function(HasMany $relation) {
-                                    $relation->joinTranslations();
-                                }
-                            );
+                            $relation->withContents();
                         }
                     );
     }

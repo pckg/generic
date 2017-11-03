@@ -18,16 +18,26 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
                 return [];
             }
         },
-        first: false,
+        first: {
+            default: false
+        },
         initialIds: {
             default: function () {
                 return [];
             }/*,
              type: Array*/
         },
-        search: null,
+        search: {
+            default: '',
+            type: String
+        },
         entityactions: {},
-        table: Object,
+        table: {
+            type: Object,
+            default: function(){
+                return {};
+            }
+        },
         paginator: {
             default: function () {
                 return {
@@ -45,7 +55,10 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             type: Function
         },
         togglefield: null,*/
-        resetpaginatorurl: null,
+        resetpaginatorurl: {
+            type: String,
+            default: ''
+        },
         sort: {
             default: function () {
                 return {
@@ -75,7 +88,6 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             records: this.initialRecords,
             ids: this.initialIds,
             emitted: 0,
-            search: '',
             allChecked: false
         };
     },

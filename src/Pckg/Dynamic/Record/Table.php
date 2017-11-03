@@ -137,7 +137,7 @@ class Table extends DatabaseRecord
         );
         $entity->setTable($this->table);
 
-        if ($extensions && $entity->isTranslatable()) {
+        if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
             $entity->joinTranslations();
         }
 

@@ -24,7 +24,7 @@ class MenuItem extends Record
             return true;
         }
 
-        if (router()->get('name') == 'dynamic.record.edit'
+        if (in_array(router()->get('name'), ['dynamic.record.edit', 'dynamic.record.view'])
             && $this->url == '/dynamic/tables/list/' . explode('/', router()->getCleanUri())[4]
         ) {
             return true;

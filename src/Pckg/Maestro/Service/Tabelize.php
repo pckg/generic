@@ -111,6 +111,24 @@ class Tabelize
         );
     }
 
+    public function make()
+    {
+        $all = $this->entity->count()->all();
+        $total = $this->entity->total();
+
+        $this->setRecords($all)
+             ->setPerPage(50)
+             ->setPage(1)
+             ->setTotal($total)
+             ->setGroups([])
+             ->setEntityActions([])
+             ->setRecordActions([])
+             ->setListActions([])
+             ->setFieldTransformations([]);
+
+        return $this;
+    }
+
     public function setViewData($data)
     {
         $this->viewData = $data;
@@ -344,6 +362,10 @@ class Tabelize
                     $relation = $originalRecord->getRelation('select_relation_' . $field->field);
 
                     $eval = $this->eval($relation->value, $record, $originalRecord, $relation);
+
+                    if (!trim($eval)) {
+                        $eval = '#' . $originalRecord->{$field->field};
+                    }
 
                     return $this->dataOnly
                         ? $eval

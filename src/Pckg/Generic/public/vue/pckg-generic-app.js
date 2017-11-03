@@ -9,6 +9,7 @@
 var store = new Vuex.Store({});
 
 var $vue = new Vue({
+    el: '#vue-app',
     // router: $router,
     store,
     data: {
@@ -27,4 +28,4 @@ var $vue = new Vue({
     }
 });
 
-$vue.$mount('#vue-app');
+// $vue.$mount('#vue-app');

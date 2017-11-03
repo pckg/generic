@@ -31,6 +31,10 @@ class Action extends Record
             $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->pivot->value;
         }
 
+        if ($keyedBySlug->getKey('pckg.generic.pageStructure.bgVideo')->pivot->value ?? null) {
+            $typeSuffix .= ' has-video-background';
+        }
+
         $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
@@ -56,8 +60,9 @@ class Action extends Record
             'pckg.generic.pageStructure.bgColor'      => 'background-color',
             'pckg.generic.pageStructure.bgAttachment' => 'background-attachment',
             'pckg.generic.pageStructure.bgImage'      => 'background-image',
-            'pckg.generic.pageStructure.margin'       => 'margin',
-            'pckg.generic.pageStructure.padding'      => 'padding',
+            'pckg.generic.pageStructure.margin'       => 'margin', // @deprecated
+            'pckg.generic.pageStructure.padding'      => 'padding', // @deprecated
+            'pckg.generic.pageStructure.style'        => 'style',
         ];
 
         $settings = $this->pivot->settings;
@@ -67,9 +72,10 @@ class Action extends Record
                 continue;
             }
 
-            if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = $mapper[$setting->slug] . ': url(' . cdn('/storage/uploads/' . config('app') . '/' .
-                                                                  $setting->pivot->value) . ')';
+            if ($setting->slug == 'pckg.generic.pageStructure.style') {
+                $value = $setting->pivot->value . ';';
+            } else if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
+                $value = $mapper[$setting->slug] . ': url(' . cdn('/storage/uploads/' . $setting->pivot->value) . ')';
             } else {
                 $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
             }

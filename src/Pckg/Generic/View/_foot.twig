@@ -1,3 +1,11 @@
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footer']) | raw }}
 
 {{ _metaManager.getMeta('footer') | raw }}
+
+{% if _env.isDev() and _debugBar %}
+    {% set renderer = _debugBar.getJavascriptRenderer() %}
+    {% do renderer.setOpenHandlerUrl('/open.php') %}
+    {% do _debugBar.sendDataInHeaders(true) %}
+    {{ renderer.renderHead() | raw }}
+    {{ renderer.render() | raw }}
+{% endif %}

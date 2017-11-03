@@ -1,6 +1,5 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
@@ -13,8 +12,11 @@ use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
+use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Pckg\Manager\Upload;
+use Pckg\Stringify;
 
 class PageStructure
 {
@@ -59,7 +61,7 @@ class PageStructure
     public function getContentsAction()
     {
         return [
-            'contents' => (new Contents())->joinTranslations()->all(),
+            'contents' => (new Contents())->all(),
         ];
     }
 
@@ -75,9 +77,7 @@ class PageStructure
         return [
             'actionsMorphs' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
             })
@@ -118,9 +118,7 @@ class PageStructure
         return [
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->joinTranslations();
-                });
+                $actions->getMiddleEntity()->withContent();
             })
                                     ->sortBy(function(Action $action) {
                                         return $action->pivot->order;
@@ -165,7 +163,7 @@ class PageStructure
 
     public function deleteActionsMorphAction(ActionsMorph $actionsMorph)
     {
-        $actionsMorph->delete();
+        $actionsMorph->deleteWidely();
 
         return response()->respondWithAjaxSuccess();
     }
@@ -263,30 +261,226 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
-    public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
+    protected function getDefaultSettings()
+    {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        return [
+            'class'           => '',
+            'style'           => '',
+            'width'           => [], // column
+            'offset'          => [], // column
+            'bgColor'         => '',
+            'bgImage'         => '',
+            'bgSize'          => '',
+            'bgAttachment'    => '',
+            'bgRepeat'        => '',
+            'bgVideo'         => '',
+            'bgVideoSource'   => '',
+            'bgVideoDisplay'  => '',
+            'bgVideoAutoplay' => '',
+            'bgVideoControls' => '',
+            'bgVideoLoop'     => '',
+        ];
+    }
+
+    public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         return response()->respondWithSuccess([
-                                                  'settings' => $actionsMorph->settings->map(function(
-                                                      Setting $settingsMorph
-                                                  ) {
-                                                      return [
-                                                          'slug'  => str_replace('pckg.generic.pageStructure.', '',
-                                                                                 $settingsMorph->slug),
-                                                          'value' => $settingsMorph->pivot->value,
-                                                      ];
-                                                  })->keyBy('slug')->map('value'),
+                                                  'content' => $actionsMorph->content,
+                                              ]);
+    }
+
+    public function postDuplicateActionsMorphContentAction(ActionsMorph $actionsMorph)
+    {
+        $content = $actionsMorph->content->saveAs();
+
+        $actionsMorph->setAndSave(['content_id' => $content->id]);
+
+        return response()->respondWithSuccess([
+                                                  'content' => $content,
+                                              ]);
+    }
+
+    public function postCreateActionsMorphContentAction(ActionsMorph $actionsMorph)
+    {
+        $content = Content::create();
+
+        $actionsMorph->setAndSave(['content_id' => $content->id]);
+
+        return response()->respondWithSuccess([
+                                                  'content' => $content,
+                                              ]);
+    }
+
+    public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
+    {
+        $settings = $actionsMorph->settings
+            ->map(function(
+                Setting $settingsMorph
+            ) {
+                return [
+                    'slug'  => str_replace('pckg.generic.pageStructure.', '',
+                                           $settingsMorph->slug),
+                    'value' => $settingsMorph->pivot->value,
+                ];
+            })->keyBy('slug')->map('value');
+
+        $defaults = $this->getDefaultSettings();
+        foreach ($defaults as $key => $val) {
+            if ($settings->hasKey($key)) {
+                continue;
+            }
+
+            $settings->push($val, $key);
+        }
+
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
+                                                                 ->unique()
+                                                                 ->removeEmpty()
+                                                                 ->all();
+        $scopeClasses = [];
+        $otherClasses = [];
+        $widthClasses = [];
+        $offsetClasses = [];
+        foreach ($allClasses as $class) {
+            $found = false;
+            foreach (config('pckg.generic.scopes') as $title => $scopes) {
+                if (in_array($title, ['Padding', 'Margin'])) {
+                    foreach ($scopes as $scps) {
+                        if (array_key_exists($class, $scps)) {
+                            $scopeClasses[] = $class;
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                } else {
+                    if (array_key_exists($class, $scopes)) {
+                        $scopeClasses[] = $class;
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+            if (!$found) {
+                if (strpos($class, 'col-') === 0) {
+                    if (strpos($class, '-offset-')) {
+                        $offsetClasses[] = $class;
+                    } else {
+                        $widthClasses[] = $class;
+                    }
+                } else {
+                    $otherClasses[] = $class;
+                }
+            }
+        }
+
+        $settings->push($scopeClasses, 'scopes');
+        $settings->push($offsetClasses, 'offset');
+        $settings->push($widthClasses, 'width');
+        $settings->push(implode(' ', $otherClasses), 'class');
+
+        /**
+         * Add path before image.
+         */
+        $settings->push(media($settings->getKey('bgImage'), null, true, path('app_uploads')) ?? '', 'bgImage');
+
+        return response()->respondWithSuccess([
+                                                  'settings' => $settings,
                                               ]);
     }
 
     public function postActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
-        collect(array_merge([
-                                'padding' => null,
-                                'margin'  => null,
-                                'class'   => null,
-                            ], post('settings')))->each(function($value, $key) use ($actionsMorph) {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        $values = array_merge($this->getDefaultSettings(), post('settings'));
+        $values = only($values, array_keys($this->getDefaultSettings()));
+        unset($values['bgImage']);
+
+        /**
+         * Add scopes.
+         */
+        $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
+                            . ' ' . implode(' ', post('settings.width', []))
+                            . ' ' . implode(' ', post('settings.offset', []));
+        $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
+                                                            ->unique()
+                                                            ->removeEmpty()
+                                                            ->implode(' ');
+        collect($values)->removeKeys(['scopes', 'width', 'offset'])->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
+
+        /**
+         * Other settings, available for plugin.
+         *
+         * @T00D00
+         */
+        $values = only(post('settings'), ['dataScope', 'viewStyle']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
+        });
+
+        /**
+         * Set template.
+         */
+        $actionsMorph->setAndSave(['template' => post('template')]);
+
+        return response()->respondWithSuccess();
+    }
+
+    public function deleteActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
+    {
+        $actionsMorph->saveSetting('pckg.generic.pageStructure.bgImage', null);
+
+        return response()->respondWithSuccess([
+                                                  'success' => true,
+                                              ]);
+    }
+
+    public function postActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
+    {
+        $upload = new Upload('file');
+        $success = $upload->validateUpload();
+
+        if ($success !== true) {
+            return [
+                'success' => false,
+                'message' => $success,
+            ];
+        }
+
+        $dir = path('app_uploads');
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
+
+        $actionsMorph->saveSetting('pckg.generic.pageStructure.bgImage', $filename);
+
+        return response()->respondWithSuccess([
+                                                  'success' => true,
+                                                  'url'     => img($filename, null, true, $dir),
+                                              ]);
+    }
+
+    public function postContentAction(Content $content)
+    {
+        $content->setAndSave(['content' => post('content.content', null)]);
+
+        return response()->respondWithSuccess(['content' => $content]);
+    }
+
+    public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
+    {
+        $actionsMorph->addPartial(post('partial', null));
 
         return response()->respondWithSuccess();
     }

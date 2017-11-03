@@ -3,14 +3,19 @@
   right: 0;
 }
 
-.tab-content .tab-pane {
-  padding: 2rem;
+#ajaxTabs {
+  padding: 1.5rem 0;
   border: 1px solid #ddd;
-  border-width: 0 1px 1px 1px;
+  border-width: 1px 0;
+  margin: 0 0 2rem 0;
 }
 
 form label .help {
   float: right;
+}
+
+ol.breadcrumb {
+  margin-bottom: 2rem;
 }
 
 .btn-rounded {
@@ -38,11 +43,14 @@ table.table th {
 }
 
 table.table tr.transparent td {
-  opacity: 0.666;
   color: #757575;
   a {
     color: inherit;
   }
+}
+
+tr.bg-grayscale {
+  filter: grayscale(33%);
 }
 
 table.table td {
@@ -75,20 +83,52 @@ div.row {
 Derive
 */
 
+table.table.table-middle {
+  > tbody > tr > td {
+    vertical-align: middle;
+  }
+}
+
 /**
 Style tds
 **/
-table.table {
+.pckg-maestro-tabelize table.table {
+  th {
+    white-space: nowrap;
+  }
   td,
   th {
+    &.boolean,
+    &.order,
+    &.date,
+    &.time,
+    &.datetime {
+      text-align: center;
+    }
 
     &.integer,
-    &.decimal,
-    &.order {
+    &.decimal {
       text-align: right;
     }
   }
   td {
+    max-width: 360px;
+    &.actions,
+    &.checkboxes {
+      vertical-align: middle;
+    }
+    &:not(.actions) {
+      > div {
+        min-height: 5rem;
+        overflow: visible;
+      }
+      &.long {
+        &:hover {
+          overflow-y: scroll;
+          max-height: 15rem;
+        }
+      }
+    }
     &.num,
     &.slug,
     &.id,
@@ -113,9 +153,20 @@ table.table {
       word-break: normal;
     }
 
+    &.pdf {
+      min-width: 60px; // 120px;
+    }
+    &.php {
+      max-width: 240px;
+    }
+    &.select {
+      min-width: 60px; // 120px;
+      max-width: 240px;
+    }
+
     &.editor,
     &.textarea {
-      min-width: 240px;
+      min-width: 60px; // 240px
     }
 
     &.order {
@@ -125,6 +176,25 @@ table.table {
         height: 26px;
         width: 60px;
         text-align: center;
+      }
+    }
+
+    &.boolean {
+      > div {
+        text-align: center;
+      }
+    }
+
+    &.id {
+      vertical-align: middle;
+      > div {
+        display: inline;
+      }
+    }
+
+    &.order {
+      input {
+        margin: 0 auto;
       }
     }
   }
@@ -298,10 +368,10 @@ table tr.strong > td:not(.actions) {
 .pckg-dynamic-record-singular,
 .pckg-dynamic-record-tabs {
   > h2 {
-    margin-top: 1rem;
-    margin-bottom: 3rem;
+    margin: 0;
+    padding: 0 0 2rem 0;
     > .btn-group {
-      > div:first-child {
+      > div.btn {
         display: none
       }
     }
@@ -450,7 +520,9 @@ button[type=button] {
     top: 5rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 2000;
+    min-width: 240px;
+    text-align: center;
   }
 }
 
@@ -549,10 +621,34 @@ img.editor-img {
         > label {
           display: block;
           width: 100%;
+          padding-left: 0;
         }
         > div {
           display: block;
           width: 100%;
+        }
+      }
+      &.with-operator {
+        display: table;
+        position: relative;
+        margin-top: 3rem;
+        > .pckg-select,
+        > .form-group {
+          display: table-cell;
+          vertical-align: bottom;
+        }
+        > .form-group {
+          > label {
+            position: absolute;
+            left: 0;
+            top: -3rem;
+            padding-left: 0;
+          }
+        }
+      }
+      &:not(.with-operator) .form-group {
+        > div {
+          padding-left: 0;
         }
       }
     }
@@ -639,8 +735,21 @@ li.double-link {
   background-color: #333;
   color: #fff;
 }
-.modal-content {
+
+/**
+  * This is causing issues with large dropdowns in popups/modals.
+ **/
+/*.modal-content {
   overflow: hidden;
+}*/
+
+.modal-xl {
+  @media (min-width: 992px) {
+    width: 900px;
+  }
+  @media (min-width: 1200px) {
+    width: 1170px;
+  }
 }
 
 button.close {
@@ -652,4 +761,64 @@ button.close {
 
 p.label {
   font-size: 95%;
+}
+
+.pckg-datetime {
+  min-width: 13.5rem;
+}
+
+.btn-vertical-group {
+  > .btn {
+    margin-bottom: 1rem;
+  }
+}
+
+.checkbox label, .radio label {
+  line-height: 100%;
+}
+
+.checkbox {
+  input[type=checkbox] {
+    margin-top: 1px;
+  }
+}
+
+.form-group div.form-control {
+  padding: 10px 12px;
+  line-height: 100%;
+}
+
+table {
+  td {
+    &.width-datetime {
+      width: 160px;
+    }
+    &.width-price {
+      width: 180px;
+    }
+  }
+}
+
+.dropdown-menu {
+  margin: 0;
+}
+
+.table {
+  display: table;
+  width: 100%;
+}
+.table-cell {
+  display: table-cell;
+}
+
+.no-body-padding {
+  .modal-body {
+    padding: 0;
+  }
+  .modal-header {
+    border-bottom: none;
+  }
+  .modal-footer {
+    border-top: none;
+  }
 }

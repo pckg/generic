@@ -38,12 +38,13 @@
     Pckg.config = {};
     Pckg.config.locale = {
         current: '{{ _localeManager.getCurrent() }}',
+        decimals: {{ config('pckg.locale.decimals', 2) }},
         format: {
             dateMoment: 'LL',
             timeMoment: 'LT'
         },
-        currency: '{{ config('pckg.payment.currency') }}',
-        currencySign: '{{ config('pckg.payment.currencySign') }}'
+        currency: '{{ config('pckg.payment.currency', 'EUR') }}',
+        currencySign: '{{ config('pckg.payment.currencySign', '€') }}'
     };
     Pckg.config.editor = {};
     Pckg.config.editor.variables = {{ config('pckg.dynamic.editor.variables') | json_encode | raw }};

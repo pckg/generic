@@ -13,7 +13,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
-use Pckg\Framework\Inter\Entity\Languages;
+use Pckg\Locale\Entity\Languages;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
@@ -389,6 +389,7 @@ ifrm.document.close();
                 $field->getSetting('pckg.dynamic.field.dir'),
                 $field->getSetting('pckg.dynamic.field.privateUpload')
             );
+            $fullPath = null;
             if ($this->record) {
                 $fullPath = $this->record->{$field->field}
                     ? media($this->record->{$field->field}, null, true, $dir)

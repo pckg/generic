@@ -1,14 +1,14 @@
-<?php namespace Pckg\Dynamic\Resolver;
+<?php namespace Pckg\Generic\Resolver;
 
-use Pckg\Locale\Entity\Languages;
 use Pckg\Framework\Provider\RouteResolver;
+use Pckg\Generic\Entity\Contents;
 
-class Language implements RouteResolver
+class Content implements RouteResolver
 {
 
     public function resolve($value)
     {
-        return (new Languages())->where('slug', $value)->oneOrFail();
+        return (new Contents())->where('id', $value)->oneOrFail();
     }
 
     public function parametrize($record)
