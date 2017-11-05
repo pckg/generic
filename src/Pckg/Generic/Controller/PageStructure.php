@@ -367,7 +367,7 @@ class PageStructure
                 }
             }
             if (!$found) {
-                if (strpos($class, 'col-') === 0) {
+                if (strpos($class, 'col-') === 0 && !strpos($class, '-pull-') && !strpos($class, '-push-')) {
                     if (strpos($class, '-offset-')) {
                         $offsetClasses[] = $class;
                     } else {
