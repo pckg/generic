@@ -417,7 +417,7 @@ $(document).ready(function () {
      *
      * @type {string}
      */
-    tinymce.baseURL = '/bower_components/tinymce/';
+    tinymce.baseURL = '/node_modules/tinymce/';
 
     $('textarea.editor').each(function () {
         var selector = null;
