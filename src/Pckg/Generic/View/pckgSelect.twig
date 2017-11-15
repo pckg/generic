@@ -30,8 +30,7 @@
         },
         props: {
             title: {
-                default: '',
-                type: String
+                default: ''
             },
             id: {
                 default: '',
@@ -86,8 +85,6 @@
 
                     options[this.getId(item, key)] = this.getTitle(item, key);
                 }.bind(this));
-
-                console.log("options", options);
 
                 return options;
             },
