@@ -87,7 +87,7 @@
                     options[this.getId(item, key)] = this.getTitle(item, key);
                 }.bind(this));
 
-                console.log(options);
+                console.log("options", options);
 
                 return options;
             },
@@ -102,8 +102,17 @@
                         return;
                     }
 
-                    options[this.getId(item, key)] = this.getTitle(item, key);
+                    if (Array.isArray(item)) {
+                        $.each(item, function (subKey, subItem) {
+                            var k = this.getId(subItem, subKey);
+                            options[key] ? (options[key][k] = this.getTitle(subItem, subKey)) : (options[key] = {k: this.getTitle(subItem, subKey)});
+                        }.bind(this));
+                    } else {
+                        options[this.getId(item, key)] = this.getTitle(item, key);
+                    }
                 }.bind(this));
+
+                console.log("groups", options);
 
                 return options;
             },
