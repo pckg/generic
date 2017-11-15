@@ -138,6 +138,10 @@
                     return option;
                 }
 
+                if (typeof this.title == 'function') {
+                    return this.title(option);
+                }
+
                 if (!this.title.length) {
                     return option;
                 }
