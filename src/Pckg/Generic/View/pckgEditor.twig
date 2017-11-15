@@ -181,15 +181,10 @@
                         </div>
                         <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
                             <template v-if="content && content.id">
-                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
-
-                                <br/><br/>
-
                                 <pckg-htmleditor v-model="content.content" id="pckg-editor-htmleditor"
                                                  forced-root-block="p"></pckg-htmleditor>
                                 <br/>
 
-                                <button class="btn btn-success" @click.prevent="saveContent">Save content</button>
                                 <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
                                     #${
                                     content.id }
@@ -457,6 +452,9 @@
                 }.bind(this));
             },
             saveSettings: function () {
+                if (this.content) {
+                    this.saveContent();
+                }
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {
                     settings: this.settings,
                     template: this.action.template
