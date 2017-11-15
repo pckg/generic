@@ -105,7 +105,10 @@
                     if (Array.isArray(item)) {
                         $.each(item, function (subKey, subItem) {
                             var k = this.getId(subItem, subKey);
-                            options[key] ? (options[key][k] = this.getTitle(subItem, subKey)) : (options[key] = {k: this.getTitle(subItem, subKey)});
+                            if (!options[key]) {
+                                options[key] = {};
+                            }
+                            options[key][k] = this.getTitle(subItem, subKey);
                         }.bind(this));
                     } else {
                         options[this.getId(item, key)] = this.getTitle(item, key);
