@@ -68,10 +68,12 @@
         data: function () {
             return {
                 records: [],
+                identifier: null
             };
         },
         methods: {
-            checkDeleteRecords: function (records) {
+            checkDeleteRecords: function (records, recordIds, identifier) {
+                this.identifier = identifier;
                 this.records = utils.collect(records);
 
                 $('#deleteRecordModal').modal('show');
@@ -82,11 +84,20 @@
                 $('#deleteRecordTranslationModal').modal('show');
             },
             deleteRecord: function () {
+                console.log("will emit", this.identifier);
                 $('#deleteRecordModal').modal('hide');
 
+                var deleteTimeout = null;
                 $.each(this.records, function (i, record) {
-                    http.get(record.deleteUrl);
-                });
+                    http.get(record.deleteUrl, function () {
+                        clearTimeout(deleteTimeout);
+                        deleteTimeout = setTimeout(function () {
+                            console.log('emiting', 'pckg-maestro-table-' + this.identifier + ':refresh', 'dynamic-tab-' + this.identifier + ':refresh');
+                            $dispatcher.$emit('pckg-maestro-table-' + this.identifier + ':refresh');
+                            $dispatcher.$emit('dynamic-tab-' + this.identifier + ':refresh');
+                        }.bind(this), 333);
+                    }.bind(this));
+                }.bind(this));
 
                 $('#recordDeletedModal').modal('show');
             },

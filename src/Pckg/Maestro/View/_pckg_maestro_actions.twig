@@ -11,11 +11,15 @@
             recordactionhandler: {
                 /*type: Function,
                  required: true*/
+            },
+            identifier: {
+                default: '',
+                type: String
             }
         },
         methods: {
             recordAction: function (record, action) {
-                $dispatcher.$emit('record:' + action, record, record.id);
+                $dispatcher.$emit('record:' + action, record, record.id, this.identifier);
             }
         },
         created: function () {

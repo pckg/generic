@@ -60,7 +60,8 @@
                 </td>
                 <td class="actions">
                     <pckg-maestro-actions-{{ table }} :record="record"
-                                                      :recordactionhandler="recordactionhandler"></pckg-maestro-actions-{{ table }}>
+                                                      :recordactionhandler="recordactionhandler"
+                                                      :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                 </td>
                 <td class="checkboxes">
                     <input type="checkbox" v-model="ids" :value="record.id"/>
