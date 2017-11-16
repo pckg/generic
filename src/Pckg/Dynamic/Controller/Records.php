@@ -177,6 +177,7 @@ class Records extends Controller
              */
             $dynamicService->applyOnEntity($entity);
         } else {
+            $dynamicService->getSortService()->applyOnEntity($entity);
             $dynamicService->getPaginateService()->applyOnEntity($entity);
         }
 
