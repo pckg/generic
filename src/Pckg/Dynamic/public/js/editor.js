@@ -273,8 +273,6 @@ var initTinymce = function (selector, setup, config) {
                 previewTemplate: '<div></div>',
                 maxFilesize: 8,
                 success: function (file, data) {
-                    data = $.parseJSON(data);
-
                     cb(data.url, {title: null, class: 'pckg-img'});
                 }
             });
