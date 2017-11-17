@@ -266,6 +266,7 @@ var initTinymce = function (selector, setup, config) {
         images_upload_url: '/dynamic/uploader',
         automatic_uploads: false,
         autoresize_min_height: '160px',
+        allow_script_urls: true,
         file_picker_callback: function (cb, value, meta) {
             manualDropzone.dropzone({
                 url: '/dynamic/uploader',
