@@ -1,0 +1,21 @@
+<script type="text/x-template" id="pckg-tooltip">
+    <nobr v-if="content">&nbsp;<span
+                class="tooltip-questionmark"
+                :title="content"
+                data-toggle="tooltip">?</span>
+    </nobr>
+</script>
+
+<script>
+    Vue.component('pckg-tooltip', {
+        mixins: [pckgDelimiters],
+        name: 'pckg-tooltip',
+        template: '#pckg-tooltip',
+        props: {
+            content: {}
+        },
+        mounted: function () {
+            $(this.$el).find('[data-toggle="tooltip"]').tooltip({'position': 'auto top'});
+        }
+    });
+</script>
