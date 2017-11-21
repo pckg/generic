@@ -2,15 +2,7 @@
 
 {% set table = tabelize.getEntity().getTable() %}
 
-{% set records = tabelize.getRecords() %}
-{% set fields = tabelize.getFields() %}
-{% set recordActions = tabelize.getRecordActions() %}
-{% set entityActions = tabelize.getEntityActions() %}
-
-{% set id = 'pckg-maestro-table-' ~ table ~ '-panel' %}
-{% set instance = table %}
-
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: recordActions, table: table }, true) %}
+{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: tabelize.getRecordActions(), table: table }, true) %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
 {% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }, true) %}

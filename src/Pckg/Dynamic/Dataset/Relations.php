@@ -13,6 +13,7 @@ class Relations
         $relations = (new RelationsEntity())->where('on_table_id', $table->id)
                                             ->where('dynamic_relation_type_id', RelationTypes::TYPE_HAS_MANY)
                                             ->where('id', $distinctRelations, 'NOT IN')
+                                            ->where('show_table_id', $table->id, '!=')
                                             ->joinTranslations()
                                             ->withShowTable()
                                             ->all();
