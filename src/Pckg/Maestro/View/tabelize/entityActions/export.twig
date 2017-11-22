@@ -11,22 +11,22 @@
 
     <ul class="dropdown-menu dropdown-menu-right">
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}">
+            <a :href="'{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
                 <i class="fa fa-table" aria-hidden="true"></i> .html
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'xlsx') }}{{ view ? '/' ~ view.id : '' }}">
+            <a :href="'{{ tabelize.getEntityUrl('export', 'xlsx') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
                 <i class="fa fa-table" aria-hidden="true"></i> .xlsx
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'csv') }}{{ view ? '/' ~ view.id : '' }}">
+            <a :href="'{{ tabelize.getEntityUrl('export', 'csv') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
                 <i class="fa fa-table" aria-hidden="true"></i> .csv
             </a>
         </li>
         <li>
-            <a href="{{ tabelize.getEntityUrl('export', 'docx') }}{{ view ? '/' ~ view.id : '' }}">
+            <a :href="'{{ tabelize.getEntityUrl('export', 'docx') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
                 <i class="fa fa-file-text-o" aria-hidden="true"></i> .docx
             </a>
         </li>
