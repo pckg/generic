@@ -67,7 +67,11 @@ var pckgTabelizeFieldDatetime = Vue.component('pckg-tabelize-field-datetime', {
             }
         },
         brValue: function () {
-            return this.value.replace(' ', '<br />');
-        }
+            return this.noBrValue.split('').reverse().join('').replace(' ', '*').split('').reverse().join('').replace('*', '<br />');
+        },
+        noBrValue: function () {
+            return this.value;
+            return locale.datetime(this.value);
+        },
     }
 });

@@ -8,7 +8,9 @@ use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
 use Pckg\Dynamic\Service\Export\Strategy;
 use Pckg\Framework\Controller;
+use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Service\Tabelize;
+use Pckg\Manager\Locale\Locale;
 
 class Export extends Controller
 {
@@ -87,7 +89,9 @@ class Export extends Controller
         /**
          * Check for additional export transformations.
          */
-        $listedFields->each(function($field) use ($strategy, &$transformedRecords) {
+        $language = Language::gets(['slug' => $_SESSION['pckg_dynamic_lang_id']]);
+        $locale = new Locale($language ? $language->locale : 'en_GB');
+        $listedFields->each(function($field) use ($strategy, &$transformedRecords, $locale) {
             if (!($field instanceof Field)) {
                 return;
             }
@@ -95,6 +99,12 @@ class Export extends Controller
             if ($field->getSetting('pckg-dynamic-field-nl2brExport' . ucfirst($strategy->getExtension()))) {
                 foreach ($transformedRecords as &$record) {
                     $record[$field->field] = br2nl($record[$field->field]);
+                }
+            }
+
+            if ($field->fieldType->slug == 'decimal') {
+                foreach ($transformedRecords as &$record) {
+                    $record[$field->field] = $locale->decimal($record[$field->field]);
                 }
             }
         });
