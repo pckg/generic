@@ -42,7 +42,7 @@
                 <th>
                     <div>
                         <div>
-                            <input type="checkbox" @click="checkAll"
+                            <input type="checkbox" @click="this.allChecked = !this.allChecked"
                                    v-model="allChecked"
                                    value="1"/>
                         </div>

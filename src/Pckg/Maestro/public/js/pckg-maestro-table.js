@@ -95,13 +95,9 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             allChecked: false
         };
     },
-    methods: {
-        recordAction: function (record, action) {
-            console.log('emiting from pckg-maestro-table.js');
-            this.$parent.recordAction(record, action);
-        },
-        checkAll: function () {
-            if (this.allChecked) {
+    watch: {
+        allChecked: function(all){
+            if (all) {
                 $.each(this.records, function (i, record) {
                     this.ids.push(record.id);
                 }.bind(this));
@@ -110,6 +106,12 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             } else {
                 this.ids = [];
             }
+        }
+    },
+    methods: {
+        recordAction: function (record, action) {
+            console.log('emiting from pckg-maestro-table.js');
+            this.$parent.recordAction(record, action);
         },
         computed: function(val){
             return val;

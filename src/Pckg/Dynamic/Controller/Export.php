@@ -48,7 +48,7 @@ class Export extends Controller
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);
         }
-        
+
         /**
          * Filter records by $_GET['search']
          */
