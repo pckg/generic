@@ -68,21 +68,21 @@ $(document).ready(function () {
 
     $('input.datetime').datetimepicker({
         format: 'YYYY-MM-DD HH:mm'
-    }).on('dp.change', function (ev) {
+    })/*.on('dp.change', function (ev) {
         //$(this).datetimepicker('hide');
-    });
+    })*/;
 
     $('input.date').datetimepicker({
         format: 'YYYY-MM-DD'
-    }).on('dp.change', function (ev) {
+    })/*.on('dp.change', function (ev) {
         //$(this).datetimepicker('hide');
-    });
+    })*/;
 
     $('input.time').datetimepicker({
         format: 'HH:mm'
-    }).on('dp.change', function (ev) {
+    })/*.on('dp.change', function (ev) {
         //$(this).datetimepicker('hide');
-    });
+    })*/;
 
     $('.form-group .input-group .fa.fa-calendar').on('click', function () {
         $(this).closest('.input-group').find('input.datetime').focus();
