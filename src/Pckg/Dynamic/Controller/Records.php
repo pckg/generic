@@ -400,11 +400,22 @@ class Records extends Controller
 
         flash('dynamic.records.add.success', __('dynamic.records.add.success'));
 
+        $url = url('dynamic.record.edit', [
+            'table'  => $table,
+            'record' => $newRecord ?? $record,
+        ]);
+
+        if ($relation && $foreign) {
+            $url = url('dynamic.record.edit.foreign', [
+                'table'    => $table,
+                'record'   => $newRecord ?? $record,
+                'relation' => $relation,
+                'foreign'  => $foreign,
+            ]);
+        }
+
         return $this->response()
-                    ->respondWithSuccessRedirect(url('dynamic.record.edit', [
-                        'table'  => $table,
-                        'record' => $newRecord ?? $record,
-                    ]));
+                    ->respondWithSuccessRedirect($url);
     }
 
     public function postCloneAction(Record $record, Table $table)

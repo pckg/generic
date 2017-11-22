@@ -13,9 +13,9 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
-use Pckg\Locale\Entity\Languages;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
+use Pckg\Locale\Entity\Languages;
 
 class Dynamic extends Bootstrap
 {
@@ -330,7 +330,7 @@ class Dynamic extends Bootstrap
         } elseif ($field->getSetting('pckg.dynamic.field.iframe')) {
             $tempValue = $value;
             $htmlValue = '<script type="text/x-template" id="iframe-field-div-' . $field->id .
-                      '">' . $tempValue . '</script>';
+                         '">' . $tempValue . '</script>';
             $htmlValue .= '<script type="text/javascript">$(document).ready(function(){
     var ifrm = document.getElementById(\'iframe-field-' . $field->id . '\');
     ifrm = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
@@ -340,7 +340,8 @@ ifrm.document.close();
     //$("#iframe-field-' . $field->id . '")[0].contentDocument.write($("#iframe-field-div-' . $field->id . '").html());
 });</script>';
             vueManager()->addStringView($htmlValue);
-            $value = '<iframe id="iframe-field-' . $field->id . '" style="border: 0; width: 100%; min-height: 360px;"></iframe>';
+            $value = '<iframe id="iframe-field-' . $field->id .
+                     '" style="border: 0; width: 100%; min-height: 360px;"></iframe>';
         } elseif (in_array($type, ['file', 'pdf'])) {
             if ($this->record->{$field->field}) {
                 $dir = $field->getAbsoluteDir(
@@ -584,7 +585,7 @@ ifrm.document.close();
                     if (!trim($item)) {
                         $item = $rawValue;
                     }
-                    
+
                     $element->addOption(
                         $rawValue,
                         str_replace(
@@ -613,6 +614,16 @@ ifrm.document.close();
                             'table'  => $this->table,
                             'field'  => $field,
                             'record' => $this->record,
+                        ]
+                    )
+                );
+
+                $element->setAttribute(
+                    'data-view-url',
+                    url(
+                        'dynamic.record.view',
+                        [
+                            'table' => $field->hasOneSelectRelation->showTable,
                         ]
                     )
                 );

@@ -2,6 +2,7 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
     template: '#pckg-htmlbuilder-select',
     props: {
         url: null,
+        viewUrl: null,
         refreshUrl: null,
         initialOptions: {
             default: function () {
@@ -11,7 +12,8 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
     },
     data: function () {
         return {
-            options: this.initialOptions
+            options: this.initialOptions,
+            v: null
         };
     },
     methods: {
@@ -33,8 +35,21 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
                     }
                 });
                 $select.val(value);
+                this.v = value;
                 $select.selectpicker('refresh');
             }.bind(this));
+        }
+    },
+    mounted: function () {
+        var $t = this;
+        $(this.$el).parent().find('select').on('change', function () {
+            $t.v = $(this).val();
+        });
+        this.v = $(this.$el).parent().find('select').val() || null;
+    },
+    computed: {
+        realViewUrl: function () {
+            return utils.url(this.viewUrl, {record: this.v});
         }
     }
 });

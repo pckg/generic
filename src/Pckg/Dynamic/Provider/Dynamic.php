@@ -138,6 +138,19 @@ class Dynamic extends Provider
                                 SwitchLanguage::class,
                             ],
                         ],
+                        '/dynamic/records/edit/[table]/[record]/[relation]/[foreign]'                   => [
+                            'name'        => 'dynamic.record.edit.foreign',
+                            'view'        => 'edit',
+                            'resolvers'   => [
+                                'table'    => TableResolver::class,
+                                'record'   => RecordResolver::class,
+                                'relation' => Relation::class,
+                                'foreign'  => ForeignRecord::class,
+                            ],
+                            'middlewares' => [
+                                SwitchLanguage::class,
+                            ],
+                        ],
                         '/dynamic/records/clone/[table]/[record]'                                       => [
                             'name'        => 'dynamic.record.clone',
                             'view'        => 'clone',
