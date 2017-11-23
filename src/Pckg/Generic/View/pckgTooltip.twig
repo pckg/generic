@@ -28,7 +28,7 @@
         },
         computed: {
             html: function(){
-                return this.icon.length > 0 ? '<i class="fa fa-' + this.icon + '"></i>' : text;
+                return this.icon.length > 0 ? '<i class="fa fa-' + this.icon + '"></i>' : this.text;
             }
         }
     });
