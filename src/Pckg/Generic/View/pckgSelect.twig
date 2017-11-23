@@ -1,12 +1,14 @@
 <script type="text/x-template" id="vue-pckg-select">
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selected">
+            <option value> -- select value(s) -- </option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
         <select v-else class="form-control" v-model="selected">
+            <option value> -- select value -- </option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
@@ -71,7 +73,7 @@
                 return this.initialOptions;
             },
             finalOptions: function () {
-                var options = {null: ' -- select value -- '};
+                var options = {};
 
                 $.each(this.options, function (key, item) {
                     if (this.flat) {
@@ -111,8 +113,6 @@
                         options[this.getId(item, key)] = this.getTitle(item, key);
                     }
                 }.bind(this));
-
-                console.log("groups", options);
 
                 return options;
             },
