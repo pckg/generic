@@ -2,7 +2,8 @@
     <nobr v-if="content">&nbsp;<span
                 class="tooltip-questionmark"
                 :title="content"
-                data-toggle="tooltip">?</span>
+                data-toggle="tooltip"
+                :html="html"></span>
     </nobr>
 </script>
 
@@ -12,10 +13,23 @@
         name: 'pckg-tooltip',
         template: '#pckg-tooltip',
         props: {
-            content: {}
+            content: {},
+            text: {
+                default: '?',
+                type: String
+            },
+            icon: {
+                default: '',
+                type: String
+            }
         },
         mounted: function () {
             $(this.$el).find('[data-toggle="tooltip"]').tooltip({'position': 'auto top'});
+        },
+        computed: {
+            html: function(){
+                return this.icon.length > 0 ? '<i class="fa fa-' + this.icon + '"></i>' : text;
+            }
         }
     });
 </script>
