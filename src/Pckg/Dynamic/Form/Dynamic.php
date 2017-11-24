@@ -224,8 +224,6 @@ class Dynamic extends Bootstrap
 
     public function initFields()
     {
-        $this->addFieldset();
-
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
