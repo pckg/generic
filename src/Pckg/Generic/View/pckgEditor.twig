@@ -39,10 +39,10 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane" id="style">
-                            <div class="row row-grid">
+                            <div class="row">
                                 <template v-for="(scopes, sectionTitle) in availableScopes">
                                     <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
-                                        <div :class="scopes.length > 5 ? 'col-md-12' : 'col-md-6'">
+                                        <div :class="[Object.keys(scopes).length > 5 ? 'col-md-12' : 'col-md-6']">
                                             <label v-text="sectionTitle"></label>
                                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                 <a class="btn"
@@ -80,9 +80,9 @@
                             </div>
 
                             <div class="row row-grid">
-                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes">
-                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1"
-                                              v-for="(scopes, css) in scopes">
+                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes"
+                                     v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1">
+                                    <template v-for="(scopes, css) in scopes">
                                         <label v-text="sectionTitle + ' ' + css"></label>
                                         <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                             <a class="btn"
@@ -324,16 +324,11 @@
                     viewStyle: ''
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
-                availableContainers: {'container': 'Wrapped container', 'container-fluid': 'Fluid container'},
-                availableBackgroundSizes: {'contain': 'Contain', 'cover': 'Cover'},
-                availableBackgroundRepeats: {
-                    'no-repeat': 'No repeat',
-                    'repeat-x': 'Repeat X',
-                    'repeat-y': 'Repeat Y',
-                    'repeat': 'Repeat'
-                },
-                availableBackgroundAttachments: {'fixed': 'Fixed', 'scroll': 'Scroll', 'local': 'Local'},
-                availableBackgroundPositions: {'top-center': 'Top center', 'center-center': 'Center center'},
+                availableContainers: {{ config('pckg.generic.editor.containers') | json_encode | raw }},
+                availableBackgroundSizes: {{ config('pckg.generic.editor.bgSizes') | json_encode | raw }},
+                availableBackgroundRepeats: {{ config('pckg.generic.editor.bgRepeats') | json_encode | raw }},
+                availableBackgroundAttachments: {{ config('pckg.generic.editor.bgAttachments') | json_encode | raw }},
+                availableBackgroundPositions: {{ config('pckg.generic.editor.bgPositions') | json_encode | raw }},
                 availableBgVideoSources: {'': 'None', 'vimeo': 'Vimeo', 'youtube': 'Youtube'},
                 availableVideoDisplays: {'popup': 'Popup', 'background': 'Background'},
                 availableVideoControls: {'yes': 'Yes', 'no': 'No'},

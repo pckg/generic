@@ -279,6 +279,7 @@ class PageStructure
             'bgSize'          => '',
             'bgAttachment'    => '',
             'bgRepeat'        => '',
+            'bgPosition'      => '',
             'bgVideo'         => '',
             'bgVideoSource'   => '',
             'bgVideoDisplay'  => '',

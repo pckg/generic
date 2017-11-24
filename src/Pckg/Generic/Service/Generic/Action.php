@@ -255,9 +255,14 @@ class Action
                 $youtubeUrl = 'https://www.youtube.com/embed/'
                               . $url . '?controls='
                               . ($controls == 'yes' ? 1 : 0)
-                              . '&showinfo=0&rel=0&autoplay='
+                              . '&autoplay='
                               . ($autoplay == 'yes' ? 1 : 0) . '&loop='
-                              . ($loop == 'yes' ? 1 : 0) . '&playlist=' . $url;
+                              . ($loop == 'yes' ? 1 : 0)
+                              . '&modestbranding=1'
+                              . '&playsinline=1'
+                              . '&rel=0'
+                              . '&showinfo=0'
+                              . '&playlist=' . $url;
 
                 return '<div class="video-background">
     <div class="video-foreground">
