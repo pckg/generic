@@ -1,0 +1,45 @@
+<script type="text/x-template" id="pckg-ping">
+    <div class="pckg-ping">
+
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-ping', {
+        name: 'pckg-ping',
+        template: '#pckg-ping',
+        mixins: [pckgDelimiters, pckgInterval],
+        data: function () {
+            return {
+                lastActivity: moment().unix(),
+                lastPing: moment().unix(),
+                expired: false,
+                diff: 5 * 60 // 5 minutes
+            };
+        },
+        created: function () {
+            $('body').on('mousemove', this.updateLastActivity);
+            this.interval('someInterval', this.performLoginCheck, this.diff);
+        },
+        methods: {
+            updateLastActivity: function () {
+                this.lastActivity = moment().unix();
+                if (this.lastActivity - this.lastPing > this.diff) {
+                    this.performLoginCheck();
+                }
+            },
+            performLoginCheck: function () {
+                this.lastPing = moment().unix();
+                http.get('{{ url('api.auth.loginStatus') }}', function (data) {
+                    if (data.loggedIn) {
+                        return;
+                    }
+
+                    this.expired = true;
+                    alert("Your session expired");
+                }.bind(this));
+            }
+        },
+        computed: {}
+    });
+</script>

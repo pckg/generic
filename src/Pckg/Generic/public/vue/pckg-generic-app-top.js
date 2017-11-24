@@ -34,9 +34,31 @@ var pckgTimeout = {
     }
 };
 
+var pckgInterval = {
+    methods: {
+        interval: function (name, callback, interval, object) {
+            if (typeof object == 'undefined') {
+                object = this;
+            }
+
+            this.removeInterval(name, object);
+
+            this.setInterval(name, callback, interval, object);
+        },
+        removeInterval: function (name, object) {
+            if (object['_pckgInterval' + name]) {
+                clearInterval(this['_pckgInterval' + name]);
+            }
+        },
+        setInterval: function (name, callback, interval, object) {
+            object['_pckgInterval' + name] = setInterval(callback, interval);
+        }
+    }
+};
+
 var pckgCleanRequest = {
     methods: {
-        cleanRequest: function(callback, name){
+        cleanRequest: function (callback, name) {
             if (this['_pckgCleanRequest' + name]) {
                 this['_pckgCleanRequest' + name].abort();
             }
