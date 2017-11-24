@@ -62,7 +62,7 @@ class Field extends DatabaseRecord
          *
          * @T00D00
          */
-        $relation->applyFilterOnEntity($entity, $foreignRecord);
+        $relation->applyFilterOnEntity($entity, $foreignRecord, $record);
 
         return $entity;
     }

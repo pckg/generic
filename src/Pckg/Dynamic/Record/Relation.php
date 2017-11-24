@@ -14,7 +14,7 @@ class Relation extends DatabaseRecord
 
     protected $entity = Relations::class;
 
-    public function applyFilterOnEntity(Entity $entity, $foreignRecord = null)
+    public function applyFilterOnEntity(Entity $entity, $foreignRecord = null, $record = null)
     {
         /**
          * Is this correct? || !$foreignRecord?
@@ -24,11 +24,15 @@ class Relation extends DatabaseRecord
             return;
         }
 
-        if (!$foreignRecord && strpos($this->filter, '$foreignRecord->') !== false) {
+        if (!$foreignRecord && !$record && strpos($this->filter, '$') !== false) {
             return;
         }
 
         $filter = $this->filter;
+
+        if (strpos($filter, '$') !== false) {
+            $filter = $this->evalRecords($filter, $foreignRecord, $record);
+        }
 
         if (strpos($filter, '"') === 0 && strpos(strrev($filter), '"') === 0) {
             $filter = substr($filter, 1, -1);
@@ -47,6 +51,19 @@ class Relation extends DatabaseRecord
     }
 
     public function eval($eval, $foreignRecord)
+    {
+        try {
+            return eval(' return ' . $eval . '; ');
+        } catch (Throwable $e) {
+            if (prod()) {
+                return null;
+            }
+
+            throw $e;
+        }
+    }
+
+    public function evalRecords($eval, $foreignRecord, $record)
     {
         try {
             return eval(' return ' . $eval . '; ');
