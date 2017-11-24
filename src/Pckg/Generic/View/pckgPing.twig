@@ -13,13 +13,12 @@
             return {
                 lastActivity: moment().unix(),
                 lastPing: moment().unix(),
-                expired: false,
                 diff: 5 * 60 // 5 minutes
             };
         },
         created: function () {
             $('body').on('mousemove', this.updateLastActivity);
-            this.interval('someInterval', this.performLoginCheck, this.diff);
+            this.interval('someInterval', this.performLoginCheck, this.diff * 1000);
         },
         methods: {
             updateLastActivity: function () {
@@ -35,8 +34,8 @@
                         return;
                     }
 
-                    this.expired = true;
-                    alert("Your session expired");
+                    confirm('Your session expired, please login in another window');
+                    this.performLoginCheck();
                 }.bind(this));
             }
         },
