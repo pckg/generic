@@ -51,18 +51,18 @@
             },
             makeSort: function () {
                 var newValue = this.sort;
-                if (this._sortTimeout) {
+                /*if (this._sortTimeout) {
                     this._sortTimeout.abort();
-                }
+                }*/
 
                 this.resetPaginatorUrl({
                     field: newValue.field,
                     dir: newValue.dir
                 });
 
-                this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
+                /*this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
-                }.bind(this));
+                }.bind(this));*/
             },
             setUrlParams: function (params) {
                 params = params || {};
@@ -125,7 +125,6 @@
                 this.timeout('search', this.refreshData, 500);
             },
             refreshData: function (config) {
-                console.log("refreshing data");
                 this.loading++;
                 http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
@@ -153,19 +152,16 @@
             }
         },
         mounted: function () {
-            console.log("mounted", this.identifier);
             {% if tab %}
             /**
              * @T00D00 - what if we have multiple tables in tab?
              */
             $dispatcher.$on('dynamic-tab-{{ tab.id }}:refresh', this.refreshData);
-            console.log('registering', 'dynamic-tab-{{ tab.id }}:refresh');
             {% endif %}
             {% if table %}
             $dispatcher.$on('pckg-maestro-table-{{ table }}:setRecords', this.setRecords);
             $dispatcher.$on('pckg-maestro-table-{{ table }}:setPaginatorTotal', this.setPaginatorTotal);
             $dispatcher.$on('pckg-maestro-table-{{ table }}:refresh', this.refreshData);
-            console.log('registering', 'pckg-maestro-table-{{ table }}:refresh');
             {% endif %}
         }
     }));

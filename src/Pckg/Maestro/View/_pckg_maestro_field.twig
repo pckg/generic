@@ -14,7 +14,8 @@
             </template>
         </template>
         <template v-else-if="type == 'order'">
-            <pckg-tabelize-field-order :field="field.id"
+            <pckg-tabelize-field-order :key="record.id"
+                                       :field="field.id"
                                        :record="record.id"
                                        :value="record[field.field]"
                                        :table="table"

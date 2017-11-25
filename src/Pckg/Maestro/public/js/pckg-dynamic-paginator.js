@@ -8,12 +8,12 @@ Vue.component('pckg-dynamic-paginator', {
         url: null,
         resetpaginatorurl: null,
         initialRecords: {
-            default: function(){
+            default: function () {
                 return [];
             }
         },
         initialGroups: {
-            default: function(){
+            default: function () {
                 return [];
             }
         }
