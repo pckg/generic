@@ -106,7 +106,7 @@
                     finalParams.page = this.paginator.page;
                 }
 
-                if (this.paginator.perPage > 0) {
+                if (this.paginator.perPage > 0 || this.paginator.perPage == 'all') {
                     finalParams.perPage = this.paginator.perPage;
                 }
 

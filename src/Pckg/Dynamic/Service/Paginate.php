@@ -29,9 +29,7 @@ class Paginate
 
         $entity->count();
 
-        if ($limit != 'all') {
-            $entity->limit($limit);
-        }
+        $entity->limit($limit == 'all' ? null : $limit);
 
         $entity->page($this->get->get('page') ?? 1);
 
