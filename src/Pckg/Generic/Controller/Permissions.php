@@ -6,6 +6,7 @@ use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Generic\Entity\MenuItems;
+use Pckg\Generic\Entity\Routes;
 
 class Permissions
 {
@@ -88,6 +89,16 @@ class Permissions
             $actions = [
                 'read' => 'Read',
             ];
+        } else if ($for == 'route') {
+            $routes = (new Routes(null, null, false));
+            $routes->usePermissionableTable();
+            $allPermissions = $routes->where('id', $id)->all();
+            $allPermissions->each(function($permission) use (&$permissions) {
+                $permissions[$permission->action][$permission->user_group_id] = true;
+            });
+            $actions = [
+                'read' => 'Read',
+            ];
         }
 
         return [
@@ -112,6 +123,8 @@ class Permissions
             $entity = (new TableActions(null, null, false));
         } else if ($for == 'menu') {
             $entity = (new MenuItems(null, null, false));
+        } else if ($for == 'route') {
+            $entity = (new Routes(null, null, false));
         }
 
         if (!$entity) {
@@ -177,6 +190,13 @@ class Permissions
         vueManager()->addView('Pckg/Generic:permissions/_permissions');
 
         return '<pckg-generic-permissions type="menu" id="' . $menuItem->id . '"></pckg-generic-permissions>';
+    }
+
+    public function getEditRoutePermissionsAction(Record $route)
+    {
+        vueManager()->addView('Pckg/Generic:permissions/_permissions');
+
+        return '<pckg-generic-permissions type="route" id="' . $route->id . '"></pckg-generic-permissions>';
     }
 
 }
