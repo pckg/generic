@@ -298,7 +298,14 @@ class Action
         $settings = $this->action->pivot->settings->keyBy('slug');
 
         if ($settings->hasKey($key)) {
-            return $settings->getKey($key)->pivot->value;
+            $setting = $settings->getKey($key);
+            $value = $setting->pivot->value;
+
+            if ($setting->type == 'array') {
+                return json_decode($value, true);
+            }
+
+            return $value;
         }
     }
 

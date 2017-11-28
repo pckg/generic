@@ -56,26 +56,27 @@
                             </div>
 
                             <label>Class</label>
-                            <input class="form-control" v-model="settings.class"/>
+                            <input class="form-control" v-model="form.settings.class"/>
 
                             <label>Style</label>
-                            <input class="form-control" v-model="settings.style"/>
+                            <input class="form-control" v-model="form.settings.style"/>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="box">
                             <div v-if="action.type == 'container'">
                                 <h4>Container</h4>
                                 <label>Container</label>
-                                <pckg-select v-model="settings.container"
+                                <pckg-select v-model="form.settings.container"
                                              :initial-options="availableContainers"></pckg-select>
                             </div>
                             <div v-else-if="action.type == 'column'">
                                 <h4>Column</h4>
 
                                 <label>Width</label>
-                                <pckg-select v-model="settings.width" :initial-options="availableWidths"></pckg-select>
+                                <pckg-select v-model="form.settings.width"
+                                             :initial-options="availableWidths"></pckg-select>
 
                                 <label>Offset</label>
-                                <pckg-select v-model="settings.offset"
+                                <pckg-select v-model="form.settings.offset"
                                              :initial-options="availableOffsets"></pckg-select>
                             </div>
 
@@ -97,33 +98,33 @@
                         <div role="tabpanel" class="tab-pane" id="background">
                             <h4>Background</h4>
                             <label>Color</label>
-                            <input class="form-control" v-model="settings.bgColor"/>
+                            <input class="form-control" v-model="form.settings.bgColor"/>
 
                             <label>Image</label>
                             <pckg-htmlbuilder-dropzone
-                                    :current="settings.bgImage"
+                                    :current="form.settings.bgImage"
                                     :url="backgroundImageUploadUrl"
                                     id="pckg-editor-dropzone"
-                                    v-model="settings.bgImage"></pckg-htmlbuilder-dropzone>
+                                    v-model="form.settings.bgImage"></pckg-htmlbuilder-dropzone>
 
-                            <template v-if="settings.bgImage && settings.bgImage.length">
+                            <template v-if="form.settings.bgImage && form.settings.bgImage.length">
                                 <label>Attachment</label>
-                                <pckg-select v-model="settings.bgAttachment"
+                                <pckg-select v-model="form.settings.bgAttachment"
                                              :initial-options="availableBackgroundAttachments"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Position</label>
-                                <pckg-select v-model="settings.bgPosition"
+                                <pckg-select v-model="form.settings.bgPosition"
                                              :initial-options="availableBackgroundPositions"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Repeat</label>
-                                <pckg-select v-model="settings.bgRepeat"
+                                <pckg-select v-model="form.settings.bgRepeat"
                                              :initial-options="availableBackgroundRepeats"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Size</label>
-                                <pckg-select v-model="settings.bgSize"
+                                <pckg-select v-model="form.settings.bgSize"
                                              :initial-options="availableBackgroundSizes"
                                              :initial-multiple="false"></pckg-select>
                             </template>
@@ -131,32 +132,33 @@
                             <label>Video</label>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <pckg-select v-model="settings.bgVideoSource"
+                                    <pckg-select v-model="form.settings.bgVideoSource"
                                                  :initial-options="availableBgVideoSources"
                                                  :initial-multiple="false"></pckg-select>
                                 </div>
-                                <div class="col-md-6" v-if="settings.bgVideoSource && settings.bgVideoSource.length">
-                                    <input class="form-control" v-model="settings.bgVideo" placeholder="Video ID"/>
+                                <div class="col-md-6"
+                                     v-if="form.settings.bgVideoSource && form.settings.bgVideoSource.length">
+                                    <input class="form-control" v-model="form.settings.bgVideo" placeholder="Video ID"/>
                                 </div>
                             </div>
-                            <template v-if="settings.bgVideo && settings.bgVideo.length">
+                            <template v-if="form.settings.bgVideo && form.settings.bgVideo.length">
                                 <label>Display</label>
-                                <pckg-select v-model="settings.bgVideoDisplay"
+                                <pckg-select v-model="form.settings.bgVideoDisplay"
                                              :initial-options="availableVideoDisplays"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Autoplay</label>
-                                <pckg-select v-model="settings.bgVideoAutoplay"
+                                <pckg-select v-model="form.settings.bgVideoAutoplay"
                                              :initial-options="availableVideoAutoplays"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Loop</label>
-                                <pckg-select v-model="settings.bgVideoLoop"
+                                <pckg-select v-model="form.settings.bgVideoLoop"
                                              :initial-options="availableVideoLoops"
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Controls</label>
-                                <pckg-select v-model="settings.bgVideoControls"
+                                <pckg-select v-model="form.settings.bgVideoControls"
                                              :initial-options="availableVideoControls"
                                              :initial-multiple="false"></pckg-select>
                             </template>
@@ -302,26 +304,31 @@
         mixins: [pckgDelimiters],
         data: function () {
             return {
-                settings: {
-                    padding: '',
-                    margin: '',
-                    'class': '',
-                    width: [],
-                    offset: [],
-                    scopes: [],
-                    bgColor: '',
-                    bgImage: '',
-                    bgAttachment: '',
-                    bgPosition: '',
-                    bgRepeat: '',
-                    bgSize: '',
-                    bgVideoSource: '',
-                    bgVideo: '',
-                    bgVideoDisplay: '',
-                    bgVideoAutoplay: '',
-                    bgVideoLoop: '',
-                    bgVideoControls: '',
-                    viewStyle: ''
+                form: {
+                    settings: {
+                        padding: '',
+                        margin: '',
+                        'class': '',
+                        width: [],
+                        offset: [],
+                        scopes: [],
+                        bgColor: '',
+                        bgImage: '',
+                        bgAttachment: '',
+                        bgPosition: '',
+                        bgRepeat: '',
+                        bgSize: '',
+                        bgVideoSource: '',
+                        bgVideo: '',
+                        bgVideoDisplay: '',
+                        bgVideoAutoplay: '',
+                        bgVideoLoop: '',
+                        bgVideoControls: '',
+                        viewStyle: '',
+                        sourceOffers: [],
+                        sourceGalleries: [],
+                        sourcePackets: [],
+                    },
                 },
                 availableScopes: {{ config('pckg.generic.scopes') | json_encode | raw }},
                 availableContainers: {{ config('pckg.generic.editor.containers') | json_encode | raw }},
@@ -349,7 +356,7 @@
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
         },
         watch: {
-            'settings.width': {
+            'form.settings.width': {
                 handler: function (newVal, oldVal) {
                     $.each(oldVal, function (i, width) {
                         this.removeActionClass(width);
@@ -361,7 +368,7 @@
                 },
                 deep: true
             },
-            'settings.offset': {
+            'form.settings.offset': {
                 handler: function (newVal, oldVal) {
                     $.each(oldVal, function (i, width) {
                         this.removeActionClass(width);
@@ -390,7 +397,7 @@
                 $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
             },
             scopeSelected: function (scope) {
-                return this.settings.scopes.indexOf(scope) >= 0;
+                return this.form.settings.scopes.indexOf(scope) >= 0;
             },
             changeContent: function (content) {
                 if (this.action.type != 'action') {
@@ -414,10 +421,10 @@
             },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
-                    utils.splice(this.settings.scopes, scope);
+                    utils.splice(this.form.settings.scopes, scope);
                     this.removeActionClass(scope);
                 } else {
-                    this.settings.scopes.push(scope);
+                    this.form.settings.scopes.push(scope);
                     this.addActionClass(scope);
                 }
             },
@@ -440,7 +447,7 @@
                 this.action = action;
                 $('#editBlockModal').modal('show');
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), function (data) {
-                    this.settings = data.settings;
+                    this.form.settings = data.settings;
                 }.bind(this));
                 http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphContent') }}', {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
@@ -451,7 +458,7 @@
                     this.saveContent();
                 }
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}', {actionsMorph: this.action.id}), {
-                    settings: this.settings,
+                    settings: this.form.settings,
                     template: this.action.template
                 }, function (data) {
                     if (data.success) {

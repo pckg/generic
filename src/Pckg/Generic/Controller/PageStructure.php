@@ -289,6 +289,21 @@ class PageStructure
         ];
     }
 
+    protected function getPluginSettings()
+    {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        return [
+            'sourceOffers'    => [],
+            'sourcePackets'   => [],
+            'sourceGalleries' => [],
+        ];
+    }
+
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         return response()->respondWithSuccess([
@@ -322,17 +337,29 @@ class PageStructure
     {
         $settings = $actionsMorph->settings
             ->map(function(
-                Setting $settingsMorph
+                Setting $setting
             ) {
                 return [
                     'slug'  => str_replace('pckg.generic.pageStructure.', '',
-                                           $settingsMorph->slug),
-                    'value' => $settingsMorph->pivot->value,
+                                           $setting->slug),
+                    'value' => $setting->type == 'array'
+                        ? (json_decode($setting->pivot->value, true) ??
+                           [])
+                        : $setting->pivot->value,
                 ];
             })->keyBy('slug')->map('value');
 
         $defaults = $this->getDefaultSettings();
         foreach ($defaults as $key => $val) {
+            if ($settings->hasKey($key)) {
+                continue;
+            }
+
+            $settings->push($val, $key);
+        }
+
+        $pluginDefaults = $this->getPluginSettings();
+        foreach ($pluginDefaults as $key => $val) {
             if ($settings->hasKey($key)) {
                 continue;
             }
@@ -429,6 +456,11 @@ class PageStructure
         $values = only(post('settings'), ['dataScope', 'viewStyle']);
         collect($values)->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
+        });
+
+        $values = only(post('settings'), ['sourceOffers', 'sourceGalleries', 'sourcePackets']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value));
         });
 
         /**
