@@ -197,6 +197,7 @@
                                     edit</a>
                             </template>
                             <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
+                            <button class="btn btn-primary" @click.prevent="switchContent">Switch content</button>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="permissions">
                             <p>... are waiting to be copied from backend</p>
@@ -388,6 +389,8 @@
             }
         },
         methods: {
+            switchContent: function () {
+            },
             deleteAction: function () {
                 http.deleteJSON(utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}), function (data) {
                     $('.modal').modal('hide');

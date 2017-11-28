@@ -18,7 +18,8 @@
                 <td>${ record.name }</td>
                 <template v-for="(group,gk) in groups">
                     <td v-for="(action,ak) in actions">
-                        <input type="checkbox" v-model="permissions[ak][gk]" value="1"/>
+                        <input type="checkbox" v-model="permissions[ak][gk]" @click="togglePermission(ak, gk)"
+                               value="1"/>
                     </td>
                 </template>
             </tr>
@@ -45,9 +46,9 @@
         data: function () {
             return {
                 permissionsModel: this.type,
-                groups: [],
-                permissions: [],
-                actions: [],
+                groups: {},
+                permissions: {},
+                actions: {},
                 records: []
             };
         },
@@ -57,17 +58,24 @@
                     this.groups = data.groups;
                     this.actions = data.actions;
                     this.records = data.records;
-                    var permissions = data.permissions;
+                    var permissions = {};
                     $.each(this.actions, function (actionKey, action) {
                         permissions[actionKey] = permissions[actionKey] || {};
                         $.each(this.groups, function (groupKey, group) {
-                            permissions[actionKey][groupKey] = permissions[actionKey][groupKey] || false;
+                            permissions[actionKey][groupKey] = !!(data.permissions[actionKey] && data.permissions[actionKey][groupKey]);
                         });
                     }.bind(this));
                     this.permissions = permissions;
+                    console.log(permissions);
                 }.bind(this));
             },
+            togglePermission: function (ak, gk) {
+                this.permissions[ak][gk] = this.permissions[ak][gk] ? false : true;
+            },
             savePermissions: function () {
+                http.post('{{ url('api.pckg.generic.permissions') }}?for=' + this.type + '&id=' + this.id, {permissions: this.permissions}, function (data) {
+
+                }.bind(this));
             }
         },
         created: function () {

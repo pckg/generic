@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Exception;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
@@ -36,11 +37,11 @@ class Permissions
         $for = get('for', null);
         $id = get('id', null);
         $groups = [
-            1  => 'Superadmin',
-            3  => 'Admin',
-            4  => 'PR',
-            5  => 'Checkin',
-            2  => 'User',
+            1    => 'Superadmin',
+            3    => 'Admin',
+            4    => 'PR',
+            5    => 'Checkin',
+            2    => 'User',
             null => 'Guest',
         ];
         $permissions = [];
@@ -95,6 +96,59 @@ class Permissions
             'records'     => [['name' => '']],
             'permissions' => $permissions,
         ];
+    }
+
+    public function postPermissionsAction()
+    {
+        $for = get('for', null);
+        $id = get('id', null);
+
+        $entity = null;
+        if ($for == 'table') {
+            $entity = (new Tables(null, null, false));
+        } else if ($for == 'field') {
+            $entity = (new Fields(null, null, false));
+        } else if ($for == 'action') {
+            $entity = (new TableActions(null, null, false));
+        } else if ($for == 'menu') {
+            $entity = (new MenuItems(null, null, false));
+        }
+
+        if (!$entity) {
+            throw new Exception("No entity?");
+        }
+
+        $record = $entity->where('id', $id)->oneOrFail();
+
+        $permissions = [];
+        foreach (post('permissions') as $action => $groups) {
+            foreach ($groups as $group => $has) {
+                if ($has) {
+                    $permissions[] = [
+                        'id'            => $id,
+                        'user_group_id' => $group,
+                        'action'        => $action,
+                    ];
+                }
+            }
+        }
+
+        $entity = new $entity(null, null, false);
+        $entity->usePermissionableTable();
+
+        /**
+         * Delete old permissions.
+         */
+        $entity->where('id', $record->id)->delete();
+
+        /**
+         * Save new permissions.
+         */
+        foreach ($permissions as $permission) {
+            $record->grantPermissionTo($permission['action'], $permission['user_group_id']);
+        }
+
+        return response()->respondWithSuccess();
     }
 
     public function getEditTablePermissionsAction(Record $table)
