@@ -1,0 +1,56 @@
+<script type="text/x-template" id="pckg-maestro-formalize">
+    <div class="pckg-maestro-formalize">
+        {{ form | raw }}
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('pckg-maestro-formalize', {
+        name: 'pckg-maestro-formalize',
+        template: '#pckg-maestro-formalize',
+        mixins: [pckgDelimiters],
+        data: function () {
+            return {
+                form: {{ form.getData() | json_encode | raw }},
+                buttons: ['submit', 'as_new'],
+                submitting: false
+            };
+        },
+        watch: {
+            submitting: function (val) {
+                if (val) {
+                    $(this.$el).find('input[type="submit"]').attr('disabled', 'disabled');
+                } else {
+                    $(this.$el).find('input[type="submit"]').attr('disabled', null);
+                }
+            }
+        },
+        methods: {
+            prepareData: function (type) {
+                var data = http.formToData(this);
+                $.each(this.buttons, function (i, v) {
+                    delete data[v];
+                });
+                data[type] = true;
+
+                return data;
+            },
+            submitForm: function () {
+                this.submitting = true;
+                var data = this.prepareData('submit');
+                http.post('{{ form.getAction() }}', data, function (data) {
+                    this.submitting = false;
+                    if (data.success) {
+                        $dispatcher.$emit('notification:success', data.message);
+                    } else {
+                        $dispatcher.$emit('notification:error', data.message || 'Something went wrong');
+                    }
+
+                    if (data.redirect) {
+                        http.redirect(data.redirect);
+                    }
+                }.bind(this));
+            }
+        }
+    });
+</script>

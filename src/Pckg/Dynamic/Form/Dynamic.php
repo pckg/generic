@@ -13,6 +13,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
+use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Locale\Entity\Languages;
@@ -52,6 +53,7 @@ class Dynamic extends Bootstrap
         parent::__construct();
 
         $this->addDecorator($this->decoratorFactory->create(DynamicDecorator::class));
+        $this->addDecorator($this->decoratorFactory->create(VueJS::class));
     }
 
     public function setEditable($editable)
@@ -134,7 +136,7 @@ class Dynamic extends Bootstrap
                                       ->keyBy('slug')
                                       ->map('title');
 
-        if (count($languages) < 2) {
+        if (count($languages) < 2 || true) {
             return;
         }
 

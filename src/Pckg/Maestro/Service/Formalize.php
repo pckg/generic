@@ -61,6 +61,8 @@ class Formalize
 
     public function __toString()
     {
+        vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $this, 'form' => $this->form]);
+
         return (string)view(
             'Pckg/Maestro:formalize',
             [

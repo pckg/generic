@@ -3,8 +3,8 @@
  */
 
 /*var $router = new VueRouter({
-    routes: []
-});*/
+ routes: []
+ });*/
 
 var store = new Vuex.Store({});
 
@@ -25,7 +25,11 @@ var $vue = new Vue({
                 $('#' + data.id).modal('show');
             });
         }
-    }
+    }/*components: {
+     'my-component': function (resolve, reject) {
+     require(['./my-component'], resolve)
+     })
+     }*/
 });
 
 // $vue.$mount('#vue-app');

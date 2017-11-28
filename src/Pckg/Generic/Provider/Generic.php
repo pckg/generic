@@ -17,6 +17,7 @@ class Generic extends Provider
             PageStructure::class,
             GenericPaths::class,
             GenericAssets::class,
+            Permissions::class,
         ];
     }
 

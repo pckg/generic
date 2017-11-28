@@ -398,8 +398,6 @@ class Records extends Controller
             flash('dynamic.records.upload.success', __('dynamic.records.upload.success'));
         }
 
-        flash('dynamic.records.add.success', __('dynamic.records.add.success'));
-
         $url = url('dynamic.record.edit', [
             'table'  => $table,
             'record' => $newRecord ?? $record,
@@ -415,7 +413,10 @@ class Records extends Controller
         }
 
         return $this->response()
-                    ->respondWithSuccessRedirect($url);
+                    ->respondWithSuccess([
+                                             'message'  => __('dynamic.records.add.success'),
+                                             'redirect' => $url,
+                                         ]);
     }
 
     public function postCloneAction(Record $record, Table $table)
@@ -742,12 +743,14 @@ class Records extends Controller
             $this->saveP17n($record, $entity);
         }
 
-        flash('dynamic.records.edit.success', __('dynamic.records.edit.success'));
-
-        return $this->response()->respondWithSuccessRedirect(post('as_new') ? url('dynamic.record.edit', [
-            'table'  => $table,
-            'record' => $record,
-        ]) : null);
+        return $this->response()
+                    ->respondWithSuccess([
+                                             'message'  => __('dynamic.records.edit.success'),
+                                             'redirect' => post('as_new') ? url('dynamic.record.edit', [
+                                                 'table'  => $table,
+                                                 'record' => $record,
+                                             ]) : null,
+                                         ]);
     }
 
     protected function saveP17n(
