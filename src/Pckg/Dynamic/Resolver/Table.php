@@ -43,17 +43,12 @@ class Table implements RouteResolver
                                   }
                               )
                               ->withActions()
-                    // removed because we moved view scope to project database
-                    /*->withViews(
-                        function(HasMany $views) {
-                            $views->withTable();
-                        }
-                    )*/
+                              ->withListableFields()
                               ->oneOrFail(
-                        function() {
-                            response()->unauthorized('Table not found');
-                        }
-                    );
+                                  function() {
+                                      response()->unauthorized('Table not found');
+                                  }
+                              );
             },
             'en_GB'
         );

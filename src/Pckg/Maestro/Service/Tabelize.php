@@ -520,13 +520,14 @@ class Tabelize
     {
         try {
             $string = '';
+            measure('Tabelize', function() use (&$string) {
+                $string .= '<!-- start tabelize -->';
+                $string .= $this->view->autoparse();
+                $string .= '<!-- end tabelize -->';
 
-            $string .= '<!-- start tabelize -->';
-            $string .= $this->view->autoparse();
-            $string .= '<!-- end tabelize -->';
-
-            $actionsTemplate = $this->__toStringParsedViews();
-            $string .= $actionsTemplate;
+                $actionsTemplate = $this->__toStringParsedViews();
+                $string .= $actionsTemplate;
+            });
         } catch (Throwable $e) {
             return exception($e);
         }
@@ -651,7 +652,7 @@ class Tabelize
             $transformed['id'] = $record->id;
         }
 
-        if (!isset($transformed['tabelizeClass'])) {
+        if (!isset($transformed['tabelizeClass']) && method_exists($record, 'getTabelizeClassAttribute')) {
             $transformed['tabelizeClass'] = $record->tabelizeClass;
         }
 

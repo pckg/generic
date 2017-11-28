@@ -1,5 +1,5 @@
 {% macro relationTree(relations) %}
-    {% if relations.count() %}
+    {% if relations %}
         <ul>
             {% for relation in relations %}
                 <li>

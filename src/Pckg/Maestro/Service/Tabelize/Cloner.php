@@ -17,7 +17,7 @@ class Cloner
          * Get relations tree.
          */
         $distinctRelations = [];
-        $relations = (new Relations())->getHasManyRelationsTreeForTable($table, $distinctRelations);
+        $relations = [];//(new Relations())->getHasManyRelationsTreeForTable($table, $distinctRelations);
 
         /**
          * Render view.
