@@ -182,6 +182,13 @@ class Records extends Controller
         }
 
         /**
+         * Get tabelize class
+         */
+        if (method_exists($entity, 'selectTabelizeClassField')) {
+            $entity->selectTabelizeClassField();
+        }
+
+        /**
          * Join extensions.
          */
         $dynamicService->selectScope($entity);
