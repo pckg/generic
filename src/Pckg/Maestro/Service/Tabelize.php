@@ -594,24 +594,26 @@ class Tabelize
          * Table fields
          */
         foreach ($this->getFields() as $key => $field) {
-            $transformed[is_string($key)
+            $realKey = is_string($key)
                 ? $key
                 : (is_string($field)
                     ? $field
                     : (is_object($field)
                         ? $field->field
-                        : $field['field']))] =
-                $this->getRecordValue($field, $record);
+                        : $field['field']));
+            measure('field.' . $realKey, function() use (&$transformed, $realKey, $field, $record) {
+                $transformed[$realKey] = $this->getRecordValue($field, $record);
+            });
         }
 
         /**
          * Additional fields
          */
         foreach ($this->getFieldTransformations() as $key => $field) {
-            $transformed[is_string($key) ? $key : (is_string($field) ? $field : $field->field)] = $this->getRecordValue(
-                $field,
-                $record
-            );
+            $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
+            measure('transformation.' . $key, function(&$transformed, $realKey, $field, $record) {
+                $transformed[$realKey] = $this->getRecordValue($field, $record);
+            });
         }
 
         if ($this->dataOnly) {

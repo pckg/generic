@@ -1,5 +1,6 @@
 <?php namespace Pckg\Dynamic\Controller;
 
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
@@ -222,7 +223,7 @@ class Records extends Controller
 
         /**
          * @T00D00
-         *  - find out joins / scopes / withs for field type = php and mysql
+         *  - find out joins / scopes / with for field type = php and mysql
          */
 
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
@@ -240,8 +241,11 @@ class Records extends Controller
             }
         }
 
-        $records = $entity->count()->all();
-        $total = $records->total();
+        /**
+         * Temp test.
+         */
+        $records = auth()->user('id') == 1 && $this->request()->isAjax() ? $entity->count()->all() : new Collection();
+        $total = auth()->user('id') == 1 && $this->request()->isAjax() ? $records->total() : $entity->total();
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
