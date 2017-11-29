@@ -34,9 +34,9 @@ var pckgHtmlbuilderSelect = Vue.component('pckg-htmlbuilder-select', {
                         $select.append('<option value="' + (key === 0 ? '' : key) + '">' + val + '</option>');
                     }
                 });
-                $select.val(value);
-                this.v = value;
                 $select.selectpicker('refresh');
+                $select.val(value).change();
+                this.v = value;
             }.bind(this));
         }
     },

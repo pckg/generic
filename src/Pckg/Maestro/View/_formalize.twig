@@ -26,6 +26,9 @@
             }
         },
         methods: {
+            syncSelectValues: function(e){
+                console.log(e);
+            },
             prepareData: function (type) {
                 var data = http.formToData(this);
                 $.each(this.buttons, function (i, v) {
