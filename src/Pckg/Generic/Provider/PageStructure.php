@@ -25,6 +25,7 @@ class PageStructure extends Provider
                            'namePrefix' => 'pckg.generic.pageStructure',
                            'controller' => PageStructureController::class,
                        ]))->routes([
+                                       '.initialFetch'                 => new Route('/initialFetch', 'initialFetch'),
                                        '.getRoutes'                    => new Route('/routes', 'routes'),
                                        '.getVariables'                 => new Route('/variables', 'variables'),
                                        '.getContents'                  => new Route('/contents', 'contents'),
@@ -65,10 +66,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorphContent'))->resolvers([
                                                                                                                             'actionsMorph' => ActionsMorph::class,
                                                                                                                         ]),
-                                       '.actionsMorph.addPartial'          => (new Route('/actionsMorph/[actionsMorph]/addPartial',
+                                       '.actionsMorph.addPartial'      => (new Route('/actionsMorph/[actionsMorph]/addPartial',
                                                                                      'actionsMorphAddPartial'))->resolvers([
-                                                                                                                            'actionsMorph' => ActionsMorph::class,
-                                                                                                                        ]),
+                                                                                                                               'actionsMorph' => ActionsMorph::class,
+                                                                                                                           ]),
                                        '.duplicateActionsMorphContent' => (new Route('/actionsMorph/[actionsMorph]/duplicateContent',
                                                                                      'duplicateActionsMorphContent'))->resolvers([
                                                                                                                                      'actionsMorph' => ActionsMorph::class,

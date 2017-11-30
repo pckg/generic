@@ -1,4 +1,4 @@
-<script type="text/x-template" id="pckg-bootstrap-modal">
+<template>
         <div :class="['modal fade', visible ? 'in' : '']" tabindex="-1" role="dialog" :id="id">
             <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
                 <div class="modal-content">
@@ -15,4 +15,33 @@
                 </div>
             </div>
         </div>
+</template>
+
+<script>
+    export default {
+        name: 'pckg-bootstrap-modal',
+        props: {
+            header: null,
+            body: null,
+            dismissable: true,
+            id: null,
+            visible: null,
+            style: null,
+            size: null
+        },
+        data: function () {
+            return {
+                _modal: null
+            };
+        },
+        create: function () {
+            this.$nextTick(function () {
+                this._modal = $(this.$el).modal();
+
+                if (this.visible) {
+                    this._modal.modal('show');
+                }
+            });
+        }
+    }
 </script>

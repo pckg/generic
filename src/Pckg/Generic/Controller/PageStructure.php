@@ -21,6 +21,27 @@ use Pckg\Stringify;
 class PageStructure
 {
 
+    public function getInitialFetchAction()
+    {
+        $data = [
+            'availableScopes'                => config('pckg.generic.scopes'),
+            'availableContainers'            => config('pckg.generic.editor.containers'),
+            'availableBackgroundSizes'       => config('pckg.generic.editor.bgSizes'),
+            'availableBackgroundRepeats'     => config('pckg.generic.editor.bgRepeats'),
+            'availableBackgroundAttachments' => config('pckg.generic.editor.bgAttachments'),
+            'availableBackgroundPositions'   => config('pckg.generic.editor.bgPositions'),
+            'templates'                      => config('pckg.generic.templates'),
+        ];
+
+        foreach (['partials', 'structures', 'pages'] as $type) {
+            $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
+                return (new $partial)->forJson();
+            });
+        }
+
+        return $data;
+    }
+
     public function getPageStructureAction(ActionMorph $actionMorphForm, Simple $simpleContentForm)
     {
         $actionMorphForm->initFields();

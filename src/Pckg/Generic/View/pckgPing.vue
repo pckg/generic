@@ -1,13 +1,10 @@
-<script type="text/x-template" id="pckg-ping">
-    <div class="pckg-ping">
+<template>
+    <div class="pckg-ping"></div>
+</template>
 
-    </div>
-</script>
-
-<script type="text/javascript">
-    Vue.component('pckg-ping', {
+<script>
+    export default {
         name: 'pckg-ping',
-        template: '#pckg-ping',
         mixins: [pckgDelimiters, pckgInterval],
         data: function () {
             return {
@@ -29,7 +26,7 @@
             },
             performLoginCheck: function () {
                 this.lastPing = moment().unix();
-                http.get('{{ url('api.auth.loginStatus') }}', function (data) {
+                http.get($store.state.router.urls['api.auth.loginStatus'], function (data) {
                     if (data.loggedIn) {
                         return;
                     }
@@ -38,7 +35,6 @@
                     this.performLoginCheck();
                 }.bind(this));
             }
-        },
-        computed: {}
-    });
+        }
+    }
 </script>

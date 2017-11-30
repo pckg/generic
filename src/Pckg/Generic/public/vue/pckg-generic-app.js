@@ -6,12 +6,20 @@
  routes: []
  });*/
 
-var store = new Vuex.Store({});
+var $store = new Vuex.Store({
+    state: {
+        router: {
+            urls: Pckg.router.urls || {}
+        }
+    },
+    actions: {},
+    mutations: {},
+    getters: {}
+});
 
 var $vue = new Vue({
     el: '#vue-app',
     // router: $router,
-    store,
     data: {
         alerts: [],
         modals: []
@@ -25,11 +33,5 @@ var $vue = new Vue({
                 $('#' + data.id).modal('show');
             });
         }
-    }/*components: {
-     'my-component': function (resolve, reject) {
-     require(['./my-component'], resolve)
-     })
-     }*/
+    }
 });
-
-// $vue.$mount('#vue-app');
