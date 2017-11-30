@@ -1,4 +1,4 @@
-<script type="text/x-template" id="pckg-dispatcher-notifications-template">
+<template>
     <div class="pckg-dispatcher-notifications-wrapper">
         <div class="alert alert-dismissible alert-fixed" role="alert"
              :class="'alert-' + notification.type"
@@ -8,11 +8,11 @@
             <div v-html="notification.content"></div>
         </div>
     </div>
-</script>
+</template>
+
 <script>
-    Vue.component('pckg-dispatcher-notifications', {
+    export default {
         name: 'pckg-dispatcher-notifications',
-        template: '#pckg-dispatcher-notifications-template',
         mixins: [pckgTimeout, pckgDelimiters],
         data: function () {
             return {
@@ -46,5 +46,5 @@
                 }.bind(this), 5000, notification);
             }.bind(this));
         }
-    });
+    }
 </script>

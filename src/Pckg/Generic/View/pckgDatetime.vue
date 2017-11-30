@@ -1,13 +1,12 @@
-<script type="text/x-template" id="pckg-datetime">
+<template>
     <div class="pckg-datetime">
         <input type="text" v-model="value" class="form-control"/>
     </div>
-</script>
+</template>
 
-<script type="text/javascript">
-    Vue.component('pckg-datetime', {
+<script>
+    export default {
         name: 'pckg-datetime',
-        template: '#pckg-datetime',
         mixins: [pckgDelimiters],
         props: {
             value: {
@@ -30,5 +29,5 @@
                 this.initPicker();
             }.bind(this));
         }
-    });
+    }
 </script>

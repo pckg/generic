@@ -1,11 +1,11 @@
-<script type="text/x-template" id="pckg-htmleditor">
+<template>
     <div class="pckg-htmleditor">
         <textarea class="form-control" v-model="value" :id="id"></textarea>
     </div>
-</script>
+</template>
 
-<script type="text/javascript">
-    Vue.component('pckg-htmleditor', {
+<script>
+    export default {
         name: 'pckg-htmleditor',
         template: '#pckg-htmleditor',
         mixins: [pckgDelimiters],
@@ -71,5 +71,5 @@
                 this.initEditor();
             }.bind(this));
         }
-    });
+    }
 </script>

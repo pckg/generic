@@ -1,4 +1,4 @@
-<script type="text/x-template" id="vue-pckg-select">
+<template>
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selected">
             <option value> -- select value(s) -- </option>
@@ -15,14 +15,12 @@
             </optgroup>
         </select>
     </div>
-</script>
+</template>
 
 <script>
-
-    Vue.component('pckg-select', {
+    export default {
         mixins: [pckgDelimiters, pckgTimeout],
         name: 'pckg-select',
-        template: '#vue-pckg-select',
         model: {
             prop: 'selected',
             event: 'input'
@@ -226,5 +224,5 @@
                 this.refreshList();
             }
         }
-    });
+    }
 </script>
