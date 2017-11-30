@@ -35,7 +35,7 @@ class Action extends Record
             $typeSuffix .= ' has-video-background';
         }
 
-        $mainClass = $this->pivot->type . $typeSuffix . ' ' . $this->pivot->type . '-' . $this->pivot->id;
+        $mainClass = $this->pivot->type . $typeSuffix/* . ' ' . $this->pivot->type . '-' . $this->pivot->id*/;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
             'pckg.generic.pageStructure.bgRepeat'   => 'bg-repeat',

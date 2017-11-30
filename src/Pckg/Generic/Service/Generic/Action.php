@@ -119,21 +119,16 @@ class Action
     public function getHtml()
     {
         return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id, function() {
-            $return = null;
+
+            $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
+                      '" data-action-id="' . $this->action->pivot->id . '"'
+                      . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
+            $return .= $this->getBackgroundVideoHtml();
             if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
-                $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
-                          '" data-action-id="' . $this->action->pivot->id . '">' .
-                          $this->attachDevHtml(null);
-                $return .= $this->getBackgroundVideoHtml();
                 $return .= $this->getSubHtml() . '</div>';
 
                 return $return;
             }
-
-            $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
-                      '" data-action-id="' . $this->action->pivot->id . '">';
-
-            $return .= $this->getBackgroundVideoHtml();
 
             if ($this->getClass() && $this->getMethod()) {
                 $data = array_merge(['action' => $this], router()->get('data'));
@@ -210,29 +205,12 @@ class Action
                 /**
                  * Return built output.
                  */
-                $return .= $this->attachDevHtml($result);
+                $return .= $result;
             }
             $return .= '</div>';
 
             return $return;
         });
-    }
-
-    protected function attachDevHtml($html)
-    {
-        /**
-         * Prepare comments for dev environment.
-         */
-        $devPrefix = null;
-        $devSuffix = null;
-        if (dev() || implicitDev()) {
-            $devPrefix = '<!-- start action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
-            /*$devPrefix .= '<pckg-editor :route-id="' . router()->resolved('route')->id . '" :actions-morph-id="' .
-                          $this->action->pivot->id . '" :type="\'' . $this->getType() . '\'"></pckg-editor>';*/
-            $devSuffix = '<!-- end action ' . $this->getClass() . '::' . $this->getMethod() . ' -->' . "\n";
-        }
-
-        return $devPrefix . $html . $devSuffix;
     }
 
     public function getBackgroundVideoHtml()

@@ -244,8 +244,8 @@ class Records extends Controller
         /**
          * Temp test.
          */
-        $records = auth()->user('id') == 1 && $this->request()->isAjax() ? $entity->count()->all() : new Collection();
-        $total = auth()->user('id') == 1 && $this->request()->isAjax() ? $records->total() : $entity->total();
+        $records = $entity->count()->all();
+        $total = $records->total();
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
