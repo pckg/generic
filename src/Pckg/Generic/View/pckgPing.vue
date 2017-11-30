@@ -5,7 +5,7 @@
 <script>
     export default {
         name: 'pckg-ping',
-        mixins: [pckgDelimiters, pckgInterval],
+        mixins: [pckgInterval],
         data: function () {
             return {
                 lastActivity: moment().unix(),

@@ -10,7 +10,8 @@ var $store = new Vuex.Store({
     state: {
         router: {
             urls: Pckg.router.urls || {}
-        }
+        },
+        translations: Pckg.translations || {}
     },
     actions: {},
     mutations: {},

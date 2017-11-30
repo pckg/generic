@@ -10,7 +10,6 @@
 
 <script>
     export default {
-        mixins: [pckgDelimiters],
         name: 'pckg-tooltip',
         props: {
             content: {},

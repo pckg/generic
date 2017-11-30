@@ -7,8 +7,6 @@
 <script>
     export default {
         name: 'pckg-htmleditor',
-        template: '#pckg-htmleditor',
-        mixins: [pckgDelimiters],
         props: {
             value: {
                 default: '',

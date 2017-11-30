@@ -4,7 +4,6 @@
 
 <script>
 export default {
-    mixins: [pckgDelimiters],
     data() {
         return {
             msg: 'Hello'

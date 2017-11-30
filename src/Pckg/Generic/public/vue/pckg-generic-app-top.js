@@ -12,6 +12,14 @@ var pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
+var pckgTranslations = {
+    methods: {
+        __: function (key) {
+            return $store.state.translations[key];
+        }
+    }
+};
+
 var pckgTimeout = {
     methods: {
         timeout: function (name, callback, timeout, object) {

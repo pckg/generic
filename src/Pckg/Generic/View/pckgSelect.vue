@@ -19,7 +19,7 @@
 
 <script>
     export default {
-        mixins: [pckgDelimiters, pckgTimeout],
+        mixins: [pckgTimeout],
         name: 'pckg-select',
         model: {
             prop: 'selected',

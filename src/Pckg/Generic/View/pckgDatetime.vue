@@ -7,7 +7,6 @@
 <script>
     export default {
         name: 'pckg-datetime',
-        mixins: [pckgDelimiters],
         props: {
             value: {
                 default: '',

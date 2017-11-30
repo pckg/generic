@@ -13,7 +13,7 @@
 <script>
     export default {
         name: 'pckg-dispatcher-notifications',
-        mixins: [pckgTimeout, pckgDelimiters],
+        mixins: [pckgTimeout],
         data: function () {
             return {
                 notifications: []
