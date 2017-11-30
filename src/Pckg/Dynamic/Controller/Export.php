@@ -102,11 +102,11 @@ class Export extends Controller
                 }
             }
 
-            if ($field->fieldType->slug == 'decimal') {
+            /*if ($field->fieldType->slug == 'decimal') {
                 foreach ($transformedRecords as &$record) {
-                    $record[$field->field] = $locale->decimal($record[$field->field]);
+                    $record[$field->field] = $record[$field->field];
                 }
-            }
+            }*/
         });
 
         $strategy->setData($transformedRecords);

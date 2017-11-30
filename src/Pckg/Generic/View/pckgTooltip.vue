@@ -1,4 +1,4 @@
-<script type="text/x-template" id="pckg-tooltip">
+<template>
     <nobr v-if="content">&nbsp;<span
                 class="tooltip-questionmark"
                 :title="content"
@@ -6,13 +6,12 @@
             <template v-if="icon.length > 0"><i class="fa" :class="'fa-' + icon"></i></template><template v-else>?</template>
         </span>
     </nobr>
-</script>
+</template>
 
 <script>
-    Vue.component('pckg-tooltip', {
+    export default {
         mixins: [pckgDelimiters],
         name: 'pckg-tooltip',
-        template: '#pckg-tooltip',
         props: {
             content: {},
             icon: {
@@ -23,5 +22,5 @@
         mounted: function () {
             $(this.$el).find('[data-toggle="tooltip"]').tooltip({'position': 'auto top'});
         }
-    });
+    }
 </script>
