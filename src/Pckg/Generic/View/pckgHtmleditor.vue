@@ -17,7 +17,6 @@
                 type: String
             },
             forcedRootBlock: {
-                type: Boolean,
                 default: false
             }
         },
@@ -28,14 +27,16 @@
         watch: {
             value: function (n, o) {
                 if (n != o) {
-                    console.log('value updated', n, o);
                     this.$nextTick(this.updateEditorValue.bind(this));
                 }
             }
         },
         methods: {
+            emitChange: function (value) {
+                this.$emit('input', value);
+                this.$emit('change', value);
+            },
             updateEditorValue: function () {
-                console.log('updating', this.id, this.value);
                 var editor = tinymce.get(this.id);
                 if (editor) {
                     var currentContent = editor.getContent();
@@ -45,21 +46,13 @@
                 }
             },
             initEditor: function () {
-                console.log('initializing');
                 var editor = initTinymce(this.id, function (editor) {
                     editor.on('Change', function (e) {
-                        console.log('changed, emiting input');
-                        this.$emit('input', tinymce.get(this.id).getContent());
-                        this.$emit('change', tinymce.get(this.id), tinymce.get(this.id).getContent())
+                        this.emitChange(tinymce.get(this.id).getContent());
                     }.bind(this)).on('KeyDown', function (e) {
-                        console.log('down, emiting input');
-                        this.$emit('input', tinymce.get(this.id).getContent());
+                        this.emitChange(tinymce.get(this.id).getContent());
                     }.bind(this));
                 }.bind(this), {forced_root_block: this.forcedRootBlock});
-
-                //console.log(editor);
-                //tinymce.get(this.id).setContent(this.value);
-                //this.$emit('input', this.value);
             }
         },
         created: function () {
