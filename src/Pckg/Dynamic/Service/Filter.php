@@ -254,8 +254,12 @@ class Filter extends AbstractService
             $where = new Parenthesis();
             $where->setGlue('OR');
             foreach ($tables as $alias => $table) {
-                $searchableFields = (new Tables())->where('table', str_replace('_i18n', '', $table))
-                                                  ->one()->searchableFields->keyBy('field');
+                $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))
+                                             ->one();
+                if (!$tableRecord) {
+                    return;
+                }
+                $searchableFields = $tableRecord->searchableFields->keyBy('field');
                 foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
                     if (!$searchableFields->hasKey($field)) {
                         continue;
