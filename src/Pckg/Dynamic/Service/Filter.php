@@ -257,7 +257,7 @@ class Filter extends AbstractService
                 $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))
                                              ->one();
                 if (!$tableRecord) {
-                    return;
+                    continue;
                 }
                 $searchableFields = $tableRecord->searchableFields->keyBy('field');
                 foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
