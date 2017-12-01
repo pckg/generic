@@ -506,6 +506,9 @@ class Records extends Controller
         try {
             list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table, $tableEntity);
         } catch (Throwable $e) {
+            if (!prod()) {
+                throw $e;
+            }
             $tabelizes = [];
             $functionizes = [];
         }

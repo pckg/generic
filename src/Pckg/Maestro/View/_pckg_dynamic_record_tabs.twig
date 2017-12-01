@@ -24,9 +24,12 @@
             <div role="tabpanel" class="tab-pane active" id="home">
                 {{ formalize | raw }}
 
+                <!-- tabelizes -->
                 {% for t in tabelizes.0 %}
                     {{ t | raw }}
                 {% endfor %}
+
+                <!-- functionizes -->
                 {% for f in functionizes.0 %}
                     {{ f | raw }}
                 {% endfor %}

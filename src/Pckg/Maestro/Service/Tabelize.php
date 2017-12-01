@@ -465,7 +465,6 @@ class Tabelize
                 /**
                  * @T00D00 - this should be automatic ...
                  */
-
                 if (is_string($key) && in_array($key, ['delete', 'clone'])) {
                     $view = $key;
                 }
@@ -473,11 +472,13 @@ class Tabelize
                 $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
 
                 $wasObject = false;
+                $listAction = true;
                 if (is_object($view)) {
                     if ($view instanceof View\Twig) {
                         $view = $view->autoparse();
                         $wasObject = true;
                     } else {
+                        $listAction = $view->type != 'record';
                         $view = $view->template;
                     }
                 }
@@ -494,15 +495,17 @@ class Tabelize
                     $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
                     $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
                 } elseif (!$wasObject && $view) {
-                    $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                    if ($view === 'delete') {
-                        $delete = new Delete();
-                        $string .= $delete->getListAction($this);
-                    } elseif ($view === 'clone') {
-                        $cloner = new Cloner();
-                        $string .= $cloner->getListAction($this);
-                    } else {
-                        $string .= view('tabelize/listActions/' . $view)->autoparse();
+                    if ($listAction) {
+                        $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
+                        if ($view === 'delete') {
+                            $delete = new Delete();
+                            $string .= $delete->getListAction($this);
+                        } elseif ($view === 'clone') {
+                            $cloner = new Cloner();
+                            $string .= $cloner->getListAction($this);
+                        } else {
+                            $string .= view('tabelize/listActions/' . $view)->autoparse();
+                        }
                     }
                 } else {
                     $string .= "\n" . '<!-- entity view (else) -->';
