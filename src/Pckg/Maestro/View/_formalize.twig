@@ -26,6 +26,25 @@
             }
         },
         methods: {
+            toggleEditor: function (name) {
+                var textarea = $('textarea[name="' + name + '"]');
+                textarea.idify();
+                var id = textarea.attr('id');
+
+                if (pckgEditors[id]) {
+                    destroyTinymce(id);
+                } else {
+                    initTinymce(id, {
+                        setup: function (editor) {
+                            editor.on('Change', function (e) {
+                                this.form[name] = editor.getContent();
+                            }.bind(this)).on('KeyDown', function (e) {
+                                this.form[name] = editor.getContent();
+                            }.bind(this));
+                        }.bind(this)
+                    });
+                }
+            },
             prepareData: function (type) {
                 var data = http.formToData(this);
                 $.each(this.buttons, function (i, v) {

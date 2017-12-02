@@ -1,10 +1,15 @@
 var pckgEditors = {};
 var destroyTinymce = function (selector) {
     //if (pckgEditors[selector]) {
-        $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
-        tinymce.remove('#' + selector);
-        tinymce.get(selector).destroy();
+    $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
+    //tinymce.remove('#' + selector);
+    var ti = tinymce.get(selector);
+    if (ti) {
+        ti.destroy();
+    }
+    if (pckgEditors[selector]) {
         delete pckgEditors[selector];
+    }
     //}
 };
 var initTinymce = function (selector, config) {
@@ -414,15 +419,6 @@ $(document).ready(function () {
     $('.pckg-editor-enabled').each(function () {
         var id = $(this).attr('id');
         initTinymce(id);
-    });
-
-    $('.pckg-editor-toggle').on('click', function () {
-        var id = $(this).closest('div').find('textarea.editor').attr('id');
-        if (pckgEditors[id]) {
-            destroyTinymce(id);
-        } else {
-            initTinymce(id);
-        }
     });
 
     /**

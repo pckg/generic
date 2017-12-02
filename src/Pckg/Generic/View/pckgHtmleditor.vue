@@ -9,7 +9,9 @@
         name: 'pckg-htmleditor',
         props: {
             id: {
-                default: 'pckg-editor-htmleditor'
+                default: function () {
+                    return 'pckg-editor-htmleditor' + parseInt(Math.random() * 1000000) % 1000000;
+                }
             },
             value: {
                 default: '',
@@ -23,7 +25,8 @@
             value: function (n, o) {
                 console.log('changed', n, o);
                 if (n != o) {
-                    this.$nextTick(this.updateEditorValue.bind(this));
+                    this.updateEditorValue();
+                    //this.$nextTick(this.updateEditorValue.bind(this));
                 }
             }
         },
@@ -38,7 +41,7 @@
                 this.$emit('change', value);
             },
             updateEditorValue: function () {
-                if (this._editor && this._editor.getContent && this._editor.getContent() != this.value) {
+                if (this._editor && this._editor.getContent() != this.value) {
                     this._editor.setContent(this.value || '');
                 }
             },
