@@ -290,6 +290,18 @@
                 <button class="btn btn-danger" @click.prevent="deleteAction">Yes, delete action</button>
             {% endblock %}
         {% endembed %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'switchContentModal', minHeight: '50vh'} %}
+            {% block header %}
+                Switch content
+            {% endblock %}
+            {% block body %}
+                <pckg-select v-model="changeContentId" :initial-multiple="false"
+                             refresh-url="{{ url('pckg.generic.pageStructure.getContents') }}" :flat="true"
+                             title="title"></pckg-select>
+
+                <button class="btn btn-success" @click.prevent="saveChangedContent">Change content</button>
+            {% endblock %}
+        {% endembed %}
     </div>
 </script>
 
@@ -347,6 +359,7 @@
                 content: {
                     content: ''
                 },
+                changeContentId: '',
                 partials: {},
                 structures: {},
                 pages: {},
@@ -405,7 +418,24 @@
                     this.templates = data.templates;
                 }.bind(this));
             },
+            saveChangedContent: function () {
+                http.post(
+                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}),
+                    {
+                        content_id: this.changeContentId
+                    },
+                    function (data) {
+                        if (data.success) {
+                            $dispatcher.$emit('notification:success', 'Content changed, refreshing');
+                            this.refreshWholeContent();
+                            $('#switchContentModal').modal('hide');
+                        } else {
+                            $dispatcher.$emit('notification:error', 'Error changing content');
+                        }
+                    }.bind(this));
+            },
             switchContent: function () {
+                $('#switchContentModal').modal('show');
             },
             deleteAction: function () {
                 http.deleteJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph'], {actionsMorph: this.action.id}), function (data) {
@@ -468,6 +498,9 @@
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), function (data) {
                     this.form.settings = data.settings;
                 }.bind(this));
+                this.refreshWholeContent();
+            },
+            refreshWholeContent: function(){
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphContent'], {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
                 }.bind(this));

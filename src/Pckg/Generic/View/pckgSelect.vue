@@ -1,14 +1,14 @@
 <template>
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selected">
-            <option value> -- select value(s) -- </option>
+            <option value> -- select value(s) --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
         <select v-else class="form-control" v-model="selected">
-            <option value> -- select value -- </option>
+            <option value> -- select value --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
@@ -26,7 +26,9 @@
             event: 'input'
         },
         data: function () {
-            return {};
+            return {
+                options: this.initialOptions
+            };
         },
         props: {
             title: {
@@ -67,9 +69,6 @@
             }
         },
         computed: {
-            options: function () {
-                return this.initialOptions;
-            },
             finalOptions: function () {
                 var options = {};
 
@@ -120,21 +119,10 @@
         },
         watch: {
             selected: function (newVal, oldVal) {
-                console.log("selected changed", newVal, oldVal);
                 this.refreshPicker(newVal);
             },
-            /*selectedMultiple: function (newVal) {
-             console.log("selectedMultiple changed", newVal);
-             this.refreshPicker(newVal);
-             },
-             selectedSingle: function (newVal) {
-             console.log("selectedSingle changed", newVal);
-             this.refreshPicker(newVal);
-             },*/
             options: function (newVal) {
-                console.log('options watcher: options changed');
                 Vue.nextTick(function () {
-                    console.log('refreshing selectpicker');
                     $(this.$el).find('select').selectpicker('refresh');
                 }.bind(this));
             }
@@ -167,11 +155,9 @@
                 return option[this.id];
             },
             changed: function () {
-                console.log('pckg select changed: ' + this.selected);
                 this.refreshPicker(this.selected);
             },
             refreshPicker: function (val) {
-                console.log('@refreshPicker emiting: ', val);
                 this.$emit('input', val); // v-model
                 this.$emit('change', val); // change event
                 Vue.nextTick(function () {
@@ -182,12 +168,15 @@
             refreshList: function () {
                 this.timeout('refreshList', function () {
                     if (this.refreshUrl.length == 0) {
-                        console.log("no refresh url");
                         return;
                     }
 
                     http.getJSON(this.refreshUrl + '?search=' + $(this.$el).find('.bs-searchbox input').val(), function (data) {
-                        this.options = data.records;
+                        if (Object.keys(data).length == 1) {
+                            this.options = data[Object.keys(data)[0]];
+                        } else {
+                            this.options = data.records;
+                        }
                     }.bind(this));
                 }.bind(this), 333);
             },
@@ -203,7 +192,6 @@
                 $(document).ready(function () {
                     $(this.$el).find('select').on('change', function () {
                         this.$nextTick(function () {
-                            console.log('changing js and emiting:', $(this.$el).find('select').val());
                             this.$emit('input', $(this.$el).find('select').val());
                         }.bind(this));
                     }.bind(this));

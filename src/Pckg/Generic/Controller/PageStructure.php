@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Controller;
 
 use Pckg\Database\Relation\MorphedBy;
+use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
@@ -79,10 +80,14 @@ class PageStructure
         ];
     }
 
-    public function getContentsAction()
+    public function getContentsAction(Contents $contents)
     {
+        if (get('search')) {
+            $dynamicService = resolve(Dynamic::class);
+            $dynamicService->getFilterService()->filterByGet($contents);
+        }
         return [
-            'contents' => (new Contents())->all(),
+            'contents' => $contents->all(),
         ];
     }
 

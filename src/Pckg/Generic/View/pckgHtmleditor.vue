@@ -20,10 +20,6 @@
                 default: false
             }
         },
-        /*model: {
-         prop: 'value',
-         event: 'input'
-         },*/
         watch: {
             value: function (n, o) {
                 if (n != o) {
@@ -31,36 +27,41 @@
                 }
             }
         },
+        data: function () {
+            return {
+                _editor: null
+            };
+        },
         methods: {
             emitChange: function (value) {
                 this.$emit('input', value);
                 this.$emit('change', value);
             },
             updateEditorValue: function () {
-                var editor = tinymce.get(this.id);
-                if (editor) {
-                    var currentContent = editor.getContent();
-                    if (this.value != currentContent) {
-                        editor.setContent(this.value || '');
-                    }
+                if (this._editor && this._editor.getContent() != this.value) {
+                    this._editor.setContent(this.value || '');
                 }
             },
             initEditor: function () {
-                var editor = initTinymce(this.id, function (editor) {
-                    editor.on('Change', function (e) {
-                        this.emitChange(tinymce.get(this.id).getContent());
-                    }.bind(this)).on('KeyDown', function (e) {
-                        this.emitChange(tinymce.get(this.id).getContent());
-                    }.bind(this));
-                }.bind(this), {forced_root_block: this.forcedRootBlock});
+                this._editor = initTinymce(this.id, {
+                    forced_root_block: this.forcedRootBlock,
+                    setup: function (editor) {
+                        editor.on('Change', function (e) {
+                            this.emitChange(this._editor.getContent());
+                        }.bind(this)).on('KeyDown', function (e) {
+                            this.emitChange(this._editor.getContent());
+                        }.bind(this));
+                    }.bind(this)
+                });
             }
         },
         created: function () {
-            console.log('created');
             this.$nextTick(function () {
-                console.log('created nextTick');
                 this.initEditor();
             }.bind(this));
+        },
+        beforeDestroyed: function () {
+            destroyTinymce(this.id);
         }
     }
 </script>

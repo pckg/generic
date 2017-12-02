@@ -1,8 +1,16 @@
 var pckgEditors = {};
-var initTinymce = function (selector, setup, config) {
+var destroyTinymce = function (selector) {
+    if (pckgEditors[selector]) {
+        $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
+        tinymce.remove('#' + selector);
+        delete pckgEditors[selector];
+    }
+};
+var initTinymce = function (selector, config) {
+    console.log('Initializing tinymce and dropzone on ' + selector);
     var selected = $('#' + selector);
     var $dropzone = $('<div class="manual-dropzone"></div>');
-    selected.append($dropzone);
+    selected.parent().append($dropzone);
     $dropzone.idify();
     var $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
         url: '/dynamic/uploader',
@@ -12,7 +20,6 @@ var initTinymce = function (selector, setup, config) {
     });
 
     var defaultConfig = {
-        setup: setup,
         content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
         selector: '#' + selector,
         height: 500,
@@ -276,7 +283,6 @@ var initTinymce = function (selector, setup, config) {
         allow_script_urls: true,
         file_picker_callback: function (cb, value, meta) {
             $dropzoneInst.on('success', function (file, data) {
-                console.log('success');
                 cb(data.url, {title: null, class: 'pckg-img'});
             });
 
@@ -290,7 +296,9 @@ var initTinymce = function (selector, setup, config) {
         });
     }
 
-    return tinymce.init(defaultConfig);
+    pckgEditors[selector] = tinymce.init(defaultConfig);
+
+    return pckgEditors[selector];
 };
 
 $(document).ready(function () {
@@ -404,16 +412,15 @@ $(document).ready(function () {
 
     $('.pckg-editor-enabled').each(function () {
         var id = $(this).attr('id');
-        pckgEditors[id] = initTinymce(id);
+        initTinymce(id);
     });
 
     $('.pckg-editor-toggle').on('click', function () {
         var id = $(this).closest('div').find('textarea.editor').attr('id');
         if (pckgEditors[id]) {
-            tinymce.remove('#' + id);
-            delete pckgEditors[id];
+            destroyTinymce(id);
         } else {
-            pckgEditors[id] = initTinymce(id);
+            initTinymce(id);
         }
     });
 

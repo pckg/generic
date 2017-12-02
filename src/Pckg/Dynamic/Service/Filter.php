@@ -270,7 +270,7 @@ class Filter extends AbstractService
             }
             $query->where($where);
 
-            $newEntity = $this->table->createEntity();
+            $newEntity = $this->table ? $this->table->createEntity() : new $entity;
             $newEntity->setQuery($query);
             $newEntity->limit(null);
             $newEntity->count(false);
