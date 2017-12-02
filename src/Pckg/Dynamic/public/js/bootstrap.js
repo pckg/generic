@@ -66,7 +66,7 @@ $(document).ready(function () {
         $(this).closest('tr').find('td input[type=checkbox]').prop('checked', $(this).is(':checked'));
     });
 
-    $('input.datetime').datetimepicker({
+    $('input.datetime:not(.vue-takeover)').datetimepicker({
         format: 'YYYY-MM-DD HH:mm'
     })/*.on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');

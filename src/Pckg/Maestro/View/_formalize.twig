@@ -70,6 +70,16 @@
                     }
                 }.bind(this));
             }
+        },
+        mounted: function () {
+            var $this = this;
+            $(this.$el).find('input.datetime.vue-takeover').each(function () {
+                $(this).datetimepicker({
+                    format: 'YYYY-MM-DD HH:mm'
+                }).on('dp.change', function () {
+                    $this.form[$(this).attr('name')] = $(this).val();
+                });
+            });
         }
     });
 </script>
