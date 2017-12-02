@@ -18,7 +18,9 @@
                 {{ _formService.close() | raw }}
             {% endblock %}
             {% block footer %}
-                <button type="button" class="btn btn-success" data-dismiss="modal" @click.prevent="selectAndClose">Select and close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" @click.prevent="selectAndClose">
+                    Select and close
+                </button>
             {% endblock %}
         {% endembed %}
     </div>
@@ -34,7 +36,9 @@
 <script>
     var pckgHtmlbuilderGeo = Vue.component('pckg-htmlbuilder-geo', {
         template: '#pckg-htmlbuilder-geo',
-        props: {},
+        props: {
+            value: {}
+        },
         data: function () {
             return {
                 search: null
@@ -50,7 +54,12 @@
                 $('#pckgHtmlbuilderGeoModal').modal('show');
             },
             selectAndClose: function () {
-                $(this.$el).parent().find('input.geo').val(this.$refs.gmap.getLocation().geo.join(';'));
+                var val = this.$refs.gmap.getLocation().geo.join(';');
+                /**
+                 * Change form's data/model, unit.geo.
+                 */
+                this.$emit('change', val);
+                this.$emit('input', val);
             }
         },
         created: function () {
