@@ -1,10 +1,11 @@
 var pckgEditors = {};
 var destroyTinymce = function (selector) {
-    if (pckgEditors[selector]) {
+    //if (pckgEditors[selector]) {
         $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
         tinymce.remove('#' + selector);
+        tinymce.get(selector).destroy();
         delete pckgEditors[selector];
-    }
+    //}
 };
 var initTinymce = function (selector, config) {
     console.log('Initializing tinymce and dropzone on ' + selector);

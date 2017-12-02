@@ -181,13 +181,11 @@
                 }.bind(this), 333);
             },
             initPicker: function () {
-                $(this.$el).find('select').selectpicker({
+                var selectpicker = $(this.$el).find('select').selectpicker({
                     liveSearch: true
                 });
 
-                setTimeout(function () {
-                    $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this), 100);
+                selectpicker.selectpicker('refresh');
 
                 $(document).ready(function () {
                     $(this.$el).find('select').on('change', function () {

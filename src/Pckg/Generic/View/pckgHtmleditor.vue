@@ -8,12 +8,11 @@
     export default {
         name: 'pckg-htmleditor',
         props: {
+            id: {
+                default: 'pckg-editor-htmleditor'
+            },
             value: {
                 default: '',
-                type: String
-            },
-            id: {
-                default: 'pckg-htmleditor',
                 type: String
             },
             forcedRootBlock: {
@@ -22,6 +21,7 @@
         },
         watch: {
             value: function (n, o) {
+                console.log('changed', n, o);
                 if (n != o) {
                     this.$nextTick(this.updateEditorValue.bind(this));
                 }
@@ -38,14 +38,15 @@
                 this.$emit('change', value);
             },
             updateEditorValue: function () {
-                if (this._editor && this._editor.getContent() != this.value) {
+                if (this._editor && this._editor.getContent && this._editor.getContent() != this.value) {
                     this._editor.setContent(this.value || '');
                 }
             },
             initEditor: function () {
-                this._editor = initTinymce(this.id, {
+                initTinymce(this.id, {
                     forced_root_block: this.forcedRootBlock,
                     setup: function (editor) {
+                        this._editor = editor;
                         editor.on('Change', function (e) {
                             this.emitChange(this._editor.getContent());
                         }.bind(this)).on('KeyDown', function (e) {
@@ -55,12 +56,10 @@
                 });
             }
         },
-        created: function () {
-            this.$nextTick(function () {
-                this.initEditor();
-            }.bind(this));
+        mounted: function () {
+            this.initEditor();
         },
-        beforeDestroyed: function () {
+        destroyed: function () {
             destroyTinymce(this.id);
         }
     }
