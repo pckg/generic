@@ -110,7 +110,6 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
     },
     methods: {
         recordAction: function (record, action) {
-            console.log('emiting from pckg-maestro-table.js');
             this.$parent.recordAction(record, action);
         },
         computed: function(val){

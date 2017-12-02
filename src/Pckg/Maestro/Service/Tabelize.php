@@ -478,7 +478,6 @@ class Tabelize
                         $view = $view->autoparse();
                         $wasObject = true;
                     } else {
-                        $listAction = $view->type != 'record';
                         $view = $view->template;
                     }
                 }
