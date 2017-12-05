@@ -3,6 +3,8 @@
 use Derive\Orders\Controller\Orders;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
+use Pckg\Generic\Console\CreateGenericActionsData;
+use Pckg\Generic\Console\CreateListData;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
 
@@ -45,6 +47,14 @@ class Generic extends Provider
         return [
             '_menuService'   => Menu::class,
             '_pluginService' => Plugin::class,
+        ];
+    }
+
+    public function consoles()
+    {
+        return [
+            CreateListData::class,
+            CreateGenericActionsData::class,
         ];
     }
 

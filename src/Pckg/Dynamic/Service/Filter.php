@@ -324,7 +324,9 @@ class Filter extends AbstractService
                 $where->push($alias . '.' . $field . ' LIKE ?', '%' . $search . '%');
             }
         }
-        $entity->where($where);
+        if ($where->hasChildren()) {
+            $entity->where($where);
+        }
     }
 
     /**
@@ -335,7 +337,10 @@ class Filter extends AbstractService
      */
     private function getTablesFromEntity(Entity $entity)
     {
-        $tables = [];
+        $tables = [$entity->getTable() => $entity->getTable()];
+        if ($entity->isTranslatable()) {
+            $tables[$entity->getTable() . $entity->getTranslatableTableSuffix()] = $entity->getTable();
+        }
         foreach ($entity->getQuery()->getJoin() as $join) {
             $table = substr($join, 11, strpos($join, '`', 11) - 11);
             if (!strpos($join, '` AS `')) {

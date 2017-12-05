@@ -1,13 +1,19 @@
-<?php namespace Pckg\Generic\Migration;
+<?php namespace Pckg\Generic\Console;
 
+use Pckg\Framework\Console\Command;
 use Pckg\Generic\Entity\ListItems;
 use Pckg\Generic\Entity\Lists;
 use Pckg\Generic\Record\ListItem;
 use Pckg\Generic\Record\ListRecord;
-use Pckg\Migration\Migration;
 
-class CreateListData extends Migration
+class CreateListData extends Command
 {
+
+    protected function configure()
+    {
+        $this->setName('generic:import-lists')
+             ->setDescription('Impor pckg.generic.lists');
+    }
 
     public function up()
     {

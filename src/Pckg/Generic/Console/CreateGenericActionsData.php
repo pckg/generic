@@ -1,17 +1,23 @@
-<?php namespace Pckg\Generic\Migration;
+<?php namespace Pckg\Generic\Console;
 
 use Pckg\Collection;
+use Pckg\Framework\Console\Command;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content as ContentRecord;
 use Pckg\Generic\Record\Route;
-use Pckg\Migration\Migration;
 
-class CreateGenericActionsData extends Migration
+class CreateGenericActionsData extends Command
 {
 
-    public function up()
+    protected function configure()
+    {
+        $this->setName('generic:import-actions')
+             ->setDescription('Impor pckg.generic.actions and routes');
+    }
+
+    public function handle()
     {
         (new Collection(config('pckg.generic.actions', [])))->each(function($action, $slug) {
             $actionRecord = Action::getOrNew(['slug' => $slug]);
