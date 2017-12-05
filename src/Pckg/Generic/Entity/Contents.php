@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Generic\Record\Content;
 
 /**
@@ -30,7 +31,9 @@ class Contents extends Entity
 
     public function contents()
     {
-        return $this->hasMany(Contents::class)
+        return $this->hasMany(Contents::class, function(HasMany $contents) {
+            $contents->nonDeleted();
+        })
                     ->foreignKey('parent_id');
     }
 

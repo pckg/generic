@@ -460,11 +460,11 @@
                 }
             },
             removeActionClass: function (c) {
-                var $action = $('.' + this.action.type + '-' + this.action.id);
+                var $action = $('#' + this.action.type + '-' + this.action.id);
                 $action.removeClass(c);
             },
             addActionClass: function (c) {
-                var $action = $('.' + this.action.type + '-' + this.action.id);
+                var $action = $('#' + this.action.type + '-' + this.action.id);
                 $action.addClass(c);
             },
             toggleScope: function (scope, group) {
