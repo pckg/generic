@@ -9,9 +9,10 @@
                 Select location
             {% endblock %}
             {% block body %}
+                ${ record }
                 <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search="search" :ref="'gmap'"
                                      center="46.055144;14.512284" :zoom="10"
-                                     :locations="[{geo:[30, 40]}]"></vue-component-gmaps>
+                                     :locations="locations"></vue-component-gmaps>
 
                 {{ _formService.open() | raw }}
                 {{ _formService.addText('search').setAttribute('v-model', 'search').setLabel('Search') | raw }}
@@ -35,6 +36,7 @@
 
 <script>
     var pckgHtmlbuilderGeo = Vue.component('pckg-htmlbuilder-geo', {
+        mixins: [pckgDelimiters],
         template: '#pckg-htmlbuilder-geo',
         props: {
             value: {}
@@ -43,6 +45,18 @@
             return {
                 search: null
             };
+        },
+        computed: {
+            locations: function () {
+                var locations = [];
+                if (this.value) {
+                    locations.push({geo:this.geoValue});
+                }
+                return locations;
+            },
+            geoValue: function () {
+                return this.value.split(';');
+            }
         },
         methods: {
             openMap: function () {
