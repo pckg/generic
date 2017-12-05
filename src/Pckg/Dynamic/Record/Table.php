@@ -78,7 +78,8 @@ class Table extends DatabaseRecord
         );
     }
 
-    public function getListUrl() {
+    public function getListUrl()
+    {
         return url('dynamic.record.list', ['table' => $this]);
     }
 
@@ -104,6 +105,9 @@ class Table extends DatabaseRecord
             );
     }
 
+    /**
+     * @return Repository
+     */
     public function getRepository()
     {
         $r = $this->repository;
@@ -118,6 +122,11 @@ class Table extends DatabaseRecord
         }
 
         return context()->get(Repository::class . '.' . $r);
+    }
+
+    public function getIsTranslatableAttribute()
+    {
+        return $this->getRepository()->getCache()->hasTable($this->table . '_i18n');
     }
 
     /**

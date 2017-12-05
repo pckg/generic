@@ -3,7 +3,9 @@
 use Foolz\SphinxQL\Connection;
 use Foolz\SphinxQL\SphinxQL;
 use Pckg\CollectionInterface;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity;
+use Pckg\Database\Query;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Fields;
@@ -214,68 +216,56 @@ class Filter extends AbstractService
         }
     }
 
-    public function filterByGet($entity)
+    public function filterByGet($entity, Collection $relations = null)
     {
         if ($search = get('search')) {
-            $query = clone $entity->getQuery();
-
             /**
-             * This should be applied on all related entities, in separate query.
-             * We cannot use this query because not all relations are joined.
-             * We cannot use separate query because relations are somehow nod accessible.
-             * We need to make join through 2 levels: relations of entity and relations of relations.
+             * We will build new part of sql.
              */
-            foreach ($entity->getWith() as $with) {
-                $with->mergeToQuery($query);
-                $with->getRightEntity()->getQuery()->mergeToQuery($query);
-            }
-
-            /**
-             * Transform all joins to LEFT joins so main data is always displayed.
-             */
-            $query->makeJoinsLeft();
-
-            /**
-             * @T00D00 - comment this
-             */
-            foreach ($query->getJoin() as $join) {
-                $table = substr($join, 11, strpos($join, '`', 11) - 11);
-                if (!strpos($join, '` AS `')) {
-                    $tables[$table] = $table;
-                } else {
-                    $start = strpos($join, '` AS `') + 6;
-                    $tables[substr($join, $start, strpos($join, '`', strpos($join, '` AS `') + 7) - $start)] = $table;
-                }
-            }
-            $tables[$entity->getTable()] = $entity->getTable();
-
-            $query->select($query->getTable() . '.id');
-
             $where = new Parenthesis();
             $where->setGlue('OR');
-            foreach ($tables as $alias => $table) {
-                $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))
-                                             ->one();
-                if (!$tableRecord) {
-                    continue;
-                }
-                $searchableFields = $tableRecord->searchableFields->keyBy('field');
-                foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
-                    if (!$searchableFields->hasKey($field)) {
-                        continue;
+
+            if ($relations) {
+                /**
+                 * Filter relations in separate query.
+                 * Add foreign field to optimize things.
+                 */
+                foreach ($relations as $relation) {
+                    /**
+                     * Perform search on relations.
+                     */
+                    $relationEntity = $relation->showTable->createEntity();
+                    $this->filterByGet($relationEntity, null);
+                    $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->all();
+                    if ($data) {
+                        $where->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .
+                                     str_repeat('?,', count($data) - 1) . '?)',
+                                     $data);
                     }
-                    $where->push($alias . '.' . $field . ' LIKE ?');
-                    $query->bind('%' . $search . '%', 'where');
                 }
             }
-            $query->where($where);
 
-            $newEntity = $this->table ? $this->table->createEntity() : new $entity;
-            $newEntity->setQuery($query);
-            $newEntity->limit(null);
-            $newEntity->count(false);
+            /**
+             * Make sure that translations are joined and matched.
+             */
+            if ($entity->isTranslatable()) {
+                if (!$entity->isTranslated()) {
+                    $entity->joinTranslations()->addSelect([$entity->getTable() . '.*']);
+                }
+                $tables[$entity->getTable() . '_i18n'] = $entity->getTable();
+            }
 
-            $entity->where('id', $newEntity, 'IN');
+            /**
+             * Get all tables that are currently linked to query.
+             */
+            $tables = $this->getTablesFromEntity($entity);
+
+            /**
+             * Perform LIKE query on all fields listed in tables
+             *
+             * @T00D00 - filter them by filterable fields only
+             */
+            $this->fullSearchTables($entity, $tables, $where, $search);
         }
     }
 
@@ -310,6 +300,54 @@ class Filter extends AbstractService
                 'label' => 'NOT',
             ],
         ];
+    }
+
+    /**
+     * @param Entity $entity
+     * @param Query  $query
+     * @param array  $tables
+     * @param        $search
+     */
+    private function fullSearchTables(Entity $entity, array $tables, Parenthesis $where, $search)
+    {
+        foreach ($tables as $alias => $table) {
+            $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))
+                                         ->one();
+            if (!$tableRecord) {
+                continue;
+            }
+            $searchableFields = $tableRecord->searchableFields->keyBy('field');
+            foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
+                if (!$searchableFields->hasKey($field) || ($field == 'id' && strpos($table, '_i18n'))) {
+                    continue;
+                }
+                $where->push($alias . '.' . $field . ' LIKE ?', '%' . $search . '%');
+            }
+        }
+        $entity->where($where);
+    }
+
+    /**
+     * @param $query
+     * @param $tables
+     *
+     * @return mixed
+     */
+    private function getTablesFromEntity(Entity $entity)
+    {
+        $tables = [];
+        foreach ($entity->getQuery()->getJoin() as $join) {
+            $table = substr($join, 11, strpos($join, '`', 11) - 11);
+            if (!strpos($join, '` AS `')) {
+                $tables[$table] = $table;
+            } else {
+                $start = strpos($join, '` AS `') + 6;
+                $tables[substr($join, $start,
+                               strpos($join, '`', strpos($join, '` AS `') + 7) - $start)] = $table;
+            }
+        }
+
+        return $tables;
     }
 
 }

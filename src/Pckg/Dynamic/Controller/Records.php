@@ -213,7 +213,7 @@ class Records extends Controller
         /**
          * Filter records by $_GET['search']
          */
-        $dynamicService->getFilterService()->filterByGet($entity);
+        $dynamicService->getFilterService()->filterByGet($entity, $relations);
         $fieldTransformations = $dynamicService->getFieldsTransformations($entity, $listableFields);
 
         /**

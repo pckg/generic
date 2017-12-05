@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
@@ -165,6 +166,21 @@ class Relation extends DatabaseRecord
                 }
             );
         $entity->with($belongsToRelation);
+    }
+
+    public function joinToQuery(Query $query, $alias = null, $subalias = null)
+    {
+
+        if (!$alias) {
+            $alias = $this->showTable->table;
+        }
+
+        if (!$subalias) {
+            $subalias = $this->onTable->table;
+        }
+
+        $query->join('LEFT JOIN ' . $this->showTable->table . ' AS ' . $alias,
+                     $alias . '.id = ' . $subalias . '.' . $this->onField->field);
     }
 
     public function joinToEntity(Entity $entity, $alias = null, $subalias = null)
