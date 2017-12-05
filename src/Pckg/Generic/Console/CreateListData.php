@@ -15,7 +15,7 @@ class CreateListData extends Command
              ->setDescription('Impor pckg.generic.lists');
     }
 
-    public function up()
+    public function handle()
     {
         $lists = config('pckg.generic.lists', []);
 
