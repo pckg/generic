@@ -90,6 +90,7 @@ class Generic
                 } else {
                     $resolved[$key] = Reflect::create($conf)->resolve($router[$key] ?? router()->getCleanUri());
                 }
+                router()->resolve($key, $resolved[$key]);
             }
         }
 
