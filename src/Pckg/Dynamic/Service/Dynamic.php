@@ -155,10 +155,13 @@ class Dynamic
     public function optimizeSelectedFields(Entity $entity, Collection $listedFields)
     {
         $listedFields->each(function(Field $field) use ($entity) {
-            if ($field->fieldType->slug == 'php' &&
-                method_exists($entity, 'select' . ucfirst($field->field) . 'Field')
-            ) {
-                $entity->{'select' . ucfirst($field->field) . 'Field'}();
+            $slug = $field->fieldType->slug;
+            if (in_array($slug, ['php', 'mysql'])) {
+                if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
+                    $entity->{'select' . ucfirst($field->field) . 'Field'}();
+                } else {
+                    message('Optimize field ' . $field->field, 'optimize');
+                }
             }
         });
     }

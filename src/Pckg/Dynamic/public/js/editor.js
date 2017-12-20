@@ -217,13 +217,13 @@ var initTinymce = function (selector, config) {
                 selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxxl'
             },
             alignleft: {
-                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-left'
+                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'left'}
             },
             aligncenter: {
-                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-center'
+                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'center'}
             },
             alignright: {
-                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-right'
+                selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'right'}
             },
             alignjustify: {
                 selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'

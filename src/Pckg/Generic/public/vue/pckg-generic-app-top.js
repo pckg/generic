@@ -20,6 +20,20 @@ var pckgTranslations = {
     }
 };
 
+var pckgFormValidator = {
+    methods: {
+        validateAndSubmit: function (submit) {
+            this.$validator.validateAll().then(function (ok) {
+                if (ok) {
+                    submit();
+                } else {
+                    globalScrollTo($(this.$el).find('.htmlbuilder-validator-error').first());
+                }
+            }.bind(this));
+        }
+    }
+};
+
 var pckgTimeout = {
     methods: {
         timeout: function (name, callback, timeout, object) {

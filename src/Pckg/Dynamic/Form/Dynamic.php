@@ -13,6 +13,7 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
+use Pckg\Htmlbuilder\Builder\Pckg;
 use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
@@ -286,6 +287,11 @@ class Dynamic extends Bootstrap
 
             $element = $this->createElementByType($type, $name, $field);
 
+            /**
+             * We need to replace some elements, such as checkbox, editor, ...
+             */
+            $element->setBuilder(new Pckg($element));
+
             if (($label = $field->label)) {
                 $translatable = $field->isTranslatable($this->record->getEntity())
                     ? '<span class="label label-info"><i class="fa fa-globe" aria-hidden="true"></i></span>'
@@ -296,6 +302,10 @@ class Dynamic extends Bootstrap
             $element->setHelp($field->help);
 
             $element->setAttribute('data-field-id', $field->id);
+
+            if ($field->required) {
+                $element->required();
+            }
         }
 
         if ($this->isEditable()) {

@@ -56,17 +56,24 @@
             },
             submitForm: function () {
                 this.submitting = true;
-                var data = this.prepareData('submit');
-                http.post('{{ form.getAction() }}', data, function (data) {
-                    this.submitting = false;
-                    if (data.success) {
-                        $dispatcher.$emit('notification:success', data.message);
-                    } else {
-                        $dispatcher.$emit('notification:error', data.message || 'Something went wrong');
-                    }
 
-                    if (data.redirect) {
-                        http.redirect(data.redirect);
+                this.$validator.validateAll().then(function (ok) {
+                    if (ok) {
+                        var data = this.prepareData('submit');
+                        http.post('{{ form.getAction() }}', data, function (data) {
+                            this.submitting = false;
+                            if (data.success) {
+                                $dispatcher.$emit('notification:success', data.message);
+                            } else {
+                                $dispatcher.$emit('notification:error', data.message || 'Something went wrong');
+                            }
+
+                            if (data.redirect) {
+                                http.redirect(data.redirect);
+                            }
+                        }.bind(this));
+                    } else {
+                        this.submitting = false;
                     }
                 }.bind(this));
             }
