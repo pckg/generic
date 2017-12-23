@@ -26,16 +26,6 @@ class Generic extends Provider
     public function routes()
     {
         return [
-            'url'    => [
-                '/maestro' => [
-                    'view'       => 'stats',
-                    'controller' => Orders::class,
-                    'name'       => 'maestro',
-                    'tags'       => [
-                        'group:admin',
-                    ],
-                ],
-            ],
             'method' => [
                 GenericService::class . '::addRoutesFromDb',
             ],
