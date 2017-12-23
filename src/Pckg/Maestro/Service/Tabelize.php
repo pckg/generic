@@ -613,7 +613,7 @@ class Tabelize
          */
         foreach ($this->getFieldTransformations() as $key => $field) {
             $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
-            measure('transformation.' . $key, function(&$transformed, $realKey, $field, $record) {
+            measure('transformation.' . $key, function() use (&$transformed, $realKey, $field, $record) {
                 $transformed[$realKey] = $this->getRecordValue($field, $record);
             });
         }

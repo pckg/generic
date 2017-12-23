@@ -1,6 +1,5 @@
 <?php namespace Pckg\Generic\Provider;
 
-use Derive\Orders\Controller\Orders;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Console\CreateGenericActionsData;
@@ -26,16 +25,6 @@ class Generic extends Provider
     public function routes()
     {
         return [
-            'url'    => [
-                '/maestro' => [
-                    'view'       => 'stats',
-                    'controller' => Orders::class,
-                    'name'       => 'maestro',
-                    'tags'       => [
-                        'group:admin',
-                    ],
-                ],
-            ],
             'method' => [
                 GenericService::class . '::addRoutesFromDb',
             ],
