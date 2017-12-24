@@ -644,6 +644,8 @@ ifrm.document.close();
             } else {
                 return $this->{'addText'}($name);
             }
+        } else if ($type == 'mysql') {
+            // do nothing, for now
         } else {
             dd('Unknown dynamic form type: ' . $type);
         }
