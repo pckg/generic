@@ -283,6 +283,8 @@ class Dynamic extends Bootstrap
             } elseif ($field->id == $this->foreignFieldId) {
                 $this->createElementByType('hidden', $name, $field);
                 continue;
+            } elseif ($type == 'mysql') {
+                continue;
             }
 
             $element = $this->createElementByType($type, $name, $field);
@@ -644,8 +646,6 @@ ifrm.document.close();
             } else {
                 return $this->{'addText'}($name);
             }
-        } else if ($type == 'mysql') {
-            // do nothing, for now
         } else {
             dd('Unknown dynamic form type: ' . $type);
         }
