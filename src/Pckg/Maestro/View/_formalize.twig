@@ -87,6 +87,13 @@
                     $this.form[$(this).attr('name')] = $(this).val();
                 });
             });
+            $(this.$el).find('input.date.vue-takeover').each(function () {
+                $(this).datetimepicker({
+                    format: 'YYYY-MM-DD'
+                }).on('dp.change', function () {
+                    $this.form[$(this).attr('name')] = $(this).val();
+                });
+            });
         }
     });
 </script>

@@ -72,13 +72,13 @@ $(document).ready(function () {
      //$(this).datetimepicker('hide');
      })*/;
 
-    $('input.date').datetimepicker({
+    $('input.date:not(.vue-takeover)').datetimepicker({
         format: 'YYYY-MM-DD'
     })/*.on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');
      })*/;
 
-    $('input.time').datetimepicker({
+    $('input.time:not(.vue-takeover)').datetimepicker({
         format: 'HH:mm'
     })/*.on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');

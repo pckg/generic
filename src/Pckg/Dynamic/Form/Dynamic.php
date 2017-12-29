@@ -523,16 +523,19 @@ ifrm.document.close();
             return $element;
         } elseif ($type == 'datetime') {
             $element = $this->addDatetime($name);
+            $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
 
             return $element;
         } elseif ($type == 'date') {
             $element = $this->addDate($name);
+            $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
 
             return $element;
         } elseif ($type == 'time') {
             $element = $this->addTime($name);
+            $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
 
             return $element;
