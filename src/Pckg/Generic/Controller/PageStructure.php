@@ -16,6 +16,7 @@ use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Pckg\Generic\Service\Generic;
 use Pckg\Manager\Upload;
 use Pckg\Stringify;
 
@@ -86,6 +87,7 @@ class PageStructure
             $dynamicService = resolve(Dynamic::class);
             $dynamicService->getFilterService()->filterByGet($contents);
         }
+
         return [
             'contents' => $contents->all(),
         ];
@@ -542,6 +544,22 @@ class PageStructure
         $actionsMorph->addPartial(post('partial', null));
 
         return response()->respondWithSuccess();
+    }
+
+    public function postActionsMorphAddRoutePartialAction(Route $route)
+    {
+        $route->addPartial(post('partial', null));
+
+        return response()->respondWithSuccess();
+    }
+
+    public function getRouteTreeAction(Route $route, Generic $genericService)
+    {
+        $genericService->readRoute($route);
+
+        return [
+            'tree' => $genericService->getRouteTree(),
+        ];
     }
 
 }

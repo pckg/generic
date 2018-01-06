@@ -368,6 +368,8 @@
         created: function () {
             this.initialFetch();
             $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
+            $dispatcher.$on('pckg-editor:addChild', this.addChild);
+            $dispatcher.$on('pckg-editor:addRootChild', this.addRootChild);
         },
         watch: {
             'form.settings.width': {
@@ -482,12 +484,20 @@
             addChild: function () {
                 $('#addNewActionModal').modal('show');
             },
+            addRootChild: function () {
+                this.action = {};
+                this.addChild();
+            },
             addAction: function (c) {
-                http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph.addPartial'], {actionsMorph: this.action.id}), {
+                var url = this.action.id
+                    ? utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph.addPartial'], {actionsMorph: this.action.id})
+                    : utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph.addRoutePartial'], {route: this.routeId});
+                http.post(url, {
                     partial: c
                 }, function (data) {
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
+                        $dispatcher.$emit('pckg-frontpage:fetchTree');
                     }
                 });
             },
@@ -499,7 +509,7 @@
                 }.bind(this));
                 this.refreshWholeContent();
             },
-            refreshWholeContent: function(){
+            refreshWholeContent: function () {
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphContent'], {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
                 }.bind(this));

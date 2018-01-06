@@ -2,8 +2,10 @@
 
 namespace Pckg\Generic\Record;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\Routes;
+use Pckg\Generic\Service\Partial\AbstractPartial;
 
 /**
  * Class Route
@@ -71,6 +73,22 @@ class Route extends Record
         foreach ($export['actions'] ?? [] as $action) {
             ActionsMorph::import($action, $this);
         }
+    }
+
+    public function addPartial($partial)
+    {
+        $partial = $this->preparePartial($partial);
+        $partial->addToRoute($this);
+    }
+
+    /**
+     * @param $partial
+     *
+     * @return object|AbstractPartial
+     */
+    protected function preparePartial($partial)
+    {
+        return Reflect::create($partial);
     }
 
 }

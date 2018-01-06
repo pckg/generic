@@ -174,9 +174,15 @@ class Generic
     {
         $order = $this->makeOrderFromBlocks();
         $variables = $this->getVariablesFromOrder($order);
-        $variables['actionsTree'] = $this->getTreeFromOrder($order);
 
         return $this->mergeVariables($variables);
+    }
+
+    public function getRouteTree()
+    {
+        $order = $this->makeOrderFromBlocks();
+
+        return $this->getTreeFromOrder($order);
     }
 
     /**

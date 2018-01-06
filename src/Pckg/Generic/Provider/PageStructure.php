@@ -70,6 +70,18 @@ class PageStructure extends Provider
                                                                                      'actionsMorphAddPartial'))->resolvers([
                                                                                                                                'actionsMorph' => ActionsMorph::class,
                                                                                                                            ]),
+                                       '.actionsMorph.addRoutePartial' => (new Route('/actionsMorph/[route]/addRoutePartial',
+                                                                                     'actionsMorphAddRoutePartial'))
+                                           ->resolvers([
+                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                               'route'),
+                                                       ]),
+                                       '.actionsMorph.routeTree' => (new Route('/actionsMorph/[route]/tree',
+                                                                                     'routeTree'))
+                                           ->resolvers([
+                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                               'route'),
+                                                       ]),
                                        '.duplicateActionsMorphContent' => (new Route('/actionsMorph/[actionsMorph]/duplicateContent',
                                                                                      'duplicateActionsMorphContent'))->resolvers([
                                                                                                                                      'actionsMorph' => ActionsMorph::class,
