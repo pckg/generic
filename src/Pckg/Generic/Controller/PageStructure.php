@@ -279,11 +279,22 @@ class PageStructure
     {
         $orders = post('orders', []);
         $actionsMorphs = (new ActionsMorphs())->where('id', array_keys($orders))->all();
-        $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders) {
-            $actionsMorph->setAndSave([
-                                          'order'     => $orders[$actionsMorph->id]['order'],
-                                          'parent_id' => $orders[$actionsMorph->id]['parent'],
-                                      ]);
+        $root = $actionsMorphs->first(function(ActionsMorph $actionsMorph) {
+            return $actionsMorph->variable_id;
+        });
+        $routeId = $root ? $root->poly_id : null;
+        $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders, $routeId) {
+            $update = [
+                'order'     => $orders[$actionsMorph->id]['order'],
+                'parent_id' => $orders[$actionsMorph->id]['parent'],
+            ];
+            if (!$update['parent_id'] && !$actionsMorph->variable_id) {
+                $update['variable_id'] = 1;
+                if (!$actionsMorph->poly_id) {
+                    $update['poly_id'] = $routeId;
+                }
+            }
+            $actionsMorph->setAndSave($update);
         });
 
         return response()->respondWithSuccess();

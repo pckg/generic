@@ -137,7 +137,7 @@ class Dynamic extends Bootstrap
                                       ->keyBy('slug')
                                       ->map('title');
 
-        if (count($languages) < 2 || true) {
+        if (count($languages) < 2) {
             return;
         }
 
