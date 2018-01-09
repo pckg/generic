@@ -71,10 +71,10 @@ class TableView extends DatabaseRecord
      *  - groups
      *  - orders
      */
-    public function loadFromSession()
+    public function loadFromSession($sessionView)
     {
         $this->settings = json_encode(
-            $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' . $this->id]['view'] ?? []
+            $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' . $sessionView]['view'] ?? []
         );
 
         $this->save();

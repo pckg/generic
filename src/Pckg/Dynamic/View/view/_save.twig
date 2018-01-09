@@ -7,7 +7,7 @@
                 {% embed 'Pckg/Generic/View/panel.twig' %}
 
                     {% block title %}
-                        Save view on <i>{{ table.table }}</i>
+                        Save view
                     {% endblock %}
 
                     {% block content %}
@@ -38,6 +38,11 @@
         template: '#pckg-dynamic-view-save-template',
         name: 'pckg-dynamic-view-save',
         mixins: [pckgDelimiters],
+        props: {
+            sessionView: {
+                default: null
+            }
+        },
         data: function () {
             return {
                 savedViews: {{ savedViews | json_encode | raw }},
@@ -50,12 +55,14 @@
                 http.post('{{ saveCurrentViewUrl }}', function () {
                     if (this.name) {
                         return {
-                            name: this.name
+                            name: this.name,
+                            sessionView: this.sessionView
                         };
                     }
 
                     return {
-                        id: this.view
+                        id: this.view,
+                        sessionView: this.sessionView
                     }
                 }.bind(this));
             }

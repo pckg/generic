@@ -733,9 +733,12 @@ class Tabelize
     public function getSaveViewUrl()
     {
         return url(
-            'dynamic.record.view.save',
+            $this->tableView
+                ? 'dynamic.record.view.savePlusView'
+                : 'dynamic.record.view.save',
             [
-                'table' => $this->table,
+                'table'     => $this->table,
+                'tableView' => $this->tableView,
             ]
         );
     }

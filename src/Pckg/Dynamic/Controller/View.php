@@ -24,27 +24,29 @@ class View extends Controller
                );
     }
 
-    public function getSaveViewAction(Table $table)
+    public function getSaveViewAction(Table $table, TableView $tableView = null)
     {
         vueManager()->addView('Pckg/Dynamic:view/_save', [
-            'table'              => $table,
             'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(),
             'saveCurrentViewUrl' => url(
-                'dynamic.record.view.save',
+                $tableView
+                    ? 'dynamic.record.view.savePlusView'
+                    : 'dynamic.record.view.save',
                 [
-                    'table' => $table,
+                    'table'     => $table,
+                    'tableView' => $tableView,
                 ]
             ),
         ]);
 
-        return view('Pckg/Dynamic:view/save');
+        return view('Pckg/Dynamic:view/save', ['view' => $tableView]);
     }
 
     public function postSaveViewAction(Table $table)
     {
         if ($id = $this->post()->get('id')) {
             $view = (new TableViews())->where('id', $id)->oneOrFail();
-            $view->loadFromSession();
+            $view->loadFromSession(post('sessionView', null));
         } else {
             $view = new TableView(
                 [
@@ -52,7 +54,7 @@ class View extends Controller
                     'title'            => $this->post()->get('name'),
                 ]
             );
-            $view->loadFromSession();
+            $view->loadFromSession(post('sessionView', null));
         }
 
         $view->save();

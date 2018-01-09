@@ -15,7 +15,6 @@ use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
 use Pckg\Dynamic\Resolver\Tab as TabResolver;
 use Pckg\Dynamic\Resolver\Table as TableResolver;
-use Pckg\Dynamic\Resolver\TableView;
 use Pckg\Dynamic\Resolver\TableView as ViewResolver;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Provider\Frontend as FrontendProvider;
@@ -275,35 +274,43 @@ class Dynamic extends Provider
                         'controller' => View::class,
                     ],
                     [
-                        '/dynamic/tables/view/[table]'                  => [
+                        '/dynamic/tables/view/[table]'                      => [
                             'name'      => 'dynamic.record.view',
                             'view'      => 'viewTable',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/view/[table]/save'             => [
+                        '/dynamic/tables/view/[table]/save'                 => [
                             'name'      => 'dynamic.record.view.save',
                             'view'      => 'saveView',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/view/[table]/reset'            => [
+                        '/dynamic/tables/view/[table]/[tableView]/savePlus' => [
+                            'name'      => 'dynamic.record.view.savePlusView',
+                            'view'      => 'saveView',
+                            'resolvers' => [
+                                'table'     => TableResolver::class,
+                                'tableView' => ViewResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/view/[table]/reset'                => [
                             'name'      => 'dynamic.record.view.reset',
                             'view'      => 'resetView',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/view/[table]/share'            => [
+                        '/dynamic/tables/view/[table]/share'                => [
                             'name'      => 'dynamic.record.view.share',
                             'view'      => 'shareView',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
-                        '/dynamic/tables/view/[table]/load/[tableView]' => [
+                        '/dynamic/tables/view/[table]/load/[tableView]'     => [
                             'name'      => 'dynamic.record.view.load',
                             'view'      => 'loadView',
                             'resolvers' => [
@@ -331,7 +338,7 @@ class Dynamic extends Provider
                             'resolvers' => [
                                 'table'     => TableResolver::class,
                                 'type'      => ExportStrategy::class,
-                                'tableView' => TableView::class,
+                                'tableView' => ViewResolver::class,
                             ],
                         ],
                     ]
