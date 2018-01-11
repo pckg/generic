@@ -65,6 +65,10 @@ class Dynamic extends Provider
                         'controller' => Records::class,
                     ],
                     [
+                        '/api/dynamic/switch-language'                                                  => [
+                            'name' => 'api.dynamic.switchLanguage',
+                            'view' => 'switchLanguage',
+                        ],
                         '/dynamic/tables/list/[table]'                                                  => [
                             'name'      => 'dynamic.record.list',
                             'view'      => 'viewTable',

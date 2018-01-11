@@ -1,6 +1,5 @@
 <?php namespace Pckg\Dynamic\Controller;
 
-use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
@@ -45,6 +44,14 @@ class Records extends Controller
         Plugin $pluginService
     ) {
         $this->pluginService = $pluginService;
+    }
+
+    public function postSwitchLanguageAction()
+    {
+        $language = post('language');
+        $_SESSION['pckg_dynamic_lang_id'] = $language;
+
+        return $this->response()->respondWithSuccess();
     }
 
     public function getSelectListAction(

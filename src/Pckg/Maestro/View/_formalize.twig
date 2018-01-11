@@ -76,6 +76,11 @@
                         this.submitting = false;
                     }
                 }.bind(this));
+            },
+            switchLanguage: function () {
+                http.post('{{ url('api.dynamic.switchLanguage') }}', {language: this.form.language_id}, function () {
+                    http.redirect();
+                });
             }
         },
         mounted: function () {

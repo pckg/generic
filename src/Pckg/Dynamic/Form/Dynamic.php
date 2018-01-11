@@ -151,8 +151,9 @@ class Dynamic extends Bootstrap
              ->setValue($languageId)
              ->addOptions($languages)
              ->setLabel('Language');
+
         if ($this->isEditable()) {
-            $this->addSubmit('switch_language')->setValue('Switch language');
+            $this->addButton('switch_language')->setValue('Switch language')->a('@click.prevent', 'switchLanguage');
         }
 
         return $this;
