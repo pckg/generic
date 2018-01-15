@@ -689,6 +689,7 @@
             saveContent: function () {
                 http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.content'], {content: this.content.id}), {content: this.content}, function (data) {
                     this.content = data.content;
+                    $('#editBlockModal').modal('hide');
                 }.bind(this));
             },
             pushNormalizecClass: function (classes, val, type, prefix) {

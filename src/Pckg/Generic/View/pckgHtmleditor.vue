@@ -23,10 +23,8 @@
         },
         watch: {
             value: function (n, o) {
-                console.log('changed', n, o);
                 if (n != o) {
                     this.updateEditorValue();
-                    //this.$nextTick(this.updateEditorValue.bind(this));
                 }
             }
         },
@@ -53,6 +51,8 @@
                         editor.on('Change', function (e) {
                             this.emitChange(this._editor.getContent());
                         }.bind(this)).on('KeyDown', function (e) {
+                            this.emitChange(this._editor.getContent());
+                        }.bind(this)).on('KeyUp', function (e) {
                             this.emitChange(this._editor.getContent());
                         }.bind(this));
                     }.bind(this)
