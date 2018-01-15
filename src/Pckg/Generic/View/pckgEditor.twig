@@ -656,12 +656,20 @@
             refreshSettings: function () {
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), function (data) {
                     this.form.settings = data.settings;
+                    this.parseSettings();
                 }.bind(this));
             },
             refreshWholeContent: function () {
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphContent'], {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
                 }.bind(this));
+            },
+            parseSettings: function () {
+                /**
+                 * Parse paddings and margins.
+                 */
+                this.parsePadding();
+                this.parseMargin();
             },
             closeSettings: function () {
                 this.action = {};
@@ -707,6 +715,41 @@
                     classes.push(type + prefix + '-' + val);
                 }
             },
+            parseMargin: function () {
+                this.parse4model('margin');
+            },
+            parsePadding: function () {
+                this.parse4model('padding');
+            },
+            parse4model: function (type) {
+                $.each(this.form.settings.scopes, function (i, scope) {
+                    var val;
+                    if (scope.indexOf(type + '-vertical-') === 0) {
+                        val = scope.substring((type + '-vertical-').length);
+                        this[type].top = val;
+                        this[type].bottom = val;
+
+                    } else if (scope.indexOf(type + '-horizontal-') === 0) {
+                        val = scope.substring((type + '-horizontal-').length);
+                        this[type].left = val;
+                        this[type].right = val;
+
+                    } else if (scope.indexOf(type + '-top-') === 0) {
+                        this[type].top = scope.substring((type + '-top-').length);
+
+                    } else if (scope.indexOf(type + '-bottom-') === 0) {
+                        this[type].bottom = scope.substring((type + '-bottom-').length);
+
+                    } else if (scope.indexOf(type + '-') === 0) {
+                        val = scope.substring((type + '-').length);
+                        this[type].top = val;
+                        this[type].right = val;
+                        this[type].left = val;
+                        this[type].right = val;
+
+                    }
+                }.bind(this));
+            },
             getNormalizedClasses: function (newVal, type) {
                 /**
                  * Calculate new classes.
@@ -743,10 +786,6 @@
                  */
                 var toRemove = [];
                 $.each(this.form.settings.scopes, function (i, scope) {
-                    if (!scope) {
-                        console.log('no scope');
-                        return;
-                    }
                     if (scope.indexOf(type) < 0 || classes.indexOf(scope) < 0) {
                         toRemove.push(scope);
                     }
@@ -758,10 +797,7 @@
 
                 $.each(classes, function (i, c) {
                     if (this.form.settings.scopes.indexOf(c) < 0) {
-                        console.log('adding ' + c);
                         this.addFullClass(c);
-                    } else {
-                        console.log('already added ' + c);
                     }
                 }.bind(this));
             },
