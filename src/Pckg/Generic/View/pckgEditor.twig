@@ -722,6 +722,12 @@
                 this.parse4model('padding');
             },
             parse4model: function (type) {
+                this[type] = {
+                    top: '',
+                    bottom: '',
+                    left: '',
+                    right: ''
+                };
                 $.each(this.form.settings.scopes, function (i, scope) {
                     var val;
                     if (scope.indexOf(type + '-vertical-') === 0) {
