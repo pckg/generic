@@ -22,6 +22,10 @@ class CreateGenericActionsData extends Command
         (new Collection(config('pckg.generic.actions', [])))->each(function($action, $slug) {
             $actionRecord = Action::getOrNew(['slug' => $slug]);
 
+            if (!$actionRecord->isSaved()) {
+                d($slug);
+            }
+
             $actionRecord->setAndSave($action);
         });
 

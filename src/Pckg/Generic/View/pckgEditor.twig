@@ -1,76 +1,65 @@
 <script type="text/x-template" id="pckg-editor">
-    <div class="pckg-editor" :class="'pckg-editor-type-' + action.type">
+    <div class="pckg-editor" :class="visibilityClass">
 
-        {# change to <pckg-modal title="Edit block"><slot name="content">...</slot></pckg-modal> #}
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
-            {% block header %}
-                Edit block
-            {% endblock %}
-            {% block body %}
-                <div>
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-pills" role="tablist">
-                        <li role="presentation" v-if="action.type == 'action'">
-                            <a href="#content" aria-controls="content" role="tab"
-                               data-toggle="tab">Content</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#module" aria-controls="module" role="tab"
-                               data-toggle="tab">Module</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#style" aria-controls="style" role="tab"
-                               data-toggle="tab">Style</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#box" aria-controls="style" role="tab"
-                               data-toggle="tab">Box</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#background" aria-controls="background" role="tab"
-                               data-toggle="tab">Background</a>
-                        </li>
-                        <li role="presentation">
-                            <a href="#permissions" aria-controls="permissions" role="tab"
-                               data-toggle="tab">Permissions</a>
-                        </li>
-                    </ul>
+        <div class="pckg-editor-settings" v-if="action.id">
 
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane" id="style">
-                            <div class="row">
-                                <template v-for="(scopes, sectionTitle) in availableScopes">
-                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
-                                        <div :class="[Object.keys(scopes).length > 5 ? 'col-md-12' : 'col-md-6']">
-                                            <label v-text="sectionTitle"></label>
-                                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                                <a class="btn"
-                                                   v-for="(title, css) in scopes"
-                                                   :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                                   @click.prevent="toggleScope(css)">${ title }</a>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </template>
-                            </div>
+            <p class="text-center padding-vertical-xs margin-none"><b>${ action.title } #${ action.id }</b></p>
 
-                            <label>Class</label>
-                            <input class="form-control" v-model="form.settings.class"/>
+            <div class="clearfix"></div>
 
-                            <label>Style</label>
-                            <input class="form-control" v-model="form.settings.style"/>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="box">
+            <div class="btn btn-group pull-left">
+                <a type="button" href="#" title="Delete element" class="btn btn-danger btn-sm"
+                   @click.prevent="openDeleteActionModal">
+                    <i aria-hidden="true" class="fa fa-trash-o danger"></i>
+                </a>
+
+                <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
+                    <i aria-hidden="true" class="fa fa-download"></i>
+                </a>
+
+                <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
+                    <i aria-hidden="true" class="fa fa-upload"></i>
+                </a>
+
+                <a type="button" href="#" title="Add child" class="btn btn-default btn-sm" @click.prevent="addChild">
+                    <i aria-hidden="true" class="fa fa-plus"></i>
+                </a>
+
+                <a type="button" href="#" title="Edit content" class="btn btn-warning btn-sm"
+                   @click.prevent="openEditContentModal">
+                    <i aria-hidden="true" class="fa fa-pencil"></i>
+                </a>
+
+                <a type="button" href="#" title="Save settings" class="btn btn-success btn-sm"
+                   @click.prevent="saveSettings">
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                </a>
+
+                <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
+                   @click.prevent="closeSettings">
+                    <i aria-hidden="true" class="fa fa-close"></i>
+                </a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="fa fa-th-large"></i> Box
+                        </a>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                        <div class="panel-body">
                             <div v-if="action.type == 'container'">
-                                <h4>Container</h4>
                                 <label>Container</label>
                                 <pckg-select v-model="form.settings.container"
                                              :initial-options="availableContainers"></pckg-select>
                             </div>
                             <div v-else-if="action.type == 'column'">
-                                <h4>Column</h4>
-
                                 <label>Width</label>
                                 <pckg-select v-model="form.settings.width"
                                              :initial-options="availableWidths"></pckg-select>
@@ -80,12 +69,64 @@
                                              :initial-options="availableOffsets"></pckg-select>
                             </div>
 
-                            <div class="row row-grid">
-                                <div class="col-md-6" v-for="(scopes, sectionTitle) in availableScopes"
+                            <label>Padding</label>
+                            <div>
+                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                                    <select v-model="padding.top">
+                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                    </select>
+                                </div>
+                                <div style="width: 100%; clear: both;">
+                                    <div style="width: 33%; text-align: center; float: left;">
+                                        <select v-model="padding.left">
+                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                        </select>
+                                    </div>
+                                    <div style="width: 33%; text-align: center; float: right;">
+                                        <select v-model="padding.right">
+                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                                    <select v-model="padding.bottom">
+                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <label>Margin</label>
+                            <div>
+                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                                    <select v-model="margin.top">
+                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                    </select>
+                                </div>
+                                <div style="width: 100%; clear: both;">
+                                    <div style="width: 33%; text-align: center; float: left;">
+                                        <select v-model="margin.left">
+                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                        </select>
+                                    </div>
+                                    <div style="width: 33%; text-align: center; float: right;">
+                                        <select v-model="margin.right">
+                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                                    <select v-model="margin.bottom">
+                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!--<div class="row row-grid">
+                                <div class="col-md-12" v-for="(scopes, sectionTitle) in availableScopes"
                                      v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1">
                                     <template v-for="(scopes, css) in scopes">
                                         <label v-text="sectionTitle + ' ' + css"></label>
-                                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                        <div class="btn-group btn-group" role="group" aria-label="...">
                                             <a class="btn"
                                                v-for="(title, css) in scopes"
                                                :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
@@ -93,10 +134,58 @@
                                         </div>
                                     </template>
                                 </div>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingFour">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            <i class="fa fa-cog"></i> Style
+                        </a>
+                    </div>
+                    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingFour">
+                        <div class="panel-body">
+                            <label>Class</label>
+                            <input class="form-control" v-model="form.settings.class"/>
+
+                            <label>Style</label>
+                            <input class="form-control" v-model="form.settings.style"/>
+
+                            <div class="row">
+                                <template v-for="(scopes, sectionTitle) in availableScopes">
+                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
+                                        <div class="col-md-12">
+                                            <label v-text="sectionTitle"></label>
+                                            <div class="btn-group btn-group" role="group" aria-label="...">
+                                                <a class="btn"
+                                                   v-for="(title, css) in scopes"
+                                                   :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                                   @click.prevent="toggleScope(css)">${ title }</a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="background">
-                            <h4>Background</h4>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                           aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-picture-o"></i> Background
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingOne">
+                        <div class="panel-body">
                             <label>Color</label>
                             <input class="form-control" v-model="form.settings.bgColor"/>
 
@@ -163,82 +252,101 @@
                                              :initial-multiple="false"></pckg-select>
                             </template>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="module">
-                            <template v-if="actionTemplates.length > 0">
-                                <label class="col-md-3">Template</label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="action.template">
-                                        <option v-for="template in actionTemplates" :value="template">${ template }
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="clearfix clear"></div>
-                            </template>
+                    </div>
+                </div>
 
-                            {% for slug, form in actionForms %}
-                                <template v-if="action.slug == '{{ slug }}'">
-                                    {{ form | raw }}
-                                </template>
-                            {% endfor %}
-                        </div>
-                        <div role="tabpanel" class="tab-pane active" id="content" v-if="action.type == 'action'">
-                            <template v-if="content && content.id">
-                                <pckg-htmleditor v-model="content.content" forced-root-block="p"></pckg-htmleditor>
-                                <br/>
 
-                                <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
-                                    #${
-                                    content.id }
-                                </button>
-
-                                <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
-                                   v-if="content">Full
-                                    edit</a>
-                            </template>
-                            <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
-                            <button class="btn btn-primary" @click.prevent="switchContent">Switch content</button>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="permissions">
+                <!--<div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingThree">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <i class="fa fa-users"></i> Permissions
+                        </a>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingThree">
+                        <div class="panel-body">
                             <p>... are waiting to be copied from backend</p>
                         </div>
                     </div>
+                </div>-->
+
+
+                <div class="panel panel-default" v-if="actionTemplates.length > 0">
+                    <div class="panel-heading" role="tab" id="headingFive">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            <i class="fa fa-eye"></i> Template
+                        </a>
+                    </div>
+                    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingFive">
+                        <div class="panel-body">
+                            <div>
+                                <label>Template</label>
+                                <select class="form-control" v-model="action.template">
+                                    <option v-for="template in actionTemplates" :value="template">${ template }
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% for slug, form in actionForms %}
+                    <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
+                        <div class="panel-heading" role="tab" id="headingForm{{ slug }}">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseForm{{ slug }}" aria-expanded="false"
+                               aria-controls="collapseForm{{ slug }}">
+                                <i class="fa fa-cogs"></i> {{ slug }}
+                            </a>
+                        </div>
+                        <div id="collapseForm{{ slug }}" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingForm{{ slug }}">
+                            <div class="panel-body">
+                                {{ form | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# change to <pckg-modal title="Edit block"><slot name="content">...</slot></pckg-modal> #}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
+            {% block header %}
+                Edit content
+            {% endblock %}
+            {% block body %}
+                <div>
+                    <template v-if="content && content.id">
+                        <pckg-htmleditor v-model="content.content" forced-root-block="p"></pckg-htmleditor>
+                        <br/>
+
+                        <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
+                            #${
+                            content.id }
+                        </button>
+
+                        <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
+                           v-if="content">Full
+                            edit</a>
+                    </template>
+                    <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
+                    <button class="btn btn-primary" @click.prevent="switchContent">Switch content</button>
                 </div>
             {% endblock %}
             {% block footer %}
                 <div role="group" class="btn-group pull-left" style="text-align: right;">
-                    <a type="button" href="#" title="Add child" class="btn btn-success" @click.prevent="addChild">
-                        <i aria-hidden="true" class="fa fa-plus"></i> Add child
-                    </a>
-                    <div class="btn-group pull-left dropup">
-                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                title="More" class="btn btn-danger dropdown-toggle">
-                            <span class="caret"></span> <span class="sr-only">More</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li>
-                                <a href="#" @click.prevent>
-                                    <i aria-hidden="true" class="fa fa-download"></i> Export
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" @click.prevent>
-                                    <i aria-hidden="true" class="fa fa-upload"></i> Import
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" @click.prevent="openDeleteActionModal">
-                                    <i aria-hidden="true" class="fa fa-trash-o danger"></i> Delete
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                     <a type="button" href="#" title="Toggle transparency" class="btn btn-default"
                        @click.prevent="toggleTransparency">
                         <i aria-hidden="true" class="fa fa-plus"></i> Toggle transparency
                     </a>
                 </div>
 
-                <input type="button" class="btn btn-success" @click.prevent="saveSettings" value="Save settings"/>
+                <input type="button" class="btn btn-success" @click.prevent="saveContent" value="Save content"/>
             {% endblock %}
         {% endembed %}
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-max', id: 'addNewActionModal'} %}
@@ -309,6 +417,10 @@
         props: {
             routeId: {
                 type: Number
+            },
+            visibilityClass: {
+                type: String,
+                default: 'hidden'
             }
         },
         name: 'pckg-editor',
@@ -362,16 +474,42 @@
                 partials: {},
                 structures: {},
                 pages: {},
-                templates: {}
+                templates: {},
+                padding: {
+                    top: 'no',
+                    bottom: 'no',
+                    left: 'no',
+                    right: 'no'
+                },
+                margin: {
+                    top: 'no',
+                    bottom: 'no',
+                    left: 'no',
+                    right: 'no'
+                }
             };
         },
         created: function () {
             this.initialFetch();
-            $dispatcher.$on('pckg-editor:actionChanged', this.openEditModal);
+            $dispatcher.$on('pckg-editor:actionChanged', this.setAction);
             $dispatcher.$on('pckg-editor:addChild', this.addChild);
             $dispatcher.$on('pckg-editor:addRootChild', this.addRootChild);
         },
         watch: {
+            padding: {
+                handler: function (newVal, oldVal) {
+                    var classes = this.getNormalizedClasses(newVal, 'padding');
+                    this.normalizeClasses(classes, 'padding');
+                },
+                deep: true
+            },
+            margin: {
+                handler: function (newVal, oldVal) {
+                    var classes = this.getNormalizedClasses(newVal, 'margin');
+                    this.normalizeClasses(classes, 'margin');
+                },
+                deep: true
+            },
             'form.settings.width': {
                 handler: function (newVal, oldVal) {
                     $.each(oldVal, function (i, width) {
@@ -471,12 +609,18 @@
             },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
-                    utils.splice(this.form.settings.scopes, scope);
-                    this.removeActionClass(scope);
+                    this.removeFullClass(scope);
                 } else {
-                    this.form.settings.scopes.push(scope);
-                    this.addActionClass(scope);
+                    this.addFullClass(scope);
                 }
+            },
+            addFullClass: function (scope) {
+                this.form.settings.scopes.push(scope);
+                this.addActionClass(scope);
+            },
+            removeFullClass: function (scope) {
+                utils.splice(this.form.settings.scopes, scope);
+                this.removeActionClass(scope);
             },
             openDeleteActionModal: function () {
                 $('#deleteActionModal').modal('show');
@@ -501,8 +645,10 @@
                     }
                 });
             },
-            openEditModal: function (action) {
+            setAction: function (action) {
                 this.action = action;
+            },
+            openEditContentModal: function () {
                 $('#editBlockModal').modal('show');
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), function (data) {
                     this.form.settings = data.settings;
@@ -514,10 +660,10 @@
                     this.content = data.content;
                 }.bind(this));
             },
+            closeSettings: function () {
+                this.action = {};
+            },
             saveSettings: function () {
-                if (this.content) {
-                    this.saveContent();
-                }
                 http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), {
                     settings: this.form.settings,
                     template: this.action.template
@@ -544,9 +690,99 @@
                 http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.content'], {content: this.content.id}), {content: this.content}, function (data) {
                     this.content = data.content;
                 }.bind(this));
+            },
+            pushNormalizecClass: function (classes, val, type, prefix) {
+                if (typeof prefix == 'undefined') {
+                    prefix = '';
+                }
+                var lefties = ['no', 'auto'];
+
+                if (lefties.indexOf(val) >= 0) {
+                    classes.push(val + '-' + type + prefix);
+                } else {
+                    classes.push(type + prefix + '-' + val);
+                }
+            },
+            getNormalizedClasses: function (newVal, type) {
+                /**
+                 * Calculate new classes.
+                 */
+                var classes = [];
+                var isVertical = newVal.top == newVal.bottom;
+                var isHorizontal = newVal.left == newVal.right;
+                var isAll = isVertical && isHorizontal && newVal.top == newVal.left;
+
+                if (isAll) {
+                    this.pushNormalizecClass(classes, newVal.top, type);
+                } else {
+                    if (isVertical) {
+                        this.pushNormalizecClass(classes, newVal.top, type, '-vertical');
+                    } else {
+                        this.pushNormalizecClass(classes, newVal.top, type, '-top');
+                        this.pushNormalizecClass(classes, newVal.bottom, type, '-bottom');
+                    }
+
+                    if (isHorizontal) {
+                        this.pushNormalizecClass(classes, newVal.right, type, '-horizontal');
+                    } else {
+                        this.pushNormalizecClass(classes, newVal.left, type, '-left');
+                        this.pushNormalizecClass(classes, newVal.right, type, '-right');
+                    }
+                }
+
+                return classes;
+            },
+            normalizeClasses: function (classes, type) {
+                /**
+                 * Remove all classes for type from this.form.settings.scopes
+                 * Add classes.
+                 */
+                var toRemove = [];
+                $.each(this.form.settings.scopes, function (i, scope) {
+                    if (!scope) {
+                        console.log('no scope');
+                        return;
+                    }
+                    if (scope.indexOf(type) < 0 || classes.indexOf(scope) < 0) {
+                        toRemove.push(scope);
+                    }
+                }.bind(this));
+
+                $.each(toRemove, function (i, c) {
+                    this.removeFullClass(c);
+                }.bind(this));
+
+                $.each(classes, function (i, c) {
+                    if (this.form.settings.scopes.indexOf(c) < 0) {
+                        console.log('adding ' + c);
+                        this.addFullClass(c);
+                    } else {
+                        console.log('already added ' + c);
+                    }
+                }.bind(this));
+            },
+            getResponsiveMapper: function(){
+                return {
+                    0: '0/12',
+                    1: '1/12',
+                    2: '1/6',
+                    3: '1/4',
+                    4: '1/3',
+                    5: '5/12',
+                    6: '1/2',
+                    7: '7/12',
+                    8: '2/3',
+                    9: '3/4',
+                    10: '5/6',
+                    11: '11/12',
+                    12: '12/12'
+                };
             }
         },
         computed: {
+            cssSizes: function () {
+                return ['no', 'auto', 'xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
+            },
             actionTemplates: function () {
                 if (!this.action) {
                     return [];
@@ -560,13 +796,14 @@
             },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                var mapper = this.getResponsiveMapper();
+                var ranges = Array.apply(null, Array(13)).map(function (_, i) {
                     return i;
                 });
 
                 $.each(sizes, function (i, size) {
-                    $.each(range, function (j, range) {
-                        sizes[i]['col-' + i + '-' + range] = 'col-' + i + '-' + range;
+                    $.each(ranges, function (j, range) {
+                        sizes[i]['col-' + i + '-' + range] = mapper[j] + ' - ' + Math.round(range / 12 * 100) + '%'; /*'col-' + i + '-' + range;*/
                     });
                 });
 
@@ -574,13 +811,14 @@
             },
             availableOffsets: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
-                var range = Array.apply(null, Array(13)).map(function (_, i) {
+                var mapper = this.getResponsiveMapper();
+                var ranges = Array.apply(null, Array(13)).map(function (_, i) {
                     return i;
                 });
 
                 $.each(sizes, function (i, size) {
-                    $.each(range, function (j, range) {
-                        sizes[i]['col-' + i + '-offset-' + range] = 'col-' + i + '-offset-' + range;
+                    $.each(ranges, function (j, range) {
+                        sizes[i]['col-' + i + '-offset-' + range] = mapper[j] + ' - ' + Math.round(range / 12 * 100) + '%'; /*'col-' + i + '-offset-' + range;*/
                     });
                 });
 
