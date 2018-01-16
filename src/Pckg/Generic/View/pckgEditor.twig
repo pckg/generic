@@ -792,6 +792,9 @@
                  */
                 var toRemove = [];
                 $.each(this.form.settings.scopes, function (i, scope) {
+                    if (scope.indexOf(type + '-') < 0) {
+                        return;
+                    }
                     if (scope.indexOf(type) < 0 || classes.indexOf(scope) < 0) {
                         toRemove.push(scope);
                     }
