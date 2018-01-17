@@ -196,6 +196,13 @@ class PageStructure
         return response()->respondWithAjaxSuccess();
     }
 
+    public function deleteRouteAction(Route $route)
+    {
+        $route->deleteWidely();
+
+        return response()->respondWithAjaxSuccess();
+    }
+
     public function postAddActionsMorphAction()
     {
         /**

@@ -30,7 +30,11 @@ class PageStructure extends Provider
                                        '.getVariables'                 => new Route('/variables', 'variables'),
                                        '.getContents'                  => new Route('/contents', 'contents'),
                                        '.getActions'                   => new Route('/actions', 'actions'),
-                                       '.getRoute'                     => new Route('/routes/[route]', 'route'),
+                                       '.route'                        => (new Route('/routes/[route]', 'route'))
+                                           ->resolvers([
+                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                               'route'),
+                                                       ]),
                                        '.getRouteActions'              => new Route('/routes/[route]/actions',
                                                                                     'routeActions'),
                                        '.routeExport'                  => new Route('/routes/[route]/export',
@@ -76,7 +80,7 @@ class PageStructure extends Provider
                                                            'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
                                                                                                                'route'),
                                                        ]),
-                                       '.actionsMorph.routeTree' => (new Route('/actionsMorph/[route]/tree',
+                                       '.actionsMorph.routeTree'       => (new Route('/actionsMorph/[route]/tree',
                                                                                      'routeTree'))
                                            ->resolvers([
                                                            'route' => (new \Pckg\Generic\Resolver\Route())->by('id',

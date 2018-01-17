@@ -624,7 +624,7 @@
                 });
             },
             fetchRoute: function () {
-                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.getRoute') }}', {route: this.selectedRoute}), function (data) {
+                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.route') }}', {route: this.selectedRoute}), function (data) {
                     pageStructureStore.dispatch('setRoute', data.route);
                     this.fetchActionsMorphs();
                 }.bind(this));

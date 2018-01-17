@@ -20,6 +20,18 @@ class Route extends Record
      */
     protected $entity = Routes::class;
 
+    public function deleteWidely()
+    {
+        /**
+         * Delete actions morphs.
+         */
+        $this->actionsMorphs->each(function(ActionsMorph $actionsMorph) {
+            $actionsMorph->deleteWidely();
+        });
+
+        $this->delete();
+    }
+
     public function getLayoutName()
     {
         return $this->layout
