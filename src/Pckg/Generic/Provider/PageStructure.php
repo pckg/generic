@@ -66,6 +66,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorphSettings'))->resolvers([
                                                                                                                              'actionsMorph' => ActionsMorph::class,
                                                                                                                          ]),
+                                       '.toggleActionsMorphLock'       => (new Route('/actionsMorph/[actionsMorph]/lock',
+                                                                                     'toggleActionsMorphLock'))->resolvers([
+                                                                                                                               'actionsMorph' => ActionsMorph::class,
+                                                                                                                           ]),
                                        '.actionsMorphContent'          => (new Route('/actionsMorph/[actionsMorph]/content',
                                                                                      'actionsMorphContent'))->resolvers([
                                                                                                                             'actionsMorph' => ActionsMorph::class,

@@ -84,6 +84,7 @@ class Action
         $tree = [
             'id'       => $this->action->pivot->id,
             'title'    => $this->action->title,
+            'morph'    => $this->action->pivot->morph,
             'type'     => $this->getType(),
             'class'    => $this->getClass(),
             'method'   => $this->getMethod(),

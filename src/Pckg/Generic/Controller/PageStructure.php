@@ -203,6 +203,20 @@ class PageStructure
         return response()->respondWithAjaxSuccess();
     }
 
+    public function postToggleActionsMorphLockAction(ActionsMorph $actionsMorph)
+    {
+        if ($actionsMorph->morph_id == Routes::class) {
+            $actionsMorph->lockToLayout();
+        } else {
+            $route = Route::gets(['id' => post('route')]);
+            $actionsMorph->lockToRoute($route);
+        }
+
+        return [
+            'actionsMorph' => $actionsMorph,
+        ];
+    }
+
     public function postAddActionsMorphAction()
     {
         /**

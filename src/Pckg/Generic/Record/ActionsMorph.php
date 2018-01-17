@@ -3,6 +3,8 @@
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\ActionsMorphs;
+use Pckg\Generic\Entity\Layouts;
+use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Service\Partial\AbstractPartial;
 
 class ActionsMorph extends Record
@@ -11,6 +13,30 @@ class ActionsMorph extends Record
     protected $entity = ActionsMorphs::class;
 
     protected $toArray = ['variable'];
+
+    public function lockToLayout()
+    {
+        foreach ($this->subActions as $subAction) {
+            $subAction->lockToLayout();
+        }
+
+        $this->setAndSave([
+                              'morph_id' => Layouts::class,
+                              'poly_id'  => 2,
+                          ]);
+    }
+
+    public function lockToRoute(Route $route)
+    {
+        foreach ($this->subActions as $subAction) {
+            $subAction->lockToRoute($route);
+        }
+
+        $this->setAndSave([
+                              'morph_id' => Routes::class,
+                              'poly_id'  => $route->id,
+                          ]);
+    }
 
     public function deleteWidely()
     {

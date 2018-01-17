@@ -153,7 +153,9 @@
                             <label>Class</label>
                             <input class="form-control" v-model="form.settings.class"/>
 
-                            <label>Style <pckg-tooltip content="Nek string"></pckg-tooltip></label>
+                            <label>Style
+                                <pckg-tooltip content="Nek string"></pckg-tooltip>
+                            </label>
                             <input class="form-control" v-model="form.settings.style"/>
 
                             <div class="row">
@@ -311,6 +313,33 @@
                         </div>
                     </div>
                 {% endfor %}
+
+                <div class="panel panel-default" v-if="action.type == 'wrapper'">
+                    <div class="panel-heading" role="tab" id="headingFormWrapper">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFormWrapper" aria-expanded="false"
+                           aria-controls="collapseFormWrapper">
+                            <i class="fa fa-cogs"></i> Wrapper
+                        </a>
+                    </div>
+                    <div id="collapseFormWrapper" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingFormWrapper">
+                        <div class="panel-body">
+                            <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
+                                <label>Lock to layout<pckg-tooltip content="Click this if you want to display module on all pages"></pckg-tooltip></label>
+                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
+                                            class="fa-unlock"></i>
+                                </button>
+                            </template>
+                            <template v-else>
+                                <label>Lock to route<pckg-tooltip content="Click this if you want to display module only on this page"></pckg-tooltip></label>
+                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
+                                            class="fa fa-lock"></i>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -673,6 +702,20 @@
             },
             closeSettings: function () {
                 this.action = {};
+            },
+            lockToRoute: function(){
+                this.toggleLock();
+            },
+            lockToLayout: function(){
+                this.toggleLock();
+            },
+            toggleLock: function () {
+                http.post(utils.url('{{ url('pckg.generic.pageStructure.toggleActionsMorphLock') }}', {actionsMorph: this.action.id}), {
+                    route: this.routeId
+                }, function (data) {
+                    this.action.morph = data.actionsMorph.morph_id;
+                    $dispatcher.$emit('notification:success', 'Lock moved');
+                }.bind(this));
             },
             saveSettings: function () {
                 http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), {
