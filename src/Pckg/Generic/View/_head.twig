@@ -101,6 +101,15 @@
 
         return string.charAt(0).toUpperCase() + string.slice(1);
     });
+
+    Vue.filter('substring', function (string, length) {
+        return string.substring(0,length);
+    });
+
+    Vue.filter('removeHtml', function(string) {
+        string.innerHTML = html;
+        return string.textContent || string.innerText || "";
+    });
 </script>
 
 {{ _metaManager.getMeta('headerLast') | raw }}

@@ -90,6 +90,7 @@ class Action
             'actions'  => [],
             'slug'     => $this->action->slug,
             'template' => $this->action->pivot->template,
+            'content'  => $this->action->pivot->content,
         ];
 
         foreach ($this->action->getChildren as $action) {
