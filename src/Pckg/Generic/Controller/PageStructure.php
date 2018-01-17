@@ -520,7 +520,7 @@ class PageStructure
 
         $values = only(post('settings'), ['sourceOffers', 'sourceGalleries', 'sourcePackets']);
         collect($values)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value));
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'json');
         });
 
         /**

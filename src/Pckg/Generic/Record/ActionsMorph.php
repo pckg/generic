@@ -61,9 +61,13 @@ class ActionsMorph extends Record
         $this->delete();
     }
 
-    public function saveSetting($key, $value)
+    public function saveSetting($key, $value, $type = null)
     {
-        $setting = Setting::getOrCreate(['slug' => $key]);
+        $setting = Setting::getOrNew(['slug' => $key]);
+
+        if ($setting->isNew()) {
+            $setting->setAndSave(['type' => $type]);
+        }
 
         $settingsMorph = SettingsMorph::getOrCreate([
                                                         'setting_id' => $setting->id,
