@@ -573,9 +573,9 @@ class PageStructure
 
     public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
     {
-        $actionsMorph->addPartial(post('partial', null));
+        $partial = $actionsMorph->addPartial(post('partial', null));
 
-        return response()->respondWithSuccess();
+        return response()->respondWithSuccess(['actionsMorph' => $partial]);
     }
 
     public function postActionsMorphAddRoutePartialAction(Route $route)

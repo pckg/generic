@@ -170,10 +170,16 @@ class ActionsMorph extends Record
         $this->setAndSave(['content_id' => $content->id]);
     }
 
+    /**
+     * @param $partial
+     *
+     * @return ActionsMorph
+     */
     public function addPartial($partial)
     {
         $partial = $this->preparePartial($partial);
-        $partial->add($this);
+
+        return $partial->add($this);
     }
 
     /**
