@@ -1,7 +1,7 @@
 <script type="text/x-template" id="pckg-editor">
-    <div class="pckg-editor" :class="visibilityClass">
+    <div class="pckg-editor">
 
-        <div class="pckg-editor-settings" v-if="action.id">
+        <div class="pckg-editor-settings" v-if="action.id" :class="visibilityClass">
 
             <p class="text-center padding-vertical-xs margin-none"><b>${ action.title } #${ action.id }</b></p>
 
