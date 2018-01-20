@@ -20,6 +20,8 @@ class Route extends Record
      */
     protected $entity = Routes::class;
 
+    protected $toArray = ['+settings'];
+
     public function deleteWidely()
     {
         /**
@@ -101,6 +103,40 @@ class Route extends Record
     protected function preparePartial($partial)
     {
         return Reflect::create($partial);
+    }
+
+    public function forPageStructure()
+    {
+        $data = $this->toArray();
+
+        $data['settings'] = $this->settings->keyBy('slug')
+                                           ->map(function(Setting $setting) {
+                                               return $setting->pivot->value;
+                                           });
+
+        return $data;
+    }
+
+    public function applySeoSettings()
+    {
+        $seoManager = seoManager();
+
+        /**
+         * Get seo setting and key them by last key.
+         */
+        $settings = $this->settings->filter(function(Setting $setting) {
+            return strpos($setting->slug, 'pckg.generic.pageStructure.seo.') === 0;
+        })->keyBy(function(Setting $setting) {
+            return str_replace('pckg.generic.pageStructure.seo.', '', $setting->slug);
+        })->map(function(Setting $setting) {
+            return $setting->pivot->value;
+        });
+
+        $settings->each(function($value, $slug) use ($seoManager) {
+            if ($value) {
+                $seoManager->{'set' . ucfirst($slug)}($value);
+            }
+        });
     }
 
 }

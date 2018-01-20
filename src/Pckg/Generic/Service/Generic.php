@@ -317,22 +317,18 @@ class Generic
                 router()->removeRouteByName($route->slug);
             }
 
+            $newRoute = [
+                "controller" => GenericController::class,
+                "view"       => "generic",
+                'resolvers'  => $resolvers,
+                'tags'       => explode(',', $route->tags),
+            ];
             if (!$existingRouteByName && $existingRouteByUrl) {
-                $router->replace($url, [
-                    "controller" => GenericController::class,
-                    "view"       => "generic",
-                    'resolvers'  => $resolvers,
-                    'tags'       => explode(',', $route->tags),
-                ]);
+                $router->replace($url, $newRoute);
             } else {
                 $router->add(
                     $url,
-                    [
-                        "controller" => GenericController::class,
-                        "view"       => "generic",
-                        'resolvers'  => $resolvers,
-                        'tags'       => explode(',', $route->tags),
-                    ],
+                    $newRoute,
                     $route->slug
                 );
             }

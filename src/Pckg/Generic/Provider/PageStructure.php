@@ -48,6 +48,12 @@ class PageStructure extends Provider
                                                                                                                               'route' => (new RouteResolver())->by('id',
                                                                                                                                                                    'route'),
                                                                                                                           ]),
+                                       '.routeSeo'                     => (new Route('/routes/[route]/route-seo',
+                                                                                     'routeSeo'))
+                                           ->resolvers([
+                                                           'route' => (new RouteResolver())->by('id',
+                                                                                                'route'),
+                                                       ]),
                                        '.setActionsMorphPermissions'   => new Route('/actionsMorph/[actionsMorph]/permissions',
                                                                                     'actionsMorphPermissions'),
                                        '.addActionsMorph'              => new Route('/actionsMorph/add',

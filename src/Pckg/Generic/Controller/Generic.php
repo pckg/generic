@@ -39,6 +39,8 @@ class Generic
 
         $vars = $this->genericService->getVariables();
 
+        $route->applySeoSettings();
+
         return $route->layout
             ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
             : $vars;

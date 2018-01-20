@@ -16,6 +16,7 @@ use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Pckg\Generic\Record\SettingsMorph;
 use Pckg\Generic\Service\Generic;
 use Pckg\Manager\Upload;
 use Pckg\Stringify;
@@ -592,6 +593,16 @@ class PageStructure
         return [
             'tree' => $genericService->getRouteTree(),
         ];
+    }
+
+    public function postRouteSeoAction(Route $route)
+    {
+        $data = only(post('seo'), ['title', 'description', 'keywords', 'image']);
+        foreach ($data as $key => $val) {
+            SettingsMorph::makeItHappen('pckg.generic.pageStructure.seo.' . $key, $val, Routes::class, $route->id);
+        }
+
+        return response()->respondWithSuccess();
     }
 
 }
