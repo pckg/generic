@@ -155,7 +155,14 @@ class Route extends Record
             return false;
         }
 
-        return $this->saveAs($newDetails);
+        $route = $this->saveAs($newDetails);
+
+        /**
+         * Simply, export and import. :)
+         */
+        $route->import($this->export());
+
+        return $route;
     }
 
 }
