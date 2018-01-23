@@ -35,6 +35,12 @@ class PageStructure extends Provider
                                                            'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
                                                                                                                'route'),
                                                        ]),
+                                       '.cloneRoute'                   => (new Route('/routes/[route]/clone',
+                                                                                     'cloneRoute'))
+                                           ->resolvers([
+                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                               'route'),
+                                                       ]),
                                        '.getRouteActions'              => new Route('/routes/[route]/actions',
                                                                                     'routeActions'),
                                        '.routeExport'                  => new Route('/routes/[route]/export',

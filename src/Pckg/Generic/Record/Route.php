@@ -139,4 +139,23 @@ class Route extends Record
         });
     }
 
+    public function cloneRoute($newDetails, &$errors = [])
+    {
+        /**
+         * Check for existing url or slug.
+         */
+        $existing = (new Routes())->joinTranslations()
+                                  ->where('route', $newDetails['route'])
+                                  ->orWhere('slug', $newDetails['slug'])
+                                  ->one();
+
+        if ($existing) {
+            $errors[] = 'Route with same slug or url already exists.';
+
+            return false;
+        }
+
+        return $this->saveAs($newDetails);
+    }
+
 }

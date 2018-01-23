@@ -605,4 +605,22 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
+    public function postCloneRouteAction(Route $route)
+    {
+        $errors = [];
+        $newRoute = $route->cloneRoute(post('route'), $errors);
+
+        if ($newRoute) {
+            return [
+                'success' => true,
+                'route'   => $newRoute,
+            ];
+        }
+
+        return [
+            'success'  => false,
+            'messages' => $errors,
+        ];
+    }
+
 }
