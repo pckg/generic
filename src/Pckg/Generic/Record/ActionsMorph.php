@@ -38,6 +38,15 @@ class ActionsMorph extends Record
                           ]);
     }
 
+    public function moveToRoute(Route $route)
+    {
+        $this->setAndSave(['morph_id' => Routes::class, 'poly_id' => $route->id]);
+        $parent = $this->parent;
+        if ($parent) {
+            $parent->moveToRoute($route);
+        }
+    }
+
     public function deleteWidely()
     {
         /**

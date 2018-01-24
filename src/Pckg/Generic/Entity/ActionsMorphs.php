@@ -42,4 +42,10 @@ class ActionsMorphs extends Entity
                     ->foreignKey('parent_id');
     }
 
+    public function parentAction()
+    {
+        return $this->hasParent(ActionsMorphs::class)
+                    ->foreignKey('parent_id');
+    }
+
 }
