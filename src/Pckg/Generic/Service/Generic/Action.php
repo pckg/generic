@@ -132,9 +132,9 @@ class Action
             }
 
             if ($this->getClass() && $this->getMethod()) {
-                $data = array_merge(['action' => $this], router()->get('data'));
-                $data = array_merge(['action' => $this], router()->getResolves());
-                $args = array_merge($this->args, $data);
+                $args = array_merge(router()->get('data'), router()->getResolves());
+                $args = array_merge($args, ['action' => $this]);
+                $args = array_merge($args, $this->args);
 
                 if (isset($args['settings'])) {
                     /**
