@@ -128,7 +128,11 @@ class Import extends Controller
                                 $values[$field->field] = $item[$field->field . '*' . $locale];
 
                             } elseif (array_key_exists($field->field, $item)) {
-                                $values[$field->field] = $item[$field->field];
+                                $val = $item[$field->field];
+                                if ($field->fieldType->slug == 'geo') {
+                                    $val = explode(';', $val);
+                                }
+                                $values[$field->field] = $val;
 
                             }
                         }
@@ -141,7 +145,7 @@ class Import extends Controller
                                 /**
                                  * Check for existing records.
                                  */
-                                $record = $prevRecord = Record::getOrCreate($uniqueValues, $entity);
+                                $record = $prevRecord = Record::getOrNew($uniqueValues, $entity);
                             } elseif (!$prevRecord) {
                                 /**
                                  * Create new record.
