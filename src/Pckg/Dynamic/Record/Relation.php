@@ -110,6 +110,9 @@ class Relation extends DatabaseRecord
     {
         $entity = $this->showTable->createEntity();
         Field::automaticallyApplyRelation($entity, $this->value);
+        if ($entity->isDeletable()) {
+            $entity->nonDeleted();
+        }
         $relation = $this;
         $relation->applyFilterOnEntity($entity);
         $foreignField = $relation->foreign_field_id

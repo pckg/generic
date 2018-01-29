@@ -34,6 +34,22 @@ var pckgFormValidator = {
     }
 };
 
+var pckgSync = {
+    methods: {
+        single: function (name, request) {
+            if (typeof object == 'undefined') {
+                object = this;
+            }
+
+            if (object['_pckgSync' + name]) {
+                object['_pckgSync' + name].abort();
+            }
+
+            object['_pckgSync' + name] = request;
+        }
+    }
+};
+
 var pckgTimeout = {
     methods: {
         timeout: function (name, callback, timeout, object) {

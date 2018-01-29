@@ -603,9 +603,9 @@ class Tabelize
                     : (is_object($field)
                         ? $field->field
                         : $field['field']));
-            measure('field.' . $realKey, function() use (&$transformed, $realKey, $field, $record) {
+            //measure('field.' . $realKey, function() use (&$transformed, $realKey, $field, $record) {
                 $transformed[$realKey] = $this->getRecordValue($field, $record);
-            });
+            //});
         }
 
         /**
