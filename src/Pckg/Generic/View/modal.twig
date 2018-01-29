@@ -22,8 +22,12 @@
                     <div class="modal-footer">
                         {% block footer %}{% endblock %}
                         {% if close %}
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close
-                            </button>{% endif %}
+                            {% if close is same as(true) %}
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            {% else %}
+                                <button type="button" class="btn btn-{{ close.class }}" data-dismiss="modal">{{ close.text }}</button>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 {% endif %}
             </template>
