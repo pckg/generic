@@ -489,8 +489,8 @@ class PageStructure
         if ($actionsMorph->morph_id == Layouts::class) {
             $layout = Layout::gets(['id' => $actionsMorph->poly_id]);
             if ($layout) {
-                $settings->push($layout->getSetting('pckg.generic.pageStructure.wrapperLockHide'), 'wrapperLockHide');
-                $settings->push($layout->getSetting('pckg.generic.pageStructure.wrapperLockShow'), 'wrapperLockShow');
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockHide'), 'wrapperLockHide');
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockShow'), 'wrapperLockShow');
             }
         }
 

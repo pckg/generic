@@ -30,4 +30,11 @@ class Layouts extends Entity
                     ->rightForeignKey('action_id');
     }
 
+    public function settings()
+    {
+        return $this->morphedBy(Settings::class)
+                    ->over(SettingsMorphs::class)
+                    ->rightForeignKey('setting_id');
+    }
+
 }
