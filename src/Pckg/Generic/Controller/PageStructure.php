@@ -14,6 +14,7 @@ use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
+use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Record\SettingsMorph;
@@ -482,6 +483,17 @@ class PageStructure
          */
         $settings->push(media($settings->getKey('bgImage'), null, true, path('app_uploads')) ?? '', 'bgImage');
 
+        /**
+         * We also need to fetch some settings which are saved on layout.
+         */
+        if ($actionsMorph->morph_id == Layouts::class) {
+            $layout = Layout::gets(['id' => $actionsMorph->poly_id]);
+            if ($layout) {
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockHide'), 'wrapperLockHide');
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockShow'), 'wrapperLockShow');
+            }
+        }
+
         return response()->respondWithSuccess([
                                                   'settings' => $settings,
                                               ]);
@@ -542,10 +554,13 @@ class PageStructure
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
         });
 
-        $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
-        });
+        if ($actionsMorph->morph_id == Layouts::class) {
+            $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);
+            $layout = Layout::gets(['id' => $actionsMorph->poly_id]);
+            collect($values)->each(function($value, $key) use ($layout) {
+                $layout->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
+            });
+        }
 
         /**
          * Set template.

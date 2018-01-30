@@ -10,16 +10,11 @@ use Pckg\Generic\Service\Partial\AbstractPartial;
 class ActionsMorph extends Record
 {
 
+    use SettingsHelper;
+
     protected $entity = ActionsMorphs::class;
 
     protected $toArray = ['variable'];
-
-    public function getSetting($slug)
-    {
-        return $this->settings->first(function(Setting $setting) use ($slug) {
-            return $setting->slug == $slug;
-        });
-    }
 
     public function lockToLayout()
     {
@@ -75,25 +70,6 @@ class ActionsMorph extends Record
          * Delete this action
          */
         $this->delete();
-    }
-
-    public function saveSetting($key, $value, $type = null)
-    {
-        $setting = Setting::getOrNew(['slug' => $key]);
-
-        if ($setting->isNew()) {
-            $setting->setAndSave(['type' => $type]);
-        }
-
-        $settingsMorph = SettingsMorph::getOrCreate([
-                                                        'setting_id' => $setting->id,
-                                                        'morph_id'   => ActionsMorphs::class,
-                                                        'poly_id'    => $this->id,
-                                                    ]);
-
-        $settingsMorph->setAndSave(['value' => $value]);
-
-        return $this;
     }
 
     public function export()
