@@ -14,6 +14,13 @@ class ActionsMorph extends Record
 
     protected $toArray = ['variable'];
 
+    public function getSetting($slug)
+    {
+        return $this->settings->first(function(Setting $setting) use ($slug) {
+            return $setting->slug == $slug;
+        });
+    }
+
     public function lockToLayout()
     {
         foreach ($this->subActions as $subAction) {

@@ -1,14 +1,14 @@
 <template>
     <div class="pckg-select" :class="styleClass">
         <select v-if="multiple" class="form-control" multiple v-model="selected">
-            <option value> -- select value(s) --</option>
+            <option value v-if="withEmpty"> -- select value(s) --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
         <select v-else class="form-control" v-model="selected">
-            <option value> -- select value --</option>
+            <option value v-if="withEmpty"> -- select value --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>

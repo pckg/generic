@@ -137,7 +137,29 @@ class Generic
                 return $action->pivot->id;
             });
             $layoutActions->each(
-                function(ActionRecord $action) use ($resolved) {
+                function(ActionRecord $action) use ($resolved, $route) {
+                    /**
+                     * Filter out hidden and shown.
+                     */
+                    $hide = $action->pivot->getSetting('pckg.generic.pageStructure.wrapperLockHide')->pivot->getFinalValueAttribute()
+                            ?? [];
+                    $show = $action->pivot->getSetting('pckg.generic.pageStructure.wrapperLockShow')->pivot->getFinalValueAttribute()
+                            ?? [];
+
+                    if ($show && !in_array($route->id, $show)) {
+                        /**
+                         * If action has defined show values, hide action if route is not defined.
+                         */
+                        return;
+                    }
+
+                    if ($hide && in_array($route->id, $hide)) {
+                        /**
+                         * If action has defined hide values, hide actions on current route.
+                         */
+                        return;
+                    }
+
                     $this->addAction(
                         $action,
                         $this->route,

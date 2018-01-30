@@ -42,6 +42,8 @@ class PageStructure
             });
         }
 
+        $data['routes'] = (new Routes())->joinTranslations()->nonDeleted()->all();
+
         return $data;
     }
 
@@ -347,6 +349,8 @@ class PageStructure
             'bgVideoAutoplay' => '',
             'bgVideoControls' => '',
             'bgVideoLoop'     => '',
+            'wrapperLockShow' => [],
+            'wrapperLockHide' => [],
         ];
     }
 
@@ -505,7 +509,21 @@ class PageStructure
                                                             ->unique()
                                                             ->removeEmpty()
                                                             ->implode(' ');
-        collect($values)->removeKeys(['scopes', 'width', 'offset'])->each(function($value, $key) use ($actionsMorph) {
+
+        $separate = [
+            'scopes',
+            'width',
+            'offset',
+            'dataScope',
+            'viewStyle',
+            'sourceOffers',
+            'sourceGalleries',
+            'sourcePackets',
+            'wrapperLockHide',
+            'wrapperLockShow',
+        ];
+        collect($values)->removeKeys($separate)->each(function($value, $key) use ($actionsMorph
+        ) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
@@ -520,6 +538,11 @@ class PageStructure
         });
 
         $values = only(post('settings'), ['sourceOffers', 'sourceGalleries', 'sourcePackets']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
+        });
+
+        $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);
         collect($values)->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
         });

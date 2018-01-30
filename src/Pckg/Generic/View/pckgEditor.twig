@@ -324,16 +324,38 @@
                          aria-labelledby="headingFormWrapper">
                         <div class="panel-body">
                             <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
-                                <label>Lock to layout<pckg-tooltip content="Click this if you want to display module on all pages"></pckg-tooltip></label>
+                                <label>Lock to layout
+                                    <pckg-tooltip
+                                            content="Click this if you want to display module on all pages"></pckg-tooltip>
+                                </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
                                             class="fa-unlock"></i>
                                 </button>
                             </template>
                             <template v-else>
-                                <label>Lock to route<pckg-tooltip content="Click this if you want to display module only on this page"></pckg-tooltip></label>
+                                <label>Lock to route
+                                    <pckg-tooltip
+                                            content="Click this if you want to display module only on this page"></pckg-tooltip>
+                                </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
                                             class="fa fa-lock"></i>
                                 </button>
+                                <div>
+                                    <label>Hide on pages
+                                        <pckg-tooltip
+                                                content="Element is by default visible on all pages"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                                 title="route" id="id" :flat="true" v-model="form.settings.wrapperLockHide"></pckg-select>
+                                </div>
+                                <div>
+                                    <label>Show on pages
+                                        <pckg-tooltip
+                                                content="Element is by default visible on all pages"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                                 title="route" id="id" :flat="true" v-model="form.settings.wrapperLockShow"></pckg-select>
+                                </div>
                             </template>
                         </div>
                     </div>
@@ -479,6 +501,8 @@
                         sourceOffers: [],
                         sourceGalleries: [],
                         sourcePackets: [],
+                        wrapperLockHide: [],
+                        wrapperLockShow: [],
                     },
                 },
                 availableScopes: {},
@@ -513,7 +537,8 @@
                     bottom: 'no',
                     left: 'no',
                     right: 'no'
-                }
+                },
+                routes: []
             };
         },
         created: function () {
@@ -582,6 +607,8 @@
                     this.structures = data.structures;
                     this.pages = data.pages;
                     this.templates = data.templates;
+
+                    this.routes = data.routes;
                 }.bind(this));
             },
             saveChangedContent: function () {
@@ -697,14 +724,19 @@
                  */
                 this.parsePadding();
                 this.parseMargin();
+                //this.parseWrapperSettings();
+            },
+            parseWrapperSettings: function () {
+                this.form.settings.wrapperLockHide = [];
+                this.form.settings.wrapperLockShow = [];
             },
             closeSettings: function () {
                 this.action = {};
             },
-            lockToRoute: function(){
+            lockToRoute: function () {
                 this.toggleLock();
             },
-            lockToLayout: function(){
+            lockToLayout: function () {
                 this.toggleLock();
             },
             toggleLock: function () {
