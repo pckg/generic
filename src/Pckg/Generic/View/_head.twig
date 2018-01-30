@@ -19,6 +19,8 @@
 {{ _assetManager.getExternals() | raw }}
 
 <!-- vue components -->
+<!--  vue css, less and js -->
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 {{ _vueManager.getComponents() | raw }}
 
 <!-- vue filters -->
@@ -26,9 +28,6 @@
 
 <!-- google fonts -->
 {{ _assetManager.getGoogleFonts() | raw }}
-
-<!--  vue css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
 
 <!-- vue live components -->
 {{ _vueManager.getViews() | raw }}
@@ -63,7 +62,8 @@
         'pckg.generic.pageStructure.duplicateActionsMorphContent': '{{ url('pckg.generic.pageStructure.duplicateActionsMorphContent') }}',
         'pckg.generic.pageStructure.createActionsMorphContent': '{{ url('pckg.generic.pageStructure.createActionsMorphContent') }}',
         'pckg.generic.pageStructure.content': '{{ url('pckg.generic.pageStructure.content') }}',
-        'pckg.generic.pageStructure.actionsMorphBackgroundImage': '{{ url('pckg.generic.pageStructure.actionsMorphBackgroundImage') }}'
+        'pckg.generic.pageStructure.actionsMorphBackgroundImage': '{{ url('pckg.generic.pageStructure.actionsMorphBackgroundImage') }}',
+        'dynamic.records.field.toggle': '{{ url('dynamic.records.field.toggle') }}',
     };
 
     Pckg.translations = {

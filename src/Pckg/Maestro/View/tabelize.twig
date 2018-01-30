@@ -3,8 +3,6 @@
 {% set table = tabelize.getEntity().getTable() %}
 
 {% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: tabelize.getRecordActions(), table: table }, true) %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions') %}
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_field') %}
 {% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }, true) %}
 {% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }, true) %}
 

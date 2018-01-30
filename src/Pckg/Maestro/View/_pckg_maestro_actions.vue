@@ -1,5 +1,5 @@
-<script type="text/javascript">
-    var pckgMaestroActionsComponent = Vue.component('pckg-maestro-actions', {
+<script>
+    export default {
         mixins: [pckgDelimiters],
         name: 'pckg-maestro-actions',
         template: '#pckg-maestro-actions',
@@ -38,5 +38,5 @@
                 });
             }.bind(this));
         }
-    });
+    };
 </script>
