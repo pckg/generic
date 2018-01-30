@@ -99,7 +99,8 @@ class Generic
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->withContents();
-                })->withSettings();
+                })->withSettings()
+                ->withVariable();
             }
         );
 
