@@ -41,7 +41,7 @@
                             :value="record[field.field]"></pckg-tabelize-field-editor>
                 </template>
                 <template v-else>
-                    <textarea>${ model | raw }</textarea>
+                    <textarea>{{ model | raw }}</textarea>
                 </template>
             </template>
             <template v-else>
@@ -52,7 +52,7 @@
                     <template v-else-if="field.field == 'title'">
                         <a :href="record.viewUrl" v-html="record[field.field]"></a>
                     </template>
-                    <template v-else-if="field.isRaw"><span class="raw">${ record[field.field] }</span></template>
+                    <template v-else-if="field.isRaw"><span class="raw">{{ record[field.field] }}</span></template>
                     <template v-else><span v-html="record[field.field]" class="else"></span></template>
                 </template>
                 <template v-else>
@@ -74,7 +74,6 @@
 <script>
     export default {
         name: 'pckg-maestro-field',
-        mixins: [pckgDelimiters],
         props: {
             field: {
                 type: Object,
