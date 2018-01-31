@@ -194,6 +194,9 @@ class Action
                  * Allow custom template.
                  */
                 if ($result instanceof View\Twig && $this->action->pivot->template) {
+                    /**
+                     * Awh, and check for allowed templates. :)
+                     */
                     $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
                 }
 

@@ -11,36 +11,66 @@ class OverloadView
             return;
         }
 
+        $view = str_replace(['\\', '/View/'], ['/', ':'], $view);
         $parts = collect(explode('/', $view));
-        $controller = $parts->slice(0, 2)->implode('\\');
-        $controller2 = $parts->slice(0, 2)->implode('/');
-        $subview = $parts->slice(3)->implode('/');
+        $subcontroller = $parts->slice(0, 2)->implode('/');
+
+        $controllerPart = explode(':', $view)[0] ?? null;
+        $viewPart = explode(':', $view)[1] ?? null;
 
         foreach (config('pckg.generic.templates') as $ctrl => $views) {
-            if (strpos($ctrl, $controller) !== 0) {
+            $ctrl = str_replace('\\', '/', $ctrl);
+
+            if (strpos($ctrl, $controllerPart) !== 0) {
+                /**
+                 * View's controller part is not part of this $ctrl, skip.
+                 */
                 continue;
             }
 
-            foreach ($views as $v => $tpls) {
-                if (in_array($controller2 . ':' . $subview, $tpls)) {
-                    // exact match was found, allowed
+            foreach ($views as $viewKey => $tpls) {
+                if (in_array($subcontroller . ':' . $viewPart, $tpls)) {
+                    /**
+                     * Exact match was found, view is allowed.
+                     */
                     break 2;
                 }
 
-                $foundSimilar = false;
-                foreach ($tpls as $tpl) {
-                    if (strpos($tpl, $controller2 . ':' . $subview) === 0) {
-                        $foundSimilar = true;
-                        break;
-                    }
-                }
-
-                if (!$foundSimilar) {
+                if (strpos($view, $subcontroller . '/' . $viewKey) !== 0) {
+                    /**
+                     * We're not checking for correct action.
+                     */
                     continue;
                 }
 
+                $similar = null;
+                foreach ($tpls as $tpl) {
+                    if (strpos($tpl, $subcontroller . '/' . $viewKey) !== 0) {
+                        /**
+                         * ?
+                         */
+                        continue;
+                    }
+
+                    /**
+                     * Similar view was found for current action.
+                     */
+                    $similar = $tpl;
+                    break;
+                }
+
+                /**
+                 * Set to last defined view.
+                 */
+                if (!$similar) {
+                    message('No similar view found for ' . $view);
+                    $similar = end($tpls);
+                } else {
+                }
+                message('Overloading ' . $view . ' to ' . $similar);
+
                 // set to new view
-                $file = str_replace(':', '/View/', end($tpls));
+                $file = str_replace(':', '/View/', $similar);
                 $twig->setFile($file);
                 break 2;
             }
