@@ -29,7 +29,7 @@ class OverloadView
             }
 
             foreach ($views as $viewKey => $tpls) {
-                if (in_array($subcontroller . ':' . $viewPart, $tpls)) {
+                if (in_array($controllerPart . ':' . $viewPart, $tpls)) {
                     /**
                      * Exact match was found, view is allowed.
                      */
