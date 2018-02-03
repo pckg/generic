@@ -9,7 +9,6 @@
                 Select location
             {% endblock %}
             {% block body %}
-                ${ record }
                 <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search="search" :ref="'gmap'"
                                      center="46.055144;14.512284" :zoom="10"
                                      :locations="locations"></vue-component-gmaps>

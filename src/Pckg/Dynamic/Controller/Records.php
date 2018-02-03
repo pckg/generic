@@ -546,11 +546,6 @@ class Records extends Controller
                            'table'         => $table->table,
                        ]
              )
-             ->addView('Pckg/Maestro:_pckg_maestro_actions',
-                       [
-                           'recordActions' => $actions,
-                       ]
-             )
              ->addView('Pckg/Maestro:_pckg_maestro_actions_custom',
                        [
                            'table' => $table->table,
