@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use Pckg\Concept\Reflect;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record as DatabaseRecord;
@@ -251,8 +252,14 @@ class Records extends Controller
         /**
          * Temp test.
          */
-        $records = $entity->count()->all();
-        $total = $records->total();
+        try {
+            $records = $entity->count()->all();
+            $total = $records->total();
+        } catch (Throwable $e) {
+            throwLogOrContinue($e);
+            $records = new Collection();
+            $total = 0;
+        }
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)

@@ -119,12 +119,15 @@ class Filter extends AbstractService
                 continue;
             }
 
-            if ($field->fieldType->slug == 'php') {
+            if (in_array($field->fieldType->slug, ['mysql'])) {
                 if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
-                    //$subquery = $entity->{'select' . ucfirst($field->field) . 'Field'}();
-                    //$subquery->addSelect(['order_id']);
-                    //$entity->join($subquery, 'isLateWithPayment.id = orders.id', $field->field);
-                    //$entity->where($field->field, $filter['value'], $signMapper[$filter['method']]);
+                    $entity->having('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
+                }
+                continue;
+            }
+
+            if (in_array($field->fieldType->slug, ['php'])) {
+                if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
                     $entity->where('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
                 }
                 continue;
