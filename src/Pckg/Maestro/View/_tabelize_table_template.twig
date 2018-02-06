@@ -52,7 +52,7 @@
             </thead>
             <tbody>
             <tr v-for="record in records"
-                :class="record.tabelizeClass ? record.tabelizeClass : ''">
+                :class="[record.tabelizeClass ? record.tabelizeClass : '', ids.indexOf(record.id) >= 0 ? 'selected' : '']">
                 <td v-for="field in fields"
                     :class="[field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                     <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"
