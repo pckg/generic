@@ -37,6 +37,16 @@ var initUninitialiedSelectpicker = function () {
 };
 
 $(document).ready(function () {
+    
+    /**
+     * Start fix multiple modals for scroll
+     */
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        $('.modal:visible').length && $(document.body).addClass('modal-open');
+    });
+    /**
+     * End fix multiple modals for scroll
+     */
 
     $('[data-toggle="popover"]').popover({
         html: true,
