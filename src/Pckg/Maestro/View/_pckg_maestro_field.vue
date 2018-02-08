@@ -19,7 +19,7 @@
                                            :record="record.id"
                                            :value="record[field.field]"
                                            :table="table"
-                                           :url="toggleFieldUrl"></pckg-tabelize-field-order>
+                                           :url="orderFieldUrl"></pckg-tabelize-field-order>
             </template>
             <template v-else-if="type == 'datetime' && field.isTogglable">
                 <template v-if="!editable">
@@ -94,7 +94,8 @@
         data: function () {
             return {
                 editable: false,
-                toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle']
+                toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle'],
+                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order']
             };
         },
         methods: {
