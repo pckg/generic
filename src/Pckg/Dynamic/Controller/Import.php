@@ -1,17 +1,13 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use League\Csv\Reader;
-use Pckg\Collection;
-use Pckg\Database\Entity;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Database\Repository;
 use Pckg\Dynamic\Form\Import as ImportForm;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Record;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
-use Pckg\Dynamic\Service\Export\Strategy;
 use Pckg\Framework\Controller;
 use Pckg\Manager\Upload;
 
@@ -126,14 +122,13 @@ class Import extends Controller
                         function(Field $field) use ($item, &$values, $locale) {
                             if (array_key_exists($field->field . '*' . $locale, $item)) {
                                 $values[$field->field] = $item[$field->field . '*' . $locale];
-
                             } elseif (array_key_exists($field->field, $item)) {
                                 $val = $item[$field->field];
                                 if ($field->fieldType->slug == 'geo') {
                                     $val = explode(';', $val);
+                                    $val = ['x' => $val[0], 'y' => $val[1]];
                                 }
                                 $values[$field->field] = $val;
-
                             }
                         }
                     );

@@ -37,7 +37,7 @@ var initUninitialiedSelectpicker = function () {
 };
 
 $(document).ready(function () {
-    
+
     /**
      * Start fix multiple modals for scroll
      */

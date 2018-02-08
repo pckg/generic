@@ -307,7 +307,7 @@ class Field extends DatabaseRecord
         $field = $this;
 
         if ($this->fieldType->slug == 'php') {
-            $fieldTransformations[$field->field] = function($record) use ($field) {
+            return function($record) use ($field) {
                 return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
             };
         } elseif ($this->fieldType->slug == 'geo') {
@@ -315,16 +315,29 @@ class Field extends DatabaseRecord
                 [
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',
-                    $this->field        => 'CONCAT(Y(' . $this->field . '), \';\', X(' . $this->field . '))',
+                    $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
                 ]
             );
-            $fieldTransformations[$field->field] = function($record) use ($field) {
+            return function($record) use ($field) {
                 $value = $record->{$field->field};
 
                 return $value
                     ? $record->{$field->field . '_x'} . ';' . $record->{$field->field . '_y'}
                     : null;
             };
+        }
+    }
+
+    public function selectMultiField(Entity $tablesEntity)
+    {
+        if ($this->fieldType->slug == 'geo') {
+            $tablesEntity->addSelect(
+                [
+                    $this->field . '_x' => 'X(' . $this->field . ')',
+                    $this->field . '_y' => 'Y(' . $this->field . ')',
+                    $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
+                ]
+            );
         }
     }
 

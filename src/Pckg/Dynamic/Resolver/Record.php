@@ -38,15 +38,7 @@ class Record implements RouteResolver
         $listableFields = $table->listableFields;
         $listableFields->each(
             function(FieldRecord $field) use ($tablesEntity) {
-                if ($field->fieldType->slug == 'geo') {
-                    $tablesEntity->addSelect(
-                        [
-                            $field->field . '_x' => 'X(' . $field->field . ')',
-                            $field->field . '_y' => 'Y(' . $field->field . ')',
-                            $field->field        => 'CONCAT(Y(' . $field->field . '), \';\', X(' . $field->field . '))',
-                        ]
-                    );
-                }
+                $field->selectMultiField($tablesEntity);
             }
         );
 
