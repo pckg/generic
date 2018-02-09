@@ -48,6 +48,8 @@
     Pckg.config.editor = {};
     Pckg.config.editor.variables = {{ config('pckg.dynamic.editor.variables') | json_encode | raw }};
 
+    Pckg.config.cdn = {{ config('storage.cdn') | json_encode | raw }};
+
     Pckg.router = {};
     Pckg.router.urls = {
         'derive.user.profile': '{{ url('derive.user.profile') }}',
