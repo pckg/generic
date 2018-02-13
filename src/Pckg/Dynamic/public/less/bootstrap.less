@@ -112,6 +112,9 @@ Style tds
     }
   }
   td {
+    white-space: normal;
+    word-break: break-word;
+    min-width: 60px;
     &.actions,
     &.checkboxes {
       vertical-align: middle;
@@ -140,16 +143,8 @@ Style tds
     &.datetime,
     &.date,
     &.time {
-      white-space: normal;
       word-break: normal;
       min-width: 80px;
-    }
-
-    &.text,
-    &.select,
-    &.php {
-      white-space: normal;
-      word-break: normal;
     }
 
     &.pdf {

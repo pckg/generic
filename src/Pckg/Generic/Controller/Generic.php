@@ -1,11 +1,11 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Pckg\Locale\Entity\Languages;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
+use Pckg\Locale\Entity\Languages;
 use Pckg\Manager\Asset as AssetManager;
 use Pckg\Manager\Seo as SeoManager;
 
@@ -53,6 +53,11 @@ class Generic
         $vars = $this->genericService->getVariables();
 
         return $vars;
+    }
+
+    public function headGenericAction()
+    {
+        return null;
     }
 
     public function wrapIntoGeneric($view, $template = 'Pckg/Generic:backend')

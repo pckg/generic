@@ -27,7 +27,7 @@ class Menu
                     }
                 )->where('slug', $slug)->one();
             },
-            first($language, config('pckg.locale.default'))
+            first($language, config('pckg.locale.current'))
         );
 
         if (!$menu) {

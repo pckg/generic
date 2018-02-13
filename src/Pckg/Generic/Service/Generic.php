@@ -15,6 +15,7 @@ use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
+use Pckg\Locale\Entity\Languages;
 use Throwable;
 
 /**
@@ -100,7 +101,7 @@ class Generic
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->withContents();
                 })->withSettings()
-                ->withVariable();
+                        ->withVariable();
             }
         );
 
@@ -309,20 +310,64 @@ class Generic
      * @param Routes $routes
      * @param Router $router
      */
-    public static function addRoutesFromDb(Routes $routes, Router $router)
+    public static function addRoutesFromDb()
     {
+        $router = router();
+        $languages = (new Languages())->/*where('frontend')->*/all()->keyBy('slug');
+        $defaultLanguage = $languages->first();
+        $multilingual = $languages->count() > 1 && config('multilingual');
+
+        if ($multilingual) {
+            /**
+             * Copy existing routes to all languages with prefix so translated api things works.
+             */
+            $existingRoutes = $router->getRoutes();
+            foreach ($existingRoutes as $url => $routes) {
+                $route = $routes[0];
+                router()->removeRouteByName($route['name']);
+
+                foreach ($languages as $language) {
+                    /**
+                     * Copy only first route.
+                     */
+                    $route['language'] = $language->slug;
+                    if ($language->id != $defaultLanguage->id && !$language->domain) {
+                        $router->add(
+                            '/' . $language->slug . $url,
+                            $route,
+                            $route['name'] . ':' . $language->slug,
+                            first($language->domain, $defaultLanguage->domain)
+                        );
+                    } else {
+                        $router->add(
+                            $url,
+                            $route,
+                            $route['name'] . ':' . $language->slug,
+                            first($language->domain, $defaultLanguage->domain)
+                        );
+                    }
+                }
+            }
+        }
+
+        $routes = new Routes();
         if (!$routes->getRepository()->getCache()->hasTable('routes')) {
             return;
         }
+        $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
 
-        $arrRoutes = $routes->nonDeleted()->joinTranslation()->all();
+        $arrRoutes = $routes->nonDeleted()
+                            ->withAllTranslations()
+                            ->all();
+
+        /**
+         * Should we load routes by domain?
+         */
 
         foreach ($arrRoutes AS $route) {
             /**
              * Add route to router.
              */
-            $url = $route->getRoute(false);
-            $existingRouteByUrl = router()->getRoute($url);
             $existingRouteByName = router()->getRouteByName($route->slug);
 
             $resolvers = [
@@ -331,6 +376,7 @@ class Generic
             if ($existingRouteByName) {
                 /**
                  * Route already exists, remove and replace it.
+                 * Keep existing resolvers.
                  */
                 foreach ($existingRouteByName['resolvers'] ?? [] as $key => $res) {
                     $resolvers[$key] = $res;
@@ -338,21 +384,58 @@ class Generic
                 router()->removeRouteByName($route->slug);
             }
 
+            /**
+             * Generic controller will take care of rendering and all actions.
+             */
             $newRoute = [
                 "controller" => GenericController::class,
                 "view"       => "generic",
                 'resolvers'  => $resolvers,
                 'tags'       => explode(',', $route->tags),
             ];
-            if (!$existingRouteByName && $existingRouteByUrl) {
-                $router->replace($url, $newRoute);
-            } else {
+
+            /**
+             * Register all translated routes.
+             */
+            $route->_translations->each(function($routeTranslation) use (
+                $route, $multilingual, $defaultLanguage, $existingRouteByName, $newRoute, $router,
+                $languages, $onDefaultDomain
+            ) {
+                /**
+                 * Single-lingual is really simple. :)
+                 */
+                if (!$multilingual) {
+                    $router->add(
+                        $routeTranslation->route,
+                        $newRoute,
+                        $route->slug,
+                        first($defaultLanguage->domain, server('HTTP_HOST'), config('domain'))
+                    );
+
+                    return;
+                }
+
+                $routesLanguage = $languages->getKey($routeTranslation->language_id);
+                if (!$routesLanguage) {
+                    /**
+                     * Language is not enabled on frontend?
+                     */
+                    return;
+                }
+
+                $newRoute['language'] = $routeTranslation->language_id;
+                $domain = $routesLanguage->domain ?? $defaultLanguage->domain;
+                $url = $routesLanguage->domain
+                    ? $routeTranslation->route
+                    : rtrim('/' . $routeTranslation->language_id . $routeTranslation->route, '/');
+
                 $router->add(
                     $url,
                     $newRoute,
-                    $route->slug
+                    $route->slug . ':' . $routeTranslation->language_id,
+                    $domain
                 );
-            }
+            });
         }
     }
 

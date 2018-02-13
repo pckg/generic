@@ -22,15 +22,6 @@ class Generic extends Provider
         ];
     }
 
-    public function routes()
-    {
-        return [
-            'method' => [
-                GenericService::class . '::addRoutesFromDb',
-            ],
-        ];
-    }
-
     public function viewObjects()
     {
         return [

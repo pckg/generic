@@ -43,7 +43,7 @@ class Route extends Record
 
     public function getRoute($prefix = true)
     {
-        return ($prefix ? env()->getUrlPrefix() : '') . $this->getValue('route');
+        return ($prefix ? env()->getUrlPrefix() : '') . $this->route;
     }
 
     public function hasPermissionToView()

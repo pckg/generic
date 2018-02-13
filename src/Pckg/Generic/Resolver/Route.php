@@ -12,7 +12,13 @@ class Route implements RouteResolver
 
     public function resolve($value)
     {
-        return (new Routes())->where($this->field, router()->get($this->routeName))
+        $routeName = router()->get($this->routeName);
+
+        if ($this->routeName == 'name' && strpos($routeName, ':')) {
+            $routeName = substr($routeName, 0, strpos($routeName, ':'));
+        }
+
+        return (new Routes())->where($this->field, $routeName)
                              ->joinTranslation()
                              ->withLayout()
                              ->withSettings()

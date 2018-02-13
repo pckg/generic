@@ -30,7 +30,7 @@ fieldset.submit {
     width: 100%;
 }
 
-.form-group > label {
+.pckg-maestro-formalize .form-group > label {
     padding-top: 6px;
 }
 
