@@ -371,7 +371,7 @@
             {% block body %}
                 <div>
                     <template v-if="content && content.id">
-                        <pckg-htmleditor v-model="content.content" forced-root-block="p"></pckg-htmleditor>
+                        <pckg-htmleditor v-model="content.content"></pckg-htmleditor>
                         <br/>
 
                         <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy

@@ -167,7 +167,7 @@
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
-                    if (this.refreshUrl.length == 0) {
+                    if (!this.refreshUrl || this.refreshUrl.length < 1) {
                         return;
                     }
 

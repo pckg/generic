@@ -6,6 +6,7 @@ use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\BelongsTo;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
@@ -158,17 +159,52 @@ class Relation extends DatabaseRecord
          * We will fetch all users and related user_group_id and language_id
          * as user.relation_user_group_id and user.relation_language_id.
          */
-        $relation = $this;
-        $belongsToRelation = (new BelongsTo($entity, $relationEntity, $alias))
-            ->foreignKey($this->onField->field)
-            ->fill('relation_' . $this->onField->field)
-            ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
-            ->after(
-                function($record) use ($relation) {
-                    $record->setRelation('select_relation_' . $relation->onField->field, $relation);
-                }
-            );
-        $entity->with($belongsToRelation);
+        $dbRelation = $this->createDbRelation($entity, $relationEntity, $alias);
+
+        if ($dbRelation) {
+            $entity->with($dbRelation);
+        }
+    }
+
+    /**
+     * @param Entity $entity
+     * @param Entity $relationEntity
+     * @param        $alias
+     *
+     * @return \Pckg\Database\Relation
+     */
+    public function createDbRelation(Entity $entity, Entity $relationEntity, $alias)
+    {
+        if ($this->dynamic_relation_type_id == 2) {
+            $dbRelation = (new HasMany($entity, $relationEntity, $alias))
+                ->foreignKey($this->onField->field)
+                ->fill('relation_' . $this->onField->field)
+                ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
+                ->after(
+                    function($record) {
+                        if (false && $this->method) {
+                            $record->setRelation($this->method, $record->{'relation_' . $this->onField->field});
+                        }
+                    }
+                );
+
+            return $dbRelation;
+        } else if ($this->dynamic_relation_type_id == 1) {
+            $dbRelation = (new BelongsTo($entity, $relationEntity, $alias))
+                ->foreignKey($this->onField->field)
+                ->fill('relation_' . $this->onField->field)
+                ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
+                ->after(
+                    function($record) {
+                        $record->setRelation('select_relation_' . $this->onField->field, $this);
+                        if (false && $this->method) {
+                            $record->setRelation($this->method, $record->{'relation_' . $this->onField->field});
+                        }
+                    }
+                );
+
+            return $dbRelation;
+        }
     }
 
     public function joinToQuery(Query $query, $alias = null, $subalias = null)

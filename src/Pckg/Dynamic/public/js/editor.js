@@ -269,7 +269,7 @@ var initTinymce = function (selector, config) {
         image_advtab: true,
         allow_html_in_named_anchor: true,
         allow_unsafe_link_target: true,
-        forced_root_block: false, // 'p',
+        forced_root_block: 'p',
         protect: [
             // /{{[^}]+}}/g,  // Protect {{ }}
             // /{%[^}]+%}/g,  // Protect {% %}

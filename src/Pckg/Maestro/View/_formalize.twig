@@ -34,6 +34,7 @@
                 if (pckgEditors[id]) {
                     destroyTinymce(id);
                 } else {
+                    var forcedRootBlock = 'p';
                     initTinymce(id, {
                         setup: function (editor) {
                             editor.on('Change', function (e) {
@@ -41,7 +42,8 @@
                             }.bind(this)).on('KeyDown', function (e) {
                                 this.form[name] = editor.getContent();
                             }.bind(this));
-                        }.bind(this)
+                        }.bind(this),
+                        forced_root_block: forcedRootBlock
                     });
                 }
             },

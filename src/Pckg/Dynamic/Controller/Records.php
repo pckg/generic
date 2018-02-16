@@ -209,14 +209,28 @@ class Records extends Controller
         $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
         $relations = (new Relations())->withShowTable()
                                       ->withOnField()
+                                      ->withForeignField()
                                       ->where('on_table_id', $tableRecord->id)
                                       ->where('dynamic_relation_type_id', 1)
-                                      ->where('on_field_id', $listedFields->map('id'))
                                       ->all();
 
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);
         }
+
+        /**
+         * Get all relations for fields with type has many
+         */
+        /*$listableFields = $tableRecord->listableFields;
+        $relations = (new Relations())->withShowTable()
+                                      ->withOnField()
+                                      ->where('on_table_id', $tableRecord->id)
+                                      ->where('dynamic_relation_type_id', 2)
+                                      ->all();
+
+        foreach ($relations as $relation) {
+            $relation->loadOnEntity($entity, $dynamicService);
+        }*/
 
         /**
          * Filter records by $_GET['search']
@@ -253,6 +267,7 @@ class Records extends Controller
          * Temp test.
          */
         try {
+            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
             $records = $entity->count()->all();
             $total = $records->total();
         } catch (Throwable $e) {
@@ -517,6 +532,7 @@ class Records extends Controller
          * We also have to return related tables.
          */
         $tabs = $table->tabs;
+
         try {
             list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table, $tableEntity);
         } catch (Throwable $e) {

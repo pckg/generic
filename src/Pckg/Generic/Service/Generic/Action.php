@@ -119,11 +119,14 @@ class Action
      */
     public function getHtml()
     {
-        return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id, function() {
+        return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' .
+                       $this->getClass() . ' @ ' . $this->getMethod(), function() {
 
-            $return = '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
-                      '" data-action-id="' . $this->action->pivot->id . '"'
-                      . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
+            $return = measure('Building pre-wrap', function() {
+                return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
+                       '" data-action-id="' . $this->action->pivot->id . '"'
+                       . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
+            });
             $return .= $this->getBackgroundVideoHtml();
             if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
                 $return .= $this->getSubHtml() . '</div>';
@@ -136,39 +139,41 @@ class Action
                 $args = array_merge($args, ['action' => $this]);
                 $args = array_merge($args, $this->args);
 
-                if (isset($args['settings'])) {
+                measure('Resolving', function() use (&$args) {
+                    if (isset($args['settings'])) {
+                        /**
+                         * We need to resolve dependencies. ;-)
+                         */
+                        $args['settings']->each(
+                            function(Setting $setting) use (&$args) {
+                                $setting->pivot->resolve($args);
+                            }
+                        );
+                    }
+
+                    foreach ($args['resolved'] as $key => $val) {
+                        $args[$key] = $val;
+                    }
+
                     /**
-                     * We need to resolve dependencies. ;-)
+                     * Proper resolve by setting implementation, remove others.
                      */
-                    $args['settings']->each(
-                        function(Setting $setting) use (&$args) {
-                            $setting->pivot->resolve($args);
-                        }
-                    );
-                }
-
-                foreach ($args['resolved'] as $key => $val) {
-                    $args[$key] = $val;
-                }
-
-                /**
-                 * Proper resolve by setting implementation, remove others.
-                 */
-                $actionsMorphResolver = $this->action->pivot->settings->keyBy('slug')
-                                                                      ->getKey('pckg.generic.actionsMorph.resolver');
-                if ($actionsMorphResolver) {
-                    foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
-                        if (isset($conf['resolver'])) {
-                            /**
-                             * @deprecated
-                             */
-                            $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
-                        } elseif (is_array($conf)) {
-                            $resolver = array_keys($conf)[0];
-                            $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                    $actionsMorphResolver = $this->action->pivot->settings->keyBy('slug')
+                                                                          ->getKey('pckg.generic.actionsMorph.resolver');
+                    if ($actionsMorphResolver) {
+                        foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
+                            if (isset($conf['resolver'])) {
+                                /**
+                                 * @deprecated
+                                 */
+                                $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
+                            } elseif (is_array($conf)) {
+                                $resolver = array_keys($conf)[0];
+                                $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                            }
                         }
                     }
-                }
+                });
 
                 /**
                  * Get plugin output.
@@ -176,7 +181,10 @@ class Action
                 $pluginService = new Plugin();
                 $result = null;
                 try {
-                    $result = $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
+                    $result = measure('Making plugin ' . $this->getClass() . ' @ ' . $this->getMethod(),
+                        function() use ($pluginService, $args) {
+                            return $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
+                        });
                 } catch (Throwable $e) {
                     if (!prod()) {
                         throw new Exception(exception($e) . ':' . $this->getClass() . ' ' . $this->getMethod());
@@ -203,9 +211,9 @@ class Action
                 /**
                  * Parse view to string in all cases.
                  */
-                startMeasure('Parsing to string');
-                $result = (string)$result;
-                stopMeasure('Parsing to string');
+                $result = measure('Parsing to string', function() use ($result) {
+                    return (string)$result;
+                });
 
                 /**
                  * Return built output.
