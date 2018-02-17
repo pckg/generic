@@ -346,7 +346,8 @@
                                                 content="Element is by default visible on all pages"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true" v-model="form.settings.wrapperLockHide"></pckg-select>
+                                                 title="route" id="id" :flat="true"
+                                                 v-model="form.settings.wrapperLockHide"></pckg-select>
                                 </div>
                                 <div>
                                     <label>Show on pages
@@ -354,7 +355,8 @@
                                                 content="Element is by default visible on all pages"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true" v-model="form.settings.wrapperLockShow"></pckg-select>
+                                                 title="route" id="id" :flat="true"
+                                                 v-model="form.settings.wrapperLockShow"></pckg-select>
                                 </div>
                             </template>
                         </div>
@@ -819,12 +821,18 @@
                     } else if (scope.indexOf(type + '-bottom-') === 0) {
                         this[type].bottom = scope.substring((type + '-bottom-').length);
 
+                    } else if (scope.indexOf(type + '-left-') === 0) {
+                        this[type].left = scope.substring((type + '-left-').length);
+
+                    } else if (scope.indexOf(type + '-right-') === 0) {
+                        this[type].right = scope.substring((type + '-right-').length);
+
                     } else if (scope.indexOf(type + '-') === 0) {
                         val = scope.substring((type + '-').length);
                         this[type].top = val;
                         this[type].right = val;
                         this[type].left = val;
-                        this[type].right = val;
+                        this[type].bottom = val;
 
                     }
                 }.bind(this));
