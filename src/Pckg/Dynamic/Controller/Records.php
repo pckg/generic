@@ -167,10 +167,112 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
+        if (!get('html') && (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
+            $this->request()->isJson())
+        ) {
+            return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
+                                                $tab, $dynamicRecord, $dynamicRelation, $tableView);
+        }
+
         if ($viewType == 'full') {
             $this->seoManager()->setTitle($tableRecord->title . ' - ' . config('site.title'));
         }
 
+        /**
+         * Set table so sub-services can reuse it later.
+         */
+        $dynamicService->setTable($tableRecord);
+
+        if (!$entity) {
+            $entity = $tableRecord->createEntity(null, false);
+
+            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
+                   . path('ds') . 'View' . path('ds');
+            Twig::addDir($dir);
+            /**
+             * This is needed for table actions.
+             */
+            Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
+            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
+        }
+
+        /**
+         * Get all relations for fields with type (select).
+         */
+        $listableFields = $tableRecord->listableFields;
+        $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
+
+        /**
+         * @T00D00
+         *  - find out joins / scopes / with for field type = php and mysql
+         */
+
+        $groups = $dynamicService->getGroupService()->getAppliedGroups();
+        if ($groups) {
+            $entity->addCount();
+            $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
+
+            if ($tableRecord->id == 26) {
+                $entity->addSelect(['sumPrice' => 'SUM(orders_bills.price)', 'sumPayed' => 'SUM(orders_bills.payed)']);
+                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
+                $listedFields->push(['field' => 'sumPayed', 'title' => 'Sum payed', 'type' => 'decimal']);
+            } elseif ($tableRecord->id == 76) {
+                $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
+                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
+            }
+        }
+
+        $tabelize = $this->tabelize()
+                         ->setTable($tableRecord)
+                         ->setTitle($tableRecord->getListTitle())
+                         ->setEntity($entity)
+                         ->setRecords(new Collection())
+                         ->setFields($listedFields)
+                         ->setPerPage(get('perPage', 50))
+                         ->setPage(1)
+                         ->setTotal(0)
+                         ->setEntityActions($tableRecord->getEntityActions())
+                         ->setRecordActions($tableRecord->getRecordActions())
+                         ->setViews($tableRecord->actions()->keyBy('slug'))
+                         ->setFieldTransformations([])
+                         ->setDynamicRecord($dynamicRecord)
+                         ->setDynamicRelation($dynamicRelation)
+                         ->setViewData([
+                                           'view' => $dynamicService->getView(),
+                                       ])
+                         ->setTableView($tableView);
+
+        $tabelize->getView()->addData(
+            [
+                'dynamic'   => $dynamicService,
+                'viewType'  => $viewType,
+                'searchUrl' => router()->getUri(),
+                'tab'       => $tab,
+            ]
+        );
+
+        return $tabelize;
+    }
+
+    /**
+     * List table records.
+     *
+     * @param Table  $tableRecord
+     * @param Entity $entity
+     *
+     * @return $this|Tabelize
+     */
+    public function getViewTableApiAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        DatabaseEntity $entity = null,
+        $viewType = 'full',
+        $returnTabelize = false,
+        Tab $tab = null,
+        $dynamicRecord = null,
+        $dynamicRelation = null,
+        TableView $tableView = null
+    ) {
         /**
          * Set table so sub-services can reuse it later.
          */
@@ -308,31 +410,14 @@ class Records extends Controller
                                        ])
                          ->setTableView($tableView);
 
-        if ($returnTabelize) {
-            return $tabelize;
-        }
-
-        if (($this->request()->isAjax() && !get('html')) || get('search')) {
-            return [
-                'records'   => $tabelize->transformRecords(),
-                'groups'    => [],
-                'paginator' => [
-                    'total' => $total,
-                    'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
-                ],
-            ];
-        }
-
-        $tabelize->getView()->addData(
-            [
-                'dynamic'   => $dynamicService,
-                'viewType'  => $viewType,
-                'searchUrl' => router()->getUri(),
-                'tab'       => $tab,
-            ]
-        );
-
-        return $tabelize;
+        return [
+            'records'   => $tabelize->transformRecords(),
+            'groups'    => [],
+            'paginator' => [
+                'total' => $total,
+                'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
+            ],
+        ];
     }
 
     public function getAddAction(
