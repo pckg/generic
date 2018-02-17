@@ -24,7 +24,7 @@ class Fields extends DatabaseEntity
         $this->joinTranslations();
         $this->joinFallbackTranslation();
         $this->withFieldType();
-        $this->withSettings(function(MorphsMany $settings){
+        $this->withSettings(function(MorphsMany $settings) {
             $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
         });
     }
@@ -70,6 +70,12 @@ class Fields extends DatabaseEntity
     public function realFields()
     {
         return $this->where('dynamic_field_type_id', 19, '!=');
+    }
+
+    public function relations()
+    {
+        return $this->hasMany(Relations::class)
+                    ->foreignKey('on_field_id');
     }
 
 }

@@ -236,6 +236,8 @@ class Filter extends AbstractService
                 foreach ($relations as $relation) {
                     /**
                      * Perform search on relations.
+                     * When searching on orders_bills.orders_user_id
+                     *  - search on orders_users.* -> orders_users.id => orders_bills.orders_user_id
                      */
                     $relationEntity = $relation->showTable->createEntity();
                     $this->filterByGet($relationEntity, null);

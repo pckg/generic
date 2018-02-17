@@ -67,17 +67,29 @@ class Records extends Controller
         }
 
         $entity = $field->getEntityForSelect($record, null);
+
+        $relation = (new Relations())->where('on_field_id', $field->id)->one();
+
+        $relations = (new Relations())->withShowTable()
+                                      ->withOnField()
+                                      ->withForeignField()
+                                      ->where('on_table_id', $relation->show_table_id)
+                                      ->where('dynamic_relation_type_id', 1)
+                                      ->all();
+
+        foreach ($relations as $relation) {
+            $relation->loadOnEntity($entity, $dynamicService);
+        }
+
         if ($search = get('search')) {
-            $dynamicService->getFilterService()->filterByGet($entity);
+            $dynamicService->getFilterService()->filterByGet($entity, $relations);
         }
 
         $relation = $field->getRelationForSelect($record, null, $entity);
 
-        return $this->response()->respondWithSuccess(
-            [
-                'records' => $relation,
-            ]
-        );
+        return [
+            'records' => $relation,
+        ];
     }
 
     public function getViewTableViewAction(
