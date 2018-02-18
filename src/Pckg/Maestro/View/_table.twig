@@ -125,12 +125,12 @@
                 this.timeout('search', this.refreshData, 500);
             },
             refreshData: function () {
-                this.loading++;
+                this.loading = true;
                 http.getJSON(this.paginator.url, function (data) {
                     this.records = data.records;
                     this.groups = data.groups;
                     this.setPaginatorTotal(data.paginator.total);
-                    this.loading--;
+                    this.loading = false;
                 }.bind(this));
             },
             setRecords: function (records) {

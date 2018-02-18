@@ -230,7 +230,7 @@ class Records extends Controller
                          ->setFields($listedFields)
                          ->setPerPage(get('perPage', 25))
                          ->setPage(1)
-                         ->setTotal(0)
+                         ->setTotal($entity->total())
                          ->setEntityActions($tableRecord->getEntityActions())
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
