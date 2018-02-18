@@ -484,7 +484,7 @@ ifrm.document.close();
             return $element;
         } elseif ($type == 'picture') {
             $element = $this->addPicture($name);
-            $element->setPrefix('<i class="fa fa-picture-o" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fa fa-image" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
                 $this->relation && $this->foreignRecord
