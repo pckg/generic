@@ -15,7 +15,7 @@ class Xlsx extends AbstractStrategy
     public function prepare()
     {
         $file = path('tmp') . sha1(microtime());
-        $objPHPExcel = new PHPExcel();;
+        $objPHPExcel = new PHPExcel();
         $lines = $this->getData();
 
         /**

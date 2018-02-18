@@ -18,9 +18,10 @@ class CreateListTables extends Migration
 
         $listItems = $this->table('list_items');
         $listItems->varchar('list_id')->references('lists');
-        $listItems->slug();
+        $listItems->slug('slug', 128, false);
         // @T00D00 - double index
         $listItems->varchar('value');
+        $listItems->unique('slug', 'list_id');
 
         $this->save();
     }

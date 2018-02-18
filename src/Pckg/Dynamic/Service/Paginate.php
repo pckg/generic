@@ -23,7 +23,7 @@ class Paginate
         return $this;
     }
 
-    public function applyOnEntity(Entity $entity, $perPage = 50)
+    public function applyOnEntity(Entity $entity, $perPage = 25)
     {
         $limit = get('perPage', $perPage);
 

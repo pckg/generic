@@ -134,7 +134,7 @@ class Dynamic
         return $this->view;
     }
 
-    public function applyOnEntity($entity, $limit = 50)
+    public function applyOnEntity($entity, $limit = 25)
     {
         $this->filterService->applyOnEntity($entity);
         $this->sortService->applyOnEntity($entity);
