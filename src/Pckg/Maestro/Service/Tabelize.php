@@ -2,6 +2,7 @@
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
+use Pckg\Database\Obj;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
@@ -588,7 +589,7 @@ class Tabelize
         return $records;
     }
 
-    public function transformRecord(DatabaseRecord $record)
+    public function transformRecord(Obj $record)
     {
         $transformed = [];
 
