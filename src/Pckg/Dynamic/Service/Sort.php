@@ -39,7 +39,7 @@ class Sort extends AbstractService
     public function applyOnEntity(Entity $entity)
     {
         if (get('field') && get('dir')) {
-            $field = Field::getOrFail(['id' => get('field')]);
+            $field = (new Fields())->withFieldType()->where('id', get('field'))->oneOrFail();
 
             $directionMapper = [
                 'up'   => 'ASC',
@@ -47,11 +47,23 @@ class Sort extends AbstractService
             ];
 
             if ($field) {
-                $entity->orderBy(
-                    '`' . $entity->getTable() . '`.`' . $field->field . '` ' . ($directionMapper[get('dir')] ?? 'DESC')
-                );
+                if (!in_array($field->fieldType->slug, ['mysql'])) {
+                    $table = $field->field == 'id'
+                        ? $entity->getTable()
+                        : $entity->getRepository()
+                                 ->getCache()
+                                 ->getExtendeeTableForField($entity->getTable(), $field->field);
 
-                return;
+                    $entity->orderBy(
+                        '`' . ($table ?? $entity->getTable()) . '`.`' . $field->field . '` ' .
+                        ($directionMapper[get('dir')] ?? 'DESC')
+                    );
+                } else {
+                    $entity->orderBy(
+                        '`' . $field->field . '` ' .
+                        ($directionMapper[get('dir')] ?? 'DESC')
+                    );
+                }
             }
         }
 
@@ -72,11 +84,14 @@ class Sort extends AbstractService
         foreach ($sorts as $sort) {
             $field = Field::getOrFail(['id' => $sort['field']]);
 
-            /**
-             * @T00D00 - guess translatable fields
-             */
+            $table = $field->field == 'id'
+                ? $entity->getTable()
+                : $entity->getRepository()
+                         ->getCache()
+                         ->getExtendeeTableForField($entity->getTable(), $field->field);
             $entity->orderBy(
-                $entity->getTable() . '.' . $field->field . ' ' . ($directionMapper[$sort['direction'] ?? 'descending'] ?? 'DESC')
+                ($table ?? $entity->getTable()) . '.' . $field->field . ' ' .
+                ($directionMapper[$sort['direction'] ?? 'descending'] ?? 'DESC')
             );
         }
     }
@@ -87,26 +102,20 @@ class Sort extends AbstractService
             $cache = $entity->getRepository()->getCache();
             if ($this->table && $this->table->order) {
                 $entity->orderBy($this->table->order);
-
             } else if ($cache->tableHasField($entity->getTable(), 'order')) {
                 $entity->orderBy('`' . $entity->getTable() . '`.`order` ASC');
-
             } else if ($cache->tableHasField($entity->getTable(), 'ord')) {
                 $entity->orderBy('`' . $entity->getTable() . '`.`ord` ASC');
-
             } else if ($cache->tableHasField($entity->getTable(), 'position')) {
                 $entity->orderBy('`' . $entity->getTable() . '`.`position` ASC');
-
             } else if ($cache->tableHasField($entity->getTable(), 'dt_published')) {
                 $entity->orderBy(
-                    'IF(`' . $entity->getTable(
-                    ) . '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, `' . $entity->getTable(
-                    ) . '`.id ASC'
+                    'IF(`' . $entity->getTable() .
+                    '`.`dt_published` BETWEEN \'0000-00-00 00:00:01\' AND NOW() , 1, 0) DESC, `' . $entity->getTable() .
+                    '`.id ASC'
                 );
-
             } else {
                 $entity->orderBy('`' . $entity->getTable() . '`.`id` DESC');
-
             }
         }
     }

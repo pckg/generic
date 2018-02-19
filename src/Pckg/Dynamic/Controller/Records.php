@@ -167,6 +167,11 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
+        /**
+         * Set table so sub-services can reuse it later.
+         */
+        $dynamicService->setTable($tableRecord);
+
         if (!get('html') && (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
             $this->request()->isJson())
         ) {
@@ -177,11 +182,6 @@ class Records extends Controller
         if ($viewType == 'full') {
             $this->seoManager()->setTitle($tableRecord->title . ' - ' . config('site.title'));
         }
-
-        /**
-         * Set table so sub-services can reuse it later.
-         */
-        $dynamicService->setTable($tableRecord);
 
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
@@ -221,6 +221,8 @@ class Records extends Controller
                 $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
             }
         }
+
+        $entity->groupBy('`' . $entity->getTable() . '`.`id`');
 
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
@@ -273,11 +275,6 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
-        /**
-         * Set table so sub-services can reuse it later.
-         */
-        $dynamicService->setTable($tableRecord);
-
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
 
