@@ -67,7 +67,14 @@
                 /**
                  * Destroy and re-init component?
                  */
-                $dispatcher.$emit('dynamic-tab-' + tabId + ':refresh', {tabId: tabId});
+                $dispatcher.$emit('dynamic-tab-' + tabId + ':refresh', {
+                    tabId: tabId, callback: function (data) {
+                        console.log("test", data);
+                        if (data.functionizes) {
+                            $(this.$el).find('.tab-functionize').html(data.functionizes.join(''));
+                        }
+                    }.bind(this)
+                });
             }
         }
     });
@@ -80,7 +87,7 @@
             resolve({
                 template: '<div>' + data.html + '</div>',
                 mixins: [pckgDelimiters],
-                mounted: function(){
+                mounted: function () {
                     $(this.$el).closest('.tab-pane').find('> .fa').detach();
                 }
             });

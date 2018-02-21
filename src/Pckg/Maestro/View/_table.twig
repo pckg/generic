@@ -124,12 +124,26 @@
             delaySearch: function () {
                 this.timeout('search', this.refreshData, 500);
             },
-            refreshData: function () {
+            refreshData: function (params) {
                 this.loading = true;
                 http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                    this.groups = data.groups;
-                    this.setPaginatorTotal(data.paginator.total);
+                    if (data.tabelizes) {
+                        /**
+                         * @T00D00 - auto detect index for multiple tables?
+                         */
+                        var d = data.tabelizes[0];
+                        this.records = d.records;
+                        this.groups = d.groups;
+                        this.setPaginatorTotal(d.paginator.total);
+
+                        if (params && params.callback) {
+                            params.callback(data);
+                        }
+                    } else {
+                        this.records = data.records;
+                        this.groups = data.groups;
+                        this.setPaginatorTotal(data.paginator.total);
+                    }
                     this.loading = false;
                 }.bind(this));
             },

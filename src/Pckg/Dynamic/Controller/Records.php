@@ -5,10 +5,7 @@ use Pckg\Database\Collection;
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record as DatabaseRecord;
-use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Database\Relation\MorphedBy;
-use Pckg\Database\Relation\MorphsMany;
 use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
@@ -172,8 +169,9 @@ class Records extends Controller
          */
         $dynamicService->setTable($tableRecord);
 
-        if (!get('html') && (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
-            $this->request()->isJson())
+        if (!get('html') &&
+            (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
+             $this->request()->isJson())
         ) {
             return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
                                                 $tab, $dynamicRecord, $dynamicRelation, $tableView);
@@ -685,14 +683,18 @@ class Records extends Controller
 
     public function getTabAction(Record $record, Table $table, Tab $tab)
     {
-        $relations = $table->hasManyRelation(
+        $relations = (new Relations())->where('on_table_id', $table->id)
+                                      ->where('dynamic_table_tab_id', $tab->id)
+                                      ->where('dynamic_relation_type_id', 2)
+                                      ->all();
+        /*$relations = $table->hasManyRelation(
             function(HasMany $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id);
+                $relation->where('dynamic_table_tab_id', $tab->id)->debug();
             }
         );
         $table->hasAndBelongsToRelation(
             function(HasAndBelongsTo $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id);
+                $relation->where('dynamic_table_tab_id', $tab->id)->debug();
             }
         )->each(
             function($item) use ($relations) {
@@ -716,7 +718,7 @@ class Records extends Controller
             function($item) use ($relations) {
                 $relations->push($item);
             }
-        );
+        );*/
         $tabelizes = [];
         $relations->each(
             function(Relation $relation) use ($record, &$tabelizes, $tab) {
@@ -741,7 +743,7 @@ class Records extends Controller
                     $relation
                 );
 
-                $tabelizes[] = is_array($tabelize) ? \json_encode($tabelize) : (string)$tabelize;
+                $tabelizes[] = $tabelize;
             }
         );
 
@@ -768,6 +770,13 @@ class Records extends Controller
                 $functionizes[] = (string)$functionize;
             }
         );
+
+        if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
+            return [
+                'functionizes' => $functionizes,
+                'tabelizes'    => $tabelizes,
+            ];
+        }
 
         /**
          * We have to build tab.

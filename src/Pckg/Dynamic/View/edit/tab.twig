@@ -1,7 +1,11 @@
-{% for tabelize in tabelizes %}
-    {{ tabelize | raw }}
-{% endfor %}
+<div class="tab-tabelize">
+    {% for tabelize in tabelizes %}
+        {{ tabelize | raw }}
+    {% endfor %}
+</div>
 
-{% for functionize in functionizes %}
-    {{ functionize | raw }}
-{% endfor %}
+<div class="tab-functionize">
+    {% for functionize in functionizes %}
+        {{ functionize | raw }}
+    {% endfor %}
+</div>
