@@ -4,7 +4,7 @@ use Exception;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Generic\Entity\MenuItems;
 use Pckg\Generic\Entity\Routes;
 

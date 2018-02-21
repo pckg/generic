@@ -1,9 +1,6 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
-use Pckg\Database\Relation\HasMany;
-use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field as FieldRecord;
-use Pckg\Dynamic\Record\Record as DatabaseRecord;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
 
@@ -24,16 +21,19 @@ class Record implements RouteResolver
     public function resolve($value)
     {
         $table = router()->resolved('table');
-        $tablesEntity = new Tables();
-        $tablesEntity->setTable($table->table);
-        $tablesEntity->setRecordClass(DatabaseRecord::class);
 
-        if ($table->repository) {
-            $tablesEntity->setRepository($table->getRepository());
-        }
+        $tablesEntity = $table->createEntity();
 
-        $this->dynamic->joinTranslationsIfTranslatable($tablesEntity);
-        $this->dynamic->joinPermissionsIfPermissionable($tablesEntity);
+        //$tablesEntity = new Tables();
+        //$tablesEntity->setTable($table->table);
+        //$tablesEntity->setRecordClass(DatabaseRecord::class);
+
+        //if ($table->repository) {
+          //  $tablesEntity->setRepository($table->getRepository());
+        //}
+
+        //$this->dynamic->joinTranslationsIfTranslatable($tablesEntity);
+        //$this->dynamic->joinPermissionsIfPermissionable($tablesEntity);
 
         $listableFields = $table->listableFields;
         $listableFields->each(

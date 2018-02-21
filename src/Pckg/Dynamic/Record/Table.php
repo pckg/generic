@@ -1,16 +1,15 @@
 <?php namespace Pckg\Dynamic\Record;
 
 use Pckg\Collection;
-use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Database\Record as DatabaseRecord;
+use Pckg\Database\Entity;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
-use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Filter;
 
-class Table extends DatabaseRecord
+class Table extends Record
 {
 
     protected $entity = Tables::class;
@@ -67,7 +66,7 @@ class Table extends DatabaseRecord
         );
     }
 
-    public function getEditUrl(DatabaseRecord $record)
+    public function getEditUrl(Record $record)
     {
         return url(
             'dynamic.record.edit',
@@ -158,7 +157,7 @@ class Table extends DatabaseRecord
         return $this->createEntity()->getRecord();
     }
 
-    public function fetchFrameworkRecord(DatabaseRecord $record, DatabaseEntity $entity)
+    public function fetchFrameworkRecord(Record $record, Entity $entity)
     {
         if (!$this->framework_entity) {
             return $record;

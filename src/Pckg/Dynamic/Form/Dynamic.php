@@ -4,13 +4,12 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
-use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Htmlbuilder\Builder\Pckg;
@@ -76,7 +75,7 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
-    public function setRecord(DatabaseRecord $record)
+    public function setRecord(Record $record)
     {
         $this->record = $record;
 
@@ -104,7 +103,7 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
-    public function populatePasswords(DatabaseRecord $record)
+    public function populatePasswords(Record $record)
     {
         $data = $this->getData();
 

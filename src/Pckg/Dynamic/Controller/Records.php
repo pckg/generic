@@ -2,17 +2,15 @@
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
-use Pckg\Database\Entity as DatabaseEntity;
+use Pckg\Database\Entity;
 use Pckg\Database\Query\Raw;
-use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Dynamic\Entity\Entity;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Func;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
@@ -92,7 +90,7 @@ class Records extends Controller
     public function getViewTableViewAction(
         Table $tableRecord,
         DynamicService $dynamicService,
-        DatabaseEntity $entity = null,
+        Entity $entity = null,
         TableView $tableView,
         $viewType = 'full'
     ) {
@@ -114,7 +112,7 @@ class Records extends Controller
     public function getConfigureTableViewAction(
         Table $tableRecord,
         DynamicService $dynamicService,
-        DatabaseEntity $entity = null,
+        Entity $entity = null,
         $viewType = 'full',
         TableView $tableView
     ) {
@@ -156,7 +154,7 @@ class Records extends Controller
     public function getViewTableAction(
         Table $tableRecord,
         DynamicService $dynamicService,
-        DatabaseEntity $entity = null,
+        Entity $entity = null,
         $viewType = 'full',
         $returnTabelize = false,
         Tab $tab = null,
@@ -265,7 +263,7 @@ class Records extends Controller
     public function getViewTableApiAction(
         Table $tableRecord,
         DynamicService $dynamicService,
-        DatabaseEntity $entity = null,
+        Entity $entity = null,
         $viewType = 'full',
         $returnTabelize = false,
         Tab $tab = null,
@@ -420,7 +418,7 @@ class Records extends Controller
         Table $table,
         Record $record = null,
         Relation $relation = null,
-        DatabaseRecord $foreign = null
+        Record $foreign = null
     ) {
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
@@ -466,7 +464,7 @@ class Records extends Controller
      * @param Table               $table    - resolved from url
      * @param Record              $record
      * @param Relation|null       $relation - resolved from url
-     * @param DatabaseRecord|null $foreign  - resolved from url
+     * @param Record|null $foreign  - resolved from url
      *
      * @return \Pckg\Framework\Response
      */
@@ -475,7 +473,7 @@ class Records extends Controller
         Table $table,
         Record $record = null,
         Relation $relation = null,
-        DatabaseRecord $foreign = null
+        Record $foreign = null
     ) {
         $entity = $table->createEntity();
         $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();
@@ -791,7 +789,7 @@ class Records extends Controller
     }
 
     protected function getTabelizesAndFunctionizes(
-        $tabs, $record, Table $table, DatabaseEntity $entity
+        $tabs, $record, Table $table, Entity $entity
     ) {
         $relations = $table->hasManyRelation(
             function(HasMany $query) {

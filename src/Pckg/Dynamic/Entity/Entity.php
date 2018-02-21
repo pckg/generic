@@ -1,7 +1,7 @@
 <?php namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
 /**

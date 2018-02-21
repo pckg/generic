@@ -1,9 +1,7 @@
 <?php namespace Pckg\Dynamic\Resolver;
 
-use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
-use Pckg\Dynamic\Record\Field as FieldRecord;
-use Pckg\Dynamic\Record\Record as DatabaseRecord;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Framework\Provider\RouteResolver;
 
@@ -30,7 +28,7 @@ class ForeignRecord implements RouteResolver
 
         $tablesEntity = new Tables();
         $tablesEntity->setTable($onTable->table);
-        $tablesEntity->setRecordClass(DatabaseRecord::class);
+        $tablesEntity->setRecordClass(Record::class);
 
         if ($onTable->repository) {
             $tablesEntity->setRepository($onTable->getRepository());

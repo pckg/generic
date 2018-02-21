@@ -4,7 +4,7 @@ use League\Csv\Reader;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Form\Import as ImportForm;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;

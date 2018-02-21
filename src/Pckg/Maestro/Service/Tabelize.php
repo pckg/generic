@@ -3,11 +3,10 @@
 use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Obj;
-use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Dynamic\Record\Record;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
@@ -272,14 +271,14 @@ class Tabelize
             }
 
             if (is_string($item)) {
-                return new DatabaseRecord([
+                return new Record([
                                               'title'                 => $item,
                                               'field'                 => $item,
                                               'dynamic_field_type_id' => 1,
                                           ]);
             }
 
-            return new DatabaseRecord([
+            return new Record([
                                           'title'                 => $item['title'] ?? null,
                                           'field'                 => $item['field'] ?? null,
                                           'dynamic_field_type_id' => 1,
