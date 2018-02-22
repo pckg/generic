@@ -683,40 +683,7 @@ class Records extends Controller
     {
         $relations = (new Relations())->where('on_table_id', $table->id)
                                       ->where('dynamic_table_tab_id', $tab->id)
-                                      ->where('dynamic_relation_type_id', 2)
                                       ->all();
-        /*$relations = $table->hasManyRelation(
-            function(HasMany $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id)->debug();
-            }
-        );
-        $table->hasAndBelongsToRelation(
-            function(HasAndBelongsTo $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id)->debug();
-            }
-        )->each(
-            function($item) use ($relations) {
-                $relations->push($item);
-            }
-        );
-        $table->morphsManyRelation(
-            function(MorphsMany $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id);
-            }
-        )->each(
-            function($item) use ($relations) {
-                $relations->push($item);
-            }
-        );
-        $table->morphedByRelation(
-            function(MorphedBy $relation) use ($tab) {
-                $relation->where('dynamic_table_tab_id', $tab->id);
-            }
-        )->each(
-            function($item) use ($relations) {
-                $relations->push($item);
-            }
-        );*/
         $tabelizes = [];
         $relations->each(
             function(Relation $relation) use ($record, &$tabelizes, $tab) {

@@ -408,8 +408,8 @@ class PageStructure
                     'slug'  => str_replace('pckg.generic.pageStructure.', '',
                                            $setting->slug),
                     'value' => $setting->type == 'array'
-                        ? (json_decode($setting->pivot->value, true) ??
-                           [])
+                        ? ($setting->pivot->value ? (json_decode($setting->pivot->value, true) ??
+                           []) : [])
                         : $setting->pivot->value,
                 ];
             })->keyBy('slug')->map('value');
