@@ -14,7 +14,6 @@ var initUninitialiedSelectpicker = function () {
                     console.log("searching ...");
                     http.getJSON(dataRefreshUrl + '?search=' + val, function (data) {
                         var val = $select.val();
-                        $select.find('option').remove();
                         $.each(data.records, function (key, val) {
                             if (typeof val == 'object' || typeof val == 'array') {
                                 var optgroup = '<optgroup label="' + key + '">';
@@ -28,7 +27,7 @@ var initUninitialiedSelectpicker = function () {
                             }
                         });
                         $select.selectpicker('refresh');
-                        $select.val(val).change();
+                        $select.val(val);
                     });
                 }, 500);
             });

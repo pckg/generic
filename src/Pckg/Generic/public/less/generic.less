@@ -7,9 +7,15 @@
 }
 
 .bootstrap-select {
-  max-width: 360px;
-  .dropdown-menu.open {
+  max-width: 720px;
+  .modal & {
     max-width: 360px;
+  }
+  .dropdown-menu.open {
+    max-width: 720px;
+    .modal & {
+      max-width: 360px;
+    }
   }
 }
 

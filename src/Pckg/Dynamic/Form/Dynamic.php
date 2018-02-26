@@ -4,12 +4,12 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pckg\Auth\Entity\UserGroups;
 use Pckg\Collection;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Database\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Htmlbuilder\Builder\Pckg;
@@ -572,20 +572,20 @@ ifrm.document.close();
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
-                $element->addOption(null, ' -- select value -- ');
-
+                $options = [];
                 $rawValue = $this->record->{$field->field};
                 $foundValue = false;
 
                 foreach ($relation as $id => $value) {
                     if (is_array($value)) {
-                        $optgroup = $element->addOptionGroup($id);
+                        $optgroup = [];
                         foreach ($value as $k => $v) {
-                            $optgroup->addOption($k, str_replace(['<br />', '<br/>', '<br>'], ' - ', $v));
+                            $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
                             $foundValue = $foundValue || $k == $rawValue;
                         }
+                        $options[$id] = $optgroup;
                     } else {
-                        $element->addOption($id, str_replace(['<br />', '<br/>', '<br>'], ' - ', $value));
+                        $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
                         $foundValue = $foundValue || $id == $rawValue;
                     }
                 }
@@ -601,17 +601,13 @@ ifrm.document.close();
                         $item = $rawValue;
                     }
 
-                    $element->addOption(
-                        $rawValue,
-                        str_replace(
-                            ['<br />', '<br/>', '<br>'],
-                            ' - ',
-                            $item
-                        )
-                    );
+                    $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
                 }
 
-                $element->setAttribute(
+                $element->setAttribute(':initial-options', json_encode($options));
+                $element->setAttribute(':initial-multiple', 'false');
+
+                /*$element->setAttribute(
                     'data-url',
                     url(
                         'dynamic.record.list',
@@ -619,10 +615,10 @@ ifrm.document.close();
                             'table' => $this->table,
                         ]
                     )
-                );
+                );*/
 
                 $element->setAttribute(
-                    'data-refresh-url',
+                    'refresh-url',
                     url(
                         'dynamic.records.field.selectList' . ($this->record->id ? '' : '.none'),
                         [
@@ -633,7 +629,7 @@ ifrm.document.close();
                     )
                 );
 
-                $element->setAttribute(
+                /*$element->setAttribute(
                     'data-view-url',
                     url(
                         'dynamic.record.view',
@@ -643,7 +639,7 @@ ifrm.document.close();
                     )
                 );
 
-                $element->addClass('ajax');
+                $element->addClass('ajax');*/
 
                 return $element;
             } else {
