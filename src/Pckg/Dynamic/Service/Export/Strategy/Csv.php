@@ -33,7 +33,6 @@ class Csv extends AbstractStrategy
         fclose($fp);
         $this->setFileContent(file_get_contents($file));
         unlink($file);
-
     }
 
 }

@@ -73,6 +73,7 @@ class Export extends Controller
         /**
          * @T00D00 - hackish ...
          */
+        $entity->groupBy('`' . $entity->getTable() . '`.`id`');
         $records = $entity->all();
         $tabelize = (new Tabelize($entity))
             ->setRecords($records)
@@ -101,12 +102,6 @@ class Export extends Controller
                     $record[$field->field] = br2nl($record[$field->field]);
                 }
             }
-
-            /*if ($field->fieldType->slug == 'decimal') {
-                foreach ($transformedRecords as &$record) {
-                    $record[$field->field] = $record[$field->field];
-                }
-            }*/
         });
 
         $strategy->setData($transformedRecords);

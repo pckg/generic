@@ -368,6 +368,8 @@ class Records extends Controller
                 $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
                 $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
             }
+        } else {
+            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
         }
 
         /**
