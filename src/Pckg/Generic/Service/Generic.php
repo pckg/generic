@@ -74,7 +74,7 @@ class Generic
         return $this->blocks[$block];
     }
 
-    public function readRoute(Route $route, $resolvers = false)
+    public function readRoute(Route $route, $resolvers = true)
     {
         $this->route = $route;
 
