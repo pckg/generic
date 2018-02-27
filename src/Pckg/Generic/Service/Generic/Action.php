@@ -287,18 +287,6 @@ class Action
             return $value;
         }
 
-        if ($key == 'content') {
-            return true;
-        }
-
-        if ($key == 'heading') {
-            return 'h2';
-        }
-
-        if ($key == 'contentWidth') {
-            return 'col-xs-12';
-        }
-
         return $default;
     }
 
