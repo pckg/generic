@@ -74,7 +74,7 @@ class Generic
         return $this->blocks[$block];
     }
 
-    public function readRoute(Route $route)
+    public function readRoute(Route $route, $resolvers = false)
     {
         $this->route = $route;
 
@@ -82,7 +82,7 @@ class Generic
          * Route resolvers.
          */
         $resolved = [];//(new Router\Command\ResolveDependencies(json_decode($route->resolvers, true)));
-        if ($route->resolvers) {
+        if ($resolvers && $route->resolvers) {
             $router = router()->get();
             foreach (json_decode($route->resolvers, true) as $key => $conf) {
                 if (is_array($conf)) {

@@ -635,7 +635,7 @@ class PageStructure
 
     public function getRouteTreeAction(Route $route, Generic $genericService)
     {
-        $genericService->readRoute($route);
+        $genericService->readRoute($route, false);
 
         return [
             'tree' => $genericService->getRouteTree(),
