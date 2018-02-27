@@ -35,7 +35,8 @@ class Action extends Record
             $typeSuffix .= ' has-video-background';
         }
 
-        $mainClass = $this->pivot->type . $typeSuffix/* . ' ' . $this->pivot->type . '-' . $this->pivot->id*/;
+        $mainClass = $this->pivot->type . $typeSuffix/* . ' ' . $this->pivot->type . '-' . $this->pivot->id*/
+        ;
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
             'pckg.generic.pageStructure.bgRepeat'   => 'bg-repeat',
@@ -65,19 +66,21 @@ class Action extends Record
             'pckg.generic.pageStructure.style'        => 'style',
         ];
 
-        $settings = $this->pivot->settings;
+        $settings = $this->pivot->settings->keyBy('slug');
         $styles = [];
-        foreach ($settings as $setting) {
-            if (!array_key_exists($setting->slug, $mapper)) {
+        foreach ($mapper as $slug => $attribute) {
+            if (!$settings->hasKey($slug)) {
                 continue;
             }
 
+            $setting = $settings->getKey($slug);
+
             if ($setting->slug == 'pckg.generic.pageStructure.style') {
-                $value = $setting->pivot->value . ';';
+                $value = $setting->pivot->value;
             } else if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = $mapper[$setting->slug] . ': url(' . cdn('/storage/uploads/' . $setting->pivot->value) . ')';
+                $value = $attribute . ': url(' . cdn('/storage/uploads/' . $setting->pivot->value) . ')';
             } else {
-                $value = $mapper[$setting->slug] . ': ' . $setting->pivot->value;
+                $value = $attribute . ': ' . $setting->pivot->value;
             }
             $styles[] = $value;
         }

@@ -5,8 +5,8 @@
                 <img src="{{ content.picture }}" class="img-responsive"/>
             </div>
         {% endif %}
-        {% if action.getSetting('content', true) %}
-            <div class="{{ action.getSetting('contentWidth', 'col-xs-12') }} {{ action.getSetting('contentOffset', '') }}">
+        {% if action.getSetting('content') %}
+            <div class="{{ action.getSetting('contentWidth') }} {{ action.getSetting('contentOffset') }}">
                 {{ content.content | raw }}
             </div>
         {% endif %}

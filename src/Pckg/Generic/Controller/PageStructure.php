@@ -373,7 +373,9 @@ class PageStructure
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         $content = $actionsMorph->content;
-        $content->withContents();
+        if ($content) {
+            $content->withContents();
+        }
 
         return response()->respondWithSuccess([
                                                   'content' => $content,
