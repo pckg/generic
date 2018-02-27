@@ -387,14 +387,16 @@
                             #${ content.id } - ${ content.title }
                         </h4>
 
-                        <pckg-htmleditor v-model="content.content"></pckg-htmleditor>
+                        <pckg-htmleditor v-model="content.content" :key="content.id"></pckg-htmleditor>
                         <br/>
 
                         <template v-if="content.contents && content.contents.length > 0">
-                            <button @click.prevent="toggleShowSubcontents" class="btn btn-primary">Show / Hide subcontents</button>
+                            <button @click.prevent="toggleShowSubcontents" class="btn btn-primary">Show / Hide
+                                subcontents
+                            </button>
                             <br/>
                             <template v-if="showSubcontents">
-                                <div v-for="subcontent in content.contents">
+                                <div v-for="subcontent in content.contents" :key="subcontent.id">
                                     <h5>
                                         <button class="btn btn-warning" @click.prevent="duplicateContent(subcontent)">
                                             Copy
@@ -551,7 +553,8 @@
                 availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
                 action: {},
                 content: {
-                    content: ''
+                    content: '',
+                    contents: []
                 },
                 changeContentId: '',
                 partials: {},
@@ -571,7 +574,8 @@
                     right: 'no'
                 },
                 routes: [],
-                showSubcontents: false
+                showSubcontents: false,
+                tempSubcontents: {}
             };
         },
         created: function () {
@@ -615,6 +619,20 @@
 
                     $.each(newVal, function (i, width) {
                         this.addActionClass(width);
+                    }.bind(this));
+                },
+                deep: true
+            },
+            'content.contents': {
+                handler: function (newVal, oldVal) {
+                    var temp = this.tempSubcontents;
+                    this.tempSubcontents = {};
+                    $.each(newVal, function (i, subcontent) {
+                        if (typeof temp[i] == undefined) {
+                        } else if (subcontent.content != temp[i]) {
+                            this.changeContent(subcontent);
+                        }
+                        this.tempSubcontents[i] = subcontent.content;
                     }.bind(this));
                 },
                 deep: true
@@ -678,15 +696,22 @@
                 return this.form.settings.scopes.indexOf(scope) >= 0;
             },
             changeContent: function (content) {
-                if (this.action.type != 'action') {
+                if (!content || this.action.type != 'action') {
                     return;
                 }
 
                 var $action = $('#' + this.action.type + '-' + this.action.id);
-                var $content = $action.find('.bind-content');
+
+                var $content = $action.find('.bind-content-' + content.id);
 
                 if ($content.length > 0) {
-                    $content.html(content);
+                    $content.html(content.content);
+                } else {
+                    $content = $action.find('.bind-content');
+
+                    if ($content.length > 0) {
+                        $content.html(content.content);
+                    }
                 }
             },
             removeActionClass: function (c) {
