@@ -20,6 +20,8 @@ class Content extends Record
 
     protected $preparsedData = [];
 
+    protected $toArray = ['+contents'];
+
     public function getImageAttribute()
     {
         if (!$this->picture) {

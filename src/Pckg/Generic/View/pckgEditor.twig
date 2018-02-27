@@ -373,17 +373,47 @@
             {% block body %}
                 <div>
                     <template v-if="content && content.id">
+                        <h4>
+                            <button class="btn btn-warning" @click.prevent="duplicateContent(content)" v-if="content">
+                                Copy
+                                #${
+                                content.id }
+                            </button>
+
+                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
+                               v-if="content">Full
+                                edit</a>
+
+                            #${ content.id } - ${ content.title }
+                        </h4>
+
                         <pckg-htmleditor v-model="content.content"></pckg-htmleditor>
                         <br/>
 
-                        <button class="btn btn-warning" @click.prevent="duplicateContent" v-if="content">Copy
-                            #${
-                            content.id }
-                        </button>
+                        <template v-if="content.contents && content.contents.length > 0">
+                            <button @click.prevent="toggleShowSubcontents" class="btn btn-primary">Show / Hide subcontents</button>
+                            <br/>
+                            <template v-if="showSubcontents">
+                                <div v-for="subcontent in content.contents">
+                                    <h5>
+                                        <button class="btn btn-warning" @click.prevent="duplicateContent(subcontent)">
+                                            Copy
+                                            #${
+                                            subcontent.id }
+                                        </button>
 
-                        <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
-                           v-if="content">Full
-                            edit</a>
+                                        <a class="btn btn-danger popup-iframe"
+                                           :href="'/dynamic/records/edit/73/' + subcontent.id">Full
+                                            edit</a>
+
+                                        #${ subcontent.id } - ${ subcontent.title }
+                                    </h5>
+
+                                    <pckg-htmleditor v-model="subcontent.content"></pckg-htmleditor>
+                                </div>
+                            </template>
+                            <br/>
+                        </template>
                     </template>
                     <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
                     <button class="btn btn-primary" @click.prevent="switchContent">Switch content</button>
@@ -540,7 +570,8 @@
                     left: 'no',
                     right: 'no'
                 },
-                routes: []
+                routes: [],
+                showSubcontents: false
             };
         },
         created: function () {
@@ -596,6 +627,9 @@
             }
         },
         methods: {
+            toggleShowSubcontents: function () {
+                this.showSubcontents = !this.showSubcontents;
+            },
             initialFetch: function () {
                 http.getJSON($store.state.router.urls['pckg.generic.pageStructure.initialFetch'], function (data) {
                     this.availableScopes = data.availableScopes;
@@ -762,7 +796,7 @@
                     $dispatcher.$emit('notification:error', 'Error saving data');
                 });
             },
-            duplicateContent: function () {
+            duplicateContent: function (content) {
                 http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.duplicateActionsMorphContent'], {actionsMorph: this.action.id}), {}, function (data) {
                     this.content = data.content;
                 }.bind(this));
@@ -895,15 +929,15 @@
                 return {
                     0: '0/12',
                     1: '1/12',
-                    2: '1/6',
-                    3: '1/4',
-                    4: '1/3',
+                    2: '2/12',
+                    3: '3/12',
+                    4: '4/12',
                     5: '5/12',
-                    6: '1/2',
+                    6: '6/12',
                     7: '7/12',
-                    8: '2/3',
-                    9: '3/4',
-                    10: '5/6',
+                    8: '8/12',
+                    9: '9/12',
+                    10: '10/12',
                     11: '11/12',
                     12: '12/12'
                 };

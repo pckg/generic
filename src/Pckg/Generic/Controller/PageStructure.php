@@ -372,8 +372,11 @@ class PageStructure
 
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
+        $content = $actionsMorph->content;
+        $content->withContents();
+
         return response()->respondWithSuccess([
-                                                  'content' => $actionsMorph->content,
+                                                  'content' => $content,
                                               ]);
     }
 
