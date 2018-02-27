@@ -40,7 +40,6 @@ class Xlsx extends AbstractStrategy
             $i++;
             $j = 1;
             foreach ($line as $val) {
-                $val = (string)preg_replace("/[^A-Za-z0-9]/s", '', $val);
                 $spreadsheet->setActiveSheetIndex(0)
                             ->setCellValueByColumnAndRow($j, $i, $val);
                 $j++;
