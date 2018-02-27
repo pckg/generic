@@ -550,7 +550,6 @@ class PageStructure
          */
         foreach ($separateTypes as $type => $keys) {
             $values = only(post('settings'), $keys);
-            dd($values);
 
             collect($values)->each(function($value, $key) use ($actionsMorph, $type) {
                 if ($type == 'array') {
@@ -561,7 +560,6 @@ class PageStructure
                 $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value, $type);
             });
         }
-        dd();
 
         if ($actionsMorph->morph_id == Layouts::class) {
             $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);

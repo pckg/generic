@@ -5,7 +5,6 @@ trait SettingsHelper
 
     public function saveSetting($key, $value, $type = null)
     {
-        d($key, $value);
         $setting = Setting::getOrNew(['slug' => $key]);
 
         if ($setting->isNew()) {
