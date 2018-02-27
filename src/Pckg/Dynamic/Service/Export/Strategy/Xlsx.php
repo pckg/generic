@@ -2,8 +2,8 @@
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
 use Pckg\Dynamic\Service\Export\Strategy;
-use PHPExcel;
-use PHPExcel_IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
 class Xlsx extends AbstractStrategy
 {
@@ -15,16 +15,16 @@ class Xlsx extends AbstractStrategy
     public function prepare()
     {
         $file = path('tmp') . sha1(microtime());
-        $objPHPExcel = new PHPExcel();
+        $spreadsheet = new Spreadsheet();
         $lines = $this->getData();
 
         /**
          * Make header
          */
         $i = 1;
-        $j = 0;
+        $j = 1;
         foreach ($lines[0] as $key => $val) {
-            $objPHPExcel->setActiveSheetIndex(0)
+            $spreadsheet->setActiveSheetIndex(0)
                         ->setCellValueByColumnAndRow($j, $i, $key)
                         ->getStyle("$j:$i")
                         ->getFont()
@@ -35,11 +35,13 @@ class Xlsx extends AbstractStrategy
         /**
          * Make data
          */
+        //dd($lines);
         foreach ($lines as $line) {
             $i++;
-            $j = 0;
+            $j = 1;
             foreach ($line as $val) {
-                $objPHPExcel->setActiveSheetIndex(0)
+                $val = (string)preg_replace("/[^A-Za-z0-9]/s", '', $val);
+                $spreadsheet->setActiveSheetIndex(0)
                             ->setCellValueByColumnAndRow($j, $i, $val);
                 $j++;
             }
@@ -48,7 +50,7 @@ class Xlsx extends AbstractStrategy
         /**
          * Set column widths
          */
-        $sheet = $objPHPExcel->getActiveSheet();
+        $sheet = $spreadsheet->getActiveSheet();
         $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
         $cellIterator->setIterateOnlyExistingCells(true);
 
@@ -59,8 +61,8 @@ class Xlsx extends AbstractStrategy
         /**
          * Save file.
          */
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $objWriter->save($file);
+        $writer = new XlsxWriter($spreadsheet);
+        $writer->save($file);
 
         /**
          * Implement strategy.

@@ -64,7 +64,7 @@ abstract class AbstractStrategy implements Strategy
     public function outputHeaders($fileSize, $fileName)
     {
         header("Cache-Control: private");
-        header("Content-Type: " . $this->responseType . '; charset=utf-8');
+        header("Content-Type: " . $this->responseType);
         header("Content-Length: " . $fileSize);
         header("Content-Disposition: attachment; filename=" . $fileName . '.' . $this->extension);
 
@@ -91,8 +91,7 @@ abstract class AbstractStrategy implements Strategy
 
     public function output()
     {
-        $this->outputHeaders(mb_strlen($this->fileContent), $this->fileName);
-
+        $this->outputHeaders(strlen($this->fileContent), $this->fileName);
         echo $this->fileContent;
     }
 

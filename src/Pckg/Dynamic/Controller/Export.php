@@ -112,6 +112,8 @@ class Export extends Controller
 
         $strategy->output();
 
+        die();
+
         $this->response()->respond();
     }
 
