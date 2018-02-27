@@ -271,20 +271,8 @@ class Action
         }
     }
 
-    public function getSetting($key = null)
+    public function getSetting($key = null, $default = null)
     {
-        if ($key == 'content') {
-            return true;
-        }
-
-        if ($key == 'heading') {
-            return 'h2';
-        }
-
-        if ($key == 'contentWidth') {
-            return 'col-xs-12';
-        }
-
         $key = 'pckg.generic.pageStructure.' . $key;
         $settings = $this->action->pivot->settings->keyBy('slug');
 
@@ -298,6 +286,20 @@ class Action
 
             return $value;
         }
+
+        if ($key == 'content') {
+            return true;
+        }
+
+        if ($key == 'heading') {
+            return 'h2';
+        }
+
+        if ($key == 'contentWidth') {
+            return 'col-xs-12';
+        }
+
+        return $default;
     }
 
 }

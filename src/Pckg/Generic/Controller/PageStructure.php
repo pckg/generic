@@ -356,12 +356,13 @@ class PageStructure
 
     protected function getPluginSettings()
     {
-        /**
-         * Add defaults.
-         *
-         * @T00D00
-         * This should be refactored to plugins. ;-)
-         */
+        $separate = [];
+        foreach (config('pckg.generic.actions') as $actionKey => $actionSettings) {
+            foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
+                $separate[$settingKey] = $settingType == 'array' ? [] : '';
+            }
+        }
+
         return [
             'sourceOffers'    => [],
             'sourcePackets'   => [],
@@ -409,7 +410,7 @@ class PageStructure
                                            $setting->slug),
                     'value' => $setting->type == 'array'
                         ? ($setting->pivot->value ? (json_decode($setting->pivot->value, true) ??
-                           []) : [])
+                                                     []) : [])
                         : $setting->pivot->value,
                 ];
             })->keyBy('slug')->map('value');
@@ -523,37 +524,44 @@ class PageStructure
                                                             ->removeEmpty()
                                                             ->implode(' ');
 
+        $actions = config('pckg.generic.actions', []);
         $separate = [
             'scopes',
             'width',
             'offset',
-            'dataScope',
-            'viewStyle',
-            'sourceOffers',
-            'sourceGalleries',
-            'sourcePackets',
             'wrapperLockHide',
             'wrapperLockShow',
         ];
-        collect($values)->removeKeys($separate)->each(function($value, $key) use ($actionsMorph
-        ) {
+        $separateTypes = [];
+
+        foreach ($actions as $actionKey => $actionSettings) {
+            foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
+                $separate[] = $settingKey;
+                $separateTypes[$settingType][] = $settingKey;
+            }
+        }
+
+        collect($values)->removeKeys($separate)->each(function($value, $key) use ($actionsMorph) {
             $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
         });
 
         /**
-         * Other settings, available for plugin.
-         *
-         * @T00D00
+         * Other settings, available for plugins.
          */
-        $values = only(post('settings'), ['dataScope', 'viewStyle']);
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
-        });
+        foreach ($separateTypes as $type => $keys) {
+            $values = only(post('settings'), $keys);
+            dd($values);
 
-        $values = only(post('settings'), ['sourceOffers', 'sourceGalleries', 'sourcePackets']);
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
-        });
+            collect($values)->each(function($value, $key) use ($actionsMorph, $type) {
+                if ($type == 'array') {
+                    $value = json_encode($value);
+                } else {
+                    $type = null;
+                }
+                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value, $type);
+            });
+        }
+        dd();
 
         if ($actionsMorph->morph_id == Layouts::class) {
             $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);
