@@ -219,7 +219,7 @@ class Filter extends AbstractService
         }
     }
 
-    public function filterByGet($entity, Collection $relations = null)
+    public function filterByGet(Entity $entity, Collection $relations = null)
     {
         if ($search = get('search')) {
             /**
@@ -347,7 +347,8 @@ class Filter extends AbstractService
             $tables[$entity->getTable() . $entity->getTranslatableTableSuffix()] = $entity->getTable();
         }
         foreach ($entity->getQuery()->getJoin() as $join) {
-            $table = substr($join, 11, strpos($join, '`', 11) - 11);
+            $first = strpos($join, '`');
+            $table = substr($join, $first, strpos($join, '`', $first + 1) - $first);
             if (!strpos($join, '` AS `')) {
                 $tables[$table] = $table;
             } else {
