@@ -1,8 +1,8 @@
 <?php namespace Pckg\Generic\Service;
 
 use Pckg\Collection;
-use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
+use Pckg\Generic\Entity\MenuItems;
 use Pckg\Generic\Entity\Menus;
 
 class Menu
@@ -16,29 +16,33 @@ class Menu
         }
 
         $menus = new Menus($repositoryObject);
-
+        $locale = first($language, config('pckg.locale.current'), 'en_GB');
         $menu = runInLocale(
-            function() use ($menus, $slug, $permissions) {
-                return $menus->withMenuItems(
-                    function(HasMany $menuItems) use ($permissions) {
-                        if ($permissions) {
-                            $menuItems->joinPermissionTo('read');
-                        }
-                    }
-                )->where('slug', $slug)->one();
+            function() use ($menus, $slug) {
+                return $menus->where('slug', $slug)->one();
             },
-            first($language, config('pckg.locale.current'), 'en_GB')
+            $locale
         );
 
         if (!$menu) {
             return '<!-- no menu ' . $slug . ' -->';
         }
 
+        $menuItems = runInLocale(function() use ($menu, $permissions) {
+            $entity = (new MenuItems())->where('menu_id', $menu->id);
+
+            if ($permissions) {
+                $entity->joinPermissionTo('read');
+            }
+
+            return $entity->all();
+        }, $locale);
+
         return view(
             'Pckg\Generic:menu\\' . $menu->template,
             [
                 'menu'      => $menu,
-                'menuItems' => $this->buildTree($menu->menuItems),
+                'menuItems' => $this->buildTree($menuItems),
                 'params'    => $params,
             ]
         );
