@@ -270,6 +270,8 @@ var initTinymce = function (selector, config) {
         allow_html_in_named_anchor: true,
         allow_unsafe_link_target: true,
         forced_root_block: 'p',
+        force_br_newlines : false,
+        force_p_newlines : true,
         protect: [
             // /{{[^}]+}}/g,  // Protect {{ }}
             // /{%[^}]+%}/g,  // Protect {% %}
