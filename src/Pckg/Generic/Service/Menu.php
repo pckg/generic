@@ -28,8 +28,8 @@ class Menu
             return '<!-- no menu ' . $slug . ' -->';
         }
 
-        $menuItems = runInLocale(function() use ($menu, $permissions) {
-            $entity = (new MenuItems())->where('menu_id', $menu->id);
+        $menuItems = runInLocale(function() use ($menu, $permissions, $repositoryObject) {
+            $entity = (new MenuItems($repositoryObject))->where('menu_id', $menu->id);
 
             if ($permissions) {
                 $entity->joinPermissionTo('read');
