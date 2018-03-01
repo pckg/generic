@@ -318,6 +318,7 @@ class Field extends DatabaseRecord
                     $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
                 ]
             );
+
             return function($record) use ($field) {
                 $value = $record->{$field->field};
 
@@ -338,6 +339,8 @@ class Field extends DatabaseRecord
                     $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
                 ]
             );
+        } else if ($this->fieldType->slug == 'mysql') {
+            $tablesEntity->{'select' . ucfirst($this->field) . 'Field'}();
         }
     }
 
