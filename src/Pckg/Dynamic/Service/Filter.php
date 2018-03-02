@@ -251,16 +251,6 @@ class Filter extends AbstractService
             }
 
             /**
-             * Make sure that translations are joined and matched.
-             */
-            if ($entity->isTranslatable()) {
-                if (!$entity->isTranslated()) {
-                    $entity->joinTranslations()->addSelect([$entity->getTable() . '.*']);
-                }
-                $tables[$entity->getTable() . '_i18n'] = $entity->getTable();
-            }
-
-            /**
              * Get all tables that are currently linked to query.
              */
             $tables = $this->getTablesFromEntity($entity);
@@ -343,9 +333,17 @@ class Filter extends AbstractService
     private function getTablesFromEntity(Entity $entity)
     {
         $tables = [$entity->getTable() => $entity->getTable()];
+
+        /**
+         * Make sure that translations are joined and matched.
+         */
         if ($entity->isTranslatable()) {
+            if (!$entity->isTranslated()) {
+                $entity->joinTranslations()->addSelect([$entity->getTable() . '.*']);
+            }
             $tables[$entity->getTable() . $entity->getTranslatableTableSuffix()] = $entity->getTable();
         }
+
         foreach ($entity->getQuery()->getJoin() as $join) {
             $first = strpos($join, '`');
             $table = substr($join, $first, strpos($join, '`', $first + 1) - $first);

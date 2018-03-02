@@ -15,34 +15,31 @@ class Tables extends DatabaseEntity implements MaestroEntity
 
     protected $repositoryName = Repository::class . '.dynamic';
 
-    public function fields()
+    /**
+     * @param callable|null $callback
+     *
+     * @return HasMany
+     */
+    public function fields(callable $callback = null)
     {
-        return $this->hasMany(Fields::class)
-                    ->foreignKey('dynamic_table_id')
-                    ->fill('fields', 'table');
+        return $this->hasMany(Fields::class, $callback)
+                    ->foreignKey('dynamic_table_id')/*->fill('fields', 'table')*/
+            ;
     }
 
     public function listableFields()
     {
-        return $this->hasMany(
-            Fields::class,
-            function(HasMany $fields) {
-                //$hasMany->joinPermissionTo('view');
-            }
-        )
-                    ->foreignKey('dynamic_table_id');
+        return $this->fields(function(HasMany $fields) {
+            //$hasMany->joinPermissionTo('view');
+            $fields->where('searchable');
+        })->fill('searchableFields');
     }
 
     public function searchableFields()
     {
-        return $this->hasMany(
-            Fields::class,
-            function(HasMany $fields) {
-                $fields->where('searchable');
-                //$hasMany->joinPermissionTo('view');
-            }
-        )
-                    ->foreignKey('dynamic_table_id');
+        return $this->fields(function(HasMany $fields) {
+            //$hasMany->joinPermissionTo('view');
+        })->fill('listableFields');
     }
 
     public function actions()
