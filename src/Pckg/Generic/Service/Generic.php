@@ -164,10 +164,27 @@ class Generic
                 /**
                  * Filter out hidden and shown.
                  */
-                $system = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockSystem', []);
+                if ($route) {
+                    $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
+                    if ($hide && in_array($route->id, $hide)) {
+                        /**
+                         * If action has defined hide values, hide actions on current route.
+                         */
+                        return;
+                    }
 
-                if (!in_array(router()->getName(), $system)) {
-                    return;
+                    $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
+                    if ($show && !in_array($route->id, $show)) {
+                        /**
+                         * If action has defined show values, hide action if route is not defined.
+                         */
+                        return;
+                    }
+                } else {
+                    $system = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockSystem', []);
+                    if (!in_array(router()->getName(), $system)) {
+                        return;
+                    }
                 }
 
                 $this->addAction(
