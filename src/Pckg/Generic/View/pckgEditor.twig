@@ -57,7 +57,8 @@
                             <div v-if="action.type == 'container'">
                                 <label>Container</label>
                                 <pckg-select v-model="form.settings.container"
-                                             :initial-options="availableContainers" :initial-multiple="false"></pckg-select>
+                                             :initial-options="availableContainers"
+                                             :initial-multiple="false"></pckg-select>
                             </div>
                             <div v-else-if="action.type == 'column'">
                                 <label>Width</label>
@@ -358,6 +359,15 @@
                                                  title="route" id="id" :flat="true"
                                                  v-model="form.settings.wrapperLockShow"></pckg-select>
                                 </div>
+                                <div>
+                                    <label>Show on system pages
+                                        <pckg-tooltip
+                                                content="Show element on system pages"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="systemRoutes" :with-empty="false" :initial-multiple="true"
+                                                 title="title" id="slug" :flat="true"
+                                                 v-model="form.settings.wrapperLockSystem"></pckg-select>
+                                </div>
                             </template>
                         </div>
                     </div>
@@ -537,6 +547,7 @@
                         sourcePackets: [],
                         wrapperLockHide: [],
                         wrapperLockShow: [],
+                        wrapperLockSystem: [],
                         container: ''
                     }
                 },
@@ -575,6 +586,12 @@
                     right: 'no'
                 },
                 routes: [],
+                systemRoutes: [
+                    {
+                        slug: 'derive.payment.startPartia',
+                        title: 'Start payment',
+                    }
+                ],
                 showSubcontents: false,
                 tempSubcontents: {}
             };
@@ -791,6 +808,7 @@
             parseWrapperSettings: function () {
                 this.form.settings.wrapperLockHide = [];
                 this.form.settings.wrapperLockShow = [];
+                this.form.settings.wrapperLockSystem = [];
             },
             closeSettings: function () {
                 this.action = {};

@@ -352,6 +352,7 @@ class PageStructure
             'bgVideoLoop'     => '',
             'wrapperLockShow' => [],
             'wrapperLockHide' => [],
+            'wrapperLockSystem' => [],
         ];
     }
 
@@ -530,7 +531,7 @@ class PageStructure
         $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
                             . ' ' . implode(' ', post('settings.width', []))
                             . ' ' . implode(' ', post('settings.offset', []))
-                            . ' ' . implode(' ', post('settings.container', []));
+                            . ' ' . post('settings.container', '');
         $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
                                                             ->unique()
                                                             ->removeEmpty()
@@ -544,6 +545,7 @@ class PageStructure
             'container',
             'wrapperLockHide',
             'wrapperLockShow',
+            'wrapperLockSystem',
         ];
         $separateTypes = [];
 
@@ -575,7 +577,7 @@ class PageStructure
         }
 
         if ($actionsMorph->morph_id == Layouts::class) {
-            $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow']);
+            $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
             collect($values)->each(function($value, $key) use ($actionsMorph) {
                 $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
             });

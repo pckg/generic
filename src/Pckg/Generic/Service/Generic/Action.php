@@ -36,7 +36,7 @@ class Action
      * @param      $method
      * @param null $order
      */
-    public function __construct(ActionRecord $action, Route $route, $resolved = [])
+    public function __construct(ActionRecord $action, Route $route = null, $resolved = [])
     {
         $this->args = [
             'content'  => $action->pivot->content,

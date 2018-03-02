@@ -11,6 +11,7 @@ use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
+use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
@@ -121,52 +122,61 @@ class Generic
                 );
             }
         );
-        if ($route->layout) {
-            $layoutActions = $route->layout->actions(
-                function(MorphedBy $actions) {
-                    // $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                        $content->withContents();
-                    })->withSettings()->withVariable();
-                }
-            );
-            $layoutActions = $layoutActions->sortBy(function($item) {
-                return $item->pivot->order;
-            })->tree(function($action) {
-                return $action->pivot->parent_id;
-            }, function($action) {
-                return $action->pivot->id;
-            });
-            $layoutActions->each(
-                function(ActionRecord $action) use ($resolved, $route) {
-                    /**
-                     * Filter out hidden and shown.
-                     */
-                    $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
-                    $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
 
-                    if ($show && !in_array($route->id, $show)) {
-                        /**
-                         * If action has defined show values, hide action if route is not defined.
-                         */
-                        return;
-                    }
+        $this->readLayout($route->layout, $resolved, $route);
+    }
 
-                    if ($hide && in_array($route->id, $hide)) {
-                        /**
-                         * If action has defined hide values, hide actions on current route.
-                         */
-                        return;
-                    }
+    public function readSystemRoute($template)
+    {
+        $layout = Layout::gets(['template' => $template]);
 
-                    $this->addAction(
-                        $action,
-                        $this->route,
-                        $resolved
-                    );
-                }
-            );
+        if (!$layout) {
+            return;
         }
+
+        $this->readLayout($layout);
+    }
+
+    protected function readLayout(Layout $layout = null, $resolved = [], Route $route = null)
+    {
+        if (!$layout) {
+            return;
+        }
+
+        $layoutActions = $layout->actions(
+            function(MorphedBy $actions) {
+                // $actions->getMiddleEntity()->joinPermissionTo('read');
+                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                    $content->withContents();
+                })->withSettings()->withVariable();
+            }
+        );
+        $layoutActions = $layoutActions->sortBy(function($item) {
+            return $item->pivot->order;
+        })->tree(function($action) {
+            return $action->pivot->parent_id;
+        }, function($action) {
+            return $action->pivot->id;
+        });
+
+        $layoutActions->each(
+            function(ActionRecord $action) use ($resolved, $route) {
+                /**
+                 * Filter out hidden and shown.
+                 */
+                $system = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockSystem', []);
+
+                if (!in_array(router()->getName(), $system)) {
+                    return;
+                }
+
+                $this->addAction(
+                    $action,
+                    $route ?? new Route(),
+                    $resolved
+                );
+            }
+        );
     }
 
     /**
@@ -312,7 +322,8 @@ class Generic
     public static function addRoutesFromDb()
     {
         $router = router();
-        $languages = (new Languages())->/*where('frontend')->*/all()->keyBy('slug');
+        $languages = (new Languages())->/*where('frontend')->*/
+        all()->keyBy('slug');
         $defaultLanguage = $languages->first();
         $multilingual = $languages->count() > 1 && config('multilingual');
 
