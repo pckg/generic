@@ -20,11 +20,10 @@ class Action extends Record
 
     public function getHtmlClassAttribute()
     {
-        $typeSuffix = '';
+        $typeSuffix = $this->pivot->type;
         $keyedBySlug = $this->pivot->settings->keyBy('slug');
-        if ($this->pivot->type == 'container' && $keyedBySlug->hasKey('pckg.generic.pageStructure.container')
-        ) {
-            $typeSuffix = '-fluid';
+        if ($this->pivot->type == 'container' && $keyedBySlug->hasKey('pckg.generic.pageStructure.container')) {
+            $typeSuffix = $keyedBySlug->getKey('pckg.generic.pageStructure.container');
         }
 
         if ($keyedBySlug->hasKey('pckg.generic.pageStructure.class')) {
@@ -35,8 +34,8 @@ class Action extends Record
             $typeSuffix .= ' has-video-background';
         }
 
-        $mainClass = $this->pivot->type . $typeSuffix/* . ' ' . $this->pivot->type . '-' . $this->pivot->id*/
-        ;
+        $mainClass = $typeSuffix;
+
         $mapper = [
             'pckg.generic.pageStructure.bgSize'     => 'bg-size',
             'pckg.generic.pageStructure.bgRepeat'   => 'bg-repeat',

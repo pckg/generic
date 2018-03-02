@@ -57,7 +57,7 @@
                             <div v-if="action.type == 'container'">
                                 <label>Container</label>
                                 <pckg-select v-model="form.settings.container"
-                                             :initial-options="availableContainers"></pckg-select>
+                                             :initial-options="availableContainers" :initial-multiple="false"></pckg-select>
                             </div>
                             <div v-else-if="action.type == 'column'">
                                 <label>Width</label>
@@ -537,7 +537,8 @@
                         sourcePackets: [],
                         wrapperLockHide: [],
                         wrapperLockShow: [],
-                    },
+                        container: ''
+                    }
                 },
                 availableScopes: {},
                 availableContainers: {},

@@ -62,6 +62,7 @@ class Generic
 
     public function wrapIntoGeneric($view, $template = 'Pckg/Generic:backend')
     {
+        message('Wrapping into generic');
         $center = $this->genericService->touchBlock('content');
 
         /**
@@ -72,6 +73,15 @@ class Generic
         $vars = $this->genericService->getVariables();
 
         return view($template, $vars);
+    }
+
+    public function wrapIntoGenericContainer($view, $template = 'Pckg/Generic:backend')
+    {
+        message('Wrapping into container, row and column');
+        $view = '<div class="container generic"><div class="row"><div class="col-xs-12">' . $view .
+                '</div></div></div>';
+
+        return $this->wrapIntoGeneric($view, $template);
     }
 
     public function getContentAction(Action $action)

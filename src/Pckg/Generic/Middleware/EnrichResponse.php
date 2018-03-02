@@ -20,6 +20,8 @@ class EnrichResponse
 
     public function execute(callable $next)
     {
+        return $next();
+
         if ($this->request->isGet() && !$this->request->isAjax()) {
             /**
              * This is used as main content.
@@ -31,7 +33,14 @@ class EnrichResponse
              *
              * @T00D00
              */
-            $generic = Reflect::create(Generic::class);
+            if (!is_array($output)) {
+                $output = (string)$output;
+
+                $generic = Reflect::create(Generic::class);
+                if ((substr($output, 0, 5)) !== '<html' && strtolower(substr($output, 0, 9)) != '<!doctype') {
+                    $output = $generic->wrapIntoGenericContainer($output, 'Pckg/Generic:frontend');
+                }
+            }
 
             /**
              * Parse new output and set it as response.

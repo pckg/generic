@@ -44,7 +44,7 @@ class EncapsulateResponse
                 }
 
                 if (!$disable) {
-                    $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
+                    $output = Reflect::create(Generic::class)->wrapIntoGenericContainer($output, $template);
                     $this->response->setOutput($output);
                 }
             }

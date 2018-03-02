@@ -334,6 +334,7 @@ class PageStructure
          */
         return [
             'class'           => '',
+            'container'       => '',
             'style'           => '',
             'width'           => [], // column
             'offset'          => [], // column
@@ -414,8 +415,9 @@ class PageStructure
                     'slug'  => str_replace('pckg.generic.pageStructure.', '',
                                            $setting->slug),
                     'value' => $setting->type == 'array'
-                        ? ($setting->pivot->value ? (json_decode($setting->pivot->value, true) ??
-                                                     []) : [])
+                        ? ($setting->pivot->value
+                            ? (json_decode($setting->pivot->value, true) ?? [])
+                            : [])
                         : $setting->pivot->value,
                 ];
             })->keyBy('slug')->map('value');
@@ -446,6 +448,7 @@ class PageStructure
         $otherClasses = [];
         $widthClasses = [];
         $offsetClasses = [];
+        $containerClass = '';
         foreach ($allClasses as $class) {
             $found = false;
             foreach (config('pckg.generic.scopes') as $title => $scopes) {
@@ -472,6 +475,8 @@ class PageStructure
                     } else {
                         $widthClasses[] = $class;
                     }
+                } elseif (strpos($class, 'container') === 0) {
+                    $containerClass = $class;
                 } else {
                     $otherClasses[] = $class;
                 }
@@ -481,6 +486,7 @@ class PageStructure
         $settings->push($scopeClasses, 'scopes');
         $settings->push($offsetClasses, 'offset');
         $settings->push($widthClasses, 'width');
+        $settings->push($containerClass, 'container');
         $settings->push(implode(' ', $otherClasses), 'class');
 
         /**
@@ -523,7 +529,8 @@ class PageStructure
          */
         $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
                             . ' ' . implode(' ', post('settings.width', []))
-                            . ' ' . implode(' ', post('settings.offset', []));
+                            . ' ' . implode(' ', post('settings.offset', []))
+                            . ' ' . implode(' ', post('settings.container', []));
         $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
                                                             ->unique()
                                                             ->removeEmpty()
@@ -534,6 +541,7 @@ class PageStructure
             'scopes',
             'width',
             'offset',
+            'container',
             'wrapperLockHide',
             'wrapperLockShow',
         ];
