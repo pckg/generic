@@ -339,7 +339,7 @@ class Field extends DatabaseRecord
                     $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
                 ]
             );
-        } else if ($this->fieldType->slug == 'mysql') {
+        } else if ($this->fieldType->slug == 'mysql' && method_exists($tablesEntity, 'select' . ucfirst($this->field) . 'Field')) {
             $tablesEntity->{'select' . ucfirst($this->field) . 'Field'}();
         }
     }
