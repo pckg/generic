@@ -346,13 +346,13 @@ class Filter extends AbstractService
 
         foreach ($entity->getQuery()->getJoin() as $join) {
             $first = strpos($join, '`');
-            $table = substr($join, $first, strpos($join, '`', $first + 1) - $first);
+            $table = substr($join, $first + 1, strpos($join, '`', $first + 1) - $first - 1);
             if (!strpos($join, '` AS `')) {
                 $tables[$table] = $table;
             } else {
                 $start = strpos($join, '` AS `') + 6;
                 $tables[substr($join, $start,
-                               strpos($join, '`', strpos($join, '` AS `') + 7) - $start)] = $table;
+                               strpos($join, '`', strpos($join, '` AS `') + 6) - $start)] = $table;
             }
         }
 
