@@ -44,7 +44,9 @@ class EncapsulateResponse
                 }
 
                 if (!$disable) {
-                    $output = Reflect::create(Generic::class)->wrapIntoGenericContainer($output, $template);
+                    $output = $template == 'Pckg/Generic:backend'
+                        ? Reflect::create(Generic::class)->wrapIntoGeneric($output, $template)
+                        : Reflect::create(Generic::class)->wrapIntoGenericContainer($output, $template);
                     $this->response->setOutput($output);
                 }
             }
