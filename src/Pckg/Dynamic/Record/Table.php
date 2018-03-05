@@ -138,16 +138,19 @@ class Table extends Record
             ? $this->framework_entity
             : Entity::class;
         $entity = runInLocale(
-            function() use ($entityClass, $repository, $alias) {
-                return new $entityClass($repository, $alias);
+            function() use ($entityClass, $repository, $alias, $extensions) {
+                $entity = new $entityClass($repository, $alias);
+
+                $entity->setTable($this->table);
+
+                if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
+                    $entity->joinTranslations();
+                }
+
+                return $entity;
             },
             $_SESSION['pckg_dynamic_lang_id']
         );
-        $entity->setTable($this->table);
-
-        if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
-            $entity->joinTranslations();
-        }
 
         return $entity;
     }
