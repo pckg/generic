@@ -368,7 +368,9 @@ class Records extends Controller
                 $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
                 $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
             }
-        } else {
+        }
+
+        if (!$entity->getQuery()->getGroupBy()) {
             $entity->groupBy('`' . $entity->getTable() . '`.`id`');
         }
 
@@ -376,7 +378,6 @@ class Records extends Controller
          * Temp test.
          */
         try {
-            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
             $records = $entity->count()->all();
             $total = $records->total();
         } catch (Throwable $e) {
