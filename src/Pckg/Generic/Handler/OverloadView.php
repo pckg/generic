@@ -29,7 +29,8 @@ class OverloadView
             }
 
             foreach ($views as $viewKey => $tpls) {
-                if (in_array($controllerPart . ':' . $viewPart, $tpls)) {
+                $templates = array_keys($tpls);
+                if (in_array($controllerPart . ':' . $viewPart, $templates)) {
                     /**
                      * Exact match was found, view is allowed.
                      */
@@ -44,7 +45,7 @@ class OverloadView
                 }
 
                 $similar = null;
-                foreach ($tpls as $tpl) {
+                foreach ($templates as $tpl) {
                     if (strpos($tpl, $subcontroller . '/' . $viewKey) !== 0) {
                         /**
                          * ?
@@ -64,7 +65,7 @@ class OverloadView
                  */
                 if (!$similar) {
                     message('No similar view found for ' . $view);
-                    $similar = end($tpls);
+                    $similar = end($templates);
                 } else {
                 }
                 message('Overloading ' . $view . ' to ' . $similar);

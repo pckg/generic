@@ -273,7 +273,7 @@
                 </div>-->
 
 
-                <div class="panel panel-default" v-if="actionTemplates.length > 0">
+                <div class="panel panel-default" v-if="Object.keys(actionTemplates).length > 0">
                     <div class="panel-heading" role="tab" id="headingFive">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
@@ -286,8 +286,7 @@
                             <div>
                                 <label>Template</label>
                                 <select class="form-control" v-model="action.template">
-                                    <option v-for="template in actionTemplates" :value="template">${ template }
-                                    </option>
+                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl">${ title }</option>
                                 </select>
                             </div>
                         </div>
