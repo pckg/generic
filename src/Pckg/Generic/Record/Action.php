@@ -22,8 +22,8 @@ class Action extends Record
     {
         $typeSuffix = $this->pivot->type;
         $keyedBySlug = $this->pivot->settings->keyBy('slug');
-        if ($this->pivot->type == 'container' && $keyedBySlug->hasKey('pckg.generic.pageStructure.container')) {
-            $typeSuffix = $keyedBySlug->getKey('pckg.generic.pageStructure.container')->pivot->value;
+        if ($this->pivot->type == 'container') {
+            $typeSuffix = $keyedBySlug->getKey('pckg.generic.pageStructure.container')->pivot->value ?? $this->pivot->type;
         }
 
         if ($keyedBySlug->hasKey('pckg.generic.pageStructure.class')) {
