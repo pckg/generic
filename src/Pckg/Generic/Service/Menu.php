@@ -16,7 +16,7 @@ class Menu
         }
 
         $menus = new Menus($repositoryObject);
-        $locale = first($language, config('pckg.locale.current'), 'en_GB');
+        $locale = first($language, config('pckg.locale.default'), 'en_GB');
         $menu = runInLocale(
             function() use ($menus, $slug) {
                 return $menus->where('slug', $slug)->one();
@@ -28,7 +28,7 @@ class Menu
             return '<!-- no menu ' . $slug . ' -->';
         }
 
-        $menuItems = runInLocale(function() use ($menu, $permissions, $repositoryObject) {
+        $menuItems = runInLocale(function() use ($menu, $permissions, $repositoryObject, $locale) {
             $entity = (new MenuItems($repositoryObject))->where('menu_id', $menu->id);
 
             if ($permissions) {

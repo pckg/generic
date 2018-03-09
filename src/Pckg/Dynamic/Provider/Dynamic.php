@@ -278,13 +278,13 @@ class Dynamic extends Provider
                         'controller' => View::class,
                     ],
                     [
-                        '/dynamic/tables/view/[table]'                      => [
+                        /*'/dynamic/tables/view/[table]'                      => [
                             'name'      => 'dynamic.record.view',
                             'view'      => 'viewTable',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
-                        ],
+                        ],*/
                         '/dynamic/tables/view/[table]/save'                 => [
                             'name'      => 'dynamic.record.view.save',
                             'view'      => 'saveView',
