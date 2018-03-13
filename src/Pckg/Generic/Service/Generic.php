@@ -9,6 +9,7 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
+use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Layout;
@@ -128,6 +129,11 @@ class Generic
 
     public function readSystemRoute($template)
     {
+        $repository = (new Layouts())->getRepository();
+        if (!$repository->getCache()->hasTable('layouts')) {
+            return;
+        }
+        
         $layout = Layout::gets(['template' => $template]);
 
         if (!$layout) {
