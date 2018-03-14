@@ -38,7 +38,7 @@ trait SettingsHelper
         }
 
         if ($setting->type == 'array') {
-            return json_decode($setting->pivot->value, true);
+            return (array)json_decode($setting->pivot->value, true);
         }
 
         return $setting->pivot->value;
