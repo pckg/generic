@@ -1,10 +1,10 @@
 <?php namespace Pckg\Generic\Controller;
 
 use Exception;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
-use Pckg\Database\Record;
 use Pckg\Generic\Entity\MenuItems;
 use Pckg\Generic\Entity\Routes;
 
@@ -38,12 +38,12 @@ class Permissions
         $for = get('for', null);
         $id = get('id', null);
         $groups = [
-            1    => 'Superadmin',
-            3    => 'Admin',
-            4    => 'PR',
-            5    => 'Checkin',
-            2    => 'User',
-            null => 'Guest',
+            0 => 'Guest',
+            1 => 'Superadmin',
+            3 => 'Admin',
+            4 => 'PR',
+            5 => 'Checkin',
+            2 => 'User',
         ];
         $permissions = [];
         $actions = [];
@@ -52,7 +52,7 @@ class Permissions
             $tables->usePermissionableTable();
             $allPermissions = $tables->where('id', $id)->all();
             $allPermissions->each(function($permission) use (&$permissions) {
-                $permissions[$permission->action][$permission->user_group_id] = true;
+                $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
                 'read'  => 'Read',
@@ -63,7 +63,7 @@ class Permissions
             $fields->usePermissionableTable();
             $allPermissions = $fields->where('id', $id)->all();
             $allPermissions->each(function($permission) use (&$permissions) {
-                $permissions[$permission->action][$permission->user_group_id] = true;
+                $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
                 'read'  => 'Read',
@@ -74,7 +74,7 @@ class Permissions
             $tableActions->usePermissionableTable();
             $allPermissions = $tableActions->where('id', $id)->all();
             $allPermissions->each(function($permission) use (&$permissions) {
-                $permissions[$permission->action][$permission->user_group_id] = true;
+                $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
                 'execute' => 'Execute',
@@ -84,7 +84,7 @@ class Permissions
             $menuItems->usePermissionableTable();
             $allPermissions = $menuItems->where('id', $id)->all();
             $allPermissions->each(function($permission) use (&$permissions) {
-                $permissions[$permission->action][$permission->user_group_id] = true;
+                $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
                 'read' => 'Read',
@@ -94,7 +94,7 @@ class Permissions
             $routes->usePermissionableTable();
             $allPermissions = $routes->where('id', $id)->all();
             $allPermissions->each(function($permission) use (&$permissions) {
-                $permissions[$permission->action][$permission->user_group_id] = true;
+                $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
                 'read' => 'Read',
@@ -136,13 +136,15 @@ class Permissions
         $permissions = [];
         foreach (post('permissions') as $action => $groups) {
             foreach ($groups as $group => $has) {
-                if ($has) {
-                    $permissions[] = [
-                        'id'            => $id,
-                        'user_group_id' => $group,
-                        'action'        => $action,
-                    ];
+                if (!$has) {
+                    continue;
                 }
+
+                $permissions[] = [
+                    'id'            => $id,
+                    'user_group_id' => $group > 0 ? $group : null,
+                    'action'        => $action,
+                ];
             }
         }
 

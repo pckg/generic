@@ -281,7 +281,7 @@ class Action
             $value = $setting->pivot->value;
 
             if ($setting->type == 'array') {
-                return json_decode($value, true);
+                return $value ? json_decode($value, true) : [];
             }
 
             return $value;
