@@ -100,7 +100,7 @@ class Generic
         return view(
             'languages',
             [
-                'languages' => (new Languages())->all(),
+                'languages' => localeManager()->getFrontendLanguages(),
             ]
         );
     }

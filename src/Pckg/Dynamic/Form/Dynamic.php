@@ -132,9 +132,7 @@ class Dynamic extends Bootstrap
 
     public function initLanguageFields()
     {
-        $languages = (new Languages())->all()
-                                      ->keyBy('slug')
-                                      ->map('title');
+        $languages = localeManager()->getFrontendLanguages();
 
         if (count($languages) < 2) {
             return;

@@ -17,7 +17,6 @@ use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
-use Pckg\Locale\Entity\Languages;
 use Throwable;
 
 /**
@@ -133,7 +132,7 @@ class Generic
         if (!$repository->getCache()->hasTable('layouts')) {
             return;
         }
-        
+
         $layout = Layout::gets(['template' => $template]);
 
         if (!$layout) {
@@ -345,9 +344,8 @@ class Generic
     public static function addRoutesFromDb()
     {
         $router = router();
-        $languages = (new Languages())->/*where('frontend')->*/
-        all()->keyBy('slug');
-        $defaultLanguage = $languages->first();
+        $languages = localeManager()->getFrontendLanguages()->keyBy('slug');
+        $defaultLanguage = localeManager()->getDefaultFrontendLanguage();;
         $multilingual = $languages->count() > 1 && config('multilingual');
 
         if ($multilingual) {
