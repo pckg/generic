@@ -240,6 +240,7 @@ class Action
         $display = $settings->getKey('pckg.generic.pageStructure.bgVideoDisplay')->pivot->value ?? 'background';
         $controls = $settings->getKey('pckg.generic.pageStructure.bgVideoControls')->pivot->value ?? 'yes';
         $loop = $settings->getKey('pckg.generic.pageStructure.bgVideoLoop')->pivot->value ?? 'yes';
+        $mute = $settings->getKey('pckg.generic.pageStructure.bgVideoMute')->pivot->value ?? null;
 
         if ($source == 'youtube') {
             if ($display == 'background') {
@@ -249,6 +250,7 @@ class Action
                               . '&autoplay='
                               . ($autoplay == 'yes' ? 1 : 0) . '&loop='
                               . ($loop == 'yes' ? 1 : 0)
+                              . ($mute ? '&mute=1' : '')
                               . '&modestbranding=1'
                               . '&playsinline=1'
                               . '&rel=0'

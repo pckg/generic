@@ -350,6 +350,7 @@ class PageStructure
             'bgVideoAutoplay' => '',
             'bgVideoControls' => '',
             'bgVideoLoop'     => '',
+            'bgVideoMute'     => '',
             'wrapperLockShow' => [],
             'wrapperLockHide' => [],
             'wrapperLockSystem' => [],

@@ -404,6 +404,7 @@ class Generic
             $resolvers = [
                 'route' => RouteResolver::class,
             ];
+
             if ($existingRouteByName) {
                 /**
                  * Route already exists, remove and replace it.
@@ -413,6 +414,14 @@ class Generic
                     $resolvers[$key] = $res;
                 }
                 router()->removeRouteByName($route->slug);
+            }
+
+            $routeResolvers = $route->resolvers;
+            if ($routeResolvers) {
+                $routeResolvers = (array)json_decode($routeResolvers, true);
+                foreach ($routeResolvers as $key => $res) {
+                    $resolvers[$key] = $res;
+                }
             }
 
             /**

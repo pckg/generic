@@ -251,6 +251,9 @@
                                 <pckg-select v-model="form.settings.bgVideoControls"
                                              :initial-options="availableVideoControls"
                                              :initial-multiple="false"></pckg-select>
+
+                                <label>Mute</label>
+                                <input type="checkbox" value="1" v-model="form.settings.bgVideoMute" />
                             </template>
                         </div>
                     </div>
@@ -540,6 +543,7 @@
                         bgVideoAutoplay: '',
                         bgVideoLoop: '',
                         bgVideoControls: '',
+                        bgVideoMute: '',
                         viewStyle: '',
                         sourceOffers: [],
                         sourceGalleries: [],
