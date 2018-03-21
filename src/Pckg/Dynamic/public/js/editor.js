@@ -270,8 +270,8 @@ var initTinymce = function (selector, config) {
         allow_html_in_named_anchor: true,
         allow_unsafe_link_target: true,
         forced_root_block: 'p',
-        force_br_newlines : false,
-        force_p_newlines : true,
+        force_br_newlines: false,
+        force_p_newlines: true,
         protect: [
             // /{{[^}]+}}/g,  // Protect {{ }}
             // /{%[^}]+%}/g,  // Protect {% %}
@@ -283,7 +283,10 @@ var initTinymce = function (selector, config) {
         ],
         image_class_list: [
             {title: 'None', value: ''},
-            {title: 'Default (.editor-img)', value: 'editor-img'}
+            {title: 'Default (.editor-img)', value: 'editor-img'},
+            {title: 'Responsive (.img-responsive)', value: 'img-responsive'},
+            {title: 'Circle (.img-circle)', value: 'img-circle'},
+            {title: 'Rounded (.img-rounded)', value: 'img-rounded'}
         ],
         images_upload_url: '/dynamic/uploader',
         automatic_uploads: false,
