@@ -26,7 +26,7 @@ class Export extends Controller
         ini_set('max_execution_time', 60);
         set_time_limit(60);
 
-        $entity = $table->createEntity();
+        $entity = $table->createEntity(null, false);
 
         if ($tableView) {
             $dynamicService->setView($tableView);
@@ -45,7 +45,6 @@ class Export extends Controller
                                       ->withOnField()
                                       ->where('on_table_id', $table->id)
                                       ->where('dynamic_relation_type_id', 1)
-                                      ->where('on_field_id', $listedFields->map('id'))
                                       ->all();
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);
@@ -54,7 +53,7 @@ class Export extends Controller
         /**
          * Filter records by $_GET['search']
          */
-        $dynamicService->getFilterService()->filterByGet($entity);
+        $dynamicService->getFilterService()->filterByGet($entity, $relations);
         $fieldTransformations = $dynamicService->getFieldsTransformations($entity, $table->listableFields);
 
         /**
@@ -70,10 +69,10 @@ class Export extends Controller
             $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
         }
 
-        /**
-         * @T00D00 - hackish ...
-         */
-        $entity->groupBy('`' . $entity->getTable() . '`.`id`');
+        if (!$entity->getQuery()->getGroupBy()) {
+            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
+        }
+        
         $records = $entity->all();
         $tabelize = (new Tabelize($entity))
             ->setRecords($records)

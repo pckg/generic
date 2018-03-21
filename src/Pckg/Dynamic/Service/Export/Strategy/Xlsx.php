@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
-use Pckg\Dynamic\Service\Export\Strategy;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
@@ -23,7 +22,7 @@ class Xlsx extends AbstractStrategy
          */
         $i = 1;
         $j = 1;
-        foreach ($lines[0] as $key => $val) {
+        foreach ($lines[0] ?? [] as $key => $val) {
             $spreadsheet->setActiveSheetIndex(0)
                         ->setCellValueByColumnAndRow($j, $i, $key)
                         ->getStyle("$j:$i")
@@ -35,7 +34,6 @@ class Xlsx extends AbstractStrategy
         /**
          * Make data
          */
-        //dd($lines);
         foreach ($lines as $line) {
             $i++;
             $j = 1;
@@ -51,7 +49,10 @@ class Xlsx extends AbstractStrategy
          */
         $sheet = $spreadsheet->getActiveSheet();
         $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
-        $cellIterator->setIterateOnlyExistingCells(true);
+
+        if ($lines) {
+            $cellIterator->setIterateOnlyExistingCells(true);
+        }
 
         foreach ($cellIterator as $cell) {
             $sheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
