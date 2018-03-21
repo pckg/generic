@@ -4,13 +4,13 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Raw;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Func;
-use Pckg\Database\Record;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
@@ -100,7 +100,7 @@ class Records extends Controller
         $dynamicService->setView($tableView);
         if (get('force')) {
             $tableView->loadToSession();
-              $this->response()->redirect();
+            $this->response()->redirect();
         } else {
             $tableView->loadToSessionIfNotLoaded();
         }
@@ -465,11 +465,11 @@ class Records extends Controller
     }
 
     /**
-     * @param Dynamic             $form     - resolved by injection
-     * @param Table               $table    - resolved from url
-     * @param Record              $record
-     * @param Relation|null       $relation - resolved from url
-     * @param Record|null $foreign  - resolved from url
+     * @param Dynamic       $form     - resolved by injection
+     * @param Table         $table    - resolved from url
+     * @param Record        $record
+     * @param Relation|null $relation - resolved from url
+     * @param Record|null   $foreign  - resolved from url
      *
      * @return \Pckg\Framework\Response
      */
