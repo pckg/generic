@@ -6,16 +6,10 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Service\Filter as FilterService;
 use Pckg\Dynamic\Service\Group as GroupService;
 use Pckg\Dynamic\Service\Sort as OrderService;
-use Pckg\Framework\Request\Data\Session;
 use Pckg\Locale\Lang;
 
 class Dynamic
 {
-
-    /**
-     * @var Session
-     */
-    protected $session;
 
     /**
      * @var Filter
@@ -35,14 +29,12 @@ class Dynamic
     protected $view;
 
     public function __construct(
-        Session $session,
         FilterService $filterService,
         OrderService $sortService,
         GroupService $groupService,
         Paginate $paginateService,
         Fields $fieldsService
     ) {
-        $this->session = $session;
         $this->filterService = $filterService;
         $this->sortService = $sortService;
         $this->groupService = $groupService;

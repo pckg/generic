@@ -100,7 +100,7 @@ class Records extends Controller
         $dynamicService->setView($tableView);
         if (get('force')) {
             $tableView->loadToSession();
-            $this->response()->redirect();
+              $this->response()->redirect();
         } else {
             $tableView->loadToSessionIfNotLoaded();
         }
@@ -190,6 +190,8 @@ class Records extends Controller
              */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
             Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
+
+            $dynamicService->selectScope($entity);
         }
 
         /**
