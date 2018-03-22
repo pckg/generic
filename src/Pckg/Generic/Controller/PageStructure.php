@@ -235,28 +235,28 @@ class PageStructure
             // pckg-generic-pageStructure-wrapper
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-wrapper',
-                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'class'  => PageStructure::class,
                                                          'method' => 'wrapper',
                                                      ])->id;
         } elseif ($data['type'] == 'container') {
             // pckg-generic-pageStructure-container
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-container',
-                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'class'  => PageStructure::class,
                                                          'method' => 'container',
                                                      ])->id;
         } elseif ($data['type'] == 'row') {
             // pckg-generic-pageStructure-row
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-row',
-                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'class'  => PageStructure::class,
                                                          'method' => 'row',
                                                      ])->id;
         } elseif ($data['type'] == 'column') {
             // pckg-generic-pageStructure-column
             $data['action_id'] = Action::getOrCreate([
                                                          'slug'   => 'pckg-generic-pageStructure-column',
-                                                         'class'  => 'Pckg\Generic\Controller\PageStructure',
+                                                         'class'  => PageStructure::class,
                                                          'method' => 'column',
                                                      ])->id;
         }
@@ -333,26 +333,26 @@ class PageStructure
          * This should be refactored to plugins. ;-)
          */
         return [
-            'class'           => '',
-            'container'       => '',
-            'style'           => '',
-            'width'           => [], // column
-            'offset'          => [], // column
-            'bgColor'         => '',
-            'bgImage'         => '',
-            'bgSize'          => '',
-            'bgAttachment'    => '',
-            'bgRepeat'        => '',
-            'bgPosition'      => '',
-            'bgVideo'         => '',
-            'bgVideoSource'   => '',
-            'bgVideoDisplay'  => '',
-            'bgVideoAutoplay' => '',
-            'bgVideoControls' => '',
-            'bgVideoLoop'     => '',
-            'bgVideoMute'     => '',
-            'wrapperLockShow' => [],
-            'wrapperLockHide' => [],
+            'class'             => '',
+            'container'         => '',
+            'style'             => '',
+            'width'             => [], // column
+            'offset'            => [], // column
+            'bgColor'           => '',
+            'bgImage'           => '',
+            'bgSize'            => '',
+            'bgAttachment'      => '',
+            'bgRepeat'          => '',
+            'bgPosition'        => '',
+            'bgVideo'           => '',
+            'bgVideoSource'     => '',
+            'bgVideoDisplay'    => '',
+            'bgVideoAutoplay'   => '',
+            'bgVideoControls'   => '',
+            'bgVideoLoop'       => '',
+            'bgVideoMute'       => '',
+            'wrapperLockShow'   => [],
+            'wrapperLockHide'   => [],
             'wrapperLockSystem' => [],
         ];
     }
