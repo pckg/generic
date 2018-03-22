@@ -39,6 +39,12 @@
                 type: String,
                 default: ''
             },
+            params: {
+                type: Object,
+                default: function () {
+                    return {};
+                }
+            },
             id: {
                 type: String,
                 default: ''
@@ -57,6 +63,9 @@
         },
         watch: {
             url: function (n, o) {
+                this.initDropzone();
+            },
+            params: function (n, o) {
                 this.initDropzone();
             }
         },
@@ -89,9 +98,11 @@
                         '</div>';
                 }
 
+
                 this.original = this.current;
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
+                    params: this.params,
                     previewsContainer: '#previews',
                     previewTemplate: this._previewTemplate,
                     clickable: $(this.$el).parent().find('.select-files').get()[0],
