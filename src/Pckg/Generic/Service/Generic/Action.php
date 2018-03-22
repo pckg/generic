@@ -283,13 +283,20 @@ class Action
             $value = $setting->pivot->value;
 
             if ($setting->type == 'array') {
-                return $value ? json_decode($value, true) : [];
+                return $value
+                    ? json_decode($value, true)
+                    : [];
             }
 
             return $value;
         }
 
         return $default;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 
 }
