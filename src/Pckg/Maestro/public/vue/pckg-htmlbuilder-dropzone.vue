@@ -114,7 +114,7 @@
                         }
 
                         if (data.message) {
-                            $dispather.$emit('notification:' + (data.sucess ? 'success' : 'error'), data.message);
+                            $dispather.$emit('notification:' + (data.success ? 'success' : 'error'), data.message);
                         }
 
                         this.$emit('input', data.url);
