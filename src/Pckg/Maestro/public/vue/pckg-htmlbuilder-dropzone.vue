@@ -113,6 +113,10 @@
                             this.current = data.url;
                         }
 
+                        if (data.message) {
+                            $dispather.$emit('notification:' + (data.sucess ? 'success' : 'error'), data.message);
+                        }
+
                         this.$emit('input', data.url);
                     }.bind(this)
                 });
