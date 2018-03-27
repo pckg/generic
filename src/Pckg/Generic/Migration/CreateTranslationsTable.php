@@ -9,6 +9,7 @@ class CreateTranslationsTable extends Migration
     {
         $translations = $this->table('translations');
         $translations->slug();
+        $translations->varchar('title', 256);
 
         $translationsI18n = $this->translatable('translations');
         $translationsI18n->text('value');

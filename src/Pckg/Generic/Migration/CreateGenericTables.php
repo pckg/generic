@@ -12,8 +12,9 @@ class CreateGenericTables extends Migration
     {
         return [
             // translatable, permissionable
-            CreateMenuTables::class,
             CreateLanguagesTable::class,
+            CreateMenuTables::class,
+            CreateListTables::class,
             CreateTranslationsTable::class,
         ];
     }

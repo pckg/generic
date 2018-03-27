@@ -344,9 +344,10 @@ class Generic
     public static function addRoutesFromDb()
     {
         $router = router();
-        $languages = localeManager()->getFrontendLanguages()->keyBy('slug');
-        $defaultLanguage = localeManager()->getDefaultFrontendLanguage();;
-        $multilingual = $languages->count() > 1 && config('multilingual');
+        $localeManager = localeManager();
+        $languages = $localeManager->getFrontendLanguages()->keyBy('slug');
+        $defaultLanguage = $localeManager->getDefaultFrontendLanguage();
+        $multilingual = $localeManager->isMultilingual();
 
         if ($multilingual) {
             /**
@@ -382,7 +383,7 @@ class Generic
         }
 
         $routes = new Routes();
-        if (!$routes->getRepository()->getCache()->hasTable('routes')) {
+        if (!$defaultLanguage || !$routes->getRepository()->getCache()->hasTable('routes')) {
             return;
         }
         $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');

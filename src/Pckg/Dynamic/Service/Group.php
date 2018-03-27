@@ -44,8 +44,8 @@ class Group extends AbstractService
         $groups = $this->getAppliedGroups();
         foreach ($groups as $group) {
             if (isset($group['field'])) {
-                $field = (new Fields())->where('id', $group['field'])->one();
-                $entity->addGroupBy($field->field);
+                $field = (new Fields())->withTable()->where('id', $group['field'])->one();
+                $entity->addGroupBy($field->table->table . '.' . $field->field);
             }
         }
     }

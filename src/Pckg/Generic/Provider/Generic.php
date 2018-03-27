@@ -2,7 +2,7 @@
 
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
-use Pckg\Generic\Console\CreateGenericActionsData;
+use Pckg\Generic\Console\ImportGenericBackend;
 use Pckg\Generic\Console\CreateListData;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
@@ -33,8 +33,7 @@ class Generic extends Provider
     public function consoles()
     {
         return [
-            CreateListData::class,
-            CreateGenericActionsData::class,
+            ImportGenericBackend::class,
         ];
     }
 

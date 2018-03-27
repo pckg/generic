@@ -6,7 +6,7 @@ class SetContentLanguage
     public function execute(callable $next)
     {
         if (!isset($_SESSION['pckg_dynamic_lang_id'])) {
-            $_SESSION['pckg_dynamic_lang_id'] = localeManager()->getDefaultFrontendLanguage()->slug;
+            $_SESSION['pckg_dynamic_lang_id'] = localeManager()->getDefaultFrontendLanguage()->slug ?? 'en';
         }
 
         return $next();
