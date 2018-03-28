@@ -183,9 +183,14 @@ class Records extends Controller
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
 
-            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
-                   . path('ds') . 'View' . path('ds');
+            $partial = implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
+                       . path('ds') . 'View' . path('ds');
+            $dir = path('app_src') . $partial;
             Twig::addDir($dir);
+            if (config('app') != config('app_parent')) {
+                $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
+                Twig::addDir($dir);
+            }
             /**
              * This is needed for table actions.
              */
