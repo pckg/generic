@@ -208,7 +208,7 @@ class Filter extends AbstractService
                         $signMapper[$relationFilter['method']]
                     );
                 }
-            } else if (false && $relation->dynamic_relation_type_id == 2) {
+            } else if ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
                 $joined = true;
