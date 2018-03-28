@@ -155,27 +155,16 @@ class Filter extends AbstractService
                 $field = null;
                 $alias = null;
 
-                /**
-                 * When listing orders users we filter by orders.status_id
-                 */
-                if (isset($relationFilter['field'])) {
-                    $field = Field::getOrFail(['id' => $relationFilter['field']]);
-                    $alias = 'relation_' . $relation->id . '_' . $relation->showTable->table;
-
-                    $joined = true;
-                    $relation->joinToEntity($entity, $alias);
-
-                    if (!$relationFilter['subfield']) {
-                        $entity->where($alias . '.' . $field->field, $relationFilter['value'],
-                                       $signMapper[$relationFilter['method']]);
-                    }
-                }
-
-                /**
-                 * When listing orders users we filter by orders_users.units.unit_group_id
-                 */
                 if ($relationFilter['subfield']) {
+                    /*$alias = 'relation_' . $relation->id . '_' . $relation->showTable->table;
+                    $relation->joinToEntity($entity, $alias);
+                    $joined = true;*/
+
+                    /**
+                     * When listing orders users we filter by orders_users.units.unit_group_id
+                     */
                     $field = Field::getOrFail(['id' => $relationFilter['subfield']]);
+
                     $subrelation = (new Relations())->withOnField()
                                                     ->withShowTable()
                                                     ->withOnTable()
@@ -184,11 +173,32 @@ class Filter extends AbstractService
                                                     ->one();
 
                     $subalias = 'relation_' . $subrelation->id . '_' . $subrelation->showTable->table;
-                    $joined = true;
-                    $subrelation->joinToEntity($entity, $subalias, $alias);
+                    /*$subrelation->joinToEntity($entity, $subalias, $alias);
 
                     $entity->where($subalias . '.' . $field->field, $relationFilter['value'],
+                                   $signMapper[$relationFilter['method']]);*/
+                } elseif (isset($relationFilter['field'])) {
+                    $alias = 'relation_' . $relation->id . '_' . $relation->showTable->table;
+                    $relation->joinToEntity($entity, $alias);
+                    $joined = true;
+
+                    /**
+                     * When listing orders users we filter by orders.status_id
+                     */
+                    $field = Field::getOrFail(['id' => $relationFilter['field']]);
+
+                    $entity->where($alias . '.' . $field->field, $relationFilter['value'],
                                    $signMapper[$relationFilter['method']]);
+
+                    /*$field = Field::getOrFail(['id' => $relationFilter['field']]);
+
+                    $entity->where($relation->onTable->table . '.' . $relation->onField->field,
+                                   $relation->showTable->createEntity()
+                                                       ->select([
+                                                                    $relation->showTable->table . '.id',
+                                                                ])
+                                                       ->where($field->field, $relationFilter['value'],
+                                                               $signMapper[$relationFilter['method']]));*/
                 }
 
                 if (!$relationFilter['field'] && !$relationFilter['subfield']) {
@@ -198,7 +208,7 @@ class Filter extends AbstractService
                         $signMapper[$relationFilter['method']]
                     );
                 }
-            } else if ($relation->dynamic_relation_type_id == 2) {
+            } else if (false && $relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
                 $joined = true;
