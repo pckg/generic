@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Migration;
 
+use Pckg\Auth\Migration\CreateAuthTables;
 use Pckg\Migration\Migration;
 
 class CreateGenericTables extends Migration
@@ -23,6 +24,7 @@ class CreateGenericTables extends Migration
     {
         return [
             (new CreateSettingsTable())->setRepository($this->repository),
+            (new CreateAuthTables())->setRepository($this->repository),
         ];
     }
 
