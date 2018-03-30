@@ -11,6 +11,7 @@ use Pckg\Generic\Record\Content as ContentRecord;
 use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\ListItem;
 use Pckg\Generic\Record\ListRecord;
+use Pckg\Generic\Record\Menu;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Variable;
 
@@ -82,6 +83,17 @@ class ImportGenericBackend extends Command
          */
         (new Collection(config('pckg.generic.variables', [])))->each(function($name, $slug) {
             Variable::getOrCreate(['slug' => $slug]);
+        });
+
+        /**
+         * Import menus.
+         */
+        (new Collection([['slug' => 'frontend', 'template' => 'frontendMainNav']]))->each(function($menu, $slug) {
+            $menuR = Menu::getOrNew(['slug' => $menu['slug']]);
+
+            if ($menuR->isNew()) {
+                $menuR->setAndSave(['template' => $menu['template']]);
+            }
         });
 
         /**
