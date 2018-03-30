@@ -13,6 +13,7 @@ use Pckg\Generic\Record\ListItem;
 use Pckg\Generic\Record\ListRecord;
 use Pckg\Generic\Record\Menu;
 use Pckg\Generic\Record\Route;
+use Pckg\Generic\Record\SettingType;
 use Pckg\Generic\Record\Variable;
 
 class ImportGenericBackend extends Command
@@ -94,6 +95,13 @@ class ImportGenericBackend extends Command
             if ($menuR->isNew()) {
                 $menuR->setAndSave(['template' => $menu['template']]);
             }
+        });
+
+        /**
+         * Import setting types.
+         */
+        (new Collection([['slug' => 'array']]))->each(function($settingType, $slug) {
+            SettingType::getOrCreate(['slug' => $settingType['slug']]);
         });
 
         /**
