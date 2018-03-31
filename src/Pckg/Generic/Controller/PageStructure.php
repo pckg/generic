@@ -185,9 +185,7 @@ class PageStructure
         /**
          * Add new permissions.
          */
-        foreach (post('read') as $userGroup) {
-            $actionsMorph->grantPermissionTo('read', $userGroup);
-        }
+        $actionsMorph->grantPermissionTo('read', post('read'));
 
         return response()->respondWithAjaxSuccess();
     }

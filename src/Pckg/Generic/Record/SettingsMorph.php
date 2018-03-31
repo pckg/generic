@@ -13,9 +13,9 @@ class SettingsMorph extends Record
 
     public function resolve(&$args)
     {
-        if ($this->setting_id == 1 || $this->setting_id == 9) {
+        if ($this->setting->slug == 'resolve-table' || $this->setting->slug == 'pckg-generic-routes-page-structure-actionsmorph') {
             $args[] = Reflect::create(Table::class)->resolve($this->value);
-        } else if ($this->setting_id == 7) {
+        } else if (false && $this->setting_id == 7) {
             $args[] = (new ActionsMorphs())->where('id', $this->value)->oneOrFail();
         }
     }
