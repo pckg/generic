@@ -55,6 +55,8 @@ class CreateGenericTables extends Migration
         $routes->slug();
         $routes->integer('layout_id')->references('layouts');
         $routes->timeable();
+        $routes->varchar('tags');
+        $routes->varchar('resolvers');
 
         $routesI18n = $this->translatable('routes');
         $routesI18n->title();
