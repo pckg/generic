@@ -275,8 +275,11 @@ class Action
 
     public function getSetting($key = null, $default = null)
     {
-        $key = 'pckg.generic.pageStructure.' . $key;
         $settings = $this->action->pivot->settings->keyBy('slug');
+        if (!$key) {
+            return $settings;
+        }
+        $key = 'pckg.generic.pageStructure.' . $key;
 
         if ($settings->hasKey($key)) {
             $setting = $settings->getKey($key);
