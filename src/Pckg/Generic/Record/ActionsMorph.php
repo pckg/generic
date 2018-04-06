@@ -184,4 +184,19 @@ class ActionsMorph extends Record
         return Reflect::create($partial);
     }
 
+    public function addClass($class)
+    {
+        $setting = Setting::getOrCreate(['slug' => 'pckg.generic.pageStructure.class']);
+        $settingsMorph = SettingsMorph::getOrNew([
+                                                     'setting_id' => $setting->id,
+                                                     'poly_id'    => $this->id,
+                                                     'morph_id'   => ActionsMorphs::class,
+                                                 ]);
+
+        return $settingsMorph->setAndSave([
+                                              'value' => $settingsMorph->value . ($settingsMorph->value ? ' ' : '') .
+                                                         $class,
+                                          ]);
+    }
+
 }

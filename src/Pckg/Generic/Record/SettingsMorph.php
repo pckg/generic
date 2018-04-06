@@ -13,7 +13,9 @@ class SettingsMorph extends Record
 
     public function resolve(&$args)
     {
-        if ($this->setting->slug == 'resolve-table' || $this->setting->slug == 'pckg-generic-routes-page-structure-actionsmorph') {
+        if ($this->setting->slug == 'resolve-table' ||
+            $this->setting->slug == 'pckg-generic-routes-page-structure-actionsmorph'
+        ) {
             $args[] = Reflect::create(Table::class)->resolve($this->value);
         } else if (false && $this->setting_id == 7) {
             $args[] = (new ActionsMorphs())->where('id', $this->value)->oneOrFail();
@@ -52,12 +54,14 @@ class SettingsMorph extends Record
     public static function makeItHappen($key, $value, $morph, $poly, $type = null)
     {
         $setting = Setting::getOrNew(['slug' => $key]);
-        $setting->setAndSave(['type' => $type]);
+        if ($setting->isNew()) {
+            $setting->setAndSave(['type' => $type ? $type : (is_array($value) ? 'array' : null)]);
+        }
         $settingsMorph = SettingsMorph::getOrNew([
-                                                        'setting_id' => $setting->id,
-                                                        'poly_id'    => $poly,
-                                                        'morph_id'   => $morph,
-                                                    ]);
+                                                     'setting_id' => $setting->id,
+                                                     'poly_id'    => $poly,
+                                                     'morph_id'   => $morph,
+                                                 ]);
         $settingsMorph->setAndSave([
                                        'value' => is_array($value) ? json_encode($value) : $value,
                                    ]);
