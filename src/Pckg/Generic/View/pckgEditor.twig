@@ -478,6 +478,15 @@
                                     <div v-html="partial.htmlIcon"></div>
                                 </div>
                             </div>
+
+                            <h2>Footers</h2>
+
+                            <div class="item" v-for="partial in footers">
+                                <div class="icon" @click.prevent="addAction(partial.obj)">
+                                    <div class="title" v-text="partial.title"></div>
+                                    <div v-html="partial.htmlIcon"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -576,6 +585,7 @@
                 structures: {},
                 pages: {},
                 templates: {},
+                footers: {},
                 padding: {
                     top: 'no',
                     bottom: 'no',
@@ -682,6 +692,7 @@
                     this.structures = data.structures;
                     this.pages = data.pages;
                     this.templates = data.templates;
+                    this.footers = data.footers;
 
                     this.routes = data.routes;
                 }.bind(this));

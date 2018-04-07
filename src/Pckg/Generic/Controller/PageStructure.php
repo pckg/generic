@@ -36,7 +36,7 @@ class PageStructure
             'templates'                      => config('pckg.generic.templates'),
         ];
 
-        foreach (['partials', 'structures', 'pages'] as $type) {
+        foreach (['partials', 'structures', 'pages', 'footers'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
                 return (new $partial)->forJson();
             });

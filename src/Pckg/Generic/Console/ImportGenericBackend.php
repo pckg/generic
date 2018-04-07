@@ -113,36 +113,6 @@ class ImportGenericBackend extends Command
             $actionRecord->setAndSave($action);
         });
 
-        /**
-         * Import routes.
-         */
-        (new Collection(config('pckg.generic.routes', [])))->each(function($route) {
-            $routeRecord = (new Routes())->joinTranslations()->where('slug', $route['slug'])->one();
-
-            if ($routeRecord) {
-                return;
-            }
-
-            $routeRecord = Route::create([
-                                             'route'     => $route['url'],
-                                             'slug'      => $route['slug'],
-                                             'title'     => $route['title'],
-                                             'layout_id' => $route['layout_id'],
-                                         ]);
-
-            $action = Action::getOrFail(['slug' => $route['morph']['action']]);
-
-            $content = ContentRecord::create(['content' => $route['morph']['content']]);
-
-            ActionsMorph::create([
-                                     'action_id'   => $action->id,
-                                     'content_id'  => $content->id,
-                                     'morph_id'    => Routes::class,
-                                     'poly_id'     => $routeRecord->id,
-                                     'variable_id' => 1,
-                                 ]);
-        });
-
         $this->output('Done');
     }
 
