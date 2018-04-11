@@ -54,7 +54,7 @@ class SettingsMorph extends Record
     public static function makeItHappen($key, $value, $morph, $poly, $type = null)
     {
         $setting = Setting::getOrNew(['slug' => $key]);
-        if ($setting->isNew()) {
+        if (!$setting->id) {
             $setting->setAndSave(['type' => $type ? $type : (is_array($value) ? 'array' : null)]);
         }
         $settingsMorph = SettingsMorph::getOrNew([
