@@ -6,12 +6,35 @@
  routes: []
  });*/
 
+var $authStore = {
+    state: {
+        user: {
+            test: 'yes'
+        }
+    },
+    getters: {
+        user: function (state) {
+            return state.user;
+        }
+    },
+    mutations: {
+        prepareUser: function (state) {
+            http.get('/api/auth/user', function (data) {
+                state.user = data.user;
+            }.bind(this));
+        }
+    }
+};
+
 var $store = new Vuex.Store({
     state: {
         router: {
             urls: Pckg.router.urls || {}
         },
         translations: Pckg.translations || {}
+    },
+    modules: {
+        auth: $authStore
     },
     actions: {},
     mutations: {},
@@ -20,10 +43,12 @@ var $store = new Vuex.Store({
 
 var $vue = new Vue({
     el: '#vue-app',
+    $store,
     // router: $router,
     data: {
         alerts: [],
-        modals: []
+        modals: [],
+        $authStore: $authStore
     },
     mixins: [pckgDelimiters],
     methods: {
@@ -33,6 +58,9 @@ var $vue = new Vue({
             Vue.nextTick(function () {
                 $('#' + data.id).modal('show');
             });
+        },
+        emit: function (event) {
+            $dispatcher.$emit(event);
         }
     }
 });

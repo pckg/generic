@@ -2,7 +2,7 @@
  * Register main Vue event dispatcher
  * @type {Vue}
  */
-$dispatcher = new Vue();
+var $dispatcher = new Vue();
 
 var data = data || {};
 
@@ -23,11 +23,15 @@ var pckgTranslations = {
 var pckgFormValidator = {
     methods: {
         validateAndSubmit: function (submit) {
-            this.$validator.validateAll().then(function (ok) {
+            console.log('validating');
+            this.$validator.validateAll().then(function (ok, a) {
                 if (ok) {
+                    console.log('ok');
                     submit();
                 } else {
-                    globalScrollTo($(this.$el).find('.htmlbuilder-validator-error').first());
+                    console.log('error', ok, a);
+                    var element = $(this.$el).find('.htmlbuilder-validator-error').first();
+                    globalScrollTo(element);
                 }
             }.bind(this));
         }
