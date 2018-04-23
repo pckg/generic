@@ -2,6 +2,9 @@
 
 {{ _metaManager.getMeta('footer') | raw }}
 
+<!-- google fonts -->
+{{ _assetManager.getGoogleFonts() | raw }}
+
 {% if _env.isDev() and _debugBar %}
     {% set renderer = _debugBar.getJavascriptRenderer() %}
     {% do renderer.setOpenHandlerUrl('/open.php') %}
