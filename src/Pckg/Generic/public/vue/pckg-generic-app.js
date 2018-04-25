@@ -19,6 +19,11 @@ const $authStore = {
     },
     mutations: {
         prepareUser: function (state) {
+            /**
+             * @T00D00 - preload?
+             */
+            state.user = {'id': 1};
+            return;
             http.get('/api/auth/user', function (data) {
                 state.user = data.user;
             }.bind(this));
@@ -29,7 +34,7 @@ const $authStore = {
 const $basketStore = {
     state: {
         orders: [],
-        dimensions: [],
+        dimensions: Pckg.data.dimensions,
     },
     mutations: {
         prepareBasket: function (state) {
@@ -74,7 +79,7 @@ new Vue({
         }
     },
     mounted: function () {
-        $store.commit('prepareBasket');
+        // $store.commit('prepareBasket');
         $store.commit('prepareUser');
     }
 });

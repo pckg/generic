@@ -171,6 +171,7 @@
                         return;
                     }
 
+                    console.log('refreshList timeout');
                     http.getJSON(this.refreshUrl + '?search=' + $(this.$el).find('.bs-searchbox input').val(), function (data) {
                         if (Object.keys(data).length == 1) {
                             this.options = data[Object.keys(data)[0]];
@@ -206,7 +207,7 @@
             /**
              * Initial fetch.
              */
-            if ((!this.options || this.options.length == 0) && (!this.refreshUrl || this.refreshUrl.length > 0)) {
+            if ((!this.options || this.options.length == 0) && this.refreshUrl && this.refreshUrl.length > 0) {
                 this.refreshList();
             }
         }
