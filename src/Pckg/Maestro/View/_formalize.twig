@@ -11,7 +11,7 @@
         mixins: [pckgDelimiters],
         data: function () {
             return {
-                form: {{ form.getData() | json_encode | raw }},
+                data: {{ form.getData() | json_encode | raw }},
                 buttons: ['submit', 'as_new'],
                 submitting: false
             };
