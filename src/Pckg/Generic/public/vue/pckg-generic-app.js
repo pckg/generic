@@ -28,7 +28,7 @@ const $authStore = {
 
 const $basketStore = {
     state: {
-        orders: [],
+        basketOrder: {orders: []},
         dimensions: Pckg.data.dimensions,
     },
     mutations: {
@@ -42,7 +42,7 @@ const $basketStore = {
                     });
                 });
 
-                state.orders = data.orders;
+                state.basketOrder = data.order;
                 state.dimensions = data.dimensions;
             }.bind(this));
         }
