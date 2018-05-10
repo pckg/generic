@@ -83,7 +83,6 @@ const $vue = new Vue({
     // router: $router,
     data: {
         alerts: [],
-        modals: [],
         //$authStore: $authStore,
         //$basketStore: $basketStore
     },
