@@ -17,6 +17,7 @@ use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Locale\Entity\Languages;
+use Pckg\Locale\Record\Language;
 
 class Dynamic extends Bootstrap
 {
@@ -146,7 +147,9 @@ class Dynamic extends Bootstrap
         $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')
              ->setValue($languageId)
-             ->addOptions($languages)
+             ->addOptions($languages->keyBy('id')->map(function(Language $language){
+                 return $language->title;
+             }))
              ->setLabel('Language');
 
         if ($this->isEditable()) {
