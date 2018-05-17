@@ -26,7 +26,7 @@
             },
             performLoginCheck: function () {
                 this.lastPing = moment().unix();
-                http.get($store.state.router.urls['api.auth.loginStatus'], function (data) {
+                http.getJSON($store.state.router.urls['api.auth.loginStatus'], function (data) {
                     if (data.loggedIn) {
                         return;
                     }

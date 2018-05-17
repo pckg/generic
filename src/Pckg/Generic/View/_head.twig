@@ -49,31 +49,16 @@
     Pckg.config.cdn = {{ config('storage.cdn') | json_encode | raw }};
 
     Pckg.router = {};
-    Pckg.router.urls = {
-        'derive.user.profile': '{{ url('derive.user.profile') }}',
-        'api.auth.loginStatus': '{{ url('api.auth.loginStatus') }}',
-        'pckg.generic.pageStructure.initialFetch': '{{ url('pckg.generic.pageStructure.initialFetch') }}',
-        'pckg.generic.pageStructure.actionsMorph': '{{ url('pckg.generic.pageStructure.actionsMorph') }}',
-        'pckg.generic.pageStructure.actionsMorph.addPartial': '{{ url('pckg.generic.pageStructure.actionsMorph.addPartial') }}',
-        'pckg.generic.pageStructure.actionsMorph.addRoutePartial': '{{ url('pckg.generic.pageStructure.actionsMorph.addRoutePartial') }}',
-        'pckg.generic.pageStructure.actionsMorph.routeTree': '{{ url('pckg.generic.pageStructure.actionsMorph.routeTree') }}',
-        'pckg.generic.pageStructure.actionsMorphSettings': '{{ url('pckg.generic.pageStructure.actionsMorphSettings') }}',
-        'pckg.generic.pageStructure.actionsMorphContent': '{{ url('pckg.generic.pageStructure.actionsMorphContent') }}',
-        'pckg.generic.pageStructure.duplicateActionsMorphContent': '{{ url('pckg.generic.pageStructure.duplicateActionsMorphContent') }}',
-        'pckg.generic.pageStructure.createActionsMorphContent': '{{ url('pckg.generic.pageStructure.createActionsMorphContent') }}',
-        'pckg.generic.pageStructure.content': '{{ url('pckg.generic.pageStructure.content') }}',
-        'pckg.generic.pageStructure.actionsMorphBackgroundImage': '{{ url('pckg.generic.pageStructure.actionsMorphBackgroundImage') }}',
-        'dynamic.records.field.toggle': '{{ url('dynamic.records.field.toggle') }}',
-        'dynamic.records.field.order': '{{ url('dynamic.records.field.order') }}',
-        'api.basket.stepOne.inquiryItem': '{{ url('api.basket.stepOne.inquiryItem') }}',
-        'api.basket.stepOne.offer': '{{ url('api.basket.stepOne.offer') }}',
-    };
+    Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};
 
     Pckg.translations = {
         'pckg.htmlbuilder.btn.viewRecord': '{{ __('pckg.htmlbuilder.btn.viewRecord') }}',
         'pckg.htmlbuilder.btn.toList': '{{ __('pckg.htmlbuilder.btn.toList') }}',
         'pckg.htmlbuilder.btn.refreshList': '{{ __('pckg.htmlbuilder.btn.refreshList') }}'
     };
+
+    Pckg.vue = {};
+    Pckg.vue.stores = {};
 
     {% if _env.isDev() %}
     Vue.config.debug = true;

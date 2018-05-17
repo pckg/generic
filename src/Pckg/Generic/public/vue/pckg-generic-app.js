@@ -6,7 +6,7 @@
  routes: []
  });*/
 
-const $authStore = {
+Pckg.vue.stores.auth = {
     state: {
         user: {
             test: 'yes'
@@ -19,21 +19,21 @@ const $authStore = {
     },
     mutations: {
         prepareUser: function (state) {
-            http.get('/api/auth/user', function (data) {
+            http.getJSON('/api/auth/user', function (data) {
                 state.user = data.user;
             }.bind(this));
         }
     }
 };
 
-const $basketStore = {
+Pckg.vue.stores.basket = {
     state: {
         basketOrder: {orders: []},
         dimensions: Pckg.data.dimensions,
     },
     mutations: {
         prepareBasket: function (state) {
-            http.get('/api/basket', function (data) {
+            http.getJSON('/api/basket', function (data) {
                 // temp
                 $.each(data.orders, function (i, order) {
                     $.each(order.packets, function (j, packet) {
@@ -56,15 +56,13 @@ const $store = new Vuex.Store({
         },
         translations: Pckg.translations || {}
     },
-    modules: {
-        auth: $authStore,
-        basket: $basketStore
-    },
+    modules: Pckg.vue.stores,
     actions: {},
     mutations: {},
     getters: {}
 });
 
+if ($('nav.header').length > 0) {
 new Vue({
     el: 'nav.header',
     $store,
@@ -77,6 +75,7 @@ new Vue({
         $store.commit('prepareUser');
     }
 });
+}
 
 const $vue = new Vue({
     el: '#vue-app',
