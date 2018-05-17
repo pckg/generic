@@ -147,7 +147,7 @@ class Dynamic extends Bootstrap
         $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')
              ->setValue($languageId)
-             ->addOptions($languages->keyBy('id')->map(function(Language $language){
+             ->addOptions($languages->keyBy('slug')->map(function(Language $language){
                  return $language->title;
              }))
              ->setLabel('Language');
