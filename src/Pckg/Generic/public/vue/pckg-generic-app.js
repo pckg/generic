@@ -30,6 +30,7 @@ Pckg.vue.stores.basket = {
     state: {
         basketOrder: {orders: []},
         dimensions: Pckg.data.dimensions,
+        loaded: false,
     },
     mutations: {
         prepareBasket: function (state) {
@@ -44,6 +45,7 @@ Pckg.vue.stores.basket = {
 
                 state.basketOrder = data.order;
                 state.dimensions = data.dimensions;
+                state.loaded = true;
             }.bind(this));
         }
     }
