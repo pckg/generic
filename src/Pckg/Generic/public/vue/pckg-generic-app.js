@@ -79,6 +79,7 @@ new Vue({
 
 const $vue = new Vue({
     el: '#vue-app',
+    $store,
     // router: $router,
     data: {
         alerts: [],
@@ -93,6 +94,9 @@ const $vue = new Vue({
             Vue.nextTick(function () {
                 $('#' + data.id).modal('show');
             });
+        },
+        emit: function (event) {
+            $dispatcher.$emit(event);
         }
     }
 });

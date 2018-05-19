@@ -47,20 +47,6 @@ class PageStructure
         return $data;
     }
 
-    public function getPageStructureAction(ActionMorph $actionMorphForm, Simple $simpleContentForm)
-    {
-        $actionMorphForm->initFields();
-
-        vueManager()->addView('Pckg/Generic:routes/_pageStructure', [
-            'actionMorphForm'   => $actionMorphForm,
-            'simpleContentForm' => $simpleContentForm,
-            'backgrounds'       => (new ListItems())->where('list_id', 'actionsMorphs.backgrounds')->all(),
-            'widths'            => (new ListItems())->where('list_id', 'actionsMorphs.widths')->all(),
-        ]);
-
-        return view('routes/pageStructure');
-    }
-
     public function getRoutesAction()
     {
         return [
