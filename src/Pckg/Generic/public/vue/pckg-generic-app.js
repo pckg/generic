@@ -6,6 +6,9 @@
  routes: []
  });*/
 
+/**
+ * @T00D00 - preload user from server
+ */
 Pckg.vue.stores.auth = {
     state: {
         user: {
@@ -39,9 +42,12 @@ Pckg.vue.stores.basket = {
         basketOrder: {orders: []},
         dimensions: Pckg.data.dimensions,
         loaded: false,
+        isOnBasket: false
     },
     mutations: {
-        prepareBasket: function (state) {
+        prepareBasket: function (state, config) {
+            state.isOnBasket = (config && config.isOnBasket) || false,
+
             http.getJSON('/api/basket', function (data) {
                 // temp
                 $.each(data.orders, function (i, order) {
