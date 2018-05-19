@@ -18,9 +18,17 @@ Pckg.vue.stores.auth = {
         }
     },
     mutations: {
-        prepareUser: function (state) {
+        prepareUser: function (state, callback) {
             http.getJSON('/api/auth/user', function (data) {
                 state.user = data.user;
+                if (callback) {
+                    callback();
+                }
+            }.bind(this));
+        },
+        logoutUser: function (state, callback) {
+            http.getJSON('/logout', function () {
+                this.prepareUser(state, callback)
             }.bind(this));
         }
     }
@@ -65,18 +73,18 @@ const $store = new Vuex.Store({
 });
 
 if ($('nav.header').length > 0) {
-new Vue({
-    el: 'nav.header',
-    $store,
-    computed: {
-        basket: function () {
-            return $store.state.basket;
+    new Vue({
+        el: 'nav.header',
+        $store,
+        computed: {
+            basket: function () {
+                return $store.state.basket;
+            }
+        },
+        mounted: function () {
+            $store.commit('prepareUser');
         }
-    },
-    mounted: function () {
-        $store.commit('prepareUser');
-    }
-});
+    });
 }
 
 const $vue = new Vue({
