@@ -36,7 +36,7 @@
             </div>
             {% for tab in tabs %}
                 <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                    <i class="fa fa-spinner fa-spin fa-3x fa-fw text-center"></i>
+                    <i class="fa fa-2x fa-spinner fa-spin fa-fw text-center"></i>
                     <keep-alive>
                         <template v-if="selectedTab == {{ tab.id }}">
                             <dynamic-tab-{{ tab.id }}></dynamic-tab-{{ tab.id }}>
