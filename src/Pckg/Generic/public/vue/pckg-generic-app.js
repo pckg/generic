@@ -32,38 +32,6 @@ Pckg.vue.stores.auth = {
     }
 };
 
-Pckg.vue.stores.basket = {
-    state: {
-        basketOrder: Pckg.data.basketOrder || {orders: []},
-        dimensions: Pckg.data.dimensions,
-        loaded: false,
-        isOnBasket: false
-    },
-    mutations: {
-        prepareBasket: function (state, config) {
-            state.isOnBasket = (config && config.isOnBasket) || false;
-
-            if (config.skipIfExistent && state.basketOrder.orders.length > 0) {
-                return;
-            }
-
-            http.getJSON('/api/basket', function (data) {
-                // temp
-                $.each(data.orders, function (i, order) {
-                    $.each(order.packets, function (j, packet) {
-                        data.orders[i].packets[j].profile = {};
-                        data.orders[i].packets[j].profile.setting = order.profile;
-                    });
-                });
-
-                state.basketOrder = data.order;
-                state.dimensions = data.dimensions;
-                state.loaded = true;
-            }.bind(this));
-        }
-    }
-};
-
 const $store = new Vuex.Store({
     state: {
         router: {
