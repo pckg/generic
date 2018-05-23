@@ -60,6 +60,9 @@
     Pckg.vue = {};
     Pckg.vue.stores = {};
 
+    Pckg.auth = {};
+    Pckg.auth.user = {{ _auth.getUser() | json_encode | raw }};
+
     {% if _env.isDev() %}
     Vue.config.debug = true;
     Vue.config.silent = false;

@@ -6,14 +6,9 @@
  routes: []
  });*/
 
-/**
- * @T00D00 - preload user from server
- */
 Pckg.vue.stores.auth = {
     state: {
-        user: {
-            test: 'yes'
-        }
+        user: Pckg.auth.user || {}
     },
     getters: {
         user: function (state) {
@@ -39,14 +34,18 @@ Pckg.vue.stores.auth = {
 
 Pckg.vue.stores.basket = {
     state: {
-        basketOrder: {orders: []},
+        basketOrder: Pckg.data.basketOrder || {orders: []},
         dimensions: Pckg.data.dimensions,
         loaded: false,
         isOnBasket: false
     },
     mutations: {
         prepareBasket: function (state, config) {
-            state.isOnBasket = (config && config.isOnBasket) || false,
+            state.isOnBasket = (config && config.isOnBasket) || false;
+
+            if (config.skipIfExistent && state.basketOrder.orders.length > 0) {
+                return;
+            }
 
             http.getJSON('/api/basket', function (data) {
                 // temp
@@ -86,9 +85,6 @@ if ($('nav.header').length > 0) {
             basket: function () {
                 return $store.state.basket;
             }
-        },
-        mounted: function () {
-            $store.commit('prepareUser');
         }
     });
 }

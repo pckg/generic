@@ -253,7 +253,7 @@
                                              :initial-multiple="false"></pckg-select>
 
                                 <label>Mute</label>
-                                <input type="checkbox" value="1" v-model="form.settings.bgVideoMute" />
+                                <input type="checkbox" value="1" v-model="form.settings.bgVideoMute"/>
                             </template>
                         </div>
                     </div>
@@ -366,7 +366,8 @@
                                         <pckg-tooltip
                                                 content="Show element on system pages"></pckg-tooltip>
                                     </label>
-                                    <pckg-select :initial-options="systemRoutes" :with-empty="false" :initial-multiple="true"
+                                    <pckg-select :initial-options="systemRoutes" :with-empty="false"
+                                                 :initial-multiple="true"
                                                  title="title" id="slug" :flat="true"
                                                  v-model="form.settings.wrapperLockSystem"></pckg-select>
                                 </div>
@@ -610,7 +611,6 @@
             };
         },
         created: function () {
-            this.initialFetch();
             $dispatcher.$on('pckg-editor:actionChanged', this.setAction);
             $dispatcher.$on('pckg-editor:addChild', this.addChild);
             $dispatcher.$on('pckg-editor:addRootChild', this.addRootChild);
@@ -673,6 +673,17 @@
                     this.changeContent(this.content);
                 },
                 deep: true
+            },
+            visibilityClass: function (newValue) {
+                if (newValue != 'visible') {
+                    return;
+                }
+
+                if (this.routes.length > 0) {
+                    return;
+                }
+
+                this.initialFetch();
             }
         },
         methods: {
