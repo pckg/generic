@@ -69,11 +69,7 @@
         'dynamic.records.field.order': '{{ url('dynamic.records.field.order') }}',
     };
 
-    Pckg.translations = {
-        'pckg.htmlbuilder.btn.viewRecord': '{{ __('pckg.htmlbuilder.btn.viewRecord') }}',
-        'pckg.htmlbuilder.btn.toList': '{{ __('pckg.htmlbuilder.btn.toList') }}',
-        'pckg.htmlbuilder.btn.refreshList': '{{ __('pckg.htmlbuilder.btn.refreshList') }}'
-    };
+    Pckg.translations = {{ _translator.getPublicTranslations() | json_encode | raw }};
 
     {% if _env.isDev() %}
     Vue.config.debug = true;
