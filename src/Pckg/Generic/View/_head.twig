@@ -69,6 +69,10 @@
     Vue.config.devtools = true;
     {% endif %}
 
+    Vue.filter('number', function (price) {
+        return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price);
+    });
+
     Vue.filter('price', function (price, decimals) {
         return locale.price(price, decimals);
     });
