@@ -22,7 +22,7 @@
         <table class="table table-condensed table-striped table-hover">
             <thead>
             <tr>
-                <th v-for="field in fields"
+                <th v-for="field in fieldsWhy"
                     :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
                     <div @click.prevent="togglefield(field.id)">
                         ${ field.title }
@@ -53,7 +53,7 @@
             <tbody>
             <tr v-for="record in records"
                 :class="[record.tabelizeClass ? record.tabelizeClass : '', ids.indexOf(record.id) >= 0 ? 'selected' : '']">
-                <td v-for="field in fields"
+                <td v-for="field in fieldsWhy"
                     :class="[field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                     <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"
                                         :table="table"></pckg-maestro-field>

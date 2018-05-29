@@ -15,7 +15,7 @@
                         <th>Group by</th>
                         <th>Order</th>
                     </tr>
-                    <tr v-for="field in fields" :class="'field field-' + field.id">
+                    <tr v-for="field in fieldsFoo" :class="'field field-' + field.id">
                         {% include '_tabelize_config_row.twig' with {'type': 'field'} %}
                     </tr>
                     <tr>
@@ -74,7 +74,7 @@
         template: '#pckg-maestro-table-config-{{ table }}',
         data: function () {
             return {
-                fields: [],
+                fieldsFoo: [],
                 relations: [],
                 directions: [],
                 filterMethods: [],
@@ -118,7 +118,7 @@
                         sorts: []
                     }
                 };
-                $.each(this.fields, function (i, field) {
+                $.each(this.fieldsFoo, function (i, field) {
                     if (field.visible) {
                         data.fields.visible.push(field.id);
                     }

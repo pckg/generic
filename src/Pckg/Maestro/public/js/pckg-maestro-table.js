@@ -2,7 +2,7 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
     name: 'pckg-maestro-table', // recursive
     template: '#pckg-maestro-table',
     props: {
-        fields: {
+        initialFields: {
             default: function () {
                 return [];
             }
@@ -13,7 +13,7 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
                 return [];
             }
         },
-        groups: {
+        initialGroups: {
             default: function () {
                 return [];
             }
@@ -76,10 +76,6 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             default: 0,
             type: Number
         },
-        loading: {
-            default: false,
-            type: Boolean
-        },
         identifier: {
             default: '',
             type: String
@@ -90,9 +86,12 @@ var pckgMaestroTableComponent = Vue.component('pckg-maestro-table', {
             _searchTimeout: null,
             _sortTimeout: null,
             records: this.initialRecords,
+            groups: this.initialGroups,
             ids: this.initialIds,
             emitted: 0,
-            allChecked: false
+            allChecked: false,
+            loading: false,
+            fieldsWhy: this.initialFields
         };
     },
     watch: {

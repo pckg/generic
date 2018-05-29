@@ -9,9 +9,9 @@
 <div>
     <pckg-maestro-table-{{ table }} :ref="'maestro-table'"
                                     :identifier="'{{ table }}'"
-                                    :fields="{{ tabelize.getFields() | json_encode | escape }}"
+                                    :initial-fields="{{ tabelize.getFields() | json_encode | escape }}"
                                     :initial-records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
-                                    :groups="{{ tabelize.getGroups() | json_encode | escape }}"
+                                    :initial-groups="{{ tabelize.getGroups() | json_encode | escape }}"
                                     :depth="{{ tabelize.getGroups() | length }}"
                                     :entityactions="{{ tabelize.getEntityActions() | json_encode | escape }}"
                                     :table="{{ tabelize.getTable() | json_encode | escape }}"
