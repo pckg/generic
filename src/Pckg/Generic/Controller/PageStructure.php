@@ -2,15 +2,12 @@
 
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Dynamic\Service\Dynamic;
-use Pckg\Generic\Action\Content\Form\Simple;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Entity\Layouts;
-use Pckg\Generic\Entity\ListItems;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
-use Pckg\Generic\Form\ActionMorph;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
@@ -36,9 +33,21 @@ class PageStructure
             'templates'                      => config('pckg.generic.templates'),
         ];
 
-        foreach (['partials', 'structures', 'pages', 'footers'] as $type) {
+        foreach (['structures', 'pages', 'footers'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
+
                 return (new $partial)->forJson();
+            });
+        }
+
+        foreach (['partials'] as $type) {
+            $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partials) {
+
+                return collect($partials)->map(
+                    function($partial) {
+                        return (new $partial)->forJson();
+                    }
+                );
             });
         }
 

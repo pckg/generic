@@ -1,7 +1,98 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor">
 
-        <div class="pckg-editor-settings" v-if="action.id" :class="visibilityClass">
+        <div class="pckg-editor-settings" v-if="mode == 'add'" :class="visibilityClass">
+
+            <p class="text-center padding-vertical-xs margin-none" v-if="action.id"><b>${ action.title } #${ action.id }</b></p>
+            <p class="text-center padding-vertical-xs margin-none" v-else><b>New action</b></p>
+
+            <div class="clearfix"></div>
+
+            <div class="btn btn-group pull-left">
+                <a type="button" href="#" title="Close plugins" class="btn btn-default btn-sm"
+                   @click.prevent="mode = 'view'">
+                    <i aria-hidden="true" class="fa fa-times"></i>
+                </a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="panel-group" id="accordionAdd" role="tablist" aria-multiselectable="true">
+
+                <div class="panel panel-default" v-for="(subPartials, title) in partials">
+
+                    <div class="panel-heading" role="tab" :id="'heading' + hash(title)">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
+                           :href="'#collapse' + hash(title)" aria-expanded="false" :aria-controls="'collapse' + hash(title)">
+                            <i class="fa fa-th-large"></i> ${ title }
+                        </a>
+                    </div>
+
+                    <div :id="'collapse' + hash(title)" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + hash(title)">
+                        <div class="panel-body">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in subPartials">
+                                ${ partial.title }
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" :id="'heading' + 'Structures'">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
+                           :href="'#collapse' + 'Structures'" aria-expanded="false" :aria-controls="'collapse' + 'Structures'">
+                            <i class="fa fa-th-large"></i> Structures
+                        </a>
+                    </div>
+
+                    <div :id="'collapse' + 'Structures'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Structures'">
+                        <div class="panel-body">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in structures">
+                                ${ partial.title }
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" :id="'heading' + 'Pages'">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
+                           :href="'#collapse' + 'Pages'" aria-expanded="false" :aria-controls="'collapse' + 'Pages'">
+                            <i class="fa fa-th-large"></i> Pages
+                        </a>
+                    </div>
+
+                    <div :id="'collapse' + 'Pages'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Pages'">
+                        <div class="panel-body">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in pages">
+                                ${ partial.title }
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" :id="'heading' + 'Footers'">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
+                           :href="'#collapse' + 'Footers'" aria-expanded="false" :aria-controls="'collapse' + 'Footers'">
+                            <i class="fa fa-th-large"></i> Footers
+                        </a>
+                    </div>
+
+                    <div :id="'collapse' + 'Footers'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Footers'">
+                        <div class="panel-body">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in footers">
+                                ${ partial.title }
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="pckg-editor-settings" v-else-if="action.id" :class="visibilityClass">
 
             <p class="text-center padding-vertical-xs margin-none"><b>${ action.title } #${ action.id }</b></p>
 
@@ -445,54 +536,6 @@
                 <input type="button" class="btn btn-success" @click.prevent="saveContent" value="Save content"/>
             {% endblock %}
         {% endembed %}
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-max', id: 'addNewActionModal'} %}
-            {% block header %}
-                Add new action
-            {% endblock %}
-            {% block body %}
-                <div class="pckg-icons">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h2>Elements</h2>
-
-                            <div class="item" v-for="partial in partials">
-                                <div class="icon" @click.prevent="addAction(partial.obj)">
-                                    <div class="title" v-text="partial.title"></div>
-                                    <div v-html="partial.htmlIcon"></div>
-                                </div>
-                            </div>
-
-                            <h2>Structures</h2>
-
-                            <div class="item" v-for="partial in structures">
-                                <div class="icon" @click.prevent="addAction(partial.obj)">
-                                    <div class="title" v-text="partial.title"></div>
-                                    <div v-html="partial.htmlIcon"></div>
-                                </div>
-                            </div>
-
-                            <h2>Pages</h2>
-
-                            <div class="item" v-for="partial in pages">
-                                <div class="icon" @click.prevent="addAction(partial.obj)">
-                                    <div class="title" v-text="partial.title"></div>
-                                    <div v-html="partial.htmlIcon"></div>
-                                </div>
-                            </div>
-
-                            <h2>Footers</h2>
-
-                            <div class="item" v-for="partial in footers">
-                                <div class="icon" @click.prevent="addAction(partial.obj)">
-                                    <div class="title" v-text="partial.title"></div>
-                                    <div v-html="partial.htmlIcon"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endblock %}
-        {% endembed %}
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal'} %}
             {% block header %}
                 Delete action
@@ -607,7 +650,8 @@
                     }
                 ],
                 showSubcontents: false,
-                tempSubcontents: {}
+                tempSubcontents: {},
+                mode: null
             };
         },
         created: function () {
@@ -687,10 +731,23 @@
             }
         },
         methods: {
+            hash: function(value){
+                var hash = 0, i, chr;
+                if (value.length === 0) return hash;
+                for (i = 0; i < value.length; i++) {
+                    chr = value.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + chr;
+                    hash |= 0; // Convert to 32bit integer
+                }
+                return hash;
+            },
             toggleShowSubcontents: function () {
                 this.showSubcontents = !this.showSubcontents;
             },
             initialFetch: function () {
+                if (this.footers.length > 0) {
+                    return;
+                }
                 http.getJSON($store.state.router.urls['pckg.generic.pageStructure.initialFetch'], function (data) {
                     this.availableScopes = data.availableScopes;
                     this.availableContainers = data.availableContainers;
@@ -784,7 +841,9 @@
                 $('#deleteActionModal').modal('show');
             },
             addChild: function () {
-                $('#addNewActionModal').modal('show');
+                this.initialFetch();
+                this.mode = 'add';
+                this.visibilityClass = 'visible';
             },
             addRootChild: function () {
                 this.action = {};
