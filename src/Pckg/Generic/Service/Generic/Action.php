@@ -141,9 +141,6 @@ class Action
 
                 measure('Resolving', function() use (&$args) {
                     if (isset($args['settings'])) {
-                        /**
-                         * We need to resolve dependencies. ;-)
-                         */
                         $args['settings']->each(
                             function(Setting $setting) use (&$args) {
                                 $setting->pivot->resolve($args);

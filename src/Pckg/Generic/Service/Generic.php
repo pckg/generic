@@ -101,7 +101,10 @@ class Generic
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->withContents();
-                })->withSettings()->withVariable();
+                })->withSettings(function(MorphedBy $settings){
+                    $settings->getMiddleEntity()->withSetting();
+                })
+                  ->withVariable();
             }
         );
 
@@ -153,7 +156,10 @@ class Generic
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                     $content->withContents();
-                })->withSettings()->withVariable();
+                })->withSettings(function(MorphedBy $settings){
+                    $settings->getMiddleEntity()->withSetting();
+                })
+                  ->withVariable();
             }
         );
         $layoutActions = $layoutActions->sortBy(function($item) {
