@@ -44,6 +44,20 @@ class OverloadView
                     continue;
                 }
 
+                $startsWith = false;
+                foreach ($templates as $tpl) {
+                    if (strpos($tpl, $subcontroller . '/') !== 0) {
+                        continue;
+                    }
+
+                    $startsWith = true;
+                    break;
+                }
+
+                if (!$startsWith) {
+                    continue;
+                }
+
                 $similar = null;
                 foreach ($templates as $tpl) {
                     if (strpos($tpl, $subcontroller . '/' . $viewKey) !== 0) {
