@@ -3,7 +3,7 @@
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button v-if="dismissable" type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal"><span
                             aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
                         <slot name="header"></slot>
@@ -16,7 +16,7 @@
                 </slot>
                 <div class="modal-footer">
                     <slot name="footer"></slot>
-                    <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
                 </div>
             </div>
         </div>
@@ -27,15 +27,21 @@
     export default {
         name: 'pckg-bootstrap-modal',
         props: {
-            header: null,
-            body: null,
-            dismissable: true,
+            dismissable: {
+                type: Boolean,
+                default: true
+            },
             id: null,
             visible: {
                 type: Boolean,
                 default: false
             },
             size: null
+        },
+        data: function(){
+            return {
+                _modal: null
+            };
         },
         watch: {
             visible: function (newVal) {
@@ -45,12 +51,13 @@
         methods: {
             handleModal: function () {
                 $(this.$el).modal(this.visible ? 'show' : 'hide');
+            },
+            closeModal: function(){
+                this.$emit('close');
             }
         },
-        data: function () {
-            return {
-                _modal: null
-            };
+        mounted: function(){
+            $(this.$el).on('hidden.bs.modal', this.closeModal);
         }
     }
 </script>

@@ -51,11 +51,7 @@
     Pckg.router = {};
     Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};
 
-    Pckg.translations = {
-        'pckg.htmlbuilder.btn.viewRecord': '{{ __('pckg.htmlbuilder.btn.viewRecord') }}',
-        'pckg.htmlbuilder.btn.toList': '{{ __('pckg.htmlbuilder.btn.toList') }}',
-        'pckg.htmlbuilder.btn.refreshList': '{{ __('pckg.htmlbuilder.btn.refreshList') }}'
-    };
+    Pckg.translations = {{ _translator.getPublicTranslations() | json_encode | raw }};
 
     Pckg.vue = {};
     Pckg.vue.stores = {};
