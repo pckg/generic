@@ -15,7 +15,11 @@ var pckgDelimiters = {
 var pckgTranslations = {
     methods: {
         __: function (key, data) {
-            var translation = $store.state.translations[key];
+            var translation = $store.state.translations[key] || null;
+
+            if (!translation) {
+                return key;
+            }
 
             if (!data) {
                 return translation;
