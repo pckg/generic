@@ -14,24 +14,37 @@ var pckgDelimiters = {
 
 var pckgTranslations = {
     methods: {
-        __: function (key) {
-            return $store.state.translations[key];
+        __: function (key, data) {
+            var translation = $store.state.translations[key];
+
+            if (!data) {
+                return translation;
+            }
+
+            $.each(data, function(key, val){
+                translation = translation.replace('{{ ' + key + ' }}', val);
+            });
+
+            return translation;
         }
     }
 };
 
 var pckgFormValidator = {
     methods: {
-        validateAndSubmit: function (submit) {
+        validateAndSubmit: function (submit, invalid) {
             console.log('validating');
-            this.$validator.validateAll().then(function (ok, a) {
+            this.$validator.validateAll().then(function (ok) {
                 if (ok) {
                     console.log('ok');
                     submit();
                 } else {
-                    console.log('error', ok, a);
+                    console.log('error', ok);
                     var element = $(this.$el).find('.htmlbuilder-validator-error').first();
                     globalScrollTo(element);
+                    if (invalid) {
+                        invalid();
+                    }
                 }
             }.bind(this));
         }

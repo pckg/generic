@@ -22,12 +22,12 @@ Pckg.vue.stores.auth = {
                 if (callback) {
                     callback();
                 }
-            }.bind(this));
+            });
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {
-                this.prepareUser(state, callback)
-            }.bind(this));
+                $store.commit('prepareUser', callback);
+            });
         }
     }
 };
