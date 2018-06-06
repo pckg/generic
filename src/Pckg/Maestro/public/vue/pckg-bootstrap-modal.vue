@@ -45,7 +45,9 @@
         },
         watch: {
             visible: function (newVal) {
-                this.handleModal();
+                setTimeout(function(){
+                    this.handleModal();
+                }.bind(this), 10);
             }
         },
         methods: {
