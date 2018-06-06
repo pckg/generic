@@ -36,6 +36,7 @@ var initUninitialiedSelectpicker = function () {
 };
 
 $(document).ready(function () {
+    var $body = $('body');
 
     /**
      * Start fix multiple modals for scroll
@@ -117,28 +118,24 @@ $(document).ready(function () {
     function sidebarCollapseExpand() {
         //sidebar is collapsed and needs to be expanded
         if (isSidebarCollapsed()) {
-            $sidebar.removeClass('collapsed');
-            $sidebarBg.removeClass('collapsed');
-            $content.removeClass('expanded');
+            $body.removeClass('collapsed');
             setCookie('maestro-sidebar-collapsed', false);
         }
         //sidebar is expanded and needs to be collapsed
         else {
-            $sidebar.addClass('collapsed');
-            $sidebarBg.addClass('collapsed');
-            $content.addClass('expanded');
+            $body.addClass('collapsed');
             $sidebar.find('.collapse.in').removeClass('in');
             setCookie('maestro-sidebar-collapsed', true);
         }
     }
 
     function isSidebarCollapsed() {
-        return ($sidebar.hasClass('collapsed') ? true : false);
+        return ($body.hasClass('collapsed') ? true : false);
     }
 
     function collapsedHoverOn() {
         $('.maestro-sidebar #main-admin-nav').on('mouseenter.collapse.data-api', '[data-toggle=collapse]', function (e) {
-            collapsed = $(".maestro-sidebar").hasClass('collapsed');
+            collapsed = $body.hasClass('collapsed');
 
             var $this = $(this),
                 href, target = $this.attr('data-target') || e.preventDefault() || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
