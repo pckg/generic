@@ -12,6 +12,24 @@ var pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
+var pckgCdn = {
+    methods: {
+        cdn: function(file) {
+            if (!file) {
+                return file;
+            }
+
+            var host = Pckg.config.cdn.host || null;
+
+            if (!host) {
+                return file;
+            }
+
+            return 'https://' + host + file;
+        }
+    }
+};
+
 var pckgTranslations = {
     methods: {
         __: function (key, data) {

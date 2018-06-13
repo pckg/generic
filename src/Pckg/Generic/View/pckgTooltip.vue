@@ -1,9 +1,11 @@
 <template>
-    <nobr v-if="content">&nbsp;<span
+    <nobr v-if="content">
+        <span
                 class="tooltip-questionmark"
                 :title="content"
                 data-toggle="tooltip">
-            <template v-if="icon.length > 0"><i class="fa" :class="'fa-' + icon"></i></template><template v-else><i class="fa fa-question"></i></template>
+            <template v-if="icon.length > 0"><i class="far" :class="'fa-' + icon"></i></template>
+            <template v-else><i class="far fa-question-circle"></i></template>
         </span>
     </nobr>
 </template>
