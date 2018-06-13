@@ -5,6 +5,7 @@ namespace Pckg\Generic\Service;
 use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
@@ -395,7 +396,9 @@ class Generic
         $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
 
         $arrRoutes = $routes->nonDeleted()
-                            ->withAllTranslations()
+                            ->withAllTranslations(function(HasMany $translations){
+                                $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
+                            })
                             ->all();
 
         /**
