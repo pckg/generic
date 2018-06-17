@@ -182,7 +182,16 @@
             },
             initPicker: function () {
                 var selectpicker = $(this.$el).find('select').selectpicker({
-                    liveSearch: true
+                    liveSearch: true,
+                    actionsBox: true,
+                    dropdownAlignRight: 'auto',
+                    liveSearchNormalize: true,
+                    mobile: true,
+                    width: 'auto'
+                });
+
+                selectpicker.on('changed.bs.select', function() {
+                    return false;
                 });
 
                 selectpicker.selectpicker('refresh');
