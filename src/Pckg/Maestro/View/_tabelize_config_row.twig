@@ -66,11 +66,9 @@
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>
                 <div v-else class="col-sm-4">
-                    <select v-model="relation.filterValue" class="form-control"
-                            :multiple="true">
-                        <option v-for="(option,key) in relation.filterOptions" :value="key">${ option }
-                        </option>
-                    </select>
+                    <pckg-select v-model="relation.filterValue"
+                                 :initialMultiple="true"
+                                 :initialOptions="relation.filterOptions"></pckg-select>
                 </div>
             </template>
         {% endif %}
