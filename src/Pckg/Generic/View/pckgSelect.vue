@@ -160,10 +160,10 @@
             refreshPicker: function (val) {
                 this.$emit('input', val); // v-model
                 this.$emit('change', val); // change event
-                Vue.nextTick(function () {
+                /*Vue.nextTick(function () {
                     $(this.$el).find('select').trigger('vue.change', val);
                     $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this));
+                }.bind(this));*/
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
@@ -184,15 +184,15 @@
                 var selectpicker = $(this.$el).find('select').selectpicker({
                     liveSearch: true,
                     actionsBox: true,
-                    dropdownAlignRight: 'auto',
+                    //dropdownAlignRight: 'auto',
                     liveSearchNormalize: true,
-                    mobile: true,
+                    //mobile: true,
                     width: 'auto'
                 });
 
-                selectpicker.on('changed.bs.select', function() {
+                /*selectpicker.on('changed.bs.select', function() {
                     return false;
-                });
+                });*/
 
                 selectpicker.selectpicker('refresh');
 
