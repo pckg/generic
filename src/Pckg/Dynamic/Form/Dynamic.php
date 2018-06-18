@@ -526,18 +526,21 @@ ifrm.document.close();
             $element = $this->addDatetime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+            $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'date') {
             $element = $this->addDate($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+            $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'time') {
             $element = $this->addTime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
+            $element->a('autocomplete', 'off');
 
             return $element;
         } elseif (in_array($type, ['password'])) {
