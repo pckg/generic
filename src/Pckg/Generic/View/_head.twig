@@ -100,6 +100,14 @@
 
         return string.charAt(0).toUpperCase() + string.slice(1);
     });
+
+    Vue.filter('nl2br', function (string) {
+        if (!string) {
+            return '';
+        }
+
+        return utils.nl2br(nl2br);
+    });
 </script>
 
 {{ _metaManager.getMeta('headerLast') | raw }}
