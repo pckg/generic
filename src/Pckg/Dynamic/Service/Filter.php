@@ -260,6 +260,11 @@ class Filter extends AbstractService
                 }
             }
 
+            if ($selected = get('selected')) {
+                $exploded = explode(',', $selected);
+                $where->push($entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')', $exploded);
+            }
+
             /**
              * Get all tables that are currently linked to query.
              */

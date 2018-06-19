@@ -171,8 +171,16 @@
                         return;
                     }
 
-                    http.getJSON(this.refreshUrl + '?search=' + $(this.$el).find('.bs-searchbox input').val(), function (data) {
-                        if (Object.keys(data).length == 1) {
+                    /**
+                     * @T00D00 - we should keep already selected options.
+                     */
+                    var search = $(this.$el).find('.bs-searchbox input').val();
+                    if (search.length < 1) {
+                        return;
+                    }
+
+                    http.getJSON(this.refreshUrl + '?search=' + search + '&selected=' + (Array.isArray(this.selected) ? this.selected.join(',') : this.selected), function (data) {
+                        if (false && Object.keys(data).length == 1) {
                             this.options = data[Object.keys(data)[0]];
                         } else {
                             this.options = data.records;
@@ -187,7 +195,7 @@
                     //dropdownAlignRight: 'auto',
                     liveSearchNormalize: true,
                     //mobile: true,
-                    width: 'auto'
+                    //width: 'auto'
                 });
 
                 /*selectpicker.on('changed.bs.select', function() {
