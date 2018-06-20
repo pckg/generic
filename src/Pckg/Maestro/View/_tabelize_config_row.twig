@@ -57,6 +57,7 @@
                 <div class="col-sm-12">
                     <pckg-select v-model="relation.filterValue"
                                  :initialMultiple="true"
+                                 :refresh-url="relationFilterSelectField(relation).filterUrl"
                                  :initialOptions="relationFilterSelectField(relation).options"></pckg-select>
                 </div>
             </template>
