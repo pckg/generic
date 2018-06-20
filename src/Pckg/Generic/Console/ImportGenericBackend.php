@@ -117,7 +117,6 @@ class ImportGenericBackend extends Command
          * Check if we should import selectively.
          */
         $dos = $this->option('do');
-        dd($dos);
 
         /**
          * Import generic lists and items.
