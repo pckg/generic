@@ -228,6 +228,11 @@ class Records extends Controller
 
         $entity->groupBy('`' . $entity->getTable() . '`.`id`');
 
+        /**
+         * Allow extensions.
+         */
+        trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listedFields, collect()]);
+
         $tabelize = $this->tabelize()
                          ->setTable($tableRecord)
                          ->setTitle($tableRecord->getListTitle())
@@ -296,11 +301,11 @@ class Records extends Controller
          * Apply entity extension.
          */
         if ($viewType != 'related') {
+            $dynamicService->applyOnEntity($entity);
+        } else {
             /**
              * Dont activate filters, group bys etc. in tabs.
              */
-            $dynamicService->applyOnEntity($entity);
-        } else {
             $dynamicService->getSortService()->applyOnEntity($entity);
             $dynamicService->getPaginateService()->applyOnEntity($entity);
         }
@@ -381,6 +386,13 @@ class Records extends Controller
         if (!$entity->getQuery()->getGroupBy()) {
             $entity->groupBy('`' . $entity->getTable() . '`.`id`');
         }
+
+        /**
+         * Allow extensions.
+         */
+        $fieldTransformations = collect($fieldTransformations);
+        trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listableFields, 'fieldTransformations' => $fieldTransformations]);
+        $fieldTransformations = $fieldTransformations->all();
 
         /**
          * Temp test.
