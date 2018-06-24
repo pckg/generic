@@ -125,6 +125,11 @@
                 Vue.nextTick(function () {
                     $(this.$el).find('select').selectpicker('refresh');
                 }.bind(this));
+            },
+            initialOptions: function () {
+                Vue.nextTick(function () {
+                    $(this.$el).find('select').selectpicker('refresh');
+                }.bind(this));
             }
         },
         methods: {
