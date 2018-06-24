@@ -126,10 +126,11 @@
                     $(this.$el).find('select').selectpicker('refresh');
                 }.bind(this));
             },
-            initialOptions: function () {
-                Vue.nextTick(function () {
+            initialOptions: function (newVal) {
+                this.options = newVal;
+                /*Vue.nextTick(function () {
                     $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this));
+                }.bind(this));*/
             }
         },
         methods: {
