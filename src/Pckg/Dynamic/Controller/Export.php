@@ -72,6 +72,13 @@ class Export extends Controller
         if (!$entity->getQuery()->getGroupBy()) {
             $entity->groupBy('`' . $entity->getTable() . '`.`id`');
         }
+
+        /**
+         * Allow extensions.
+         */
+        $fieldTransformations = collect($fieldTransformations);
+        trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listableFields, 'fieldTransformations' => $fieldTransformations]);
+        $fieldTransformations = $fieldTransformations->all();
         
         $records = $entity->all();
         $tabelize = (new Tabelize($entity))
