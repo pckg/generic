@@ -2,7 +2,7 @@
     <div class="modal-dialog {{ class }}">
         <div class="modal-content">
             {% if vueLoading %}
-                <template v-if="{{ vueLoading }}"><i class="fa fa-2x fa-spinner fa-spin fa-fw"></i></template>
+                <template v-if="{{ vueLoading }}"><i class="fa fa-spinner fa-spin fa-fw"></i></template>
             {% endif %}
             <template{{ vueLoading ? ' v-else' : '' }}>
                 {% if block('header') or close %}
