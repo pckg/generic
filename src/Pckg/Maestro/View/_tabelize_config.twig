@@ -97,7 +97,7 @@
                         'fields', 'relations', 'filterMethods', 'directions'
                     ];
                     $.each(keys, function (i, key) {
-                        self[key] = data[key];
+                        self[key == 'fields' ? 'fieldsFoo' : key] = data[key];
                     }.bind(this));
 
                     this.appliedRelations = this.addRelationFilterToAppliedRelations(this.appliedRelationFilters, this.relationFilters);
