@@ -18,8 +18,7 @@
                 <td>${ record.name }</td>
                 <template v-for="(group,gk) in groups">
                     <td v-for="(action,ak) in actions">
-                        <input type="checkbox" v-model="permissions[ak][gk]" @click="togglePermission(ak, gk)"
-                               value="1"/>
+                        <input type="checkbox" v-model="permissions[ak][gk]" value="1"/>
                     </td>
                 </template>
             </tr>
