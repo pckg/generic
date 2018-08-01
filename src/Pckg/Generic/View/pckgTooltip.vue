@@ -19,8 +19,7 @@
                 default: '',
                 type: String
             },
-            visible: false,
-            _tooltip: null
+            visible: false
         },
         watch: {
             visible: function (newVal) {
@@ -30,7 +29,8 @@
         },
         data: function () {
             return {
-                isVisible: this.visible
+                isVisible: this.visible,
+                _tooltip: null
             };
         },
         mounted: function () {

@@ -12,18 +12,18 @@
 <td class="filter {{ type }}" :class="['field-' + {{ type }}.id]" style="min-width: 360px;max-width: 360px;">
     <div class="form-group">
         {% if type == 'field' %}
-            <div class="col-sm-4 filter-method">
+            <div class="col-sm-4 filter-method type-field">
                 <select v-model="field.filterMethod" class="form-control">
                     <option></option>
                     <option v-for="(option,key) in filterMethods" :value="key">${ option }</option>
                 </select>
             </div>
-            <div class="col-sm-8 filter-value" v-if="field.filterMethod">
+            <div class="col-sm-8 filter-value type-field" v-if="field.filterMethod">
                 <template
                         v-if="field.type == 'select' && ['equals', 'not'].indexOf(field.filterMethod) > -1">
                     <pckg-select v-model="field.filterValue" :refresh-url="field.filterUrl"
                                  :initial-multiple="true"
-                    :initialOptions="field.options"></pckg-select>
+                                 :initialOptions="field.options"></pckg-select>
                 </template>
                 <template v-else-if="['isNull', 'notNull'].indexOf(field.filterMethod) == -1">
                     <input type="text" v-model="field.filterValue" class="form-control"/>
@@ -31,14 +31,14 @@
             </div>
         {% else %}
             {# belongs to #}
-            <div class="col-sm-4 filter-field">
+            <div class="col-sm-4 filter-field type-relation">
                 <select v-model="relation.filterField" class="form-control">
                     <option></option>
                     <option v-for="option in relation.fields" :value="option.id">${ option.title }</option>
                 </select>
             </div>
             <template v-if="relationFilterSelectField(relation)">
-                <div class="col-sm-4 filter-subfield">
+                <div class="col-sm-4 filter-subfield type-relation">
                     <select v-model="relation.filterSubField" class="form-control">
                         <option></option>
                         <option v-for="option in relationFilterSelectField(relation).fields" :value="option.id">${
@@ -47,14 +47,14 @@
                     </select>
                 </div>
             </template>
-            <div class="col-sm-4">
+            <div class="col-sm-4 type-relation relation-filter-method">
                 <select v-model="relation.filterMethod" class="form-control">
                     <option></option>
                     <option v-for="(option,key) in filterMethods" :value="key">${ option }</option>
                 </select>
             </div>
             <template v-if="!relation.filterSubField && relationFilterSelectField(relation) && relation.filterMethod">
-                <div class="col-sm-12">
+                <div class="col-sm-12 type-relation relation-filter-value">
                     <pckg-select v-model="relation.filterValue"
                                  :initialMultiple="true"
                                  :refresh-url="relationFilterSelectField(relation).filterUrl"
@@ -63,10 +63,10 @@
             </template>
             <template v-else-if="relation.filterMethod">
                 <div v-if="relation.filterField || ['greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like'].indexOf(relation.filterMethod) > -1"
-                     class="col-sm-4">
+                     class="col-sm-4 type-relation-first">
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>
-                <div v-else class="col-sm-4">
+                <div v-else class="col-sm-4 type-relation-second">
                     <pckg-select v-model="relation.filterValue"
                                  :initialMultiple="true"
                                  :initialOptions="relation.filterOptions"></pckg-select>

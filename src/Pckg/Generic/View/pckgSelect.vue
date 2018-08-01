@@ -1,13 +1,14 @@
 <template>
     <div class="pckg-select" :class="styleClass">
-        <select v-if="multiple" class="form-control" multiple v-model="selected">
+        <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
+        <select v-if="multiple" class="form-control" multiple v-model="selectedModel">
             <option value v-if="withEmpty"> -- select value(s) --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
-        <select v-else class="form-control" v-model="selected">
+        <select v-else class="form-control" v-model="selectedModel">
             <option value v-if="withEmpty"> -- select value --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
@@ -27,7 +28,11 @@
         },
         data: function () {
             return {
-                options: this.initialOptions
+                options: this.initialOptions,
+                selectedModel: this.multiple
+                    ? (Array.isArray(this.selected) ? this.selected : [this.selected])
+                    : this.selected,
+                loading: false
             };
         },
         props: {
@@ -119,11 +124,20 @@
         },
         watch: {
             selected: function (newVal, oldVal) {
+                console.log('changed prop selected', newVal);
+                this.selectedModel = newVal;
+            },
+            selectedModel: function (newVal, oldVal) {
+                console.log('selected to', newVal);
                 this.refreshPicker(newVal);
             },
             options: function (newVal) {
                 Vue.nextTick(function () {
-                    $(this.$el).find('select').selectpicker('refresh');
+                    try {
+                        $(this.$el).find('select').selectpicker('refresh');
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }.bind(this));
             },
             initialOptions: function (newVal) {
@@ -161,15 +175,19 @@
                 return option[this.id];
             },
             changed: function () {
-                this.refreshPicker(this.selected);
+                this.refreshPicker(this.selectedModel);
             },
             refreshPicker: function (val) {
                 this.$emit('input', val); // v-model
-                this.$emit('change', val); // change event
-                /*Vue.nextTick(function () {
-                    $(this.$el).find('select').trigger('vue.change', val);
-                    $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this));*/
+                //this.$emit('change', val); // change event
+                Vue.nextTick(function () {
+                    // $(this.$el).find('select').trigger('vue.change', val);
+                    try {
+                        $(this.$el).find('select').selectpicker('refresh');
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }.bind(this));
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
@@ -185,13 +203,13 @@
                         return;
                     }
 
-                    http.getJSON(this.refreshUrl + '?search=' + search + '&selected=' + (Array.isArray(this.selected) ? this.selected.join(',') : this.selected), function (data) {
-                        if (false && Object.keys(data).length == 1) {
-                            this.options = data[Object.keys(data)[0]];
-                        } else {
-                            this.options = data.records;
-                        }
-                    }.bind(this));
+                    this.loading = true;
+                    http.getJSON(this.refreshUrl + '?search=' + search + '&selected=' + (Array.isArray(this.selectedModel) ? this.selectedModel.join(',') : this.selectedModel), function (data) {
+                        this.options = data.records;
+                        this.loading = false;
+                    }.bind(this), function () {
+                        this.loading = false;
+                    });
                 }.bind(this), 333);
             },
             initPicker: function () {
@@ -201,22 +219,27 @@
                     //dropdownAlignRight: 'auto',
                     liveSearchNormalize: true,
                     //mobile: true,
-                    //width: 'auto'
+                    //width: 'auto',
+                    showTick: true
                 });
 
                 /*selectpicker.on('changed.bs.select', function() {
                     return false;
                 });*/
 
-                selectpicker.selectpicker('refresh');
+                try {
+                    selectpicker.selectpicker('refresh');
+                } catch (e) {
+                    console.log(e);
+                }
 
-                $(document).ready(function () {
+                /*$(document).ready(function () {
                     $(this.$el).find('select').on('change', function () {
                         this.$nextTick(function () {
                             this.$emit('input', $(this.$el).find('select').val());
                         }.bind(this));
                     }.bind(this));
-                }.bind(this));
+                }.bind(this));*/
 
                 $(this.$el).find('.bs-searchbox input').on('keyup', function () {
                     this.refreshList();
