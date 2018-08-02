@@ -12,6 +12,7 @@ var destroyTinymce = function (selector) {
     }
     //}
 };
+
 var initTinymce = function (selector, config) {
     console.log('Initializing tinymce and dropzone on ' + selector);
     var selected = $('#' + selector);
@@ -298,12 +299,43 @@ var initTinymce = function (selector, config) {
             });
 
             $dropzone.trigger('click');
+        },
+        setup: function(editor) {
+            editor.addCommand('mceInsertLink', function (ui, value) {
+                var anchor;
+
+                if (typeof value == 'string') {
+                    value = {href: value};
+                }
+
+                anchor = dom.getParent(editor.selection.getNode(), 'a');
+
+                //value.href = value.href.replace(/\s+/g, '%20');
+
+                // Remove existing links if there could be child links or that the href isn't specified
+                if (!anchor || !value.href) {
+                    formatter.remove('link');
+                }
+
+                // Apply new link to selection
+                if (value.href) {
+                    editor.formatter.apply('link', value, anchor);
+                }
+            });
         }
     };
 
     if (config) {
         $.each(config, function (key, val) {
-            defaultConfig[key] = val;
+            if (key == 'setup') {
+                var tempSetup = defaultConfig.setup;
+                defaultConfig.setup = function(editor) {
+                    tempSetup(editor);
+                    val(editor);
+                }
+            } else {
+                defaultConfig[key] = val;
+            }
         });
     }
 
