@@ -62,7 +62,7 @@
                 </div>
             </template>
             <template v-else-if="relation.filterMethod">
-                <div v-if="relation.filterField || ['greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like'].indexOf(relation.filterMethod) > -1"
+                <div v-if="relation.filterField || ['greater', 'greaterOrEquals', 'lower', 'lowerOrEquals', 'like', 'notLike'].indexOf(relation.filterMethod) > -1"
                      class="col-sm-4 type-relation-first">
                     <input type="text" v-model="relation.filterValue" class="form-control"/>
                 </div>

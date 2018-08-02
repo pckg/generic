@@ -289,6 +289,7 @@ class Filter extends AbstractService
             'lowerOrEquals'   => '<=',
             'not'             => '!=',
             'like'            => 'LIKE',
+            'notLike'            => 'NOT LIKE',
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
         ];
