@@ -1,6 +1,5 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Doctrine\Common\Cache\RedisCache;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;

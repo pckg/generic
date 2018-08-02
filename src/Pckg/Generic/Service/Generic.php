@@ -424,6 +424,7 @@ class Generic
                     $resolvers[$key] = $res;
                 }
                 router()->removeRouteByName($route->slug);
+                message('Removing system route ' . $route->slug);
             }
 
             $routeResolvers = $route->resolvers;
