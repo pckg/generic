@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -34,6 +35,8 @@ class Generic
     protected $blocks = [];
 
     protected $route;
+
+    protected $actions = [];
 
     public function authCheckRoute()
     {
@@ -76,6 +79,13 @@ class Generic
         return $this->blocks[$block];
     }
 
+    public function hasAction(array $actions = [])
+    {
+        return $this->actions && $this->actions->has(function(\Pckg\Generic\Record\Action $action) use ($actions) {
+            return in_array($action->slug, $actions);
+        });
+    }
+
     public function readRoute(Route $route, $resolvers = true)
     {
         $this->route = $route;
@@ -97,7 +107,7 @@ class Generic
             }
         }
 
-        $actions = $route->actions(
+        $this->actions = $route->actions(
             function(MorphedBy $actions) {
                 // $actions->getMiddleEntity()->joinPermissionTo('read');
                 $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
@@ -109,7 +119,7 @@ class Generic
             }
         );
 
-        $actions = $actions->sortBy(function($item) {
+        $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
             return $action->pivot->parent_id;
