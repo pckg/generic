@@ -3,17 +3,16 @@
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal"><span
-                            aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <h4 class="modal-title">
                         <slot name="header"></slot>
                     </h4>
                 </div>
-                <slot name="body">
-                    <div class="modal-body">
-                        <slot></slot>
-                    </div>
-                </slot>
+                <div class="modal-body" v-if="$slots.body">
+                    <slot name="body"></slot>
+                </div>
                 <div class="modal-footer">
                     <slot name="footer"></slot>
                     <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
