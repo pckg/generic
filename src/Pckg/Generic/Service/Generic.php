@@ -3,7 +3,6 @@
 namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
-use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -414,7 +413,6 @@ class Generic
         /**
          * Should we load routes by domain?
          */
-
         foreach ($arrRoutes AS $route) {
             /**
              * Add route to router.
