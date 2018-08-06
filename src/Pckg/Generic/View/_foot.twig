@@ -1,4 +1,24 @@
+<!-- libraries css, less -->
+{{ _assetManager.getMeta(['css', 'less'], ['libraries']) | raw }}
+
+<!-- main css, less -->
+{{ _assetManager.getMeta(['css', 'less'], ['main']) | raw }}
+
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footerFirst']) | raw }}
+
+<!-- external assets-->
+{{ _assetManager.getExternals() | raw }}
+
+<!-- vue components -->
+<!--  vue css, less and js -->
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
+{{ _vueManager.getComponents() | raw }}
+
+<!-- vue filters -->
+{{ _vueManager.getFilters() | raw }}
+
+<!-- vue live components -->
+{{ _vueManager.getViews() | raw }}
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footer']) | raw }}
 

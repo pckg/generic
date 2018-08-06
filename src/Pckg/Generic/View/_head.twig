@@ -9,25 +9,11 @@
 
 {{ _metaManager.getMeta('header') | raw }}
 
-<!-- libraries css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries']) | raw }}
+<!-- libraries js -->
+{{ _assetManager.getMeta(['js'], ['libraries']) | raw }}
 
-<!-- main css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['main']) | raw }}
-
-<!-- external assets-->
-{{ _assetManager.getExternals() | raw }}
-
-<!-- vue components -->
-<!--  vue css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
-{{ _vueManager.getComponents() | raw }}
-
-<!-- vue filters -->
-{{ _vueManager.getFilters() | raw }}
-
-<!-- vue live components -->
-{{ _vueManager.getViews() | raw }}
+<!-- main js -->
+{{ _assetManager.getMeta(['js'], ['main']) | raw }}
 
 <script>
     var Pckg = Pckg || {};
