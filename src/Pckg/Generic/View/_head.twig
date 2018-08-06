@@ -10,10 +10,10 @@
 {{ _metaManager.getMeta('header') | raw }}
 
 <!-- libraries js -->
-{{ _assetManager.getMeta(['js'], ['libraries']) | raw }}
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries']) | raw }}
 
 <!-- main js -->
-{{ _assetManager.getMeta(['js'], ['main']) | raw }}
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['main']) | raw }}
 
 <script>
     var Pckg = Pckg || {};
