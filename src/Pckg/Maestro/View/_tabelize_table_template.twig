@@ -22,6 +22,22 @@
         <table class="table table-condensed table-striped table-hover">
             <thead>
             <tr>
+                <th>
+                    <div>
+                        <div>
+                            <input type="checkbox" @click="this.allChecked = !this.allChecked"
+                                   v-model="allChecked"
+                                   value="1"/>
+                        </div>
+                    </div>
+                </th>
+                <th class="text-right">
+                    <!--<div>
+                        <div>
+                            {{ __('pckg.generic.btn.selectAll') }}
+                        </div>
+                    </div>-->
+                </th>
                 <th v-for="field in fieldsWhy"
                     :class="field.fieldType && field.fieldType.slug ? field.fieldType.slug : ''">
                     <div @click.prevent="togglefield(field.id)">
@@ -32,39 +48,23 @@
                             </span>
                     </div>
                 </th>
-                <th class="text-right">
-                    <div>
-                        <div>
-                            {{ __('pckg.generic.btn.selectAll') }}
-                        </div>
-                    </div>
-                </th>
-                <th>
-                    <div>
-                        <div>
-                            <input type="checkbox" @click="this.allChecked = !this.allChecked"
-                                   v-model="allChecked"
-                                   value="1"/>
-                        </div>
-                    </div>
-                </th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="record in records"
                 :class="[record.tabelizeClass ? record.tabelizeClass : '', ids.indexOf(record.id) >= 0 ? 'selected' : '']">
-                <td v-for="field in fieldsWhy"
-                    :class="[field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
-                    <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"
-                                        :table="table"></pckg-maestro-field>
+                <td class="checkboxes">
+                    <input type="checkbox" v-model="ids" :value="record.id"/>
                 </td>
                 <td class="actions">
                     <pckg-maestro-actions-{{ table }} :record="record"
                                                       :recordactionhandler="recordactionhandler"
                                                       :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                 </td>
-                <td class="checkboxes">
-                    <input type="checkbox" v-model="ids" :value="record.id"/>
+                <td v-for="field in fieldsWhy"
+                    :class="[field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
+                    <pckg-maestro-field :field="field" :record="record" :model="record[field.field]"
+                                        :table="table"></pckg-maestro-field>
                 </td>
             </tr>
             </tbody>
