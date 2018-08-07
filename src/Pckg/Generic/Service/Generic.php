@@ -118,7 +118,7 @@ class Generic
                 });
             },
                                'app',
-                               '1minute');
+                               0);
 
         $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
@@ -175,7 +175,7 @@ class Generic
                 });
             },
                                'app',
-                               '1minute');
+                               0);
 
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
