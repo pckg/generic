@@ -413,7 +413,6 @@ class Generic
                             ->withAllTranslations(function(HasMany $translations){
                                 $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
                             })
-                            ->cache('2minutes')
                             ->all();
 
         /**
