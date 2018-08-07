@@ -106,17 +106,19 @@ class Generic
             }
         }
 
-        $this->actions = $route->actions(
-            function(MorphedBy $actions) {
-                // $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->withContents();
-                })->withSettings(function(MorphedBy $settings){
-                    $settings->getMiddleEntity()->withSetting();
-                })
-                  ->withVariable();
-            }
-        );
+        $this->actions = cache(Generic::class . ':readRoute:' . $route->id,
+            function() use ($route) {
+                return $route->actions(function(MorphedBy $actions) {
+                    // $actions->getMiddleEntity()->joinPermissionTo('read');
+                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                        $content->withContents();
+                    })->withSettings(function(MorphedBy $settings) {
+                        $settings->getMiddleEntity()->withSetting();
+                    })->withVariable();
+                });
+            },
+                               'app',
+                               '1minute');
 
         $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
@@ -161,17 +163,20 @@ class Generic
             return;
         }
 
-        $layoutActions = $layout->actions(
-            function(MorphedBy $actions) {
-                // $actions->getMiddleEntity()->joinPermissionTo('read');
-                $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                    $content->withContents();
-                })->withSettings(function(MorphedBy $settings){
-                    $settings->getMiddleEntity()->withSetting();
-                })
-                  ->withVariable();
-            }
-        );
+        $layoutActions = cache(Generic::class . ':readLayout:' . $layout->id,
+            function() use ($layout) {
+                return $layout->actions(function(MorphedBy $actions) {
+                    // $actions->getMiddleEntity()->joinPermissionTo('read');
+                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                        $content->withContents();
+                    })->withSettings(function(MorphedBy $settings) {
+                        $settings->getMiddleEntity()->withSetting();
+                    })->withVariable();
+                });
+            },
+                               'app',
+                               '1minute');
+
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
@@ -408,6 +413,7 @@ class Generic
                             ->withAllTranslations(function(HasMany $translations){
                                 $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
                             })
+                            ->cache('2minutes')
                             ->all();
 
         /**
