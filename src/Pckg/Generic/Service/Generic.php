@@ -118,7 +118,7 @@ class Generic
                 });
             },
                                'app',
-                               0);
+                               1);
 
         $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
@@ -175,7 +175,7 @@ class Generic
                 });
             },
                                'app',
-                               0);
+                               1);
 
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
