@@ -74,6 +74,7 @@ class CreateGenericTables extends Migration
         $contents = $this->table('contents');
         $contents->integer('parent_id')->references('contents');
         $contents->timeable();
+        $contents->orderable();
 
         $contentsI18n = $this->translatable('contents');
         $contentsI18n->title();
