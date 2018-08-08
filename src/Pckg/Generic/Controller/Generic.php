@@ -6,6 +6,7 @@ use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
 use Pckg\Locale\Entity\Languages;
+use Pckg\Locale\Record\Language;
 use Pckg\Manager\Asset as AssetManager;
 use Pckg\Manager\Seo as SeoManager;
 
