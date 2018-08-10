@@ -11,13 +11,16 @@
             value: {
                 default: '',
                 type: String
+            },
+            format: {
+                default: 'YYYY-MM-DD HH:mm'
             }
         },
         methods: {
             initPicker: function () {
                 var $this = this;
                 $(this.$el).find('input').datetimepicker({
-                    format: 'YYYY-MM-DD HH:mm'
+                    format: this.format
                 }).on('dp.change', function (ev) {
                     $this.$emit('input', $(this).val());
                 });

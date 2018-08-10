@@ -55,11 +55,7 @@
                     return [];
                 }
             },
-            selected: {
-                default: function () {
-                    return [];
-                }
-            },
+            selected: {},
             initialMultiple: {
                 default: true,
                 type: Boolean
