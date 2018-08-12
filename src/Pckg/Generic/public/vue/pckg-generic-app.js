@@ -23,6 +23,8 @@ Pckg.vue.stores.auth = {
                     callback();
                 }
             });
+
+            $dispatcher.$emit('derive:profile:addresses:fetch');
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {

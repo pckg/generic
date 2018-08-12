@@ -60,13 +60,14 @@ var pckgFormValidator = {
                 if (ok) {
                     console.log('ok');
                     submit();
-                } else {
-                    console.log('error', ok);
-                    var element = $(this.$el).find('.htmlbuilder-validator-error').first();
-                    globalScrollTo(element);
-                    if (invalid) {
-                        invalid();
-                    }
+                    return;
+                }
+
+                console.log('error', ok);
+                var element = $(this.$el).find('.htmlbuilder-validator-error').first();
+                globalScrollTo(element);
+                if (invalid) {
+                    invalid();
                 }
             }.bind(this));
         }

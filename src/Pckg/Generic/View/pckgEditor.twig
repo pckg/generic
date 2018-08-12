@@ -420,7 +420,7 @@
                             <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
                                 <label>Lock to layout
                                     <pckg-tooltip
-                                            content="Click this if you want to display module on all pages"></pckg-tooltip>
+                                            content="Click this if you want to display module on all pages" icon="question-circle"></pckg-tooltip>
                                 </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
                                             class="fa-unlock"></i>
@@ -429,7 +429,7 @@
                             <template v-else>
                                 <label>Lock to route
                                     <pckg-tooltip
-                                            content="Click this if you want to display module only on this page"></pckg-tooltip>
+                                            content="Click this if you want to display module only on this page" icon="question-circle"></pckg-tooltip>
                                 </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
                                             class="fa fa-lock"></i>
@@ -437,7 +437,7 @@
                                 <div>
                                     <label>Hide on pages
                                         <pckg-tooltip
-                                                content="Element is by default visible on all pages"></pckg-tooltip>
+                                                content="Element is by default visible on all pages" icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
                                                  title="route" id="id" :flat="true"
@@ -446,7 +446,7 @@
                                 <div>
                                     <label>Show on pages
                                         <pckg-tooltip
-                                                content="Element is by default visible on all pages"></pckg-tooltip>
+                                                content="Element is by default visible on all pages" icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
                                                  title="route" id="id" :flat="true"
@@ -455,7 +455,7 @@
                                 <div>
                                     <label>Show on system pages
                                         <pckg-tooltip
-                                                content="Show element on system pages"></pckg-tooltip>
+                                                content="Show element on system pages" icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="systemRoutes" :with-empty="false"
                                                  :initial-multiple="true"
