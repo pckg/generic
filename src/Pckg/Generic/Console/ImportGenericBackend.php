@@ -28,6 +28,7 @@ class ImportGenericBackend extends Command
 
     public function importGenericList()
     {
+        $languages = localeManager()->getLanguages();
         $lists = config('pckg.generic.lists', []);
         foreach ($lists as $listConfig) {
             $skipWhenExisting = $listConfig['skipWhenExisting'] ?? false;
@@ -46,23 +47,30 @@ class ImportGenericBackend extends Command
 
             foreach ($listConfig['items'] as $key => $title) {
                 $listItem = (new ListItems())->where('list_id', $list->id)->where('slug', $key)->one();
-                $deleted = strpos($title, '**deleted**') === 0;
+                /*foreach ($languages as $language) {
+                    runInLocale(function() use ($title, $key, $listConfig, $list, $language) {*/
+                        //$translatedTitle = is_array($title) ? ($title[$language->slug] ?? $title['en']) : $title;
+                        $translatedTitle = is_array($title) ? $title['en'] : $title;
+                        $deleted = strpos($title, '**deleted**') === 0;
 
-                if (!$listItem && !$deleted) {
-                    $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
-                    ListItem::create([
-                                         'list_id' => $list->id,
-                                         'slug'    => $key,
-                                         'value'   => $title,
-                                     ]);
-                } elseif ($listItem) {
-                    if ($deleted) {
-                        $this->output('Deleting item ' . $listConfig['id'] . '.' . $key);
-                        $listItem->delete();
-                    } else {
-                        $listItem->setAndSave(['value' => $title]);
-                    }
-                }
+                        if (!$listItem && !$deleted) {
+                            $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
+                            ListItem::create([
+                                                 'list_id' => $list->id,
+                                                 'slug'    => $key,
+                                                 'value'   => $translatedTitle,
+                                             ]);
+                        } elseif ($listItem) {
+                            if ($deleted) {
+                                $this->output('Deleting item ' . $listConfig['id'] . '.' . $key);
+                                $listItem->delete();
+                            } else {
+                                $listItem->setAndSave(['value' => $translatedTitle]);
+                            }
+                        }
+
+                /*    }, $language->locale);
+                }*/
             }
         }
     }

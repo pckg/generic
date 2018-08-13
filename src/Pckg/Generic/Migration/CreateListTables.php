@@ -23,6 +23,9 @@ class CreateListTables extends Migration
         $listItems->varchar('value');
         $listItems->unique('slug', 'list_id');
 
+        /*$listItemsI18n = $this->translatable('list_items');
+        $listItemsI18n->varchar('value');*/
+
         $this->save();
     }
 

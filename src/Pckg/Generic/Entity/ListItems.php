@@ -8,4 +8,10 @@ class ListItems extends Entity
 
     protected $record = ListItem::class;
 
+    public function boot()
+    {
+        /*$this->joinTranslation()
+             ->addSelect(['value' => 'IFNULL(' . $this->getAlias() . '_i18n.value, ' . $this->getAlias() . '.value)']);*/
+    }
+
 }
