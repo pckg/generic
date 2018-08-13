@@ -51,7 +51,7 @@ class ImportGenericBackend extends Command
                     runInLocale(function() use ($title, $key, $listConfig, $list, $language) {*/
                         //$translatedTitle = is_array($title) ? ($title[$language->slug] ?? $title['en']) : $title;
                         $translatedTitle = is_array($title) ? $title['en'] : $title;
-                        $deleted = strpos($title, '**deleted**') === 0;
+                        $deleted = strpos($translatedTitle, '**deleted**') === 0;
 
                         if (!$listItem && !$deleted) {
                             $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
