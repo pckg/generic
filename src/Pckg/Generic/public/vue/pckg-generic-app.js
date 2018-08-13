@@ -19,12 +19,13 @@ Pckg.vue.stores.auth = {
         prepareUser: function (state, callback) {
             http.getJSON('/api/auth/user', function (data) {
                 state.user = data.user;
+                $dispatcher.$emit('auth:user:' + (data.user.id > 0 ? 'in' : 'out'));
                 if (callback) {
                     callback();
                 }
             });
 
-            $dispatcher.$emit('derive:profile:addresses:fetch');
+            $store.commit('prepareAddresses');
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {
