@@ -1,12 +1,12 @@
 <div class="btn-group btn-group-sm">
-    <a type="button" class="entity-action-view btn btn-default dropdown-toggle" href="#" title="{{ __('pckg.generic.btn.viewOptions') }}" data-toggle="dropdown"
+    <a type="button" class="entity-action-view btn btn-default dropdown-toggle" href="#" title="View" data-toggle="dropdown"
        aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-bars" aria-hidden="true"></i> {{ __('pckg.generic.btn.viewOptions') }}
+        <i class="fa fa-bars" aria-hidden="true"></i> View
     </a>
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a href="#" class="customizeView" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> {{ __('pckg.generic.btn.customizeView') }}</a></li>
-        <li><a href="{{ tabelize.getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ __('pckg.generic.btn.saveView') }}</a></li>
-        <li><a href="{{ tabelize.getResetViewUrl() }}">{{ __('pckg.generic.btn.resetView') }}</a></li>
+        <li><a href="#" class="customizeView" @click.prevent="entityAction('openConfigureViewModal')"><i class="fa fa-pencil" aria-hidden="true"></i> Customize view</a></li>
+        <li><a href="{{ tabelize.getSaveViewUrl() }}" class="popup-iframe"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save view</a></li>
+        <li><a href="{{ tabelize.getResetViewUrl() }}">Reset view</a></li>
         {% if tabelize.getSavedViews() %}
             <li role="separator" class="divider"></li>
             {% for view in tabelize.getSavedViews() %}

@@ -548,7 +548,7 @@ class Records extends Controller
                 $this->saveP17n($record, $entity);
             }
         } else {
-            flash('dynamic.records.upload.success', __('dynamic.records.upload.success'));
+            flash('dynamic.records.upload.success', 'File successfully uploaded');
         }
 
         $url = url('dynamic.record.edit', [

@@ -1,15 +1,15 @@
 <template>
     <div class="pckg-htmlbuilder-select">
         <a href="button" :href="realViewUrl" target="_blank" class="btn btn-warning btn-md"
-           :title="__('pckg.htmlbuilder.btn.viewRecord')">
+           title="View">
             <i class="fa fa-search" aria-hidden="true"></i>
         </a>
         <a href="button" :href="url" target="_blank" class="btn btn-info btn-md"
-           :title="__('pckg.htmlbuilder.btn.toList')">
+           title="To list">
             <i class="fa fa-list-ul" aria-hidden="true"></i>
         </a>
         <button type="button" @click.prevent="refreshList" class="btn btn-success btn-md"
-                :title="__('pckg.htmlbuilder.btn.refreshList')">
+                title="Refresh">
             <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
     </div>
