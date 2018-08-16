@@ -20,7 +20,7 @@ var pckgCdn = {
             }
 
             if (!Pckg || !Pckg.config || !Pckg.config.cdn || !Pckg.config.cdn.host) {
-                return file:
+                return file;
             }
 
             return 'https://' + host + file;
