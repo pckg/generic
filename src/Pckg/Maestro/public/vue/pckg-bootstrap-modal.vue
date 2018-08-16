@@ -2,7 +2,7 @@
     <div class="modal fade" tabindex="-1" role="dialog" :id="id">
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" v-if="$slots.header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -13,7 +13,7 @@
                 <div class="modal-body" v-if="$slots.body">
                     <slot name="body"></slot>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" v-if="$slots.footer">
                     <slot name="footer"></slot>
                     <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
                 </div>
