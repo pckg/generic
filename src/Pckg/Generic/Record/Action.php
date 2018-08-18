@@ -74,6 +74,13 @@ class Action extends Record
 
             $setting = $settings->getKey($slug);
 
+            /**
+             * Skip all empty values.
+             */
+            if (!$setting->pivot->value) {
+                continue;
+            }
+
             if ($setting->slug == 'pckg.generic.pageStructure.style') {
                 $value = $setting->pivot->value;
             } else if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
