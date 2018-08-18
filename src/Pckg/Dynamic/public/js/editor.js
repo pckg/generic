@@ -308,13 +308,13 @@ var initTinymce = function (selector, config) {
                     value = {href: value};
                 }
 
-                anchor = dom.getParent(editor.selection.getNode(), 'a');
+                anchor = tinymce.DOM.getParent(editor.selection.getNode(), 'a');
 
                 //value.href = value.href.replace(/\s+/g, '%20');
 
                 // Remove existing links if there could be child links or that the href isn't specified
                 if (!anchor || !value.href) {
-                    formatter.remove('link');
+                    editor.formatter.remove('link');
                 }
 
                 // Apply new link to selection
