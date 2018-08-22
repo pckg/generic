@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Derive\Orders\Entity\Orders;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
