@@ -2,12 +2,20 @@
 
 use Pckg\Auth\Migration\CreateAuthTables;
 use Pckg\Database\Repository;
+use Pckg\Generic\Migration\CreateSettingsTable;
 use Pckg\Migration\Migration;
 
 class CreateDynamicTables extends Migration
 {
 
     protected $repository = Repository::class . '.dynamic';
+
+    public function dependencies()
+    {
+        return [
+            (new CreateSettingsTable())->setRepository($this->repository),
+        ];
+    }
 
     public function partials()
     {

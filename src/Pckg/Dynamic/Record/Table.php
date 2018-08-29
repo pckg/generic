@@ -111,13 +111,8 @@ class Table extends Record
     {
         $r = $this->repository;
 
-        // @T00D00 - @T3MP
-        if ($r == 'gnp') {
+        if (!$r) {
             $r = 'default';
-        } elseif ($r == 'derive') {
-            $r = 'dynamic';
-        } elseif (!$r) {
-            $r = 'dynamic';
         }
 
         return context()->get(Repository::class . '.' . $r);

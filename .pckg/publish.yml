@@ -1,0 +1,41 @@
+# each packet may provide multiple functionalitites
+# when publishing (or activating) vendor we need to define which files needs to be altered:
+#  - composer packages
+#  - yarn / npm packages
+#  - css, js, less assets
+#  - migrations
+#  - config changes
+#  - providers
+#
+# first, we need to require package
+# $ composer require pckg/generic
+#
+# then we want to use some things, so for example, when user wants to enable dynamic backend he runs:
+# $ php console vendor:activate vendor/pckg/generic dynamicBackend
+#
+# but first we need to define what will we publish :)
+
+generic:
+  provider:
+    Pckg\Generic\Provider\Generic
+
+dynamicAssets:
+  provider:
+    Pckg\Dynamic\Provider\DynamicAssets
+
+dynamicBackend:
+  # composer packages are automatically required in previous step
+  composer:
+  yarn:
+    vee-validate: dev-master
+  js:
+  css:
+  less:
+  migration:
+    Pckg\Dynamic\Migration\CreateDynamicTables
+    Pckg\Dynamic\Migration\CreateDynamicProjectTables
+  config:
+
+menu:
+  migration:
+    Pckg\Dynamic\Migration\CreateMenuTables
