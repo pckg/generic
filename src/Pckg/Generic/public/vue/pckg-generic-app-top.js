@@ -23,7 +23,7 @@ var pckgCdn = {
                 return file;
             }
 
-            return 'https://' + host + file;
+            return 'https://' + Pckg.config.cdn.host + file;
         }
     }
 };
@@ -63,7 +63,9 @@ var pckgFormValidator = {
 
                 console.log('error', ok);
                 var element = $(this.$el).find('.htmlbuilder-validator-error').first();
-                globalScrollTo(element);
+                if (element && typeof globalScrollTo == Function) {
+                    globalScrollTo(element);
+                }
                 if (invalid) {
                     invalid();
                 }

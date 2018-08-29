@@ -26,3 +26,39 @@
 .modal-body {
   overflow: auto;
 }
+
+ul.vertical-mid-menu {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  > li {
+    > span {
+      border-bottom: 2px solid #eee;
+      display: block;
+      padding: 0 0 .333rem 0;
+      margin: 0 0 .333rem 0;
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      color: #777;
+    }
+    ul {
+      margin: 0 0 0 .666rem;
+      padding: 0;
+      list-style-type: none;
+      li {
+        margin: 0;
+        padding: .2rem 0;
+      }
+    }
+    & + li {
+      margin-top: 2rem;
+    }
+  }
+}
+
+.box {
+  padding: 2rem;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px #ddd;
+  border-radius: 4px;
+}
