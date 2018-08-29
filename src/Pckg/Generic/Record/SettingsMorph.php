@@ -4,6 +4,7 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Dynamic\Resolver\Table;
 use Pckg\Generic\Entity\ActionsMorphs;
+use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
 class SettingsMorph extends Record
@@ -65,6 +66,26 @@ class SettingsMorph extends Record
         $settingsMorph->setAndSave([
                                        'value' => is_array($value) ? json_encode($value) : $value,
                                    ]);
+    }
+
+    public static function getSettingOrDefault($slug, $morph, $poly, $default = null)
+    {
+        $setting = (new Settings())->where('slug', $slug)->one();
+
+        if (!$setting) {
+            return $default;
+        }
+
+        $settingsMorph = (new SettingsMorphs())->where('setting_id', $setting->id)
+                                               ->where('morph_id', $morph)
+                                               ->where('poly_id', $poly)
+                                               ->one();
+
+        if (!$settingsMorph) {
+            return $default;
+        }
+
+        return $settingsMorph->getFinalValueAttribute();
     }
 
 }
