@@ -139,7 +139,7 @@ class Dynamic extends Bootstrap
             return;
         }
 
-        $this->addFieldset('translatable');
+        $fieldset = $this->addFieldset('translatable');
         /**
          * @T00D00 - field language_id could/will interfere with main table fields ...
          */
@@ -153,7 +153,7 @@ class Dynamic extends Bootstrap
              ->setLabel('Language');
 
         if ($this->isEditable()) {
-            $this->addButton('switch_language')->setValue('Switch language')->a('@click.prevent', 'switchLanguage');
+            $fieldset->addButton('switch_language')->setValue('Switch language')->a('@click.prevent', 'switchLanguage');
         }
 
         return $this;
@@ -228,6 +228,17 @@ class Dynamic extends Bootstrap
 
     public function initFields()
     {
+        $this->setDecoratorClasses(
+            [
+                'label'           => 'col-xs-12',
+                'field'           => 'col-xs-12',
+                'fullField'       => 'col-xs-12',
+                'offset'          => '',
+                'offsetField'     => '',
+                'offsetFullField' => '',
+            ]
+        );
+
         $fields = $this->table->listableFields(
             function(HasMany $fields) {
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
@@ -248,7 +259,7 @@ class Dynamic extends Bootstrap
                 (!$prevGroup && $field->dynamic_field_group_id)
             ) {
                 $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<hr /><h4>' . $field->fieldGroup->title . '</h4>');
+                $fieldset->addChild('<h4>' . $field->fieldGroup->title . '</h4>');
                 $prevGroup = $field->dynamic_field_group_id;
             }
 
@@ -265,15 +276,15 @@ class Dynamic extends Bootstrap
                 }
 
                 $element = $this->getFieldset()->addDiv()->addChild(
-                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-sm-3">' .
+                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-xs-12">' .
                     $field->title . '</label>
-<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
+<div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $this->getFieldset()->addDiv()->addChild(
-                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label class="col-sm-3"></label>
-<div class="col-sm-9">' . $this->record->{$field->field} . '</div></div>'
+                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label class="col-xs-12"></label>
+<div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
                 );
 
                 continue;

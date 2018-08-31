@@ -4,14 +4,34 @@
 }
 
 #ajaxTabs {
-  padding: 1.5rem 0;
-  border: 1px solid #ddd;
-  border-width: 1px 0;
-  margin: 0 0 2rem 0;
+  padding: 0;
+  margin: 0;
+}
+
+#formDynamic {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: -1rem;
+  min-width: 100%;
+  align-items: stretch;
+  > * {
+    flex-basis: 42rem;
+    flex-grow: 1;
+    margin: 1rem;
+    background: #fff;
+    padding: 24px;
+    border-radius: 6px;
+    border: 1px solid #e7e7e7;
+    &.submit {
+      flex-basis: 100%;
+    }
+  }
 }
 
 form label .help {
-  float: right;
+  margin-left: 1rem;
+  display: inline-block;
 }
 
 ol.breadcrumb {
@@ -371,7 +391,7 @@ table tr.strong > td:not(.actions) {
 
 .pckg-dynamic-record-singular,
 .pckg-dynamic-record-tabs {
-  > h2 {
+  h2 {
     margin: 0;
     padding: 0 0 2rem 0;
     > .btn-group {
@@ -379,6 +399,9 @@ table tr.strong > td:not(.actions) {
         display: none
       }
     }
+  }
+  > .tab-content {
+    margin-top: 2rem;
   }
 }
 

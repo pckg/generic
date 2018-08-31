@@ -1,24 +1,26 @@
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
-        <h2>
-            {{ formalize.getTitle() | raw }}
-            <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
-                                              :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"
-                                              :identifier="'{{ table }}'"></pckg-maestro-actions-{{ table }}>
-        </h2>
+        <div class="box-with-padding">
+            <h2>
+                {{ formalize.getTitle() | raw }}
+                <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
+                                                  :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"
+                                                  :identifier="'{{ table }}'"></pckg-maestro-actions-{{ table }}>
+            </h2>
 
-        <ul class="nav nav-pills" role="tablist" id="ajaxTabs">
-            <li role="presentation" class="active">
-                <a href="#home" aria-controls="home" role="tab" data-toggle="tab">General</a>
-            </li>
-            {% for tab in tabs %}
-                <li role="presentation">
-                    <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
-                       data-toggle="tab"
-                       @click.prevent="selectTab({{ tab.id }})">{{ tab.name }}</a>
+            <ul class="nav nav-pills" role="tablist" id="ajaxTabs">
+                <li role="presentation" class="active">
+                    <a href="#home" aria-controls="home" role="tab" data-toggle="tab">General</a>
                 </li>
-            {% endfor %}
-        </ul>
+                {% for tab in tabs %}
+                    <li role="presentation">
+                        <a href="#dynamic-tab-{{ tab.id }}" aria-controls="dynamic-tab-{{ tab.id }}" role="tab"
+                           data-toggle="tab"
+                           @click.prevent="selectTab({{ tab.id }})">{{ tab.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="home">
