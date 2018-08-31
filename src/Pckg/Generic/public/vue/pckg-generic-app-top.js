@@ -12,6 +12,33 @@ var pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
+var pckgPlatformSettings = {
+    data: function () {
+        return {
+            form: {}
+        };
+    },
+    methods: {
+        submitForm: function () {
+            this.validateAndSubmit(function(){
+                http.post($(this.$el).find('form').attr('action'), this.form, function (data) {
+                    $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message || (data.success ? 'Settings saved' : 'General error'));
+                }, function (response) {
+                    http.postError(response);
+
+                    $.each(response.responseJSON.descriptions || [], function (name, message) {
+                        this.errors.remove(name);
+                        this.errors.add(name, message);
+                    }.bind(this));
+                }.bind(this));
+            }.bind(this));
+        }
+    },
+    created: function () {
+        this.initialFetch();
+    }
+};
+
 var pckgCdn = {
     methods: {
         cdn: function(file) {
