@@ -405,9 +405,62 @@ table tr.strong > td:not(.actions) {
   }
 }
 
-.affix-dynamic-offset-container {
-  height: 60px;
+.pckg-maestro-tabelize {
+  .quick-search {
+    width: 100%;
+    margin: 16px 0;
+  }
+}
 
+textarea.form-control {
+  min-height: 10rem;
+}
+
+.row.help-grid {
+  clear: both;
+  > div:nth-child(2n) {
+    color: grey;
+    font-size: 13px;
+    margin-top: 20px;
+  }
+  > div {
+    padding-bottom: 0;
+  }
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+.derive-platform-theme {
+  .row.help-grid>div:nth-child(2n) {
+    margin-top: 0;
+  }
+  table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    td {
+      border: none !important;
+    }
+    input[type=text] {
+      border: none;
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+      text-align: center;
+      margin: 0;
+      mix-blend-mode: difference;
+    }
+    .form-group {
+      margin: 0;
+    }
+  }
+}
+
+.affix-dynamic-offset-container {
+  .clear-after();
   .affix-dynamic-offset {
     > div {
       display: block;
@@ -422,12 +475,6 @@ table tr.strong > td:not(.actions) {
       right: 0;
       top: 0;
       z-index: 10;
-    }
-
-    .quick-search {
-      width: 100%;
-      float: left;
-      margin: 16px 0;
     }
   }
 }

@@ -9,6 +9,7 @@
             <div class="btn-group btn-group-sm pull-right" role="group" style="text-align: right;">
                 {# print all buttons for mixed, entity-plugin and entity actions #}
                 {{ tabelize.getEntityActionsHtml() | raw }}
+
                 <div class="btn-group btn-group-sm">
                     <a type="button" class="entity-action-view btn btn-default dropdown-toggle" href="#" title="" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
@@ -19,12 +20,6 @@
                     </ul>
                 </div>
             </div>
-            {% if viewType == 'full' %}
-                <div class="quick-search">
-                    <input type="text" v-model="search" class="form-control"
-                           placeholder="Quick search"/>
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>

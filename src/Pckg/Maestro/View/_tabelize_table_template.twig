@@ -19,6 +19,13 @@
         </table>
     </template>
     <template v-if="depth < 1">
+        {% if viewType == 'full' %}
+            <div class="quick-search">
+                <input type="text" v-model="search" class="form-control"
+                       placeholder="Quick search"/>
+            </div>
+        {% endif %}
+
         <table class="table table-condensed table-striped table-hover">
             <thead>
             <tr>

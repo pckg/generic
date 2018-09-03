@@ -114,6 +114,9 @@ class Table extends Record
         if (!$r) {
             $r = 'default';
         }
+        if ($r == 'gnp') {
+            $r = 'default';
+        }
 
         return context()->get(Repository::class . '.' . $r);
     }
