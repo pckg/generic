@@ -49,6 +49,8 @@ class Dynamic extends Bootstrap
 
     protected $editable = true;
 
+    protected $positionFieldset;
+
     public function __construct()
     {
         parent::__construct();
@@ -254,12 +256,19 @@ class Dynamic extends Bootstrap
         );
 
         $prevGroup = null;
+        $fieldPositions = $fields->groupBy(function(Field $field){
+            return $field->dynamic_field_group_id % 2 == 0 ? 'left' : 'right';
+        });
+
+        foreach ($fieldPositions as $position => $fields) {
+            $positionFieldset = $this->addFieldset('position-' . $position);
         foreach ($fields as $field) {
             if (($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
-                (!$prevGroup && $field->dynamic_field_group_id)
+                (!$prevGroup && $field->dynamic_field_group_id) ||
+                !$this->positionFieldset
             ) {
-                $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<h4>' . $field->fieldGroup->title . '</h4>');
+                $this->positionFieldset = $fieldset = $positionFieldset->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
+                $fieldset->addChild('<h4>' . ($field->fieldGroup->title ?? 'General') . '</h4>');
                 $prevGroup = $field->dynamic_field_group_id;
             }
 
@@ -275,14 +284,14 @@ class Dynamic extends Bootstrap
                     continue;
                 }
 
-                $element = $this->getFieldset()->addDiv()->addChild(
+                $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-xs-12">' .
                     $field->title . '</label>
 <div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
-                $element = $this->getFieldset()->addDiv()->addChild(
+                $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label class="col-xs-12"></label>
 <div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
                 );
@@ -308,7 +317,7 @@ class Dynamic extends Bootstrap
 
             if (($label = $field->label)) {
                 $translatable = $field->isTranslatable($this->record->getEntity())
-                    ? '<span class="label label-info"><i class="fa fa-globe" aria-hidden="true"></i></span>'
+                    ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
                     : '';
                 $element->setLabel($label . $translatable);
             }
@@ -320,6 +329,7 @@ class Dynamic extends Bootstrap
             if ($field->required) {
                 $element->required();
             }
+        }
         }
 
         if ($this->isEditable()) {
@@ -388,7 +398,7 @@ ifrm.document.close();
             }
         }
 
-        $element = $this->getFieldset()->addDiv()->addChild(
+        $element = $this->positionFieldset->addDiv()->addChild(
             '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
 </label>
 <div class="col-sm-9">' . $value . '</div></div>'
@@ -408,7 +418,7 @@ ifrm.document.close();
             'decimal',
         ];
         if (in_array($type, $auto)) {
-            return $this->{'add' . ucfirst($type)}($name);
+            return $this->positionFieldset->{'add' . ucfirst($type)}($name);
         } elseif (in_array($type, ['file', 'pdf'])) {
             $dir = $field->getAbsoluteDir(
                 $field->getSetting('pckg.dynamic.field.dir'),
@@ -422,7 +432,7 @@ ifrm.document.close();
             }
 
             if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
-                $element = $this->addDiv();
+                $element = $this->positionFieldset->addDiv();
                 if ($this->record) {
                     if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
                         $element->addChild(
@@ -451,7 +461,7 @@ ifrm.document.close();
                     }
                 }
             } else {
-                $element = $this->addFile($name);
+                $element = $this->positionFieldset->addFile($name);
                 $element->setPrefix(
                     '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
                 );
@@ -494,7 +504,7 @@ ifrm.document.close();
 
             return $element;
         } elseif ($type == 'picture') {
-            $element = $this->addPicture($name);
+            $element = $this->positionFieldset->addPicture($name);
             $element->setPrefix('<i class="fa fa-image" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
@@ -534,28 +544,28 @@ ifrm.document.close();
 
             return $element;
         } elseif ($type == 'datetime') {
-            $element = $this->addDatetime($name);
+            $element = $this->positionFieldset->addDatetime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'date') {
-            $element = $this->addDate($name);
+            $element = $this->positionFieldset->addDate($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'time') {
-            $element = $this->addTime($name);
+            $element = $this->positionFieldset->addTime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif (in_array($type, ['password'])) {
-            $element = $this->addPassword($name);
+            $element = $this->positionFieldset->addPassword($name);
 
             $element->setAttribute('autocomplete', 'off');
             $element->readonly();
@@ -566,15 +576,15 @@ ifrm.document.close();
 
             return $element;
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
-            return $this->addText($name);
+            return $this->positionFieldset->addText($name);
         } elseif (in_array($type, ['json'])) {
-            return $this->addTextarea($name);
+            return $this->positionFieldset->addTextarea($name);
         } elseif ($type == 'boolean') {
-            return $this->addCheckbox($name);
+            return $this->positionFieldset->addCheckbox($name);
         } elseif ($type == 'point') {
-            return $this->addPoint($name);
+            return $this->positionFieldset->addPoint($name);
         } elseif ($type == 'geo') {
-            $element = $this->addGeo($name);
+            $element = $this->positionFieldset->addGeo($name);
             $element->setPrefix('<i class="fa fa-map-marker" aria-hidden="true"></i>');
 
             return $element;
@@ -583,7 +593,7 @@ ifrm.document.close();
             if ($this->record) {
                 $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
 
-                $element = $this->addSelect($name);
+                $element = $this->positionFieldset->addSelect($name);
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
@@ -658,7 +668,7 @@ ifrm.document.close();
 
                 return $element;
             } else {
-                return $this->{'addText'}($name);
+                return $this->positionFieldset->addText($name);
             }
         } else {
             dd('Unknown dynamic form type: ' . $type);

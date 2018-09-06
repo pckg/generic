@@ -9,22 +9,93 @@
 }
 
 #formDynamic {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin: -1rem;
-  min-width: 100%;
-  align-items: stretch;
-  > * {
-    flex-basis: 42rem;
-    flex-grow: 1;
-    margin: 1rem;
-    background: #fff;
-    padding: 24px;
-    border-radius: 6px;
-    border: 1px solid #e7e7e7;
-    &.submit {
-      flex-basis: 100%;
+  margin: -12px;
+  .help {
+    margin-top: .5rem;
+    color: grey;
+    font-size: 13px;
+  }
+  .position-left {
+    width: 65%;
+    float: left;
+  }
+  .position-right {
+    width: 35%;
+    float: left;
+  }
+  .position-left,
+  .position-right {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 12px;
+
+    > fieldset {
+      flex-grow: 1;
+      background: #fff;
+      padding: 24px;
+      border-radius: 6px;
+      border: 1px solid #e7e7e7;
+      margin-bottom: 24px;
+      &.submit {
+        flex-basis: 100%;
+      }
+    }
+  }
+  input[type=text],
+  input[type=number] {
+    border: none;
+    box-shadow: none;
+    position: relative;
+    border-bottom: 2px solid #eee;
+    border-radius: 0;
+    &:after {
+      transition: all 333ms ease-in-out;
+      content: '';
+      position: absolute;
+      height: 2px;
+      width: 0%;
+      top: 100%;
+      left: 0;
+    }
+    &:focus,
+    &:hover {
+      border-bottom: 2px solid #999;
+      &:after {
+        width: 100%;
+        background-color: #ccc;
+      }
+    }
+  }
+  input[type=number],
+  .datetime {
+    max-width: 240px;
+  }
+  input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+  }
+  .pckg-htmlbuilder-dropzone {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .form-group {
+    position: relative;
+  }
+  .input-group-addon {
+    border: none;
+    border-bottom: 2px solid #eee;
+    border-radius: 0;
+  }
+  .dropdown.bootstrap-select {
+    .dropdown-toggle {
+      border: none;
+      border-bottom: 2px solid #eee;
+    }
+    .btn {
+      padding: 7px 12px;
     }
   }
 }
@@ -402,6 +473,13 @@ table tr.strong > td:not(.actions) {
   }
   > .tab-content {
     margin-top: 2rem;
+  }
+  > :first-child {
+    margin-left: -25px;
+    margin-right: -20px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
   }
 }
 
