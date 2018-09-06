@@ -1,5 +1,5 @@
 <template>
-    <div class="pckg-htmlbuilder-select">
+    <div class="pckg-htmlbuilder-select btn-group">
         <a href="button" :href="realViewUrl" target="_blank" class="btn btn-warning btn-md"
            title="View">
             <i class="fa fa-search" aria-hidden="true"></i>
@@ -10,7 +10,7 @@
         </a>
         <button type="button" @click.prevent="refreshList" class="btn btn-success btn-md"
                 title="Refresh">
-            <i class="fa fa-refresh" aria-hidden="true"></i>
+            <i class="fa fa-sync-alt" aria-hidden="true"></i>
         </button>
     </div>
 </template>

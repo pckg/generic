@@ -8,31 +8,28 @@
   margin: 0;
 }
 
-#formDynamic {
-  margin: -12px;
-  .help {
-    margin-top: .5rem;
-    color: grey;
-    font-size: 13px;
-  }
+#home.tab-pane {
   .position-left {
     width: 65%;
     float: left;
+    padding-right: 12px;
   }
   .position-right {
     width: 35%;
-    float: left;
+    float: right;
+    padding-left: 12px;
   }
   .position-left,
   .position-right {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    padding: 12px;
+    @media(max-width: 640px) {
+      width: 100%;
+      padding: 0;
+      float: left;
+    }
+    display: block;
 
     > fieldset {
-      flex-grow: 1;
+      width: 100%;
       background: #fff;
       padding: 24px;
       border-radius: 6px;
@@ -43,13 +40,31 @@
       }
     }
   }
+  .form-group {
+    margin: 0 0 2rem 0;
+  }
+}
+#formDynamic {
+  .help {    margin-top: .5rem;
+    color: grey;
+    font-size: 13px;
+    float: left;
+    clear: both;
+  }
   input[type=text],
-  input[type=number] {
+  input[type=number],
+  textarea,
+  .dropdown.bootstrap-select .dropdown-toggle {
+    background: #f7f7f7;
     border: none;
     box-shadow: none;
     position: relative;
     border-bottom: 2px solid #eee;
     border-radius: 0;
+    transition: all 333ms ease-in-out;
+    font-size: 16px;
+    padding: 10px;
+    height: 40px;
     &:after {
       transition: all 333ms ease-in-out;
       content: '';
@@ -61,12 +76,16 @@
     }
     &:focus,
     &:hover {
+      //background: #fff;
       border-bottom: 2px solid #999;
       &:after {
         width: 100%;
         background-color: #ccc;
       }
     }
+  }
+  textarea {
+    max-width: 100%;
   }
   input[type=number],
   .datetime {
@@ -90,10 +109,6 @@
     border-radius: 0;
   }
   .dropdown.bootstrap-select {
-    .dropdown-toggle {
-      border: none;
-      border-bottom: 2px solid #eee;
-    }
     .btn {
       padding: 7px 12px;
     }
@@ -403,13 +418,13 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
 }
 
 .pckg-htmlbuilder-select {
-  width: 124px;
+  width: 118px;
   float: right;
 }
 
 .pckg-htmlbuilder-select + div {
   float: left;
-  width: ~'calc(100% - 124px) !important';
+  width: ~'calc(100% - 118px) !important';
   padding-right: 4px !important;
   max-width: none;
 }
