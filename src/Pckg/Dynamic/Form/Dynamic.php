@@ -16,6 +16,7 @@ use Pckg\Htmlbuilder\Builder\Pckg;
 use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
+use Pckg\Htmlbuilder\Handler\Method\Query;
 use Pckg\Locale\Entity\Languages;
 use Pckg\Locale\Record\Language;
 
@@ -48,6 +49,8 @@ class Dynamic extends Bootstrap
     protected $foreignFieldId;
 
     protected $editable = true;
+
+    protected $lastFieldset;
 
     public function __construct()
     {
@@ -230,9 +233,9 @@ class Dynamic extends Bootstrap
     {
         $this->setDecoratorClasses(
             [
-                'label'           => 'col-xs-12',
-                'field'           => 'col-xs-12',
-                'fullField'       => 'col-xs-12',
+                'label'           => '',
+                'field'           => '',
+                'fullField'       => '',
                 'offset'          => '',
                 'offsetField'     => '',
                 'offsetFullField' => '',
@@ -254,12 +257,19 @@ class Dynamic extends Bootstrap
         );
 
         $prevGroup = null;
+        $fieldPositions = $fields->groupBy(function(Field $field){
+            return $field->fieldGroup->position ?: 'left';
+        });
+
+        foreach ($fieldPositions as $position => $fields) {
+            // $positionFieldset = $this->addFieldset('position-' . $position);
         foreach ($fields as $field) {
             if (($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
-                (!$prevGroup && $field->dynamic_field_group_id)
+                (!$prevGroup && $field->dynamic_field_group_id) ||
+                (!$prevGroup && !$this->lastFieldset)
             ) {
-                $fieldset = $this->addFieldset()->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<h4>' . $field->fieldGroup->title . '</h4>');
+                $this->lastFieldset = $fieldset = $this->addFieldset('position-' . $position)->setAttribute('data-field-group', $field->dynamic_field_group_id);
+                $fieldset->addChild('<h4>' . ($field->fieldGroup->title ?? 'General') . '</h4>');
                 $prevGroup = $field->dynamic_field_group_id;
             }
 
@@ -275,16 +285,16 @@ class Dynamic extends Bootstrap
                     continue;
                 }
 
-                $element = $this->getFieldset()->addDiv()->addChild(
-                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label class="col-xs-12">' .
+                $element = $fieldset->addDiv()->addChild(
+                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label>' .
                     $field->title . '</label>
-<div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
+<div>' . $this->record->{$field->field} . '</div></div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
-                $element = $this->getFieldset()->addDiv()->addChild(
-                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label class="col-xs-12"></label>
-<div class="col-xs-12">' . $this->record->{$field->field} . '</div></div>'
+                $element = $fieldset->addDiv()->addChild(
+                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label></label>
+<div>' . $this->record->{$field->field} . '</div></div>'
                 );
 
                 continue;
@@ -308,7 +318,7 @@ class Dynamic extends Bootstrap
 
             if (($label = $field->label)) {
                 $translatable = $field->isTranslatable($this->record->getEntity())
-                    ? '<span class="label label-info"><i class="fa fa-globe" aria-hidden="true"></i></span>'
+                    ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
                     : '';
                 $element->setLabel($label . $translatable);
             }
@@ -320,6 +330,7 @@ class Dynamic extends Bootstrap
             if ($field->required) {
                 $element->required();
             }
+        }
         }
 
         if ($this->isEditable()) {
@@ -384,14 +395,16 @@ ifrm.document.close();
                 $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
                 $fullPath = img($this->record->{$field->field}, null, true, $dir);
                 $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
-                         $fullPath . '" /></a>';
+                    $fullPath . '" /></a>';
             }
+        } elseif ($type == 'boolean') {
+            $value = $value ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>';
         }
 
-        $element = $this->getFieldset()->addDiv()->addChild(
-            '<div class="form-group grouped" data-field-id="' . $field->id . '"><label class="col-sm-3">' . $label . '
+        $element = $this->lastFieldset->addDiv()->addChild(
+            '<div class="form-group grouped" data-field-id="' . $field->id . '"><label>' . $label . '
 </label>
-<div class="col-sm-9">' . $value . '</div></div>'
+<div>' . $value . '</div></div>'
         );
     }
 
@@ -406,9 +419,10 @@ ifrm.document.close();
             'editor',
             'integer',
             'decimal',
+            'point',
         ];
         if (in_array($type, $auto)) {
-            return $this->{'add' . ucfirst($type)}($name);
+            return $this->getFieldset()->{'add' . ucfirst($type)}($name);
         } elseif (in_array($type, ['file', 'pdf'])) {
             $dir = $field->getAbsoluteDir(
                 $field->getSetting('pckg.dynamic.field.dir'),
@@ -422,7 +436,7 @@ ifrm.document.close();
             }
 
             if ($field->getSetting('pckg.dynamic.field.uploadDisabled')) {
-                $element = $this->addDiv();
+                $element = $this->getFieldset()->addDiv();
                 if ($this->record) {
                     if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
                         $element->addChild(
@@ -451,7 +465,7 @@ ifrm.document.close();
                     }
                 }
             } else {
-                $element = $this->addFile($name);
+                $element = $this->getFieldset()->addFile($name);
                 $element->setPrefix(
                     '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
                 );
@@ -494,7 +508,7 @@ ifrm.document.close();
 
             return $element;
         } elseif ($type == 'picture') {
-            $element = $this->addPicture($name);
+            $element = $this->getFieldset()->addPicture($name);
             $element->setPrefix('<i class="fa fa-image" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
@@ -534,28 +548,28 @@ ifrm.document.close();
 
             return $element;
         } elseif ($type == 'datetime') {
-            $element = $this->addDatetime($name);
+            $element = $this->getFieldset()->addDatetime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'date') {
-            $element = $this->addDate($name);
+            $element = $this->getFieldset()->addDate($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'time') {
-            $element = $this->addTime($name);
+            $element = $this->getFieldset()->addTime($name);
             $element->addClass('vue-takeover');
             $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif (in_array($type, ['password'])) {
-            $element = $this->addPassword($name);
+            $element = $this->getFieldset()->addPassword($name);
 
             $element->setAttribute('autocomplete', 'off');
             $element->readonly();
@@ -566,15 +580,13 @@ ifrm.document.close();
 
             return $element;
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
-            return $this->addText($name);
+            return $this->getFieldset()->addText($name);
         } elseif (in_array($type, ['json'])) {
-            return $this->addTextarea($name);
+            return $this->getFieldset()->addTextarea($name);
         } elseif ($type == 'boolean') {
-            return $this->addCheckbox($name);
-        } elseif ($type == 'point') {
-            return $this->addPoint($name);
+            return $this->getFieldset()->addCheckbox($name);
         } elseif ($type == 'geo') {
-            $element = $this->addGeo($name);
+            $element = $this->getFieldset()->addGeo($name);
             $element->setPrefix('<i class="fa fa-map-marker" aria-hidden="true"></i>');
 
             return $element;
@@ -583,7 +595,7 @@ ifrm.document.close();
             if ($this->record) {
                 $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
 
-                $element = $this->addSelect($name);
+                $element = $this->getFieldset()->addSelect($name);
                 /**
                  * @T00D00 - add setting for select placeholder for speciffic field
                  */
@@ -658,7 +670,7 @@ ifrm.document.close();
 
                 return $element;
             } else {
-                return $this->{'addText'}($name);
+                return $this->getFieldset()->addText($name);
             }
         } else {
             ddd('Unknown dynamic form type: ' . $type);

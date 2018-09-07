@@ -1,6 +1,20 @@
 <script type="text/x-template" id="pckg-maestro-formalize">
     <div class="pckg-maestro-formalize">
-        {{ form | raw }}
+        {{ form.a('@submit.prevent', 'submitForm').emptyAttribute('novalidate').open() | raw }}
+        <div class="position-left">
+            {% for element in form.findChildren('.position-left') %}
+                {{ element | raw }}
+            {% endfor %}
+        </div>
+        <div class="position-right">
+            {% for element in form.findChildren('.position-right') %}
+                {{ element | raw }}
+            {% endfor %}
+        </div>
+        <div class="floating-submit">
+            {{ form.findChild('.submit') | raw }}
+        </div>
+        {{ form.close() | raw }}
     </div>
 </script>
 
