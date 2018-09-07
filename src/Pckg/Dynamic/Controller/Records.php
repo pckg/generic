@@ -473,6 +473,8 @@ class Records extends Controller
         }
 
         $formalize = $this->formalize($form, $record, $table->getFormTitle('Add'));
+        
+        vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $formalize, 'form' => $form]);
 
         return view(
             'edit/singular',

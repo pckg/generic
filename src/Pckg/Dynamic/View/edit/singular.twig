@@ -5,13 +5,16 @@
     <div class="alert alert-success" role="alert">{{ flash('dynamic.records.edit.success') }}</div>
 {% endif %}
 <div class="pckg-dynamic-record-singular">
-    <h2>
-        {{ formalize.getTitle() | raw }}
-        {% if not formalize.getForm().isEditable() and record.id %}
-            <a href="{{ formalize.getEditUrl() }}" class="btn btn-info pull-right">Edit</a>
-        {% elseif record.id %}
-        {% endif %}
-    </h2>
+
+    <div class="box-with-padding">
+        <h2>
+            {{ formalize.getTitle() | raw }}
+            {% if not formalize.getForm().isEditable() and record.id %}
+                <a href="{{ formalize.getEditUrl() }}" class="btn btn-info pull-right">Edit</a>
+            {% elseif record.id %}
+            {% endif %}
+        </h2>
+    </div>
 
     {{ formalize | raw }}
 
