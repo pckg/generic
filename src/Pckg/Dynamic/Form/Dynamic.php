@@ -661,7 +661,7 @@ ifrm.document.close();
                 return $this->{'addText'}($name);
             }
         } else {
-            dd('Unknown dynamic form type: ' . $type);
+            ddd('Unknown dynamic form type: ' . $type);
         }
     }
 
