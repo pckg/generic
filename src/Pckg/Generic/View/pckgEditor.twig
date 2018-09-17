@@ -3,7 +3,8 @@
 
         <div class="pckg-editor-settings" v-if="mode == 'add'" :class="visibilityClass">
 
-            <p class="text-center padding-vertical-xs margin-none" v-if="action.id"><b>${ action.title } #${ action.id }</b></p>
+            <p class="text-center padding-vertical-xs margin-none" v-if="action.id"><b>${ action.title } #${ action.id
+                    }</b></p>
             <p class="text-center padding-vertical-xs margin-none" v-else><b>New action</b></p>
 
             <div class="clearfix"></div>
@@ -23,14 +24,17 @@
 
                     <div class="panel-heading" role="tab" :id="'heading' + hash(title)">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + hash(title)" aria-expanded="false" :aria-controls="'collapse' + hash(title)">
+                           :href="'#collapse' + hash(title)" aria-expanded="false"
+                           :aria-controls="'collapse' + hash(title)">
                             <i class="fa fa-th-large"></i> ${ title }
                         </a>
                     </div>
 
-                    <div :id="'collapse' + hash(title)" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + hash(title)">
+                    <div :id="'collapse' + hash(title)" class="panel-collapse collapse" role="tabpanel"
+                         :aria-labelledby="'heading' + hash(title)">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in subPartials">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
+                               v-for="(partial, title) in subPartials">
                                 ${ partial.title }
                             </a>
                         </div>
@@ -41,14 +45,17 @@
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" :id="'heading' + 'Structures'">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + 'Structures'" aria-expanded="false" :aria-controls="'collapse' + 'Structures'">
+                           :href="'#collapse' + 'Structures'" aria-expanded="false"
+                           :aria-controls="'collapse' + 'Structures'">
                             <i class="fa fa-th-large"></i> Structures
                         </a>
                     </div>
 
-                    <div :id="'collapse' + 'Structures'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Structures'">
+                    <div :id="'collapse' + 'Structures'" class="panel-collapse collapse" role="tabpanel"
+                         :aria-labelledby="'heading' + 'Structures'">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in structures">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
+                               v-for="(partial, title) in structures">
                                 ${ partial.title }
                             </a>
                         </div>
@@ -63,9 +70,11 @@
                         </a>
                     </div>
 
-                    <div :id="'collapse' + 'Pages'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Pages'">
+                    <div :id="'collapse' + 'Pages'" class="panel-collapse collapse" role="tabpanel"
+                         :aria-labelledby="'heading' + 'Pages'">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in pages">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
+                               v-for="(partial, title) in pages">
                                 ${ partial.title }
                             </a>
                         </div>
@@ -75,14 +84,17 @@
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" :id="'heading' + 'Footers'">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + 'Footers'" aria-expanded="false" :aria-controls="'collapse' + 'Footers'">
+                           :href="'#collapse' + 'Footers'" aria-expanded="false"
+                           :aria-controls="'collapse' + 'Footers'">
                             <i class="fa fa-th-large"></i> Footers
                         </a>
                     </div>
 
-                    <div :id="'collapse' + 'Footers'" class="panel-collapse collapse" role="tabpanel" :aria-labelledby="'heading' + 'Footers'">
+                    <div :id="'collapse' + 'Footers'" class="panel-collapse collapse" role="tabpanel"
+                         :aria-labelledby="'heading' + 'Footers'">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)" v-for="(partial, title) in footers">
+                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
+                               v-for="(partial, title) in footers">
                                 ${ partial.title }
                             </a>
                         </div>
@@ -420,7 +432,8 @@
                             <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
                                 <label>Lock to layout
                                     <pckg-tooltip
-                                            content="Click this if you want to display module on all pages" icon="question-circle"></pckg-tooltip>
+                                            content="Click this if you want to display module on all pages"
+                                            icon="question-circle"></pckg-tooltip>
                                 </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
                                             class="fa-unlock"></i>
@@ -429,7 +442,8 @@
                             <template v-else>
                                 <label>Lock to route
                                     <pckg-tooltip
-                                            content="Click this if you want to display module only on this page" icon="question-circle"></pckg-tooltip>
+                                            content="Click this if you want to display module only on this page"
+                                            icon="question-circle"></pckg-tooltip>
                                 </label>
                                 <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
                                             class="fa fa-lock"></i>
@@ -437,7 +451,8 @@
                                 <div>
                                     <label>Hide on pages
                                         <pckg-tooltip
-                                                content="Element is by default visible on all pages" icon="question-circle"></pckg-tooltip>
+                                                content="Element is by default visible on all pages"
+                                                icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
                                                  title="route" id="id" :flat="true"
@@ -446,7 +461,8 @@
                                 <div>
                                     <label>Show on pages
                                         <pckg-tooltip
-                                                content="Element is by default visible on all pages" icon="question-circle"></pckg-tooltip>
+                                                content="Element is by default visible on all pages"
+                                                icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
                                                  title="route" id="id" :flat="true"
@@ -455,7 +471,8 @@
                                 <div>
                                     <label>Show on system pages
                                         <pckg-tooltip
-                                                content="Show element on system pages" icon="question-circle"></pckg-tooltip>
+                                                content="Show element on system pages"
+                                                icon="question-circle"></pckg-tooltip>
                                     </label>
                                     <pckg-select :initial-options="systemRoutes" :with-empty="false"
                                                  :initial-multiple="true"
@@ -731,7 +748,7 @@
             }
         },
         methods: {
-            hash: function(value){
+            hash: function (value) {
                 var hash = 0, i, chr;
                 if (value.length === 0) return hash;
                 for (i = 0; i < value.length; i++) {
@@ -966,31 +983,42 @@
                     right: ''
                 };
                 $.each(this.form.settings.scopes, function (i, scope) {
-                    var val;
-                    if (scope.indexOf(type + '-vertical-') === 0) {
-                        val = scope.substring((type + '-vertical-').length);
+                    var lefty = scope.indexOf('auto-') === 0 || scope.indexOf('no-') === 0;
+                    var val = null;
+                    var m = '-';
+                    // type: padding
+                    // direction: vertical
+                    // value: no or sm
+                    // no-padding-vertical or padding-vertical-sm
+                    if (lefty) {
+                        val = scope.substring(0, scope.indexOf('-'));
+                        m = '';
+                    }
+
+                    if (scope.indexOf(type + '-vertical' + m) >= 0) {
+                        val = val || scope.substring((type + '-vertical' + m).length);
                         this[type].top = val;
                         this[type].bottom = val;
 
-                    } else if (scope.indexOf(type + '-horizontal-') === 0) {
-                        val = scope.substring((type + '-horizontal-').length);
+                    } else if (scope.indexOf(type + '-horizontal' + m) >= 0) {
+                        val = val || scope.substring((type + '-horizontal' + m).length);
                         this[type].left = val;
                         this[type].right = val;
 
-                    } else if (scope.indexOf(type + '-top-') === 0) {
-                        this[type].top = scope.substring((type + '-top-').length);
+                    } else if (scope.indexOf(type + '-top' + m) >= 0) {
+                        this[type].top = val || scope.substring((type + '-top' + m).length);
 
-                    } else if (scope.indexOf(type + '-bottom-') === 0) {
-                        this[type].bottom = scope.substring((type + '-bottom-').length);
+                    } else if (scope.indexOf(type + '-bottom' + m) >= 0) {
+                        this[type].bottom = val || scope.substring((type + '-bottom' + m).length);
 
-                    } else if (scope.indexOf(type + '-left-') === 0) {
-                        this[type].left = scope.substring((type + '-left-').length);
+                    } else if (scope.indexOf(type + '-left' + m) >= 0) {
+                        this[type].left = val || scope.substring((type + '-left' + m).length);
 
-                    } else if (scope.indexOf(type + '-right-') === 0) {
-                        this[type].right = scope.substring((type + '-right-').length);
+                    } else if (scope.indexOf(type + '-right' + m) >= 0) {
+                        this[type].right = val || scope.substring((type + '-right' + m).length);
 
-                    } else if (scope.indexOf(type + '-') === 0) {
-                        val = scope.substring((type + '-').length);
+                    } else if (scope.indexOf(type + '-') >= 0) {
+                        val = val || scope.substring((type + '-').length);
                         this[type].top = val;
                         this[type].right = val;
                         this[type].left = val;
