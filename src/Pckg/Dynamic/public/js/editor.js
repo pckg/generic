@@ -322,6 +322,18 @@ var initTinymce = function (selector, config) {
                     editor.formatter.apply('link', value, anchor);
                 }
             });
+
+            editor.on('Paste Change input Undo Redo', function() {
+                console.log('changing');
+                var content = editor.getContent();
+                var updated = content.replace(/<\/?g[^>]*>/g, "");
+
+                if (updated == content) {
+                    return;
+                }
+
+                editor.setContent(updated);
+            });
         }
     };
 
