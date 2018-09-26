@@ -140,12 +140,12 @@
                     }
                 }.bind(this));
             },
-            initialOptions: function (newVal) {
-                this.options = newVal;
+            //initialOptions: function (newVal) {
+              //  this.options = newVal;
                 /*Vue.nextTick(function () {
                     $(this.$el).find('select').selectpicker('refresh');
                 }.bind(this));*/
-            }
+            //}
         },
         methods: {
             getTitle: function (option, key) {
