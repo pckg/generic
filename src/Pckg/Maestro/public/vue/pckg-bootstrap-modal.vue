@@ -46,6 +46,9 @@
             visible: function (newVal) {
                 setTimeout(function(){
                     this.handleModal();
+                    setTimeout(function(){
+                        $(window).resize();
+                    }, 1000);
                 }.bind(this), 10);
             }
         },

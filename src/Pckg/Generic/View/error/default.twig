@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'vendor/pckg/generic/src/Pckg/Generic/View/_head.twig' %}
+</head>
+<body>
+{% include 'vendor/pckg/generic/src/Pckg/Generic/View/_body.twig' %}
+<div class="container">
+
+    <h1>{{ __('error.heading') }}</h1>
+    <p>{{ __('error.code_' ~ _response.getCode()) }}</p>
+
+    <p>Go to <a href="#back">previous page</a> or <a href="/">home</a></p>
+
+    {% if implicitDev() %}
+        <p>{{ exception.getMessage() }}</p>
+        <p>{{ exception.getTraceAsString() | nl2br }}</p>
+    {% endif %}
+</div>
+{% include 'vendor/pckg/generic/src/Pckg/Generic/View/_foot.twig' %}
+</body>
+</html>

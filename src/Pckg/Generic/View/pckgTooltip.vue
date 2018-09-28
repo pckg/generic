@@ -4,6 +4,7 @@
                 class="tooltip-questionmark"
                 :title="content"
                 data-toggle="tooltip">
+            <span v-if="text">{{ text }}</span>
             <template v-if="icon && icon.length > 0"><i class="far" :class="'fa-' + icon"></i></template>
             <template v-else-if="icon"><i class="far fa-question-circle"></i></template>
         </span>
@@ -15,6 +16,7 @@
         name: 'pckg-tooltip',
         props: {
             content: {},
+            text: {},
             icon: {
                 default: '',
                 type: String
