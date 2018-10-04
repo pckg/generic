@@ -1,14 +1,14 @@
 <template>
     <div class="pckg-select" :class="styleClass">
         <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
-        <select v-if="multiple" class="form-control" multiple v-model="selectedModel">
+        <select v-if="multiple" class="form-control" multiple v-model="selectedModel" :name="name">
             <option value v-if="withEmpty"> -- select value(s) --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                 <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
             </optgroup>
         </select>
-        <select v-else class="form-control" v-model="selectedModel">
+        <select v-else class="form-control" v-model="selectedModel" :name="name">
             <option value v-if="withEmpty"> -- select value --</option>
             <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
             <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
@@ -71,6 +71,10 @@
             styleClass: {
                 default: '',
                 type: String
+            },
+            name: {
+                type: String,
+                default: ''
             }
         },
         computed: {
@@ -216,6 +220,7 @@
                 var selectpicker = $(this.$el).find('select').selectpicker({
                     liveSearch: true,
                     actionsBox: true,
+                    dropupAuto: false,
                     //dropdownAlignRight: 'auto',
                     liveSearchNormalize: true,
                     //mobile: true,
