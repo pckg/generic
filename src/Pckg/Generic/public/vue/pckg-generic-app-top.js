@@ -162,12 +162,12 @@ var pckgFormValidator = {
             console.log('validating');
             this.$validator.validateAll().then(function (ok) {
                 if (ok) {
-                    console.log('ok');
+                    console.log('form valid');
                     submit();
                     return;
                 }
 
-                console.log('error', ok);
+                console.log('form invalid', ok);
                 var element = $(this.$el).find('.htmlbuilder-validator-error').first();
                 if (element && typeof globalScrollTo == Function) {
                     globalScrollTo(element);
