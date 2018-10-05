@@ -63,9 +63,11 @@
         mounted: function(){
             $(this.$el).on('hidden.bs.modal', this.closeModal);
             if (this.visible) {
-                setTimeout(function(){
-                    this.handleModal();
-                }.bind(this), 10);
+                this.$nextTick(function(){
+                    setTimeout(function(){
+                        this.handleModal();
+                    }.bind(this), 100);
+                }.bind(this));
             }
         }
     }

@@ -115,10 +115,10 @@ var pckgPayment = {
                 };
             } else if (data.modal) {
                 t.state = data.modal;
-                $dispatcher.$emit('payment-form:' + data.modal, data.message);
+                $dispatcher.$emit('payment-form:' + data.modal, data);
             } else if (!data.success) {
                 t.state = 'error';
-                $dispatcher.$emit('payment-form:error', data.message);
+                $dispatcher.$emit('payment-form:error', data);
             }
         },
         handleErrorResponse: function (data) {
