@@ -15,7 +15,9 @@
                 </div>
                 <div class="modal-footer" v-if="$slots.footer">
                     <slot name="footer"></slot>
-                    <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
+                    <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal"
+                            @click="closeModal">Close
+                    </button>
                 </div>
             </div>
         </div>
@@ -37,16 +39,16 @@
             },
             size: null
         },
-        data: function(){
+        data: function () {
             return {
                 _modal: null
             };
         },
         watch: {
             visible: function (newVal) {
-                setTimeout(function(){
+                setTimeout(function () {
                     this.handleModal();
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $(window).resize();
                     }, 1000);
                 }.bind(this), 10);
@@ -54,17 +56,19 @@
         },
         methods: {
             handleModal: function () {
+                console.log("handleModal", this.visible, this.id, $(this.$el));
                 $(this.$el).modal(this.visible ? 'show' : 'hide');
             },
-            closeModal: function(){
+            closeModal: function () {
+                console.log('closing modal, emiting');
                 this.$emit('close');
             }
         },
-        mounted: function(){
+        mounted: function () {
             $(this.$el).on('hidden.bs.modal', this.closeModal);
             if (this.visible) {
-                this.$nextTick(function(){
-                    setTimeout(function(){
+                this.$nextTick(function () {
+                    setTimeout(function () {
                         this.handleModal();
                     }.bind(this), 100);
                 }.bind(this));
