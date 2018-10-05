@@ -6,15 +6,14 @@
     export default {
         name: 'htmlbuilder-validator-error',
         props: {
-            errors: {},
+            //errors: {},
             name: {},
             message: {
                 default: 'Error'
             },
             shown: {
                 default: false,
-                type: Boolean,
-                required: true
+                type: Boolean
             }
         },
         computed: {
