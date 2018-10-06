@@ -37,8 +37,6 @@ class Generic
 
     public function getGenericAction(Route $route)
     {
-        response()->sendCacheHeaders(60);
-
         $this->genericService->readRoute($route);
 
         $vars = $this->genericService->getVariables();
