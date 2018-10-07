@@ -133,7 +133,7 @@ var pckgPayment = {
         collectFormData: function () {
             return {};
         },
-        preFetch: {},
+        preFetch: function(){},
         initialFetch: function () {
             this.state = 'fetching';
             http.post(utils.url('@api.payment.init', { handler: this.handler }), {
