@@ -2,12 +2,13 @@
 
 {% set table = tabelize.getEntity().getTable() %}
 
-{% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: tabelize.getRecordActions(), table: table }, true) %}
-{% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }, true) %}
-{% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }, true) %}
+{#% do _vueManager.addView('Pckg/Maestro:_pckg_maestro_actions_template', { recordActions: tabelize.getRecordActions(), table: table }, true) %#}
+{#% do _vueManager.addView('Pckg/Maestro:_tabelize_config', { table: table, tabelize: tabelize }, true) %#}
+{#% do _vueManager.addView('Pckg/Maestro:_table', { table: table, searchUrl: searchUrl, tabelize: tabelize, viewType: viewType, tab: tab }, true) %#}
 
 <div>
-    <pckg-maestro-table-{{ table }} :ref="'maestro-table'"
+
+    <!-- <pckg-maestro-table :ref="'maestro-table'"
                                     :identifier="'{{ table }}'"
                                     :initial-fields="{{ tabelize.getFields() | json_encode | escape }}"
                                     :initial-records="{{ tabelize.transformRecords() | json_encode(JSON_PARTIAL_OUTPUT_ON_ERROR) | escape }}"
@@ -17,7 +18,7 @@
                                     :table="{{ tabelize.getTable() | json_encode | escape }}"
                                     :paginator="{{ tabelize.getPaginator() | json_encode | escape }}"
                                     :total="{{ tabelize.getTotal() }}"
-                                    :first="1"></pckg-maestro-table-{{ table }}>
+                                    :first="1"></pckg-maestro-table> -->
 
-    <pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>
+    <!--<pckg-maestro-table-config-{{ table }}></pckg-maestro-table-config-{{ table }}>-->
 </div>

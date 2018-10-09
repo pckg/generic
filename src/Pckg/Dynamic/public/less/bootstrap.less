@@ -1,3 +1,11 @@
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
 .panel-heading .dropdown-menu {
   left: auto;
   right: 0;
@@ -21,7 +29,7 @@
   }
   .position-left,
   .position-right {
-    @media(max-width: 640px) {
+    @media (max-width: 640px) {
       width: 100%;
       padding: 0;
       float: left;
@@ -44,8 +52,10 @@
     margin: 0 0 2rem 0;
   }
 }
+
 #formDynamic {
-  .help {    margin-top: .5rem;
+  .help {
+    margin-top: .5rem;
     color: grey;
     font-size: 13px;
     float: left;
@@ -163,14 +173,6 @@ tr.bg-grayscale {
 
 table.table td {
   word-break: break-all;
-}
-
-.pckg-maestro-tabelize > [class^='pckg-maestro-table-'] {
-  .header {
-    h2 {
-      margin-bottom: 20px;
-    }
-  }
 }
 
 fieldset.submit:after {
@@ -455,14 +457,6 @@ td.actions div.btn-group a.delete {
   color: #d9534f;
 }
 
-.pckg-maestro-tabelize {
-  td,
-  th {
-    font-size: 12px;
-    line-height: 16px;
-  }
-}
-
 form.form-horizontal textarea.form-control {
   min-height: 120px;
 }
@@ -500,13 +494,6 @@ table tr.strong > td:not(.actions) {
   }
 }
 
-.pckg-maestro-tabelize {
-  .quick-search {
-    width: 100%;
-    margin: 16px 0;
-  }
-}
-
 textarea.form-control {
   min-height: 10rem;
 }
@@ -529,7 +516,7 @@ textarea.form-control {
 }
 
 .derive-platform-theme {
-  .row.help-grid>div:nth-child(2n) {
+  .row.help-grid > div:nth-child(2n) {
     margin-top: 0;
   }
   table {
@@ -550,38 +537,6 @@ textarea.form-control {
     }
     .form-group {
       margin: 0;
-    }
-  }
-}
-
-.affix-dynamic-offset-container {
-  .clear-after();
-  .affix-dynamic-offset {
-    > div {
-      display: block;
-    }
-    input {
-      width: 100%;
-    }
-
-    &.affix {
-      background: #FFF;
-      padding: 10px 10px 30px;
-      right: 0;
-      top: 0;
-      z-index: 10;
-    }
-  }
-}
-
-.affix-thead-container {
-  .affix-thead-fixed {
-    visibility: hidden;
-
-    &.affix {
-      top: 60px;
-      visibility: visible;
-      z-index: 11;
     }
   }
 }
@@ -793,10 +748,54 @@ div.form-control {
 
 .pckg-maestro-tabelize {
   .header {
+    white-space: nowrap;
+    position: fixed;
+    left: 160px;
+    right: 0;
+    top: 0;
+    height: auto;
+    padding: 2.4rem;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: table;
+    box-sizing: border-box;
+    width: calc(100% - 160px);
+    table-layout: fixed;
+    .sec {
+      display: table-cell;
+      vertical-align: middle;
+    }
     h2 {
+      margin: 0;
       float: left;
-      margin-top: 0;
-      margin-bottom: 0;
+      white-space: nowrap;
+    }
+    .table-actions {
+      float: right;
+      white-space: nowrap;
+      > a,
+      > div {
+        padding-left: 2.4rem;
+      }
+    }
+    .quick-search {
+      position: relative;
+      white-space: nowrap;
+      input {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border: none;
+        border-radius: none;
+        box-shadow: none;
+        font-size: 2rem;
+        text-align: center;
+        background: transparent;
+        height: auto;
+      }
     }
   }
 }
@@ -936,6 +935,7 @@ table {
   display: table;
   width: 100%;
 }
+
 .table-cell {
   display: table-cell;
 }
