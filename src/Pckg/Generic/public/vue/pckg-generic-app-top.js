@@ -262,6 +262,25 @@ var pckgCleanRequest = {
     }
 };
 
+var pckgSmartComponent = {
+    mixins: [pckgTranslations, pckgCdn],
+    data: function () {
+        return {
+            itemComponent: 'derive-item',
+            listComponent: 'derive-list-bootstrap',
+        };
+    },
+    mounted: function () {
+        $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
+            this.itemComponent = newTemplate;
+        }.bind(this));
+
+        $dispatcher.$on('pckg-action:' + this.action.id + ':listTemplate-changed', function (newTemplate) {
+            this.listComponent = newTemplate;
+        }.bind(this));
+    },
+};
+
 var pckgSmartList = {
     mixins: [pckgTranslations, pckgCdn],
     props: {
@@ -298,11 +317,8 @@ var pckgSmartItem = {
         };
     },
     render: function (h) {
-        console.log('rendering derive item');
         if (!this.templateRender) {
-            console.log('no render');
             if (this.$options.template) {
-                console.log('but option');
                 return this.$options.template;
             }
 
@@ -312,11 +328,7 @@ var pckgSmartItem = {
         return this.templateRender();
     },
     mounted: function () {
-        /**
-         * This is code that listens for event to be triggered from page builder.
-         */
-        $dispatcher.$on('pckg-action:' + this.action.id + ':template-changed', function (newTemplate) {
-            console.log('changed', newTemplate);
+        $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
             this.tpl = newTemplate;
         }.bind(this));
     },
@@ -325,10 +337,8 @@ var pckgSmartItem = {
             immediate: true,
             handler: function (newVal, oldVal) {
                 return;
-                console.log('resolving template', newVal, oldVal, this.$options.template);
                 let template = $store.getters.resolveTemplate(newVal, this.$options.template);
 
-                console.log('resolved template', template, typeof template);
                 let res = typeof template === 'string' ? Vue.compile(template) : template;
 
                 this.templateRender = res.render;
@@ -338,7 +348,6 @@ var pckgSmartItem = {
 
                 this.$options.staticRenderFns = [];
 
-                console.log('res', res);
                 // clean the cache of static elements
                 // this is a cache of the results from the staticRenderFns
                 this._staticTrees = [];
@@ -346,7 +355,6 @@ var pckgSmartItem = {
                 // Fill it with the new staticRenderFns
                 if (res.staticRenderFns) {
                     for (var i in res.staticRenderFns) {
-                        console.log('staticRenderFns', i);
                         //staticRenderFns.push(res.staticRenderFns[i]);
                         this.$options.staticRenderFns.push(res.staticRenderFns[i]);
                     }

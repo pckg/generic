@@ -421,7 +421,6 @@
                     </div>
                 </div>
 
-
                 {% for slug, form in actionForms %}
                     <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
                         <div class="panel-heading" role="tab" id="headingForm{{ slug }}">
@@ -725,6 +724,12 @@
             },
             'action.itemTemplate': function (newVal) {
                 $dispatcher.$emit('pckg-action:' + this.action.id + ':itemTemplate-changed', newVal);
+            },
+            'form.settings.perRow': {
+                deep: true,
+                handler: function(newVal){
+                    $dispatcher.$emit('pckg-action:' + this.action.id + ':perRow-changed', newVal);
+                }
             },
             'form.settings.width': {
                 handler: function (newVal, oldVal) {
