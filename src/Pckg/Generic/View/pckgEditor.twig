@@ -389,12 +389,34 @@
                     <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
                          aria-labelledby="headingFive">
                         <div class="panel-body">
+
                             <div>
                                 <label>Template</label>
                                 <select class="form-control" v-model="action.template">
-                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl">${ title }</option>
+                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl" v-if="typeof title === 'string'">${ title }</option>
+
+                                    <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
+                                        <option :value="tpl">${ tpl }</option>
+                                    </template>
                                 </select>
                             </div>
+
+                            <template v-if="typeof actionTemplates[action.template] !== 'string'">
+
+                            <div v-if="actionTemplates[action.template].list">
+                                <label>List template</label>
+                                <select class="form-control" v-model="action.listTemplate">
+                                    <option v-for="(title,tpl) in actionTemplates[action.template].list" :value="tpl">${ title }</option>
+                                </select>
+                            </div>
+
+                            <div v-if="actionTemplates[action.template].item">
+                                <label>Item template</label>
+                                <select class="form-control" v-model="action.itemTemplate">
+                                    <option v-for="(title,tpl) in actionTemplates[action.template].item" :value="tpl">${ title }</option>
+                                </select>
+                            </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -636,7 +658,11 @@
                 availableVideoLoops: {'yes': 'Yes', 'no': 'No'},
                 availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
                 availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
-                action: {},
+                action: {
+                    template: '',
+                    listTemplate: '',
+                    itemTemplate: '',
+                },
                 content: {
                     content: '',
                     contents: []
@@ -690,6 +716,15 @@
                     this.normalizeClasses(classes, 'margin');
                 },
                 deep: true
+            },
+            'action.template': function (newVal) {
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':template-changed', newVal);
+            },
+            'action.listTemplate': function (newVal) {
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':listTemplate-changed', newVal);
+            },
+            'action.itemTemplate': function (newVal) {
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':itemTemplate-changed', newVal);
             },
             'form.settings.width': {
                 handler: function (newVal, oldVal) {

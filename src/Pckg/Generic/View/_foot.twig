@@ -1,11 +1,7 @@
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['footerFirst']) | raw }}
-
-<!-- external assets-->
-{{ _assetManager.getExternals() | raw }}
-
 <!-- vue components -->
 <!--  vue css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
+
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['footerFirst', 'vue']) | raw }}
 {{ _vueManager.getComponents() | raw }}
 
 <!-- vue filters -->
@@ -15,6 +11,9 @@
 {{ _vueManager.getViews() | raw }}
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footer']) | raw }}
+
+<!-- external assets-->
+{{ _assetManager.getExternals() | raw }}
 
 {{ _metaManager.getMeta('footer') | raw }}
 

@@ -9,11 +9,8 @@
 
 {{ _metaManager.getMeta('header') | raw }}
 
-<!-- libraries js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries']) | raw }}
-
-<!-- main js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['main']) | raw }}
+<!-- libraries css, less, js, main css, less, js -->
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', 'main']) | raw }}
 
 <script>
     var Pckg = Pckg || {};
@@ -41,6 +38,7 @@
 
     Pckg.vue = {};
     Pckg.vue.stores = {};
+    Pckg.vue.templates = {};
 
     Pckg.auth = {};
     Pckg.auth.user = {{ _auth.getUser() | json_encode | raw }};
@@ -61,6 +59,10 @@
 
     Vue.filter('roundPrice', function (price, decimals) {
         return locale.roundPrice(price, decimals);
+    });
+
+    Vue.filter('roundNumber', function (price, decimals) {
+        return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price).toFixed(decimals || 2);
     });
 
     Vue.filter('date', function (date, format) {

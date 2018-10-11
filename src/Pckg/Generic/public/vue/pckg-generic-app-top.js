@@ -51,6 +51,16 @@ var pckgCdn = {
             }
 
             return 'https://' + Pckg.config.cdn.host + file;
+        },
+        imageCache: function(pic, type, arg) {
+            return pic && pic.length > 0
+                ? '/cache/img/' + type + '/' + arg + pic
+                : null;
+        },
+        mediaImage: function(pic, folder) {
+            return pic && pic.length > 0
+                ? '/storage/uploads/' + folder + '/' + pic
+                : null;
         }
     }
 };
@@ -169,6 +179,100 @@ var pckgCleanRequest = {
             }
 
             this['_pckgCleanRequest' + name] = callback();
+        }
+    }
+};
+
+var pckgSmartList = {
+    mixins: [pckgTranslations, pckgCdn],
+    props: {
+        contents: {
+            type: Array
+        },
+        action: {
+            type: Object,
+            required: true
+        }
+    },
+    data: function () {
+        return {
+            itemComponent: 'derive-item'
+        };
+    },
+    mounted: function () {
+        $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
+            this.itemComponent = newTemplate;
+        }.bind(this));
+    }
+};
+
+var pckgSmartItem = {
+    mixins: [pckgTranslations, pckgCdn],
+    props: {
+        content: {},
+        action: {},
+    },
+    data: function () {
+        return {
+            templateRender: null,
+            tpl: 'derive-item'
+        };
+    },
+    render: function (h) {
+        console.log('rendering derive item');
+        if (!this.templateRender) {
+            console.log('no render');
+            if (this.$options.template) {
+                console.log('but option');
+                return this.$options.template;
+            }
+
+            return h('div', 'Loading ...');
+        }
+
+        return this.templateRender();
+    },
+    mounted: function () {
+        /**
+         * This is code that listens for event to be triggered from page builder.
+         */
+        $dispatcher.$on('pckg-action:' + this.action.id + ':template-changed', function (newTemplate) {
+            console.log('changed', newTemplate);
+            this.tpl = newTemplate;
+        }.bind(this));
+    },
+    watch: {
+        tpl: {
+            immediate: true,
+            handler: function (newVal, oldVal) {
+                return;
+                console.log('resolving template', newVal, oldVal, this.$options.template);
+                let template = $store.getters.resolveTemplate(newVal, this.$options.template);
+
+                console.log('resolved template', template, typeof template);
+                let res = typeof template === 'string' ? Vue.compile(template) : template;
+
+                this.templateRender = res.render;
+
+                // staticRenderFns belong into $options,
+                // appearantly
+
+                this.$options.staticRenderFns = [];
+
+                console.log('res', res);
+                // clean the cache of static elements
+                // this is a cache of the results from the staticRenderFns
+                this._staticTrees = [];
+
+                // Fill it with the new staticRenderFns
+                if (res.staticRenderFns) {
+                    for (var i in res.staticRenderFns) {
+                        console.log('staticRenderFns', i);
+                        //staticRenderFns.push(res.staticRenderFns[i]);
+                        this.$options.staticRenderFns.push(res.staticRenderFns[i]);
+                    }
+                }
+            }
         }
     }
 };
