@@ -13,6 +13,9 @@ Pckg.vue.stores.auth = {
     getters: {
         user: function (state) {
             return state.user;
+        },
+        isLoggedIn: function(state){
+            return state.user.id > 0 ? true : false;
         }
     },
     mutations: {
