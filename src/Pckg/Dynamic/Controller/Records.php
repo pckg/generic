@@ -162,17 +162,33 @@ class Records extends Controller
         $dynamicRecord = null,
         $dynamicRelation = null,
         TableView $tableView = null
+    )
+    {
+        return '<pckg-maestro-table :table-id="' . $tableRecord->id . '"></pckg-maestro-table>';
+    }
+
+    public function getViewTableApiApiAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        Entity $entity = null,
+        $viewType = 'full',
+        $returnTabelize = false,
+        Tab $tab = null,
+        $dynamicRecord = null,
+        $dynamicRelation = null,
+        TableView $tableView = null
     ) {
         /**
          * Set table so sub-services can reuse it later.
          */
         $dynamicService->setTable($tableRecord);
 
+        $ajaxData = null;
         if (!get('html') &&
             (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
              $this->request()->isJson())
         ) {
-            return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
+            $ajaxData = $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
                                                 $tab, $dynamicRecord, $dynamicRelation, $tableView);
         }
 
@@ -261,6 +277,12 @@ class Records extends Controller
                 'tab'       => $tab,
             ]
         );
+
+        return [
+            'table' => $tableRecord,
+            'fields' => $listedFields,
+            'records' => $ajaxData['records'] ?? [],
+        ];
 
         return $tabelize;
     }
