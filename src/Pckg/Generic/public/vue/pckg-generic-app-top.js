@@ -90,7 +90,9 @@ var pckgPayment = {
     data: function () {
         return {
             formAction: '',
-            state: null
+            state: null,
+            handlerData: {},
+            formData: {}
         };
     },
     methods: {
@@ -131,7 +133,7 @@ var pckgPayment = {
             http.post(this.formAction, this.collectFormData(data), pckgPayment.methods.handleSuccessResponse, pckgPayment.methods.handleErrorResponse);
         },
         collectFormData: function () {
-            return {};
+            return this.formData;
         },
         preFetch: function(){},
         initialFetch: function () {
@@ -142,6 +144,8 @@ var pckgPayment = {
                 })
             }, function (data) {
                 this.formAction = data.formAction;
+                this.formData = data.handlerData.formData;
+                this.handlerData = data.handlerData;
 
                 this.afterFetch(data);
                 this.state = 'fetched';
@@ -153,6 +157,11 @@ var pckgPayment = {
     created: function(){
         this.preFetch();
         this.initialFetch();
+    },
+    computed: {
+        total: function(){
+            return this.instalments.reduce(function(sum, instalment){ return sum + instalment.price; }, 0.0);
+        }
     }
 };
 
