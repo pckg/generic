@@ -144,41 +144,9 @@
                                 </h4>
                             </div>
                             <div class="col-xs-2">
-                                <h4>
-                                    Fields
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'Select fields you would like to see, reorder and freeze them'"></pckg-tooltip>
-                                </h4>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-lock"></i>
-                                    ID
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Num
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Title
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Summary
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <a href="#">
-                                        <i class="fa fa-plus"></i>
-                                        Add
-                                    </a>
-                                </div>
+
+                                <pckg-maestro-customize-fields :fields="fields" :relations="relations" :table="table"></pckg-maestro-customize-fields>
+
                             </div>
                             <div class="col-xs-2">
 
@@ -240,9 +208,9 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-for="(field, i) in fieldsWhy"
-                                        :style="{'--freeze': i < 3 ? i : null}"
-                                        :class="[i < 3 ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
+                                    <th v-for="(field, i) in listedFields"
+                                        :style="{'--freeze': field.freeze ? i : null}"
+                                        :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
 
                                         <!-- quick sort -->
                                         <div>
@@ -281,9 +249,9 @@
                                                                               :recordactionhandler="recordactionhandler"
                                                                               :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                                         </td>-->
-                                        <td v-for="(field, i) in fieldsWhy"
-                                            :style="{'--freeze': i < 3 ? i : null}"
-                                            :class="[i < 3 ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
+                                        <td v-for="(field, i) in listedFields"
+                                            :style="{'--freeze': field.freeze ? i : null}"
+                                            :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                                             <pckg-maestro-field :field="field" :record="record"
                                                                 :model="record[field.field]"
                                                                 :table="table"></pckg-maestro-field>
@@ -505,7 +473,7 @@
                 emitted: 0,
                 allChecked: false,
                 loading: false,
-                fieldsWhy: this.initialFields,
+                fields: this.initialFields,
                 contextMenuShown: false,
                 table: {},
                 sort: {
@@ -516,6 +484,7 @@
                 quickView: 'closed',
                 _quickViewDelay: null,
                 doubleClickDiff: null,
+                relations: []
             };
         },
         methods: {
@@ -575,7 +544,8 @@
                      *  - current page
                      *  - paginator, fetch and search urls
                      */
-                    this.fieldsWhy = data.fields;
+                    this.fields = data.fields;
+                    this.relations = data.relations;
                     this.records = data.records;
                     this.table = data.table;
                     this.loading = false;
@@ -717,6 +687,13 @@
             },
             setPaginatorTotal: function (total) {
                 $vue.$set(this.paginator, 'total', total);
+            }
+        },
+        computed: {
+            listedFields: function () {
+                return this.fields.filter(function (field) {
+                    return field.visible;
+                });
             }
         },
         watch: {

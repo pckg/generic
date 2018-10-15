@@ -3,6 +3,7 @@
 use Pckg\Dynamic\Controller\Export;
 use Pckg\Dynamic\Controller\Import;
 use Pckg\Dynamic\Controller\Records;
+use Pckg\Dynamic\Controller\Relations;
 use Pckg\Dynamic\Controller\View;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
 use Pckg\Dynamic\Middleware\SetContentLanguage;
@@ -366,7 +367,17 @@ class Dynamic extends Provider
                             ],
                         ],
                     ]
-                )
+                ) + array_merge_array([
+                    'controller' => Relations::class,
+                                                      ], [
+                                                          '/api/dynamic/relation/[relation]' => [
+                                                              'name' => 'api.dynamic.relation',
+                                                              'view' => 'relation',
+                                                              'resolvers' => [
+                                                                  'relation' => Relation::class,
+                                                              ]
+                                                          ]
+                ])
             ),
         ];
     }
