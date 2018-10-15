@@ -5,7 +5,8 @@
                      :initial-multiple="false"></pckg-select>
         <a v-if="isFinal" href="#" @click.prevent="makeSelectedFieldVisible">Add field</a>
         <pckg-maestro-customize-fields-field v-else-if="isRelation"
-                                             :relation="selectedRelation"></pckg-maestro-customize-fields-field>
+                                             :relation="selectedRelation"
+                                             @chosen="chosen"></pckg-maestro-customize-fields-field>
     </div>
 </template>
 
@@ -17,20 +18,24 @@
                 type: Object,
                 default: null
             },
-            fields: {
+            parentFields: {
                 type: Array,
-                default: []
+                default: function () {
+                    return [];
+                }
             },
             relations: {
                 type: Array,
-                default: []
+                default: function () {
+                    return [];
+                }
             }
         },
         data: function () {
             return {
                 selected: null,
                 myRelations: this.relations,
-                myFields: this.fields
+                myFields: this.parentFields
             }
         },
         watch: {
@@ -62,6 +67,14 @@
                      *  - (#order.ordersUsers.ordersUsersItems.quantity #order.ordersUsers.ordersUsersItems.packetsItem.item.title)
                      */
                 });
+            },
+            makeSelectedFieldVisible: function () {
+                this.$emit('chosen', this.selected);
+            },
+            chosen: function (chosen) {
+                let data = {};
+                data[this.selected] = chosen;
+                this.$emit('chosen', data);
             },
             fetchRelation: function () {
                 http.getJSON('/api/dynamic/relation/' + this.relation.id + '?with[]=fields&with[]=relations', function (data) {

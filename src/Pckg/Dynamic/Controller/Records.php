@@ -291,11 +291,32 @@ class Records extends Controller
                                           'tab'       => $tab,
                                       ]);
 
+        $columns = $tableRecord->fields->keyBy(function(Field $field) {
+            return 'field-' . $field->id;
+        })->map(function(Field $field) {
+            return 'field-' . $field->id;
+        })->toArray();
+
+        /*$columns['relation-162'] = [
+            'relation-152' => 'field-455',
+        ];*/
+
+        $filters = [];
+
         return [
             'table'     => $tableRecord,
             'fields'    => $tableRecord->fields,
             'relations' => $tableRecord->relations,
             'records'   => $ajaxData['records'] ?? [],
+            'paginator' => [
+                'total'   => 123,
+                'page'    => 2,
+                'perPage' => 20,
+            ],
+            'view'      => [
+                'columns' => $columns,
+                'filters' => $filters,
+            ],
         ];
     }
 
@@ -328,6 +349,7 @@ class Records extends Controller
             Twig::addDir($dir);
             /**
              * This is needed for table actions.
+             * @T00D00 - can we move this?
              */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
             Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
@@ -463,8 +485,17 @@ class Records extends Controller
                                        ])
                          ->setTableView($tableView);
 
+        $records = $tabelize->transformRecords();
+
+        /**
+         * We have to preselect that field.
+         * That should happen in field service?
+         */
+        foreach ($records as &$record) {
+            $record['relation-162-relation-152-field-455'] = 'yeee';
+        }
         return [
-            'records'   => $tabelize->transformRecords(),
+            'records'   => $records,
             'groups'    => [],
             'paginator' => [
                 'total' => $total,
