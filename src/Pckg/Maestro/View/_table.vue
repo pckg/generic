@@ -1,5 +1,5 @@
 <template>
-    <div class="pckg-maestro-tabelize" :id="id">
+    <div class="pckg-maestro-tabelize">
 
         <!-- Header template and entity actions -->
         <div class="header">
@@ -99,8 +99,13 @@
 
 
                                     <div class="pull-right">
-                                        <d-input-checkbox></d-input-checkbox>
+                                        <d-input-checkbox v-model="view.archived"></d-input-checkbox>
                                         Archived items
+                                    </div>
+
+                                    <div class="pull-right">
+                                        <d-input-checkbox v-model="view.deleted"></d-input-checkbox>
+                                        Deleted items
                                     </div>
                                 </h4>
                                 <div>
@@ -144,41 +149,12 @@
                                 </h4>
                             </div>
                             <div class="col-xs-2">
-                                <h4>
-                                    Fields
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'Select fields you would like to see, reorder and freeze them'"></pckg-tooltip>
-                                </h4>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-lock"></i>
-                                    ID
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Num
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Title
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <i class="fa fa-arrows"></i>
-                                    <i class="fa fa-unlock"></i>
-                                    Summary
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                                <div>
-                                    <a href="#">
-                                        <i class="fa fa-plus"></i>
-                                        Add
-                                    </a>
-                                </div>
+
+                                <pckg-maestro-customize-fields :parent-fields="myFields"
+                                                               :relations="relations"
+                                                               :table="table"
+                                                               @chosen="chosen"></pckg-maestro-customize-fields>
+
                             </div>
                             <div class="col-xs-2">
 
@@ -230,7 +206,8 @@
 
                     <div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">
                         <div style="overflow-x: scroll; overflow-y: visible;">
-                            <table class="table table-hover">
+                            <p v-if="records.length == 0">No records to display :/</p>
+                            <table class="table table-hover" v-else>
                                 <thead>
                                 <tr>
                                     <th class="freeze checkboxes">
@@ -240,9 +217,9 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th v-for="(field, i) in fieldsWhy"
-                                        :style="{'--freeze': i < 3 ? i : null}"
-                                        :class="[i < 3 ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
+                                    <th v-for="(field, i) in columns"
+                                        :style="{'--freeze': field.freeze ? i : null}"
+                                        :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
 
                                         <!-- quick sort -->
                                         <div>
@@ -281,9 +258,9 @@
                                                                               :recordactionhandler="recordactionhandler"
                                                                               :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                                         </td>-->
-                                        <td v-for="(field, i) in fieldsWhy"
-                                            :style="{'--freeze': i < 3 ? i : null}"
-                                            :class="[i < 3 ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
+                                        <td v-for="(field, i) in columns"
+                                            :style="{'--freeze': field.freeze ? i : null}"
+                                            :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                                             <pckg-maestro-field :field="field" :record="record"
                                                                 :model="record[field.field]"
                                                                 :table="table"></pckg-maestro-field>
@@ -412,12 +389,6 @@
 </template>
 
 <script type="text/javascript">
-    /*var pckgMaestroActions{{ table }} = Vue.component('pckg-maestro-actions-{{ table }}', pckgMaestroActionsComponent.extend({
-        mixins: [pckgDelimiters],
-        name: 'pckg-maestro-actions-{{ table }}',
-        template: '#pckg-maestro-actions-{{ table }}-template'
-    }));*/
-
     export default {
         name: 'pckg-maestro-table',
         mixins: [pckgTimeout],
@@ -429,7 +400,7 @@
                 required: true,
                 type: Number
             },
-            inTab: {
+            onTab: {
                 default: false
             },
             /**
@@ -469,15 +440,9 @@
                         total: 0,
                         url: null
                     };
-                }/*,
-             type: Object*/
-            },
-            /*recordactionhandler: {
-                default: function () {
                 },
-                type: Function
+             type: Object
             },
-            togglefield: null,*/
             resetpaginatorurl: {
                 type: String,
                 default: ''
@@ -505,8 +470,14 @@
                 emitted: 0,
                 allChecked: false,
                 loading: false,
-                fieldsWhy: this.initialFields,
+                /**
+                 * All available table fields.
+                 */
+                myFields: this.initialFields,
                 contextMenuShown: false,
+                /**
+                 * Current table info.
+                 */
                 table: {},
                 sort: {
                     field: '',
@@ -516,9 +487,32 @@
                 quickView: 'closed',
                 _quickViewDelay: null,
                 doubleClickDiff: null,
+                relations: [],
+                view: {
+                    /**
+                     * Visible columns.
+                     */
+                    columns: {},
+                    /**
+                     * Applied filters.
+                     */
+                    filters: {},
+                    archived: false,
+                    deleted: false
+                }
             };
         },
         methods: {
+            chosen: function (selection) {
+                /**
+                 * Field (or relation) was chosen.
+                 * We need to add it to listed fields and refetch table because field was not loaded earlier.
+                 */
+                $.each(selection, function (i, j) {
+                    $vue.$set(this.view.columns, i, j);
+                    return false;
+                }.bind(this));
+            },
             delaySingleClick: function () {
                 if (this._quickViewDelay) {
                     clearTimeout(this._quickViewDelay);
@@ -575,9 +569,11 @@
                      *  - current page
                      *  - paginator, fetch and search urls
                      */
-                    this.fieldsWhy = data.fields;
+                    this.myFields = data.fields;
+                    this.relations = data.relations;
                     this.records = data.records;
                     this.table = data.table;
+                    this.view = data.view;
                     this.loading = false;
                 }.bind(this));
             },
@@ -717,6 +713,61 @@
             },
             setPaginatorTotal: function (total) {
                 $vue.$set(this.paginator, 'total', total);
+            },
+            getFieldById: function (fieldId) {
+                var field = null;
+                $.each(this.myFields, function (i, f) {
+                    if (f.id != fieldId) {
+                        return;
+                    }
+
+                    field = f;
+                    return false;
+                });
+
+                return field;
+            },
+            getFieldByRelation: function (relationId) {
+                return {
+                    field: 'relation-162-relation-152-field-455',
+                    title: 'Unit > Unit group > Title',
+                    visible: true
+                };
+            },
+            resolveRelationField: function (relation, field) {
+                if (typeof field == 'string') {
+                    return relation + '-' + field;
+                }
+
+                let key = Object.keys(field)[0];
+                return relation + '-' + this.resolveRelationField(key, field[key]);
+            },
+            isFieldLoaded: function (field) {
+                if (!this.records[0]) {
+                    return false;
+                }
+
+                let record = this.records[0];
+                return Object.keys(this.records[0]).indexOf(field.field) >= 0;
+            }
+        },
+        computed: {
+            columns: function () {
+                console.log('computing columns');
+                let columns = [];
+
+                $.each(this.view.columns, function (i, column) {
+                    if (i.indexOf('field-') === 0) {
+                        console.log('field');
+                        columns.push(this.getFieldById(column.substring(6)));
+                    } else {
+                        console.log('relation');
+                        columns.push(this.getFieldByRelation(this.resolveRelationField(i, column)));
+                    }
+                }.bind(this));
+                console.log('columns', columns);
+
+                return columns;
             }
         },
         watch: {
