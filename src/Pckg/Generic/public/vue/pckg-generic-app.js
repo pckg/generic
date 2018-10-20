@@ -67,10 +67,12 @@ const $vue = new Vue({
     el: '#vue-app',
     $store,
     // router: $router,
-    data: {
-        alerts: [],
-        //$authStore: $authStore,
-        //$basketStore: $basketStore
+    data: function(){
+        return {
+            alerts: [],
+            //$authStore: $authStore,
+            //$basketStore: $basketStore
+        };
     },
     mixins: [pckgDelimiters],
     methods: {
@@ -84,5 +86,8 @@ const $vue = new Vue({
         emit: function (event) {
             $dispatcher.$emit(event);
         }
+    },
+    computed: {
+        '$store': function(){ return $store; }
     }
 });
