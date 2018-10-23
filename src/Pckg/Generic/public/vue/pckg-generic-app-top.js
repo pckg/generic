@@ -122,10 +122,12 @@ var pckgPayment = {
                 t.state = 'error';
                 $dispatcher.$emit('payment-form:error', data);
             }
+            $dispatcher.$emit('payment-form:refresh-data');
         },
         handleErrorResponse: function (data) {
             this.state = 'error';
             $dispatcher.$emit('payment-form:error', 'Unknown error');
+            $dispatcher.$emit('payment-form:refresh-data');
         },
         submitForm: function (data) {
             this.state = 'validating';
@@ -201,6 +203,14 @@ var pckgSync = {
             }
 
             object['_pckgSync' + name] = request;
+        }
+    }
+};
+
+var pckgLocale = {
+    methods: {
+        locale: function(){
+            return locale;
         }
     }
 };

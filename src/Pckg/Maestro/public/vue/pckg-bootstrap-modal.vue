@@ -2,13 +2,14 @@
     <div class="modal fade" :class="visible ? 'in display-block' : ''" tabindex="-1" role="dialog" :id="id">
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
-                <div class="modal-header" v-if="$slots.header">
+                <div class="modal-header" v-if="$slots.header || $slots.headerOut">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title">
+                    <h4 class="modal-title" v-if="$slots.header">
                         <slot name="header"></slot>
                     </h4>
+                    <slot name="headerOut" v-if="$slots.headerOut"></slot>
                 </div>
                 <div class="modal-body" v-if="$slots.body">
                     <slot name="body"></slot>
@@ -58,6 +59,7 @@
                 this.$nextTick(function () {
                     console.log("handleModal next tick", this.visible, $(this.$el));
                     $(this.$el).modal(this.visible ? 'show' : 'hide');
+                    $(window).resize();
                 }.bind(this));
             },
             closeModal: function () {
@@ -67,11 +69,16 @@
             modalOpened: function () {
                 console.log('modal opened, resizing window');
                 $(window).resize();
+            },
+            modalOpening: function () {
+                console.log('modal opening, resizing window');
+                $(window).resize();
             }
         },
         mounted: function () {
             $(this.$el).on('hidden.bs.modal', this.closeModal);
             $(this.$el).on('shown.bs.modal', this.modalOpened);
+            $(this.$el).on('show.bs.modal', this.modalOpening);
             if (this.visible) {
                 this.$nextTick(function () {
                     setTimeout(function () {
