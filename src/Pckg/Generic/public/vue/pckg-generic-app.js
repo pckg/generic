@@ -19,20 +19,20 @@ Pckg.vue.stores.auth = {
         }
     },
     mutations: {
-        prepareUser: function (state, callback) {
+        prepareUser: function (state, params) {
             http.getJSON('/api/auth/user', function (data) {
                 state.user = data.user;
                 $dispatcher.$emit('auth:user:' + (data.user.id > 0 ? 'in' : 'out'));
-                if (callback) {
-                    callback();
+                if (params && params.callback) {
+                    params.callback();
                 }
             });
 
-            $store.commit('prepareAddresses');
+            $store.commit('prepareAddresses', { order: params && params.order || null });
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {
-                $store.commit('prepareUser', callback);
+                $store.commit('prepareUser', { callback: callback });
             });
         }
     }
@@ -116,10 +116,12 @@ const $vue = new Vue({
     el: '#vue-app',
     $store,
     // router: $router,
-    data: {
-        alerts: [],
-        //$authStore: $authStore,
-        //$basketStore: $basketStore
+    data: function(){
+        return {
+            alerts: [],
+            //$authStore: $authStore,
+            //$basketStore: $basketStore
+        };
     },
     mixins: [pckgDelimiters],
     methods: {
@@ -133,5 +135,8 @@ const $vue = new Vue({
         emit: function (event) {
             $dispatcher.$emit(event);
         }
+    },
+    computed: {
+        '$store': function(){ return $store; }
     }
 });

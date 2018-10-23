@@ -133,6 +133,7 @@
             },
             selectedModel: function (newVal, oldVal) {
                 console.log('selected to', newVal);
+                this.$emit('change', newVal);
                 this.refreshPicker(newVal);
             },
             options: function (newVal) {
