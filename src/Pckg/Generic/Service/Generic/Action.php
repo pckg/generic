@@ -99,10 +99,39 @@ class Action implements \JsonSerializable
         return $tree;
     }
 
-    public function getSubHtml()
+    public function hasChildren(...$index) {
+        if (!$this->action) {
+            return false;
+        }
+
+        $children = $this->action->getChildren;
+        if (!$children) {
+            return false;
+        }
+
+        if (!$index) {
+            return true;
+        }
+
+        foreach ($index as $i) {
+            if (isset($children[$i])) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getSubHtml(...$index)
     {
         $html = [];
-        foreach ($this->action->getChildren as $action) {
+        foreach ($this->action->getChildren as $i => $action) {
+            if ($index && !in_array($i, $index)) {
+                continue;
+            }
+
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);
 
             $html[] = $genericAction->getHtml();
@@ -111,14 +140,24 @@ class Action implements \JsonSerializable
         return implode($html);
     }
 
+    public function getChild($index)
+    {
+        $action = $this->action->getChildren[$index] ?? null;
+        if (!$action) {
+            return null;
+        }
+
+        return new Action($action, $this->args['route'], $this->args['resolved']);
+    }
+
     /**
      * @return string
      * @throws Exception
      */
-    public function getHtml()
+    public function getHtml($innerOnly = false)
     {
         return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
-            function() {
+            function() use ($innerOnly) {
 
                 $return = measure('Building pre-wrap',
                     function() {
@@ -194,11 +233,15 @@ class Action implements \JsonSerializable
                     /**
                      * Allow custom template.
                      */
-                    if ($result instanceof View\Twig && $this->action->pivot->template) {
+                    if ($result instanceof View\Twig) {
                         /**
                          * Awh, and check for allowed templates. :)
                          */
-                        $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
+                        if ($this->action->pivot->template) {
+                            $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
+                        }
+
+                        $result->addData('serviceAction', $this);
                     }
 
                     /**
@@ -208,6 +251,10 @@ class Action implements \JsonSerializable
                         function() use ($result) {
                             return (string)$result;
                         });
+
+                    if ($innerOnly) {
+                        return $result;
+                    }
 
                     /**
                      * Return built output.

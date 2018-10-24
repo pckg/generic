@@ -357,6 +357,10 @@ var pckgSmartItem = {
             required: true,
             type: Object
         },
+        index: {
+            type: Number,
+            default: 0
+        }
     },
     data: function () {
         return {
