@@ -393,7 +393,9 @@
                             <div>
                                 <label>Template</label>
                                 <select class="form-control" v-model="action.template">
-                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl" v-if="typeof title === 'string'">${ title }</option>
+                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl"
+                                            v-if="typeof title === 'string'">${ title }
+                                    </option>
 
                                     <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
                                         <option :value="tpl">${ tpl }</option>
@@ -401,18 +403,23 @@
                                 </select>
                             </div>
 
-                            <template v-if="actionTemplates[action.template] && typeof actionTemplates[action.template] !== 'string'">
+                            <template
+                                    v-if="actionTemplates[action.template] && typeof actionTemplates[action.template] !== 'string'">
                                 <div v-if="actionTemplates[action.template].list">
                                     <label>List template</label>
                                     <select class="form-control" v-model="action.listTemplate">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template].list" :value="tpl">${ title }</option>
+                                        <option v-for="(title,tpl) in actionTemplates[action.template].list"
+                                                :value="tpl">${ title }
+                                        </option>
                                     </select>
                                 </div>
 
                                 <div v-if="actionTemplates[action.template].item">
                                     <label>Item template</label>
                                     <select class="form-control" v-model="action.itemTemplate">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template].item" :value="tpl">${ title }</option>
+                                        <option v-for="(title,tpl) in actionTemplates[action.template].item"
+                                                :value="tpl">${ title }
+                                        </option>
                                     </select>
                                 </div>
                             </template>
@@ -726,7 +733,7 @@
             },
             'form.settings.perRow': {
                 deep: true,
-                handler: function(newVal){
+                handler: function (newVal) {
                     $dispatcher.$emit('pckg-action:' + this.action.id + ':perRow-changed', newVal);
                 }
             },
@@ -919,7 +926,41 @@
                 });
             },
             setAction: function (action) {
+                /*
+                action.template = action.template || '';
+                action.listTemplate = action.listTemplate || '';
+                action.itemTemplate = action.itemTemplate || '';
+                */
                 this.action = action;
+                /**
+                 * Set default action template
+                 */
+                if (false
+                    && this.templates[action.class]
+                    && this.templates[action.class][action.method]
+                    && !this.templates[action.class][action.method][action.template]) {
+                    this.action.template = Object.keys(this.templates[action.class][action.method])[0];
+                    let name = this.templates[action.class][action.method][this.action.template];
+                    if (typeof name != 'string') {
+                        /**
+                         * Set default list template
+                         */
+                        if (name.list && (!action.listTemplate || action.listTemplate.length == 0)) {
+                            this.action.listTemplate = Object.keys(name.list)[0];
+                        }
+                        /**
+                         * Set default item template
+                         */
+                        if (name.item && (!action.itemTemplate || action.itemTemplate.length == 0)) {
+                            this.action.itemTemplate = Object.keys(name.item)[0];
+                        }
+                    }
+                }
+                /*
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':template-changed', this.action.template);
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':listTemplate-changed', this.action.listTemplate);
+                $dispatcher.$emit('pckg-action:' + this.action.id + ':itemTemplate-changed', this.action.itemTemplate);
+*/
                 this.refreshSettings();
             },
             openEditContentModal: function () {

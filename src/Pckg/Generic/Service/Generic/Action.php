@@ -81,17 +81,15 @@ class Action implements \JsonSerializable
             return;
         }
 
-        $tree = [
-            'id'       => $this->action->pivot->id,
+        $defaults = $this->jsonSerialize();
+
+        $tree = array_merge([
             'title'    => $this->action->title,
             'morph'    => $this->action->pivot->morph,
             'type'     => $this->getType(),
-            'class'    => $this->getClass(),
-            'method'   => $this->getMethod(),
             'actions'  => [],
             'slug'     => $this->action->slug,
-            'template' => $this->action->pivot->template,
-        ];
+        ], $defaults);
 
         foreach ($this->action->getChildren as $action) {
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);
@@ -287,11 +285,45 @@ class Action implements \JsonSerializable
 
     public function jsonSerialize()
     {
+        $template = $this->action->pivot->template;
+
+        /**
+         * Transform template to original template
+         *  - Derive/Offers:offers/list-vSquare -> Derive/Offers:offers/list
+         */
+        list($before, $after) = explode(':',
+                                        str_replace(['\\', '/Controller/'],
+                                                    ['/', ':'],
+                                                    $this->action->class) . '/' . $this->action->method);
+        $classed = $before . ':' . lcfirst($after);
+
+
+        /**
+         * Make sure that vue templates are set.
+         */
+        $listTemplate = null;
+        $itemTemplate = null;
+        $templates = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method . '.' . $classed, null);
+        if (is_array($templates)) {
+            $listTemplate = array_keys($templates['list'] ?? [])[0] ?? null;
+            $itemTemplate = array_keys($templates['item'] ?? [])[0] ?? null;
+        }
+
+
         return [
-            'id'       => $this->action->pivot->id,
-            'template' => $this->action->pivot->template,
-            'settings' => $this->getSetting(),
-            'content' => $this->getContent(),
+            'id'           => $this->action->pivot->id,
+            'class'        => $this->action->class,
+            'classed'      => $classed,
+            'method'       => $this->action->method,
+            'template'     => $classed,//$template,
+            'listTemplate' => $listTemplate,
+            'itemTemplate' => $itemTemplate,
+            'settings'     => $this->getSetting()->keyBy(function(Setting $setting) {
+                return str_replace('pckg.generic.pageStructure.', '', $setting->slug);
+            })->map(function(Setting $setting) {
+                return $setting->pivot->getFinalValueAttribute();
+            }),
+            'content'      => $this->getContent(),
         ];
     }
 

@@ -46,6 +46,7 @@ Pckg.vue.stores.template = {
         templates: Pckg.vue.templates,
     },
     getters: {
+
         resolveTemplate: function (state) {
             console.log('resolving', state);
             return function (template, opt) {

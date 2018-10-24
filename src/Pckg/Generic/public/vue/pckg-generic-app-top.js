@@ -283,18 +283,36 @@ var pckgCleanRequest = {
 
 var pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn],
+    props: {
+        action: {
+            type: Object,
+            required: true
+        },
+        content: {
+            type: Object
+        }
+    },
     data: function () {
         return {
-            itemComponent: 'derive-item',
-            listComponent: 'derive-list-bootstrap',
+            myAction: this.action,
+            listComponent: this.action.listTemplate || 'derive-list',
+            itemComponent: this.action.itemTemplate || 'derive-item',
         };
     },
     mounted: function () {
         $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
+            console.log('item template changed', newTemplate);
+            if (!newTemplate) {
+                return;
+            }
             this.itemComponent = newTemplate;
         }.bind(this));
 
         $dispatcher.$on('pckg-action:' + this.action.id + ':listTemplate-changed', function (newTemplate) {
+            console.log('list template changed', newTemplate);
+            if (!newTemplate) {
+                return;
+            }
             this.listComponent = newTemplate;
         }.bind(this));
     },
@@ -313,11 +331,16 @@ var pckgSmartList = {
     },
     data: function () {
         return {
-            itemComponent: 'derive-item'
+            itemComponent: this.action.itemTemplate || 'derive-item',
+            myAction: this.action
         };
     },
     mounted: function () {
-        $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
+        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
+            console.log('smart list item template changed', newTemplate);
+            if (!newTemplate) {
+                return;
+            }
             this.itemComponent = newTemplate;
         }.bind(this));
     }
@@ -326,13 +349,20 @@ var pckgSmartList = {
 var pckgSmartItem = {
     mixins: [pckgTranslations, pckgCdn],
     props: {
-        content: {},
-        action: {},
+        content: {
+            required: true,
+            type: Object
+        },
+        action: {
+            required: true,
+            type: Object
+        },
     },
     data: function () {
         return {
             templateRender: null,
-            tpl: 'derive-item'
+            tpl: 'derive-item',
+            myAction: this.action
         };
     },
     render: function (h) {
@@ -347,8 +377,12 @@ var pckgSmartItem = {
         return this.templateRender();
     },
     mounted: function () {
-        $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
+        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
             this.tpl = newTemplate;
+        }.bind(this));
+
+        $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
+            this.myAction.settings.perRow = newVal;
         }.bind(this));
     },
     watch: {
