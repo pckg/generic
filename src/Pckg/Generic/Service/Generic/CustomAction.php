@@ -10,7 +10,7 @@ class CustomAction extends Action
         $this->view = $view;
     }
 
-    public function getHtml()
+    public function getHtml($innerOnly = false)
     {
         return (string)$this->view;
     }
