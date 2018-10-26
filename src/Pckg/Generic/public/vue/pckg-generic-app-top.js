@@ -100,6 +100,8 @@ var pckgPayment = {
             var t = this;
             if (data.redirect) {
                 t.state = 'redirected';
+                http.redirect(data.redirect);
+                /*
                 $.magnificPopup.open({
                     items: {
                         src: data.redirect,
@@ -114,7 +116,7 @@ var pckgPayment = {
                     t.state = 'canceled';
                     $dispatcher.$emit('payment-form:canceled');
                     $.magnificPopup.proto.close.call(this);
-                };
+                };*/
             } else if (data.modal) {
                 t.state = data.modal;
                 $dispatcher.$emit('payment-form:' + data.modal, data);
@@ -122,10 +124,12 @@ var pckgPayment = {
                 t.state = 'error';
                 $dispatcher.$emit('payment-form:error', data);
             }
+            $dispatcher.$emit('payment-form:refresh-data');
         },
         handleErrorResponse: function (data) {
             this.state = 'error';
             $dispatcher.$emit('payment-form:error', 'Unknown error');
+            $dispatcher.$emit('payment-form:refresh-data');
         },
         submitForm: function (data) {
             this.state = 'validating';
@@ -201,6 +205,14 @@ var pckgSync = {
             }
 
             object['_pckgSync' + name] = request;
+        }
+    }
+};
+
+var pckgLocale = {
+    methods: {
+        locale: function(){
+            return locale;
         }
     }
 };

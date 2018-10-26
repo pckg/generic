@@ -34,6 +34,9 @@
 
     Pckg.config.cdn = {{ config('storage.cdn') | json_encode | raw }};
 
+    Pckg.config.apis = {};
+    Pckg.config.apis.googleConsole = {{ config('external.googleMaps.apiKey', '') | json_encode | raw }};
+
     Pckg.router = {};
     Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};
 

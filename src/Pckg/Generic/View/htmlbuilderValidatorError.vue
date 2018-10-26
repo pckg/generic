@@ -6,7 +6,7 @@
     export default {
         name: 'htmlbuilder-validator-error',
         props: {
-            //errors: {},
+            errors: {},
             name: {},
             message: {
                 default: 'Error'
@@ -14,6 +14,16 @@
             shown: {
                 default: false,
                 type: Boolean
+            }
+        },
+        data: function(){
+            return {
+                myErrors: this.errors
+            };
+        },
+        watch: {
+            errors: function(newVal){
+                this.myErrors = newVal;
             }
         },
         computed: {
