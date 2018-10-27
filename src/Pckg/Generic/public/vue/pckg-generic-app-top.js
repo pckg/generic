@@ -110,6 +110,8 @@ var pckgPayment = {
             var t = this;
             if (data.redirect) {
                 t.state = 'redirected';
+                http.redirect(data.redirect);
+                /*
                 $.magnificPopup.open({
                     items: {
                         src: data.redirect,
@@ -124,7 +126,7 @@ var pckgPayment = {
                     t.state = 'canceled';
                     $dispatcher.$emit('payment-form:canceled');
                     $.magnificPopup.proto.close.call(this);
-                };
+                };*/
             } else if (data.modal) {
                 t.state = data.modal;
                 $dispatcher.$emit('payment-form:' + data.modal, data);

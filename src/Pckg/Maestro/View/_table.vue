@@ -31,23 +31,7 @@
                     <i class="fa fa-chevron-down"></i> Customize view
                 </a>
                 <a href="#" v-else @click.prevent="configureSection = 'closed'">
-                    <i class="fa fa-chevron-down"></i> Hide configuration
-                </a>
-
-                <div class="btn-group btn-group-sm">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-download"></i> Export
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu">
-                        <li>.pdf</li>
-                        <li>.csv</li>
-                        <li>.xlsx</li>
-                        <li>.html</li>
-                    </ul>
-                </div>
-
-                <a href="#">
-                    <i class="fa fa-upload"></i> Import
+                    <i class="fa fa-chevron-up"></i> Hide configuration
                 </a>
 
                 <div class="btn-group btn-group-sm">
@@ -57,6 +41,8 @@
                         <i class="fa fa-bars" aria-hidden="true"></i> More
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
+                        <li><a href="#"><i class="fa fa-upload"></i>Import</a></li>
                         <!-- {{ tabelize.getEntityActionsHtml(false) | raw }} -->
                     </ul>
                 </div>
@@ -92,61 +78,10 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-xs-8">
-                                <h4>
-                                    Filter
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
 
+                                <pckg-maestro-customize-filters :fields="myFields"
+                                                                :relations="relations"></pckg-maestro-customize-filters>
 
-                                    <div class="pull-right">
-                                        <d-input-checkbox v-model="view.archived"></d-input-checkbox>
-                                        Archived items
-                                    </div>
-
-                                    <div class="pull-right">
-                                        <d-input-checkbox v-model="view.deleted"></d-input-checkbox>
-                                        Deleted items
-                                    </div>
-                                </h4>
-                                <div>
-                                    <select class="form-control">
-                                        <option>Field</option>
-                                    </select>
-                                    <select class="form-control">
-                                        <option>equals</option>
-                                    </select>
-                                    <input type="text" value="sth" class="form-control"/>
-                                </div>
-                                <div>
-                                    <select class="form-control">
-                                        <option>Other field</option>
-                                    </select>
-                                    <select class="form-control">
-                                        <option>between</option>
-                                    </select>
-                                    <input type="number" value="123" class="form-control"/>
-                                    and
-                                    <input type="number" value="223" class="form-control"/>
-                                </div>
-                                <div>
-                                    <select class="form-control">
-                                        <option>Third field</option>
-                                    </select>
-                                    <select class="form-control">
-                                        <option>between</option>
-                                    </select>
-                                    <input type="date" value="2018-01-01" class="form-control"/>
-                                    and
-                                    <input type="date" value="2019-01-01" class="form-control"/>
-                                </div>
-                                <div>
-                                    <a href="#"><i class="fa fa-plus"></i> Add field</a>
-                                </div>
-                                <h4>
-                                    Group by / statistical view
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'You can group records by fields and displa'"></pckg-tooltip>
-                                </h4>
                             </div>
                             <div class="col-xs-2">
 
@@ -158,38 +93,13 @@
                             </div>
                             <div class="col-xs-2">
 
-                                <h4>
-                                    Saved views
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'You can save custom build views with selected fields and filters for quick access'"></pckg-tooltip>
-                                </h4>
-                                <div>
-                                    <a href="#">Default view</a>
-                                </div>
-                                <div>
-                                    <a href="#">Custom named view #1</a>
-                                </div>
-                                <div>
-                                    <a href="#">Foo bar view</a>
-                                </div>
-                                <div>
-                                    <a href="#"><i class="fa fa-save"></i> Save current view</a>
-                                </div>
+                                <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
 
-                                <h4>
-                                    System views
-                                    <pckg-tooltip icon="question-circle"
-                                                  :content="'You can save custom build views with selected fields and filters for quick access'"></pckg-tooltip>
-                                </h4>
-                                <div>
-                                    <a href="#">Default view</a>
-                                </div>
-                                <div>
-                                    <a href="#">Custom named view #1</a>
-                                </div>
-                                <div>
-                                    <a href="#">Foo bar view</a>
-                                </div>
+                                <br/>
+
+                                <button type="button" class="btn btn-success">Save view</button>
+
+                                <a href="#">Reset view</a>
 
                             </div>
                         </div>
@@ -289,67 +199,7 @@
 
         <div class="table-floating-right-bar" :class="quickView">
 
-            <div class="row">
-                <div class="col-xs-12">
-
-                    <h4>Order info</h4>
-                    <div>3x Some packet - blue option</div>
-                    <div>3x Some packet - option</div>
-                    <div>3x packet - blue option krneki</div>
-                    <div>3x Foobar - blue</div>
-
-                    <h4>Attedees</h4>
-                    <div>Bojan Rajh - bojan.rajh@t-2.net</div>
-                    <div>Ana Brinc - ana@gmail.com</div>
-                    <div>Bojan Rajh - bojan.rajh@t-2.net</div>
-                    <div>Ana Brinc - ana@gmail.com</div>
-
-                </div>
-
-                <div class="col-xs-12">
-
-                    <h4>Customer</h4>
-                    <div>Bojan Rajh</div>
-                    <div>bojan.rajh@t-2.net</div>
-
-                    <h4>Status</h4>
-                    <div><b>Order:</b> confirmed</div>
-                    <div><b>Payment:</b> partial</div>
-                    <div><b>Delivery:</b> none</div>
-                    <div><b>Voucher:</b> none</div>
-
-                </div>
-
-                <div class="col-xs-12">
-
-                    <h4>Payment info</h4>
-                    <div>1. instalment - 123.12€ <i class="fa fa-check"></i> 21. Nov 2018</div>
-                    <div>2. instalment - 123.12€ <i class="fa fa-info"></i> 21. Nov 2018</div>
-                    <div>3. instalment - 123.12€ 21. Nov 2018</div>
-                    <div>4. instalment - 123.12€ 21. Nov 2018</div>
-                    <div>Total <b>1234.23 €</b></div>
-
-                    <h4>Documents</h4>
-                    <div>Pre-invoice <i class="fa fa-download"></i> <i class="fa fa-sync-alt"></i>
-                        <i class="fa fa-envelope"></i></div>
-                    <div>Voucher <i class="fa fa-download"></i> <i class="fa fa-sync-alt"></i> <i
-                            class="fa fa-envelope"></i></div>
-                    <div>Invoice <i class="fa fa-download"></i> <i class="fa fa-sync-alt"></i> <i
-                            class="fa fa-envelope"></i></div>
-
-                </div>
-
-                <div class="col-xs-12">
-
-                    <h4>Delivery</h4>
-                    <div>Bojan Rajh</div>
-                    <div>Šmartno ob Paki 103</div>
-                    <div>3327 Šmartno ob Paki</div>
-                    <div>SI - Slovenia</div>
-                    <div>+386(0)70123456</div>
-
-                </div>
-            </div>
+            <derive-orders-tabelize-quick-view></derive-orders-tabelize-quick-view>
 
         </div>
 
@@ -441,7 +291,7 @@
                         url: null
                     };
                 },
-             type: Object
+                type: Object
             },
             resetpaginatorurl: {
                 type: String,
@@ -462,6 +312,40 @@
         },
         data: function () {
             return {
+                views: [
+                    {
+                        type: 'saved',
+                        title: 'First custom saved view',
+                        data: {},
+                    },
+                    {
+                        type: 'saved',
+                        title: 'Second custom saved view',
+                        data: {},
+                    },
+                    {
+                        type: 'saved',
+                        title: 'Third custom saved view',
+                        data: {},
+                    },
+                    {
+                        type: 'system',
+                        title: 'First custom saved view',
+                        data: {},
+                    },
+                    {
+                        type: 'system',
+                        title: 'Second custom saved view',
+                        data: {},
+                    },
+                    {
+                        type: 'system',
+                        title: 'Third custom saved view',
+                        data: {},
+                    }
+                ],
+
+
                 _searchTimeout: null,
                 _sortTimeout: null,
                 records: this.initialRecords,
