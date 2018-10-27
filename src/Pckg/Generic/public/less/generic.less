@@ -60,8 +60,13 @@ ul.vertical-mid-menu {
   border-radius: 4px;
 }
 
-.pckg-maestro-customize-fields-field {
-  display: inline-block;
-  width: 20%;
-  float: left;
+.pckg-maestro-customize-filters-field {
+  width: 100%;
+  & &,
+  & .field-relation {
+    width: auto
+    float: left;
+    min-width: 12rem;
+    display: inline-block;
+  }
 }

@@ -15,7 +15,7 @@
                 Deleted items
             </div>
         </h4>
-        <div v-for="filter in filters" style="">
+        <div v-for="filter in filters" style="display: block; clear: both;">
             <div>
                 <a href="#"><i class="fa fa-trash"></i></a>
             </div>
@@ -44,23 +44,27 @@
     export default {
         name: 'pckg-maestro-customize-filters',
         props: {
-            fields: {
+            columns: {
                 type: Array,
             },
             relations: {
                 type: Array,
             }
         },
-
         data: function () {
             return {
                 filters: [
                     {}
                 ],
-                myFields: this.fields,
+                myFields: this.columns,
                 myRelations: this.relations,
                 view: {}
             };
+        },
+        methods: {
+            chosen: function(){
+
+            }
         },
         computed: {
             selectOptions: function () {

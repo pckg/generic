@@ -1,9 +1,10 @@
 <template>
-    <div>
+    <div class="pckg-maestro-customize-filters-field">
 
         <pckg-select v-model="selected"
                      :initial-options="options"
-                     :initial-multiple="false"></pckg-select>
+                     :initial-multiple="false"
+                     class="field-relation"></pckg-select>
 
         <pckg-maestro-customize-filters-field v-if="isRelation"
                                               :relation="selectedRelation"

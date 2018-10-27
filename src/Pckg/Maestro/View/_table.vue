@@ -79,7 +79,7 @@
                         <div class="row">
                             <div class="col-xs-8">
 
-                                <pckg-maestro-customize-filters :fields="myFields"
+                                <pckg-maestro-customize-filters :columns="myFields"
                                                                 :relations="relations"></pckg-maestro-customize-filters>
 
                             </div>
