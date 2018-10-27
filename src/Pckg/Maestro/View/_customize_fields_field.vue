@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pckg-maestro-customize-fields-field">
         <pckg-select v-model="selected"
                      :initial-options="options"
                      :initial-multiple="false"></pckg-select>
