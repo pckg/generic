@@ -392,7 +392,7 @@
 
                             <div v-if="Object.keys(actionTemplates).length > 0">
                                 <label>Template</label>
-                                <select class="form-control" v-model="action.template">
+                                <select class="form-control" v-model="action.template.template">
                                     <option v-for="(title,tpl) in actionTemplates" :value="tpl"
                                             v-if="typeof title === 'string'">${ title }
                                     </option>
@@ -404,21 +404,21 @@
                             </div>
 
                             <template
-                                    v-if="actionTemplates[action.template] && typeof actionTemplates[action.template] !== 'string'">
+                                    v-if="actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] !== 'string'">
 
-                                <div v-if="actionTemplates[action.template].list">
+                                <div v-if="actionTemplates[action.template.template].list">
                                     <label>List template</label>
-                                    <select class="form-control" v-model="action.listTemplate">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template].list"
+                                    <select class="form-control" v-model="action.template.list">
+                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
                                                 :value="tpl">${ title }
                                         </option>
                                     </select>
                                 </div>
 
-                                <div v-if="actionTemplates[action.template].item">
+                                <div v-if="actionTemplates[action.template.template].item">
                                     <label>Item template</label>
-                                    <select class="form-control" v-model="action.itemTemplate">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template].item"
+                                    <select class="form-control" v-model="action.template.item">
+                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
                                                 :value="tpl">${ title }
                                         </option>
                                     </select>
@@ -665,9 +665,11 @@
                 availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
                 availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
                 action: {
-                    template: '',
-                    listTemplate: '',
-                    itemTemplate: '',
+                    template: {
+                        template: '',
+                        list: '',
+                        item: '',
+                    },
                 },
                 content: {
                     content: '',
@@ -723,13 +725,22 @@
                 },
                 deep: true
             },
-            'action.template': function (newVal) {
+            'action.template.template': function (newVal) {
+                if (!this.action) {
+                    return;
+                }
                 $dispatcher.$emit('pckg-action:' + this.action.id + ':template-changed', newVal);
             },
-            'action.listTemplate': function (newVal) {
+            'action.template.list': function (newVal) {
+                if (!this.action) {
+                    return;
+                }
                 $dispatcher.$emit('pckg-action:' + this.action.id + ':listTemplate-changed', newVal);
             },
-            'action.itemTemplate': function (newVal) {
+            'action.template.item': function (newVal) {
+                if (!this.action) {
+                    return;
+                }
                 $dispatcher.$emit('pckg-action:' + this.action.id + ':itemTemplate-changed', newVal);
             },
             'form.settings.perRow': {
@@ -939,21 +950,21 @@
                 if (false
                     && this.templates[action.class]
                     && this.templates[action.class][action.method]
-                    && !this.templates[action.class][action.method][action.template]) {
-                    this.action.template = Object.keys(this.templates[action.class][action.method])[0];
+                    && !this.templates[action.class][action.method][action.template.template]) {
+                    this.action.template.template = Object.keys(this.templates[action.class][action.method])[0];
                     let name = this.templates[action.class][action.method][this.action.template];
                     if (typeof name != 'string') {
                         /**
                          * Set default list template
                          */
-                        if (name.list && (!action.listTemplate || action.listTemplate.length == 0)) {
-                            this.action.listTemplate = Object.keys(name.list)[0];
+                        if (name.list && (!action.template.list || action.template.list.length == 0)) {
+                            this.action.template.list = Object.keys(name.list)[0];
                         }
                         /**
                          * Set default item template
                          */
-                        if (name.item && (!action.itemTemplate || action.itemTemplate.length == 0)) {
-                            this.action.itemTemplate = Object.keys(name.item)[0];
+                        if (name.item && (!action.template.item || action.template.item.length == 0)) {
+                            this.action.template.item = Object.keys(name.item)[0];
                         }
                     }
                 }

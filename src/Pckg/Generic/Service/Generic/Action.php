@@ -237,8 +237,11 @@ class Action implements \JsonSerializable
                         /**
                          * Awh, and check for allowed templates. :)
                          */
-                        if ($this->action->pivot->template) {
-                            $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
+                        if ($this->action->pivot->template['template']) {
+                            /**
+                             * In template we store template, list template and item template designs.
+                             */
+                            $result->setFile(str_replace(':', '/View/', $this->action->pivot->template['template']));
                         }
 
                         $result->addData('serviceAction', $this);
@@ -354,17 +357,16 @@ class Action implements \JsonSerializable
         if (is_array($templates)) {
             $listTemplate = array_keys($templates['list'] ?? [])[0] ?? null;
             $itemTemplate = array_keys($templates['item'] ?? [])[0] ?? null;
+            $template['list'] = $listTemplate;
+            $template['item'] = $itemTemplate;
         }
-
 
         return [
             'id'           => $this->action->pivot->id,
             'class'        => $this->action->class,
             'classed'      => $classed,
             'method'       => $this->action->method,
-            'template'     => $classed,//$template,
-            'listTemplate' => $listTemplate,
-            'itemTemplate' => $itemTemplate,
+            'template'     => $template,
             'settings'     => $this->getSetting()->keyBy(function(Setting $setting) {
                 return str_replace('pckg.generic.pageStructure.', '', $setting->slug);
             })->map(function(Setting $setting) {

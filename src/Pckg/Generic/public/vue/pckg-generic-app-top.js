@@ -296,9 +296,10 @@ var pckgSmartComponent = {
     },
     data: function () {
         return {
+            loading: false,
             myAction: this.action,
-            listComponent: this.action.listTemplate || 'derive-list',
-            itemComponent: this.action.itemTemplate || 'derive-item',
+            listComponent: this.action.template.list || 'derive-list', // we need to resolve proper list template for action
+            itemComponent: this.action.template.item || 'derive-item',
         };
     },
     mounted: function () {
@@ -317,6 +318,28 @@ var pckgSmartComponent = {
             }
             this.listComponent = newTemplate;
         }.bind(this));
+
+        $dispatcher.$on('listSubitemSelected', function (newItem) {
+            /**
+             * Categories > Offers > Packets
+             * On category page we display offers and all packets. Click on offer reload packets.
+             * Use url: api.$type.$id.$collection somehow dynamically
+             */
+            this.loading = true;
+            let plural = newItem.type == 'offer' ? 'offers' : 'categories';
+            let collection = newItem.type == 'offer' ? 'packets' : 'offers';
+            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function(data){
+                this['my' + collection] = data[collection];
+                this.loading = false;
+            }.bind(this), function(){
+                this.loading = false;
+                $dispatcher.$emit('notification:error', 'Error fetching ' + collection);
+            }.bind(this));
+        }.bind(this));
+
+        $dispatcher.$on('listItemSelected', function (newItem) {
+
+        }.bind(this));
     },
 };
 
@@ -333,7 +356,7 @@ var pckgSmartList = {
     },
     data: function () {
         return {
-            itemComponent: this.action.itemTemplate || 'derive-item',
+            itemComponent: this.action.template.item || 'derive-item',
             myAction: this.action
         };
     },

@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Record;
 
+use Complex\Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\ActionsMorphs;
@@ -197,6 +198,58 @@ class ActionsMorph extends Record
                                               'value' => $settingsMorph->value . ($settingsMorph->value ? ' ' : '') .
                                                          $class,
                                           ]);
+    }
+
+    public function setTemplateAttribute($template)
+    {
+        if ($template && (!is_array($template) && !is_string($template))) {
+            throw new Exception('Template should be empty, string or array');
+        }
+
+        if (!$template) {
+            $template = [
+                'template' => null,
+                'list'     => null,
+                'item'     => null,
+            ];
+        } elseif (is_string($template)) {
+            if (substr($template, 0, 1) === '{') {
+
+            } else {
+                $template = [
+                    'template' => $template,
+                    'list'     => null,
+                    'item'     => null,
+                ];
+            }
+        }
+
+        $template = is_string($template) ? $template : json_encode($template);
+        $this->data['template'] = $template;
+
+        return $this;
+    }
+
+    public function getTemplateAttribute() {
+        $template = $this->data('template');
+        if (!$template) {
+            return [
+                'template' => null,
+                'list' => null,
+                'item' => null,
+            ];
+        }
+
+        if (substr($template, 0, 1) == '{') {
+            $template = (array)json_decode($template, true);
+            return $template;
+        }
+
+        return [
+            'template' => $template,
+            'list' => null,
+            'item' => null,
+        ];
     }
 
 }
