@@ -60,13 +60,21 @@ ul.vertical-mid-menu {
   border-radius: 4px;
 }
 
+
+.pckg-maestro-customize-filters-field-filter,
 .pckg-maestro-customize-filters-field {
-  width: 100%;
-  & &,
-  & .field-relation {
-    width: auto
-    float: left;
-    min-width: 12rem;
+  .pckg-select {
+    min-width: 10rem;
+  }
+}
+
+.pckg-maestro-customize-filters-field {
+  > * {
+    display: inline-block;
+  }
+}
+.pckg-maestro-customize-filters-field-filter {
+  > * {
     display: inline-block;
   }
 }

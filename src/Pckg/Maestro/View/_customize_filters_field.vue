@@ -6,13 +6,24 @@
                      :initial-multiple="false"
                      class="field-relation"></pckg-select>
 
-        <pckg-maestro-customize-filters-field v-if="isRelation"
-                                              :relation="selectedRelation"
-                                              @chosen="chosen"></pckg-maestro-customize-filters-field>
+        <template v-if="isRelation">
+            <i class="fa fa-cogs" @click.prevent="customizeRelation = !customizeRelation"></i>
 
-        <pckg-maestro-customize-filters-field-filter v-if="selected"
-                                                     :type="selectionType"
-                                                     :selection="selection"></pckg-maestro-customize-filters-field-filter>
+            <pckg-maestro-customize-filters-field v-if="customizeRelation"
+                                                  :relation="selectedRelation"
+                                                  @chosen="chosen"></pckg-maestro-customize-filters-field>
+
+            <pckg-maestro-customize-filters-field-filter v-else
+                                                         type="relation"
+                                                         :selection="selection"></pckg-maestro-customize-filters-field-filter>
+        </template>
+        <template v-else>
+
+            <pckg-maestro-customize-filters-field-filter v-if="selected"
+                                                         type="field"
+                                                         :selection="selection"></pckg-maestro-customize-filters-field-filter>
+
+        </template>
 
     </div>
 </template>
@@ -42,7 +53,8 @@
             return {
                 selected: null,
                 myRelations: this.relations,
-                myFields: this.parentFields
+                myFields: this.parentFields,
+                customizeRelation: false
             }
         },
         watch: {
