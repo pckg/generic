@@ -6,16 +6,15 @@
                           :content="'Select fields you would like to see, reorder and freeze them'"></pckg-tooltip>
         </h4>
         <div v-for="field in parentFields" v-if="field.visible">
-            <i class="fa fa-arrows"></i>
-            <i v-if="field.freeze" class="fa fa-lock" @click.prevent="$set(field, 'freeze', false)"></i>
-            <i v-else class="fa fa-lock-open" @click.prevent="$set(field, 'freeze', true)"></i>
+            <a href="#"><i class="fal fa-minus-circle" @click.prevent="$set(field, 'visible', false)"></i></a>
+            <a href="#" style="cursor: move;"><i class="fa fa-elipsis"></i></a>
             {{ field.title }}
-            <i class="fa fa-trash" @click.prevent="$set(field, 'visible', false)"></i>
+            <a href="#" v-if="field.freeze"><i class="pull-right fas fa-thumbtack" @click.prevent="$set(field, 'freeze', false)"></i></a>
+            <a href="#" v-else><i class="pull-right fa fa-thumbtack" @click.prevent="$set(field, 'freeze', true)"></i></a>
         </div>
         <div>
             <a href="#" v-if="mode != 'add'" @click.prevent="mode = 'add'">
-                <i class="fa fa-plus"></i>
-                Add
+                <i class="fal fa-plus-circle"></i>
             </a>
             <template v-else-if="mode == 'add'">
                 <pckg-maestro-customize-fields-field :parent-fields="parentFields"

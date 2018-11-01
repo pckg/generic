@@ -60,6 +60,12 @@
         watch: {
             relation: function (newVal) {
                 this.fetchRelation();
+            },
+            parentFields: function (fields) {
+                this.myFields = fields;
+            },
+            relation: function (relations) {
+                this.myRelations = relations;
             }
         },
         methods: {

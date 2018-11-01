@@ -7,12 +7,16 @@ class RegisterDynamicProviders extends Provider
 
     public function execute(callable $next)
     {
-        measure('Registering dynamic providers',
-            function() {
-                $this->register();
-            });
+        $this->handle();
 
         return $next();
+    }
+
+    public function handle()
+    {
+        measure('Registering dynamic providers', function() {
+            $this->register();
+        });
     }
 
     public function providers()

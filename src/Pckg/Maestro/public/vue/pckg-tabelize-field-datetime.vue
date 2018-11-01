@@ -1,8 +1,11 @@
 <template>
-    <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle">
-        <template v-if="value">{{ value | date }}<br />{{ value | time }}</template>
+    <div>
+        <a href="#" @click.prevent="toggle" class="text-center">
+            <i class="fa" :class="'fa-' + iconClass"></i>
+        </a><br />
+        <template v-if="value">{{ value | date }}<br/>{{ value | time }}</template>
         <template v-else><i class="fa fa-times"></i></template>
-    </a>
+    </div>
 </template>
 
 <script>
@@ -58,19 +61,19 @@
             }
         },
         computed: {
-            btnClass: function () {
+            iconClass: function () {
                 if (this.min == '2999-01-01 00:00:00') {
                     return this.value > this.max
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'times'
+                        : 'check';
                 } else if (this.min == null) {
                     return this.value > this.max || this.value == this.min
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'times'
+                        : 'check';
                 } else {
                     return this.value <= this.min
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'times'
+                        : 'check';
                 }
             },
             brValue: function () {

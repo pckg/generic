@@ -1,6 +1,6 @@
 <template>
     <div v-if="loading" class="pckg-loader display-block text-center">
-        <i class="fa fa-spinner fa-spin fa-2x"></i>
+        <i class="fa fa-spinner-third fa-spin fa-2x"></i>
     </div>
 </template>
 

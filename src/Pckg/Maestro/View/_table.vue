@@ -16,7 +16,7 @@
             </div>
 
             <div class="sec table-actions">
-                <a href="#">
+                <a :href="'/dynamic/records/add/' + table.id">
                     <i class="fa fa-plus"></i> Add
                 </a>
 
@@ -27,7 +27,8 @@
                     <i class="fa fa-chevron-up"></i> Hide configuration
                 </a>
 
-                <pckg-maestro-table-actions :table="table" :actions="actions.entity"></pckg-maestro-table-actions>
+                <pckg-maestro-table-actions :table="table" :actions="actions.entity"
+                                            @entity-action="entityAction"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -59,13 +60,13 @@
                 <div class="panel panel-default new-filters" :class="configureSection">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-xs-8">
+                            <div class="col-xs-6">
 
                                 <pckg-maestro-customize-filters :columns="myFields"
                                                                 :relations="relations"></pckg-maestro-customize-filters>
 
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-3">
 
                                 <pckg-maestro-customize-fields :parent-fields="myFields"
                                                                :relations="relations"
@@ -73,47 +74,49 @@
                                                                @chosen="chosen"></pckg-maestro-customize-fields>
 
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-3">
 
                                 <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
 
-                                <br/>
+                            </div>
+                            <div class="col-xs-12">
 
-                                <button type="button" class="btn btn-success">Save view</button>
+                                <div class="pull-right">
+                                    <a href="#">Reset view</a>
 
-                                <a href="#">Reset view</a>
+                                    <button type="button" class="btn btn-success">Save view</button>
+                                </div>
 
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel panel-default">
+                <div class="panel panel-default" v-if="records.length > 0">
                     <div style="position: relative;" class="closest">
-                        <div class="showContextMenu" v-if="contextMenuShown && selectedRecord">
-                            <template v-for="action in actions.record"
-                                      v-if="action.recordHref && selectedRecord[recordHref] || action.event">
+
+                        <div class="showContextMenu dropdown-menu" v-if="contextMenuShown && selectedRecord">
+                            <li v-for="action in actions.record"
+                                v-if="action.recordHref && selectedRecord[recordHref] || action.event">
                                 <a v-if="action.recordHref && selectedRecord[recordHref]"
                                    :href="selectedRecord[recordHref]">
                                     <i class="fa" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
-                                <span v-else-if="action.event" class="as-link"
-                                      @click.prevent="recordAction(selectedRecord, action.event)">
-                                <i class="fa" :class="'fa-' + action.icon"></i>
-                                {{ action.title }}
-                            </span>
-                                <br/>
-                            </template>
+                                <a v-else-if="action.event" href="#"
+                                   @click.prevent="recordAction(selectedRecord, action.event)">
+                                    <i class="fa" :class="'fa-' + action.icon"></i>
+                                    {{ action.title }}
+                                </a>
+                            </li>
                         </div>
 
                         <div class="clearfix"></div>
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
                         <div style="padding-left: 3rem;">
-                            <div style="overflow-x: scroll; overflow-y: visible;">
-                                <p v-if="records.length == 0">No records to display :/</p>
-                                <table class="table table-hover" v-else>
+                            <div style="overflow-x: auto; overflow-y: visible;">
+                                <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes">
@@ -152,8 +155,8 @@
                                         <!-- main record row -->
                                         <tr :class="[ids.indexOf(record.id) >= 0 ? 'selected' : '']"
                                             @contextmenu.prevent="showContextMenu($event, record)"
-                                            @click="delaySingleClick(record)"
-                                            @dblclick="doubleClick(record)">
+                                            @click.stop="delaySingleClick(record)"
+                                            @dblclick.stop="doubleClick(record)">
                                             <td class="checkboxes freeze" @click.prevent>
                                                 <div>
                                                     <d-input-checkbox v-model="ids"
@@ -196,13 +199,13 @@
             </div>
         </div>
 
-        <div class="table-floating-right-bar" :class="quickView">
+        <div class="table-floating-right-bar" :class="quickView" v-if="false">
 
             <derive-orders-tabelize-quick-view></derive-orders-tabelize-quick-view>
 
         </div>
 
-        <div class="table-floating-bottom-bar" v-if="ids.length > 0">
+        <div class="table-floating-bottom-bar" :class="ids.length > 0 ? 'in' : ''">
             <div class="pull-left" style="margin-right: 4rem;">
                 {{ ids.length }} records selected
                 <template v-if="allChecked">
@@ -275,18 +278,6 @@
                 type: String
             },
             entityactions: {},
-            paginator: {
-                default: function () {
-                    return {
-                        perPage: 50,
-                        page: 1,
-                        filtered: 0,
-                        total: 0,
-                        url: null
-                    };
-                },
-                type: Object
-            },
             resetpaginatorurl: {
                 type: String,
                 default: ''
@@ -302,6 +293,13 @@
         },
         data: function () {
             return {
+                paginator: {
+                    perPage: 50,
+                    page: 1,
+                    filtered: 0,
+                    total: 0,
+                    url: null
+                },
                 selectedRecord: null,
                 views: [
                     {
@@ -672,7 +670,7 @@
                 });
             },
             ids: function () {
-                $dispatcher.$emit('pckg-maestro-table-' + this.onTable.table + ':setSelectedRecords', this.getSelectedRecords());
+                $dispatcher.$emit('pckg-maestro-table-' + this.table.table + ':setSelectedRecords', this.getSelectedRecords());
             }
         },
         created: function () {
@@ -684,9 +682,9 @@
                 $dispatcher.$on('dynamic-tab-' + tab.id + ':refresh', this.refreshData);
             }
             if (this.onTable) {
-                $dispatcher.$on('pckg-maestro-table-' + this.onTable.table + ':setRecords', this.setRecords);
-                $dispatcher.$on('pckg-maestro-table-' + this.onTable.table + ':setPaginatorTotal', this.setPaginatorTotal);
-                $dispatcher.$on('pckg-maestro-table-' + this.onTable.table + ':refresh', this.refreshData);
+                $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setRecords', this.setRecords);
+                $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setPaginatorTotal', this.setPaginatorTotal);
+                $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':refresh', this.refreshData);
             }
         }
     };

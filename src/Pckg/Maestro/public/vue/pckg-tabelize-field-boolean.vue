@@ -1,5 +1,7 @@
 <template>
-    <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle"><i class="fa" :class="iconClass"></i></a>
+    <a @click.prevent="toggle" href="#" class="pckg-tabelize-field-boolean">
+        <i class="fa" :class="iconClass"></i>
+    </a>
 </template>
 
 <script>
@@ -28,11 +30,8 @@
             }
         },
         computed: {
-            btnClass: function () {
-                return this.value > 0 ? 'btn-success' : 'btn-danger';
-            },
             iconClass: function () {
-                return this.value > 0 ? 'fa-check' : 'fa-times';
+                return this.value > 0 ? 'fa-toggle-on' : 'fa-toggle-off';
             }
         }
     }

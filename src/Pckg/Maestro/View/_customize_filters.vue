@@ -4,33 +4,34 @@
             Filter
             <pckg-tooltip icon="question-circle"
                           :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
-
-            <div class="pull-right">
-                <d-input-checkbox v-model="view.live"></d-input-checkbox>
-                Live search
-            </div>
-
-            <div class="pull-right">
-                <d-input-checkbox v-model="view.archived"></d-input-checkbox>
-                Archived items
-            </div>
-
-            <div class="pull-right">
-                <d-input-checkbox v-model="view.deleted"></d-input-checkbox>
-                Deleted items
-            </div>
         </h4>
         <div v-for="filter in filters" class="display-block clear-both">
-            <a href="#"><i class="fa fa-trash"></i></a>
+            <a href="#" title="Remove condition"><i class="fal fa-minus-circle"></i></a>
 
-            <pckg-maestro-customize-filters-field style="width: 100%;" :parent-fields="myFields"
+            <pckg-maestro-customize-filters-field :parent-fields="myFields"
                                                   :relations="myRelations"
                                                   @chosen="chosen"></pckg-maestro-customize-filters-field>
 
         </div>
-        <div class="display-block clear-both">
-            <a href="#" @click.prevent="addCondition"><i class="fa fa-plus"></i> Add condition</a>
-        </div>
+
+        <p>
+            <a href="#" title="Add condition" @click.prevent="addCondition"><i class="fal fa-plus-circle"></i></a>
+        </p>
+
+        <p>
+            <d-input-checkbox v-model="view.live"></d-input-checkbox>
+            Live search
+        </p>
+
+        <p>
+            <d-input-checkbox v-model="view.archived"></d-input-checkbox>
+            Archived items
+        </p>
+
+        <p>
+            <d-input-checkbox v-model="view.deleted"></d-input-checkbox>
+            Deleted items
+        </p>
 
         <h4>
             Group by / statistical view
@@ -52,6 +53,14 @@
                 type: Array,
             }
         },
+        watch: {
+            columns: function (columns) {
+                this.myFields = columns;
+            },
+            relations: function (relations) {
+                this.myRelations = relations;
+            }
+        },
         data: function () {
             return {
                 filters: [
@@ -67,7 +76,7 @@
             };
         },
         methods: {
-            addCondition: function() {
+            addCondition: function () {
                 this.filters.push({});
             },
             chosen: function () {

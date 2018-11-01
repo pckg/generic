@@ -72,6 +72,10 @@
         return locale.date(date, format);
     });
 
+    Vue.filter('time', function (date, format) {
+        return locale.time(date, format);
+    });
+
     Vue.filter('datetime', function (date, format) {
         return locale.datetime(date, format);
     });

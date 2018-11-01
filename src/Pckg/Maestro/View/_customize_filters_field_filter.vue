@@ -75,7 +75,7 @@
                 let type = this.fieldType;
             },
             fieldType: function () {
-                if (selection.fieldType) {
+                if (this.selection.fieldType) {
                     if (['email', 'text', 'edit', 'slug', 'hash', 'textarea', 'file', 'picture', 'json', 'pdf', 'geo', 'mysql']) {
                         return 'text';
                     }
@@ -84,7 +84,7 @@
                         return 'number';
                     }
 
-                    return selection.fieldType;
+                    return this.selection.fieldType;
                 }
             },
             initialOptions: function () {

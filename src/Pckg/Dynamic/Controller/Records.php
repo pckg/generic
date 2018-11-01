@@ -106,14 +106,7 @@ class Records extends Controller
             $tableView->loadToSessionIfNotLoaded();
         }
 
-        return $this->getViewTableAction($tableRecord,
-                                         $dynamicService,
-                                         $entity,
-                                         $viewType,
-                                         false,
-                                         null,
-                                         null,
-                                         null,
+        return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, false, null, null, null,
                                          $tableView);
     }
 
@@ -144,7 +137,8 @@ class Records extends Controller
         TableView $tableView = null,
         DynamicService $dynamicService
     ) {
-        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_' . ($tableView ? $tableView->id : '')]['view'] = post()->all();
+        $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_' .
+        ($tableView ? $tableView->id : '')]['view'] = post()->all();
 
         return [
             'message' => 'ok',
@@ -171,7 +165,14 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
-        return '<pckg-maestro-table :table-id="' . $tableRecord->id . '"></pckg-maestro-table>';
+        $tabelize = new Tabelize();
+
+        $tabelize->setEntityActions($tableRecord->getEntityActions())
+                 ->setRecordActions($tableRecord->getRecordActions())
+                 ->setViews($tableRecord->actions()->keyBy('slug'));
+
+        return $tabelize->__toStringParsedViews() . '<pckg-maestro-table :table-id="' . $tableRecord->id .
+            '"></pckg-maestro-table>';
     }
 
     public function getViewTableApiApiAction(
@@ -191,18 +192,11 @@ class Records extends Controller
         $dynamicService->setTable($tableRecord);
 
         $ajaxData = null;
-        if (!get('html') && (get('search') || get('dir') || get('page') || get('perPage') || $this->request()
-                                                                                                  ->isAjax() || $this->request()
-                                                                                                                     ->isJson())) {
-            $ajaxData = $this->getViewTableApiAction($tableRecord,
-                                                     $dynamicService,
-                                                     $entity,
-                                                     $viewType,
-                                                     $returnTabelize,
-                                                     $tab,
-                                                     $dynamicRecord,
-                                                     $dynamicRelation,
-                                                     $tableView);
+        if (!get('html') &&
+            (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
+                $this->request()->isJson())) {
+            $ajaxData = $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
+                                                     $tab, $dynamicRecord, $dynamicRelation, $tableView);
         }
 
         if ($viewType == 'full') {
@@ -212,10 +206,8 @@ class Records extends Controller
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
 
-            $partial = implode(path('ds'),
-                               array_slice(explode('\\', get_class($entity)),
-                                           0,
-                                           -2)) . path('ds') . 'View' . path('ds');
+            $partial = implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) . path('ds') .
+                'View' . path('ds');
             $dir = path('app_src') . $partial;
             Twig::addDir($dir);
             if (config('app') != config('app_parent')) {
@@ -304,7 +296,7 @@ class Records extends Controller
         $filters = [];
 
         return [
-            'actions' => [
+            'actions'   => [
                 'entity' => $tabelize->getEntityActionsArray(false),
                 'record' => $tabelize->getRecordActionsArray(),
             ],
@@ -342,13 +334,12 @@ class Records extends Controller
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
 
-            $dir = path('app_src') . implode(path('ds'),
-                                             array_slice(explode('\\', get_class($entity)),
-                                                         0,
-                                                         -2)) . path('ds') . 'View' . path('ds');
+            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) .
+                path('ds') . 'View' . path('ds');
             Twig::addDir($dir);
             /**
              * This is needed for table actions.
+             *
              * @T00D00 - can we move this?
              */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
@@ -494,6 +485,7 @@ class Records extends Controller
         foreach ($records as &$record) {
             $record['relation-162-relation-152-field-455'] = 'yeee';
         }
+
         return [
             'records'   => $records,
             'groups'    => [],
@@ -544,10 +536,9 @@ class Records extends Controller
 
         vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $formalize, 'form' => $form]);
 
-        return view('edit/singular',
-                    [
-                        'formalize' => $formalize,
-                    ]);
+        return view('edit/singular', [
+                                       'formalize' => $formalize,
+                                   ]);
     }
 
     /**
@@ -619,20 +610,18 @@ class Records extends Controller
             flash('dynamic.records.upload.success', 'File successfully uploaded');
         }
 
-        $url = url('dynamic.record.edit',
-                   [
-                       'table'  => $table,
-                       'record' => $newRecord ?? $record,
-                   ]);
+        $url = url('dynamic.record.edit', [
+                                            'table'  => $table,
+                                            'record' => $newRecord ?? $record,
+                                        ]);
 
         if ($relation && $foreign) {
-            $url = url('dynamic.record.edit.foreign',
-                       [
-                           'table'    => $table,
-                           'record'   => $newRecord ?? $record,
-                           'relation' => $relation,
-                           'foreign'  => $foreign,
-                       ]);
+            $url = url('dynamic.record.edit.foreign', [
+                                                        'table'    => $table,
+                                                        'record'   => $newRecord ?? $record,
+                                                        'relation' => $relation,
+                                                        'foreign'  => $foreign,
+                                                    ]);
         }
 
         return $this->response()->respondWithSuccess([
@@ -651,11 +640,10 @@ class Records extends Controller
         }
 
         return $this->response()->respondWithSuccess([
-                                                         'clonedUrl' => url('dynamic.record.edit',
-                                                                            [
-                                                                                'table'  => $table,
-                                                                                'record' => $clonedRecord,
-                                                                            ]),
+                                                         'clonedUrl' => url('dynamic.record.edit', [
+                                                                                                     'table'  => $table,
+                                                                                                     'record' => $clonedRecord,
+                                                                                                 ]),
                                                      ]);
     }
 
@@ -668,8 +656,8 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
     {
-        $this->seoManager()
-             ->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' . $record->id . ' - ' . config('site.title'));
+        $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' .
+                                      $record->id . ' - ' . config('site.title'));
 
         $listableFields = $table->listableFields;
         if (!$listableFields->count()) {
@@ -678,10 +666,8 @@ class Records extends Controller
 
         $tableEntity = $table->createEntity();
 
-        $dir = path('app_src') . implode(path('ds'),
-                                         array_slice(explode('\\', get_class($tableEntity)),
-                                                     0,
-                                                     -2)) . path('ds') . 'View' . path('ds');
+        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) .
+            path('ds') . 'View' . path('ds');
         Twig::addDir($dir);
         /**
          * This is needed for table actions.
@@ -705,7 +691,8 @@ class Records extends Controller
             $form->initPermissionFields();
         }
 
-        $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' . ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
+        $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' .
+            ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
 
         $formalize = $this->formalize($form, $record, $title)->setTable($table);
 
@@ -744,25 +731,22 @@ class Records extends Controller
 
         $this->vueManager()
              ->addView('Pckg/Maestro:_pckg_chart')
-             ->addView('Pckg/Maestro:_pckg_maestro_actions_template',
-                       [
-                           'recordActions' => $actions,
-                           'table'         => $table->table,
-                       ])
-             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom',
-                       [
-                           'table' => $table->table,
-                       ])
-             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs',
-                       [
-                           'tabelize'     => $tabelize,
-                           'formalize'    => $formalize,
-                           'tabs'         => $tabs,
-                           'table'        => $table->table,
-                           'tabelizes'    => $tabelizes,
-                           'functionizes' => $functionizes,
-                           'record'       => $record,
-                       ]);
+             ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
+                                                                        'recordActions' => $actions,
+                                                                        'table'         => $table->table,
+                                                                    ])
+             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom', [
+                                                                      'table' => $table->table,
+                                                                  ])
+             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
+                                                                   'tabelize'     => $tabelize,
+                                                                   'formalize'    => $formalize,
+                                                                   'tabs'         => $tabs,
+                                                                   'table'        => $table->table,
+                                                                   'tabelizes'    => $tabelizes,
+                                                                   'functionizes' => $functionizes,
+                                                                   'record'       => $record,
+                                                               ]);
 
         return view('edit/tabs', ['tabelize' => $tabelize]);
     }
@@ -784,14 +768,8 @@ class Records extends Controller
 
             $dynamicService = Reflect::create(DynamicService::class);
             $relation->applyRecordFilterOnEntity($record, $entity);
-            $tabelize = $this->getViewTableAction((new Tables())->where('id', $tableId)->one(),
-                                                  $dynamicService,
-                                                  $entity,
-                                                  'related',
-                                                  false,
-                                                  $tab,
-                                                  $record,
-                                                  $relation);
+            $tabelize = $this->getViewTableAction((new Tables())->where('id', $tableId)->one(), $dynamicService,
+                                                  $entity, 'related', false, $tab, $record, $relation);
 
             $tabelizes[] = $tabelize;
         });
@@ -807,9 +785,7 @@ class Records extends Controller
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
         $functions->each(function(Func $function) use (&$functionizes, $pluginService, $record, $args) {
-            $functionize = $pluginService->make($function->class,
-                                                $function->method,
-                                                $args);
+            $functionize = $pluginService->make($function->class, $function->method, $args);
 
             $functionizes[] = (string)$functionize;
         });
@@ -824,11 +800,10 @@ class Records extends Controller
         /**
          * We have to build tab.
          */
-        return view('edit/tab',
-                    [
-                        'functionizes' => $functionizes,
-                        'tabelizes'    => $tabelizes,
-                    ]);
+        return view('edit/tab', [
+                                  'functionizes' => $functionizes,
+                                  'tabelizes'    => $tabelizes,
+                              ]);
     }
 
     protected function getTabelizesAndFunctionizes(
@@ -852,9 +827,7 @@ class Records extends Controller
             $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
 
             $dynamicService = Reflect::create(DynamicService::class);
-            $tabelize = $recordsController->getViewTableAction($table,
-                                                               $dynamicService,
-                                                               $entity);
+            $tabelize = $recordsController->getViewTableAction($table, $dynamicService, $entity);
 
             if ($tabs->count()) {
                 $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = (string)$tabelize;
@@ -874,8 +847,7 @@ class Records extends Controller
             $table,
             $entity
         ) {
-            $functionize = $pluginService->make($function->class,
-                                                $function->method,
+            $functionize = $pluginService->make($function->class, $function->method,
                                                 [$record, $table->fetchFrameworkRecord($record, $entity)]);
             if ($tabs->count()) {
                 $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;
@@ -928,11 +900,11 @@ class Records extends Controller
 
         return $this->response()->respondWithSuccess([
                                                          'message'  => __('dynamic.records.edit.success'),
-                                                         'redirect' => post('as_new') ? url('dynamic.record.edit',
-                                                                                            [
-                                                                                                'table'  => $table,
-                                                                                                'record' => $record,
-                                                                                            ]) : null,
+                                                         'redirect' => post('as_new') ? url('dynamic.record.edit', [
+                                                                                                                     'table'  => $table,
+                                                                                                                     'record' => $record,
+                                                                                                                 ])
+                                                             : null,
                                                      ]);
     }
 
@@ -943,7 +915,8 @@ class Records extends Controller
         $p17n = $this->post()->p17n;
 
         if (isset($p17n['table'])) {
-            $entity = (new Entity($entity->getRepository()))->setTable($entity->getTable() . $entity->getPermissionableTableSuffix());
+            $entity = (new Entity($entity->getRepository()))->setTable($entity->getTable() .
+                                                                       $entity->getPermissionableTableSuffix());
             $entity->where('id', $record->id)->delete();
             foreach ($p17n['table'] as $userGroupId => $permissions) {
                 foreach ($permissions as $permissionKey => $one) {
@@ -1162,10 +1135,11 @@ class Records extends Controller
 
         $tabelize->setEntityActions($table->getEntityActions(true));
 
-        return ['template' => view('Pckg/Maestro:_table_actions',
-                    [
-                        'tabelize' => $tabelize,
-                    ])];
+        return [
+            'template' => view('Pckg/Maestro:_table_actions', [
+                                                                'tabelize' => $tabelize,
+                                                            ]),
+        ];
     }
 
 }

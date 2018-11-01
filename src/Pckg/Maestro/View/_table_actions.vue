@@ -1,9 +1,9 @@
 <template>
     <div class="btn-group btn-group-sm">
-        <a type="button" class="entity-action-view dropdown-toggle" href="#"
+        <a type="button" class="dropdown-toggle" href="#"
            title="" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-bars" aria-hidden="true"></i> More
+            <i class="fa fa-elipsis-h" aria-hidden="true"></i> More
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
@@ -64,8 +64,7 @@
         },*/
         methods: {
             entityAction: function (action) {
-                return;
-                $dispatcher.$emit('entity-action:' + action);
+                this.$emit('entity-action', action);
             }
         }
     }
