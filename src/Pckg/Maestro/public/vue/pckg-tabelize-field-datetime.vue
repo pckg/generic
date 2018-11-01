@@ -1,6 +1,6 @@
 <template>
     <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle">
-        <template v-if="value"><span v-html="brValue"></span></template>
+        <template v-if="value">{{ value | date }}<br />{{ value | time }}</template>
         <template v-else><i class="fa fa-times"></i></template>
     </a>
 </template>

@@ -1,2 +1,6 @@
-<a v-if="record.language_id" class="delete" @click.prevent="recordAction(record, 'checkDeleteRecordTranslation')" href="#" title="Delete translation"><i class="fa fa-trash" aria-hidden="true"></i> Delete translation</a>
-<a class="delete" @click.prevent="recordAction(record, 'checkDeleteRecord')" href="#" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+{% set json = {
+    event: 'checkDeleteRecord',
+    icon: 'trash',
+    title: 'Delete'
+} %}
+{{ json | json_encode | raw }}

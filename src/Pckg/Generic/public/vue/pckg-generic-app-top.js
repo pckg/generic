@@ -339,6 +339,22 @@ var pckgSmartComponent = {
 
         $dispatcher.$on('listItemSelected', function (newItem) {
 
+            /**
+             * Categories > Offers > Packets
+             * On category page we display offers and all packets. Click on offer reload packets.
+             * Use url: api.$type.$id.$collection somehow dynamically
+             */
+            this.loading = true;
+            let plural = newItem.type == 'category' ? 'categories' : 'offers';
+            let collection = newItem.type == 'category' ? 'offers' : 'offers';
+            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function(data){
+                this['my' + collection] = data[collection];
+                this.loading = false;
+            }.bind(this), function(){
+                this.loading = false;
+                $dispatcher.$emit('notification:error', 'Error fetching ' + collection);
+            }.bind(this));
+
         }.bind(this));
     },
 };

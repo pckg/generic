@@ -16,24 +16,14 @@ class Table extends Record
 
     public function getEntityActions()
     {
-        $actions = $this->actions(
+        return $this->actions(
             function(HasMany $relation) {
                 $relation->where('type', ['entity', 'entity-plugin', 'mixed']);
                 $relation->joinPermission();
             }
         );
-        $defaultActions = new Collection(
-            [
-                'add',
-                'export',
-                'import',
-                'view',
-            ]
-        );
 
-        $actions->copyTo($defaultActions);
-
-        return $defaultActions;
+        return $actions;
     }
 
     public function getRecordActions()

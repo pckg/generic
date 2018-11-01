@@ -1,2 +1,6 @@
-<a :href="record.editUrl" title="Edit">
-    <i class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+{% set json = {
+    recordHref: 'editUrl',
+    icon: 'edit',
+    title: 'Edit'
+} %}
+{{ json | json_encode | raw }}

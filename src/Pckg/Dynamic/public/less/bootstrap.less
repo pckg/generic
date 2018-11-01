@@ -4,6 +4,7 @@ html {
 
 body {
   font-size: 1.6rem;
+  background-color: #f7f7f7;
 }
 
 .panel-heading .dropdown-menu {
@@ -245,7 +246,8 @@ Style tds
     &.id,
     &.url,
     &.email,
-    &.decimal {
+    &.decimal,
+    &.hash {
       white-space: nowrap;
     }
 
@@ -271,9 +273,12 @@ Style tds
       max-width: 240px;
     }
 
-    &.editor,
+    &.editor {
+      min-width: 32rem;
+    }
+
     &.textarea {
-      min-width: 160px;
+      min-width: 24rem;
     }
 
     &.order {
@@ -310,10 +315,6 @@ Style tds
       background-color: #eee;
     }
   }
-}
-
-#main-row > div {
-  transition: all 500ms ease-in-out;
 }
 
 .col-md-0 {
@@ -744,20 +745,18 @@ div.form-control {
 
 .pckg-maestro-tabelize {
   .header {
+    transition: all .4s ease-in-out;
     white-space: nowrap;
-    position: fixed;
-    left: 160px;
-    right: 0;
-    top: 0;
+    width: 100%;
     height: auto;
-    padding: 2.4rem;
+    padding: 0;
     z-index: 100;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
     display: table;
     box-sizing: border-box;
-    width: calc(100% - 160px);
     table-layout: fixed;
+    body.collapsed & {
+      left: 60px;
+    }
     .sec {
       display: table-cell;
       vertical-align: middle;
@@ -792,6 +791,23 @@ div.form-control {
         background: transparent;
         height: auto;
       }
+    }
+  }
+}
+
+.tab-tabelize {
+  position: relative;
+  .pckg-maestro-tabelize {
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 1rem 0;
+    }
+    .pckg-maestro-table {
+      margin-top: 10rem;
     }
   }
 }

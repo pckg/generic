@@ -1,3 +1,6 @@
-<a :href="record.viewUrl" title="View">
-    <i class="fa fa-search" aria-hidden="true"></i>
-</a>
+{% set json = {
+    recordHref: 'viewUrl',
+    icon: 'search',
+    title: 'View'
+} %}
+{{ json | json_encode | raw }}

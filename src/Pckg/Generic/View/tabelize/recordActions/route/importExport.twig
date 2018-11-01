@@ -1,2 +1,6 @@
-<a @click.prevent="recordAction(record, 'importExport')" href="#"
-   title="{{ __('import_export') }}"><i class="fa fa-refresh" aria-hidden="true"></i> {{ __('import_export') }}</a>
+{% set json = {
+    event: 'importExport',
+    icon: 'refresh',
+    title: 'Import & Export'
+} %}
+{{ json | json_encode | raw }}

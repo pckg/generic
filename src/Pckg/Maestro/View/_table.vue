@@ -5,24 +5,17 @@
         <div class="header">
             <div class="sec">
                 <h2>
-                    <template v-if="loading">
-                        <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
-                    </template>
-                    <template v-else>
-                        {{ table.title }} {{ paginator.total }}/{{ total }}
-                    </template>
+                    {{ table.title ? table.title : table.table }} {{ paginator.filtered }}/{{ paginator.total }}
+                    <pckg-loader :loading="loading"></pckg-loader>
                 </h2>
             </div>
 
             <div class="sec quick-search" v-if="!onTab">
-                <input type="text" v-model="search" class="form-control" :placeholder="'Quick search 29483 orders'"/>
+                <input type="text" v-model="search" class="form-control"
+                       :placeholder="'Quick search ' + paginator.total + ' ' + (table.title ? table.title : table.table)"/>
             </div>
 
             <div class="sec table-actions">
-                <!-- print all buttons for mixed, entity-plugin and entity actions -->
-
-                <!-- {{ tabelize.getEntityActionsHtml() | raw }} -->
-
                 <a href="#">
                     <i class="fa fa-plus"></i> Add
                 </a>
@@ -34,18 +27,7 @@
                     <i class="fa fa-chevron-up"></i> Hide configuration
                 </a>
 
-                <div class="btn-group btn-group-sm">
-                    <a type="button" class="entity-action-view dropdown-toggle" href="#"
-                       title="" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-bars" aria-hidden="true"></i> More
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
-                        <li><a href="#"><i class="fa fa-upload"></i>Import</a></li>
-                        <!-- {{ tabelize.getEntityActionsHtml(false) | raw }} -->
-                    </ul>
-                </div>
+                <pckg-maestro-table-actions :table="table" :actions="actions.entity"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -53,7 +35,7 @@
         <div class="clearfix"></div>
 
         <!-- table template -->
-        <div class="pckg-maestro-table" v-if="!loading">
+        <div class="pckg-maestro-table">
             <template v-if="depth > 0">
                 <table class="table table-striped table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">
@@ -106,80 +88,97 @@
                     </div>
                 </div>
 
-                <div style="position: relative;" class="closest">
-                    <div class="showContextMenu" v-if="contextMenuShown">
-                        <a href="#"><i class="fa fa-search"></i> View</a><br/>
-                        <a href="#"><i class="fa fa-edit"></i> Edit</a><br/>
-                        <a href="#"><i class="fa fa-check"></i> Confirm order</a><br/>
-                        <a href="#"><i class="fa fa-envelope"></i> Send email</a>
-                    </div>
+                <div class="panel panel-default">
+                    <div style="position: relative;" class="closest">
+                        <div class="showContextMenu" v-if="contextMenuShown && selectedRecord">
+                            <template v-for="action in actions.record"
+                                      v-if="action.recordHref && selectedRecord[recordHref] || action.event">
+                                <a v-if="action.recordHref && selectedRecord[recordHref]"
+                                   :href="selectedRecord[recordHref]">
+                                    <i class="fa" :class="'fa-' + action.icon"></i>
+                                    {{ action.title }}
+                                </a>
+                                <span v-else-if="action.event" class="as-link"
+                                      @click.prevent="recordAction(selectedRecord, action.event)">
+                                <i class="fa" :class="'fa-' + action.icon"></i>
+                                {{ action.title }}
+                            </span>
+                                <br/>
+                            </template>
+                        </div>
 
-                    <div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">
-                        <div style="overflow-x: scroll; overflow-y: visible;">
-                            <p v-if="records.length == 0">No records to display :/</p>
-                            <table class="table table-hover" v-else>
-                                <thead>
-                                <tr>
-                                    <th class="freeze checkboxes">
-                                        <div>
+                        <div class="clearfix"></div>
+
+                        <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
+                        <div style="padding-left: 3rem;">
+                            <div style="overflow-x: scroll; overflow-y: visible;">
+                                <p v-if="records.length == 0">No records to display :/</p>
+                                <table class="table table-hover" v-else>
+                                    <thead>
+                                    <tr>
+                                        <th class="freeze checkboxes">
                                             <div>
-                                                <d-input-checkbox v-model="allChecked"></d-input-checkbox>
+                                                <div>
+                                                    <d-input-checkbox v-model="allChecked"></d-input-checkbox>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th v-for="(field, i) in columns"
-                                        :style="{'--freeze': field.freeze ? i : null}"
-                                        :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
+                                        </th>
+                                        <th v-for="(field, i) in columns"
+                                            :style="{'--freeze': field.freeze ? i : null}"
+                                            :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
 
-                                        <!-- quick sort -->
-                                        <div>
-                                            <span @click.prevent="togglefield(field.id)">{{ field.title }}</span>
+                                            <!-- quick sort -->
+                                            <div>
+                                                <span @click.prevent="togglefield(field.id)">{{ field.title }}</span>
 
-                                            <span @click.prevent="togglefield(field.id)" v-if="sort.field == field.id">
+                                                <span @click.prevent="togglefield(field.id)"
+                                                      v-if="sort.field == field.id">
                                     <i class="fa"
                                        :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
                                 </span>
 
-                                            <!-- quick filter -->
-                                            <span href="#">
-                                    <i class="fa fa-filter"></i>
+                                                <!-- quick filter -->
+                                                <span href="#">
+                                    <i class="fal fa-filter"></i>
                                 </span>
-                                        </div>
-
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <template v-for="record in records">
-
-                                    <!-- main record row -->
-                                    <tr :class="[record.tabelizeClass ? record.tabelizeClass : '', ids.indexOf(record.id) >= 0 ? 'selected' : '']"
-                                        @contextmenu.prevent="showContextMenu($event)"
-                                        @click.prevent="delaySingleClick(record)"
-                                        @dblclick.prevent="doubleClick(record)">
-                                        <td class="checkboxes freeze">
-                                            <div>
-                                                <d-input-checkbox v-model="ids" :value="record.id"></d-input-checkbox>
                                             </div>
-                                        </td>
-                                        <!--<td class="actions freeze">
-                                            <div>Actions</div>
-                                            <pckg-maestro-actions-{{ table }} :record="record"
-                                                                              :recordactionhandler="recordactionhandler"
-                                                                              :identifier="identifier"></pckg-maestro-actions-{{ table }}>
-                                        </td>-->
-                                        <td v-for="(field, i) in columns"
-                                            :style="{'--freeze': field.freeze ? i : null}"
-                                            :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
-                                            <pckg-maestro-field :field="field" :record="record"
-                                                                :model="record[field.field]"
-                                                                :table="table"></pckg-maestro-field>
-                                        </td>
-                                    </tr>
 
-                                </template>
-                                </tbody>
-                            </table>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <template v-for="record in records">
+
+                                        <!-- main record row -->
+                                        <tr :class="[ids.indexOf(record.id) >= 0 ? 'selected' : '']"
+                                            @contextmenu.prevent="showContextMenu($event, record)"
+                                            @click="delaySingleClick(record)"
+                                            @dblclick="doubleClick(record)">
+                                            <td class="checkboxes freeze" @click.prevent>
+                                                <div>
+                                                    <d-input-checkbox v-model="ids"
+                                                                      :value="record.id"></d-input-checkbox>
+                                                </div>
+                                            </td>
+                                            <!--<td class="actions freeze">
+                                                <div>Actions</div>
+                                                <pckg-maestro-actions-{{ table }} :record="record"
+                                                                                  :recordactionhandler="recordactionhandler"
+                                                                                  :identifier="identifier"></pckg-maestro-actions-{{ table }}>
+                                            </td>-->
+                                            <td v-for="(field, i) in columns"
+                                                :style="{'--freeze': field.freeze ? i : null}"
+                                                :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
+                                                <pckg-maestro-field :field="field" :record="record"
+                                                                    :model="record[field.field]"
+                                                                    :table="table"></pckg-maestro-field>
+                                            </td>
+                                        </tr>
+
+                                    </template>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -204,16 +203,22 @@
         </div>
 
         <div class="table-floating-bottom-bar" v-if="ids.length > 0">
-            <div class="pull-left">
-                {{ ids.length }} records selected<br/>
-                <a href="#">Select all items from all pages</a>
+            <div class="pull-left" style="margin-right: 4rem;">
+                {{ ids.length }} records selected
+                <template v-if="allChecked">
+                    <br/>
+                    <a href="#"> Select all items from all pages</a>
+                </template>
             </div>
 
-            <a href="#" style="margin-right: 2rem;"><i class="fa fa-check"></i> Confirm orders</a>
-            <a href="#" style="margin-right: 2rem;"><i class="fa fa-envelope"></i> Send email</a>
-            <a href="#" style="margin-right: 2rem;"><i class="fa fa-truck"></i> Process shipping</a>
+            <a href="#" style="margin-right: 2rem;" v-for="action in actions.entity"
+               @click.prevent="entityAction(action.event)">
+                <i class="fa" :class="'fa-' + action.icon"></i>
+                {{ action.title }}
+            </a>
 
-            <a href="#" class="pull-right danger"><i class="fa fa-trash"></i> Delete
+            <a href="#" class="pull-right danger">
+                <i class="fa fa-trash"></i> Delete
                 <pckg-tooltip icon="question-circle"
                               :content="'This is permanent and non-reversable action. Use it with caution.'"></pckg-tooltip>
             </a>
@@ -221,18 +226,6 @@
                 <pckg-tooltip icon="question-circle"
                               :content="'Archived items can be listed by checking \'Archived items\' on view configuration.'"></pckg-tooltip>
             </a>
-
-            <div class="btn-group btn-group-sm pull-right" style="margin-right: 2rem;">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="fa fa-download"></i> Export
-                </a>
-                <ul class="dropdown-menu dropdown-menu">
-                    <li>.pdf</li>
-                    <li>.csv</li>
-                    <li>.xlsx</li>
-                    <li>.html</li>
-                </ul>
-            </div>
         </div>
 
     </div>
@@ -287,6 +280,7 @@
                     return {
                         perPage: 50,
                         page: 1,
+                        filtered: 0,
                         total: 0,
                         url: null
                     };
@@ -296,10 +290,6 @@
             resetpaginatorurl: {
                 type: String,
                 default: ''
-            },
-            total: {
-                default: 0,
-                type: Number
             },
             listed: {
                 default: 0,
@@ -312,6 +302,7 @@
         },
         data: function () {
             return {
+                selectedRecord: null,
                 views: [
                     {
                         type: 'saved',
@@ -383,6 +374,10 @@
                     filters: {},
                     archived: false,
                     deleted: false
+                },
+                actions: {
+                    entity: [],
+                    record: [],
                 }
             };
         },
@@ -421,8 +416,9 @@
             doubleClick: function () {
                 $dispatcher.$emit('notification:success', 'Double click');
             },
-            showContextMenu: function ($event) {
-                console.log($event);
+            showContextMenu: function ($event, record) {
+                console.log($event, record);
+                this.selectedRecord = record;
                 this.contextMenuShown = true;
                 var t = this;
                 let x = $event.pageX;//: 674
@@ -441,6 +437,7 @@
                          * Close context menu on any click.
                          */
                         t.contextMenuShown = false;
+                        t.selectedRecord = null;
                     });
                 });
             },
@@ -458,6 +455,8 @@
                     this.records = data.records;
                     this.table = data.table;
                     this.view = data.view;
+                    this.actions = data.actions;
+                    this.paginator = data.paginator;
                     this.loading = false;
                 }.bind(this));
             },
@@ -562,7 +561,7 @@
             },
             resetPaginatorUrl: function (preset) {
                 this.setUrlParams(preset);
-                this.paginator.url = '{{ searchUrl }}' + this.getUrlParams();
+                this.paginator.url = '/api/dynamic/table/' + this.table.id + this.getUrlParams();
 
                 this.delaySearch();
             },
@@ -680,7 +679,7 @@
             this.initialFetch();
         },
         mounted: function () {
-            this.refreshData();
+            // this.refreshData();
             if (this.onTab) {
                 $dispatcher.$on('dynamic-tab-' + tab.id + ':refresh', this.refreshData);
             }

@@ -304,15 +304,15 @@ class Records extends Controller
         $filters = [];
 
         return [
+            'actions' => [
+                'entity' => $tabelize->getEntityActionsArray(false),
+                'record' => $tabelize->getRecordActionsArray(),
+            ],
             'table'     => $tableRecord,
             'fields'    => $tableRecord->fields,
             'relations' => $tableRecord->relations,
             'records'   => $ajaxData['records'] ?? [],
-            'paginator' => [
-                'total'   => 123,
-                'page'    => 2,
-                'perPage' => 20,
-            ],
+            'paginator' => $tabelize->getPaginator(),
             'view'      => [
                 'columns' => $columns,
                 'filters' => $filters,
@@ -1154,6 +1154,18 @@ class Records extends Controller
         $tableView->delete();
 
         return $this->response()->respondWithSuccess();
+    }
+
+    public function getTableActionsAction(Table $table)
+    {
+        $tabelize = new Tabelize();
+
+        $tabelize->setEntityActions($table->getEntityActions(true));
+
+        return ['template' => view('Pckg/Maestro:_table_actions',
+                    [
+                        'tabelize' => $tabelize,
+                    ])];
     }
 
 }

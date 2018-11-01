@@ -1,1 +1,6 @@
-<a :href="record.listUrl" title="List"><i class="fa fa-list-ul" aria-hidden="true"></i> List</a>
+{% set json = {
+    recordHref: 'listUrl',
+    icon: 'list-ul',
+    title: 'List'
+} %}
+{{ json | json_encode | raw }}

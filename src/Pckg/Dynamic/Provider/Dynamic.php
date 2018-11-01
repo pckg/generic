@@ -66,6 +66,13 @@ class Dynamic extends Provider
                         'controller' => Records::class,
                     ],
                     [
+                        '/api/vue/dynamic/table/[table]/actions' => [
+                            'name' => 'api.vue.dynamic.table.actions',
+                            'view' => 'tableActions',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ]
+                        ],
                         '/api/dynamic/switch-language'                                                  => [
                             'name' => 'api.dynamic.switchLanguage',
                             'view' => 'switchLanguage',
