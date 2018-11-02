@@ -241,7 +241,9 @@ class Action implements \JsonSerializable
                             /**
                              * In template we store template, list template and item template designs.
                              */
-                            $result->setFile(str_replace(':', '/View/', $this->action->pivot->template['template']));
+                            $newFile = str_replace(':', '/View/', $this->action->pivot->template['template']);
+                            message('Setting file ' . $newFile);
+                            $result->setFile($newFile);
                         }
 
                         $result->addData('serviceAction', $this);
