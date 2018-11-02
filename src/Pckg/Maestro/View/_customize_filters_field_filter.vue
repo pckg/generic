@@ -55,16 +55,16 @@
                  * All supported operators.
                  */
                 operators: {
-                    like: 'like - %search%',
-                    notLike: 'not like - %search%',
-                    equals: 'equals - =',
-                    notEquals: 'not equals - !=',
-                    in: 'in - =',
-                    notIn: 'not in - !=',
-                    more: 'more - >',
-                    less: 'less - <',
-                    moreOrEquals: 'more or equals - >=',
-                    lessOrEquals: 'less or equals - <=',
+                    like: 'like',
+                    notLike: 'not like',
+                    equals: 'equals',
+                    notEquals: 'notEquals',
+                    in: 'in',
+                    notIn: 'not in',
+                    more: '> - more than',
+                    less: '< - less than',
+                    moreOrEquals: '>= - more than or equals',
+                    lessOrEquals: '<= - less than or equals',
                 },
                 search: null
             }
