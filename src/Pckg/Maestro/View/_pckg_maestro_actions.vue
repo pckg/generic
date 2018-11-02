@@ -4,6 +4,7 @@
         name: 'pckg-maestro-actions',
         template: '#pckg-maestro-actions',
         props: {
+            actions: {},
             record: {
                 type: Object,
                 required: true

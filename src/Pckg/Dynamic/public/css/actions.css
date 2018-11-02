@@ -32,6 +32,9 @@ fieldset.submit {
 
 .pckg-maestro-formalize .form-group > label {
     padding-top: 6px;
+    color: grey;
+    font-size: 13px;
+    text-transform: uppercase;
 }
 
 td.actions a > i.fa {

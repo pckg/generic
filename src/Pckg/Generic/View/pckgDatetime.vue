@@ -14,14 +14,32 @@
             },
             format: {
                 default: 'YYYY-MM-DD HH:mm'
+            },
+            options: {
+                default: function () {
+                    return {};
+                }
+            }
+        },
+        data: function () {
+            let options = this.options;
+            options.format = this.format;
+
+            return {
+                myOptions: options,
+            };
+        },
+        watch: {
+            options: function (options) {
+                options.format = this.format;
+                this.myOptions = options;
             }
         },
         methods: {
             initPicker: function () {
                 var $this = this;
-                $(this.$el).find('input').datetimepicker({
-                    format: this.format
-                }).on('dp.change', function (ev) {
+                console.log("Options", this.myOptions);
+                $(this.$el).find('input').datetimepicker(this.myOptions).on('dp.change', function (ev) {
                     $this.$emit('input', $(this).val());
                 });
             }

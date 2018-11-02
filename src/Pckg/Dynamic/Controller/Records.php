@@ -171,8 +171,11 @@ class Records extends Controller
                  ->setRecordActions($tableRecord->getRecordActions())
                  ->setViews($tableRecord->actions()->keyBy('slug'));
 
-        return $tabelize->__toStringParsedViews() . '<pckg-maestro-table :table-id="' . $tableRecord->id .
-            '"></pckg-maestro-table>';
+        return $tabelize->__toStringParsedViews()
+            . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
+            ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
+            ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
+            '></pckg-maestro-table>';
     }
 
     public function getViewTableApiApiAction(
@@ -182,8 +185,8 @@ class Records extends Controller
         $viewType = 'full',
         $returnTabelize = false,
         Tab $tab = null,
-        $dynamicRecord = null,
-        $dynamicRelation = null,
+        Record $record = null,
+        Relation $relation = null,
         TableView $tableView = null
     ) {
         /**
@@ -195,8 +198,8 @@ class Records extends Controller
         if (!get('html') &&
             (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
                 $this->request()->isJson())) {
-            $ajaxData = $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize,
-                                                     $tab, $dynamicRecord, $dynamicRelation, $tableView);
+            $ajaxData = $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $relation, $relation ? 'related' : 'full',
+                                                     $returnTabelize, $tab, $record, $tableView);
         }
 
         if ($viewType == 'full') {
@@ -269,8 +272,8 @@ class Records extends Controller
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations([])
-                         ->setDynamicRecord($dynamicRecord)
-                         ->setDynamicRelation($dynamicRelation)
+                         ->setDynamicRecord($record)
+                         ->setDynamicRelation($relation)
                          ->setViewData([
                                            'view' => $dynamicService->getView(),
                                        ])
@@ -324,15 +327,29 @@ class Records extends Controller
         Table $tableRecord,
         DynamicService $dynamicService,
         Entity $entity = null,
+        Relation $relation = null,
         $viewType = 'full',
         $returnTabelize = false,
         Tab $tab = null,
-        $dynamicRecord = null,
-        $dynamicRelation = null,
+        Record $record = null,
         TableView $tableView = null
     ) {
         if (!$entity) {
-            $entity = $tableRecord->createEntity(null, false);
+            if ($relation) {
+                $tableId = $relation->over_table_id ?? $relation->show_table_id;
+                if ($relation->over_table_id) {
+                    $entity = $relation->overTable->createEntity();
+                } else {
+                    $entity = $relation->showTable->createEntity();
+                }
+
+                // $dynamicService = Reflect::create(DynamicService::class);
+                $relation->applyRecordFilterOnEntity($record, $entity);
+            }
+
+            if (!$entity) {
+                $entity = $tableRecord->createEntity(null, false);
+            }
 
             $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) .
                 path('ds') . 'View' . path('ds');
@@ -360,13 +377,6 @@ class Records extends Controller
         }
 
         /**
-         * Get tabelize class
-         */
-        if (method_exists($entity, 'selectTabelizeClassField')) {
-            $entity->selectTabelizeClassField();
-        }
-
-        /**
          * Join extensions.
          */
         $dynamicService->selectScope($entity);
@@ -383,8 +393,8 @@ class Records extends Controller
                                       ->where('dynamic_relation_type_id', 1)
                                       ->all();
 
-        foreach ($relations as $relation) {
-            $relation->loadOnEntity($entity, $dynamicService);
+        foreach ($relations as $r) {
+            $r->loadOnEntity($entity, $dynamicService);
         }
 
         /**
@@ -469,8 +479,8 @@ class Records extends Controller
                          ->setRecordActions($tableRecord->getRecordActions())
                          ->setViews($tableRecord->actions()->keyBy('slug'))
                          ->setFieldTransformations($fieldTransformations)
-                         ->setDynamicRecord($dynamicRecord)
-                         ->setDynamicRelation($dynamicRelation)
+                         ->setDynamicRecord($record)
+                         ->setDynamicRelation($relation)
                          ->setViewData([
                                            'view' => $dynamicService->getView(),
                                        ])
@@ -482,8 +492,8 @@ class Records extends Controller
          * We have to preselect that field.
          * That should happen in field service?
          */
-        foreach ($records as &$record) {
-            $record['relation-162-relation-152-field-455'] = 'yeee';
+        foreach ($records as &$r) {
+            $r['relation-162-relation-152-field-455'] = 'yeee';
         }
 
         return [

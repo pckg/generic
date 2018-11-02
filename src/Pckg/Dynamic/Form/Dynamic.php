@@ -275,6 +275,7 @@ class Dynamic extends Bootstrap
 
             $type = $field->fieldType->slug;
             $name = $field->field;
+            $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
 
             if ($type == 'php') {
                 /**
@@ -288,13 +289,13 @@ class Dynamic extends Bootstrap
                 $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label>' .
                     $field->title . '</label>
-<div>' . $this->record->{$field->field} . '</div></div>'
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label></label>
-<div>' . $this->record->{$field->field} . '</div></div>'
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
                 );
 
                 continue;
@@ -401,10 +402,12 @@ ifrm.document.close();
             $value = $value ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>';
         }
 
+        $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
+
         $element = $this->lastFieldset->addDiv()->addChild(
             '<div class="form-group grouped" data-field-id="' . $field->id . '"><label>' . $label . '
 </label>
-<div>' . $value . '</div></div>'
+<div>' . $value . '</div>' . $helpHtml . '</div>'
         );
     }
 

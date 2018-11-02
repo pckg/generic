@@ -365,7 +365,7 @@ class Tabelize
                     }
 
                     return $this->dataOnly ? $eval
-                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '">' . $eval . '</a>');
+                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' . $eval . '</a>');
                 }
             }
 

@@ -52,6 +52,8 @@ form div.help,
   font-size: 13px;
   float: left;
   clear: both;
+  display: block;
+  width: 100%;
 }
 
 #formDynamic {
@@ -203,7 +205,7 @@ Style tds
 **/
 .pckg-maestro-tabelize table.table {
   .pckg-tabelize-field-boolean {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
   th {
     white-space: nowrap;
@@ -235,7 +237,6 @@ Style tds
       vertical-align: middle;
       min-width: fit-content;
       > div {
-        margin-top: 50%;
         position: absolute;
       }
     }
@@ -493,13 +494,13 @@ table tr.strong > td:not(.actions) {
   > .tab-content {
     margin-top: 2rem;
   }
-  > :first-child {
+  /*> :first-child {
     margin-left: -25px;
     margin-right: -20px;
     border-left: none;
     border-right: none;
     border-radius: 0;
-  }
+  }*/
 }
 
 textarea.form-control {
@@ -755,6 +756,7 @@ div.form-control {
 }
 
 .pckg-maestro-tabelize {
+  padding-bottom: 6rem;
   .header {
     transition: all .4s ease-in-out;
     white-space: nowrap;
@@ -788,7 +790,7 @@ div.form-control {
     .quick-search {
       position: relative;
       white-space: nowrap;
-      input {
+      /*input {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -801,7 +803,7 @@ div.form-control {
         text-align: center;
         background: transparent;
         height: auto;
-      }
+      }*/
     }
   }
 }

@@ -6,11 +6,10 @@
             <div class="sec">
                 <h2>
                     {{ table.title ? table.title : table.table }} {{ paginator.filtered }}/{{ paginator.total }}
-                    <pckg-loader :loading="loading"></pckg-loader>
                 </h2>
             </div>
 
-            <div class="sec quick-search" v-if="!onTab">
+            <div class="sec quick-search" v-if="table && table.id">
                 <input type="text" v-model="search" class="form-control"
                        :placeholder="'Quick search ' + paginator.total + ' ' + (table.title ? table.title : table.table)"/>
             </div>
@@ -34,6 +33,8 @@
         </div>
 
         <div class="clearfix"></div>
+
+        <pckg-loader :loading="loading"></pckg-loader>
 
         <!-- table template -->
         <div class="pckg-maestro-table">
@@ -95,11 +96,11 @@
                 <div class="panel panel-default" v-if="records.length > 0">
                     <div style="position: relative;" class="closest">
 
-                        <div class="showContextMenu dropdown-menu" v-if="contextMenuShown && selectedRecord">
+                        <div class="showContextMenu dropdown-menu" v-if="selectedRecord">
                             <li v-for="action in actions.record"
-                                v-if="action.recordHref && selectedRecord[recordHref] || action.event">
-                                <a v-if="action.recordHref && selectedRecord[recordHref]"
-                                   :href="selectedRecord[recordHref]">
+                                v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
+                                <a v-if="action.recordHref && selectedRecord[action.recordHref]"
+                                   :href="selectedRecord[action.recordHref]">
                                     <i class="fa" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
@@ -115,7 +116,7 @@
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
                         <div style="padding-left: 3rem;">
-                            <div style="overflow-x: auto; overflow-y: visible;">
+                            <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -208,7 +209,7 @@
         <div class="table-floating-bottom-bar" :class="ids.length > 0 ? 'in' : ''">
             <div class="pull-left" style="margin-right: 4rem;">
                 {{ ids.length }} records selected
-                <template v-if="allChecked">
+                <template v-if="allChecked && paginator.total != ids.length">
                     <br/>
                     <a href="#"> Select all items from all pages</a>
                 </template>
@@ -246,6 +247,10 @@
                 required: true,
                 type: Number
             },
+            relationId: {
+                type: Number
+            },
+            recordId: {},
             onTab: {
                 default: false
             },
@@ -376,10 +381,18 @@
                 actions: {
                     entity: [],
                     record: [],
+                },
+                scroll: {
+                    left: false,
+                    right: false
                 }
             };
         },
         methods: {
+            scrollTable: function ($event) {
+                this.scroll.left = $event.target.scrollLeft > 0;
+                this.scroll.right = $event.target.scrollLeft + $event.target.clientWidth < $event.target.scrollWidth;
+            },
             chosen: function (selection) {
                 /**
                  * Field (or relation) was chosen.
@@ -411,15 +424,15 @@
                     });
                 }.bind(this), 333);
             },
-            doubleClick: function () {
-                $dispatcher.$emit('notification:success', 'Double click');
+            doubleClick: function (record) {
+                http.redirect('/dynamic/records/view/' + this.table.id + '/' + record.id);
             },
             showContextMenu: function ($event, record) {
                 console.log($event, record);
                 this.selectedRecord = record;
                 this.contextMenuShown = true;
                 var t = this;
-                let x = $event.pageX;//: 674
+                let x = $event.pageX;
                 let y = $event.pageY;
                 let $target = $($event.target).closest('.closest');
 
@@ -429,19 +442,12 @@
                         top: (parseInt(y) - parseInt($target.offset().top)) + 'px',
                         left: (parseInt(x) - parseInt($target.offset().left)) + 'px',
                     });
-
-                    $('body').on('click', function () {
-                        /**
-                         * Close context menu on any click.
-                         */
-                        t.contextMenuShown = false;
-                        t.selectedRecord = null;
-                    });
                 });
             },
             initialFetch: function () {
                 this.loading = true;
-                http.getJSON('/api/dynamic/table/' + this.tableId, function (data) {
+
+                http.getJSON('/api/dynamic/table/' + this.tableId + (this.relationId > 0 ? '/relation/' + this.relationId + '/record/' + this.recordId : ''), function (data) {
                     /**
                      * Receive view config:
                      *  - fields
@@ -459,7 +465,7 @@
                 }.bind(this));
             },
             recordAction: function (record, action) {
-                this.$parent.recordAction(record, action);
+                $dispatcher.$emit('record:' + action, record, record.id, this);
             },
             computed: function (val) {
                 return val;
@@ -675,6 +681,14 @@
         },
         created: function () {
             this.initialFetch();
+
+            $('body').on('click', function () {
+                /**
+                 * Close context menu on any click.
+                 */
+                this.contextMenuShown = false;
+                this.selectedRecord = null;
+            }.bind(this));
         },
         mounted: function () {
             // this.refreshData();

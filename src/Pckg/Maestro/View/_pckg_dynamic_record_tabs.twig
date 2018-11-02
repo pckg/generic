@@ -1,10 +1,12 @@
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
-        <div class="box-with-padding">
+        <div>
             <h2>
                 {{ formalize.getTitle() | raw }}
+
                 <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
                                                   :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"
+                                                  :actions="{{ tabelize.getRecordActionsArray() | json_encode | escape }}"
                                                   :identifier="'{{ table }}'"></pckg-maestro-actions-{{ table }}>
             </h2>
 

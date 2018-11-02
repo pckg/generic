@@ -47,10 +47,10 @@
             <template v-else>
                 <template v-if="!editable">
                     <template v-if="field.field == 'id'">
-                        <a :href="record.viewUrl" v-html="record[field.field]" class="nobr"></a>
+                        <a :href="record.viewUrl" v-html="record[field.field]" class="nobr" title="Open record"></a>
                     </template>
                     <template v-else-if="field.field == 'title'">
-                        <a :href="record.viewUrl" v-html="record[field.field]"></a>
+                        <a :href="record.viewUrl" v-html="record[field.field]" title="Open record"></a>
                     </template>
                     <template v-else-if="field.isRaw"><span class="raw">{{ record[field.field] }}</span></template>
                     <template v-else><span v-html="record[field.field]" class="else"></span></template>
