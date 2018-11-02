@@ -34,6 +34,7 @@ class OverloadView
                     /**
                      * Exact match was found, view is allowed.
                      */
+                    message('Exact match found ' . $view);
                     break 2;
                 }
 
