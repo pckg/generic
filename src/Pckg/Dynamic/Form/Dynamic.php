@@ -452,7 +452,7 @@ ifrm.document.close();
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                         $element->addChild(
-                            '<a class="btn btn-info btn-md" title="Generate" href="' .
+                            '<a class="btn btn-default btn-md" title="Generate" href="' .
                             $field->getGenerateFileUrlAttribute(
                                 $this->record
                             ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type .
@@ -461,7 +461,7 @@ ifrm.document.close();
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild(
-                            '<a class="btn btn-success btn-md" title="Download" href="' .
+                            '<a class="btn btn-default btn-md" title="Download" href="' .
                             $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
                             $this->record->{$field->field} . '</a>&nbsp;&nbsp;'
                         );

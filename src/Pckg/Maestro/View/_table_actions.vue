@@ -3,7 +3,7 @@
         <a type="button" class="dropdown-toggle" href="#"
            title="" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-elipsis-h" aria-hidden="true"></i> More
+            <i class="fas fa-ellipsis-h"></i> More
         </a>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="#"><i class="fa fa-download"></i> Export</a></li>

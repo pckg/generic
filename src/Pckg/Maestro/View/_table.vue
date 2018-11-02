@@ -61,6 +61,11 @@
                 <div class="panel panel-default new-filters" :class="configureSection">
                     <div class="panel-body">
                         <div class="row">
+                            <div class="col-xs-12">
+                                <h4>Customize view</h4>
+
+                                <hr />
+                            </div>
                             <div class="col-xs-6">
 
                                 <pckg-maestro-customize-filters :columns="myFields"
@@ -70,9 +75,12 @@
                             <div class="col-xs-3">
 
                                 <pckg-maestro-customize-fields :parent-fields="myFields"
+                                                               :columns="view.columns"
                                                                :relations="relations"
                                                                :table="table"
-                                                               @chosen="chosen"></pckg-maestro-customize-fields>
+                                                               @chosen="chosen"
+                                                               @remove="removeColumn"
+                                                               @reorder="view.columns = $event"></pckg-maestro-customize-fields>
 
                             </div>
                             <div class="col-xs-3">
@@ -81,6 +89,8 @@
 
                             </div>
                             <div class="col-xs-12">
+
+                                <hr />
 
                                 <div class="pull-right">
                                     <a href="#">Reset view</a>
@@ -127,7 +137,7 @@
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-for="(field, i) in columns"
+                                        <th v-for="(field, i) in view.columns"
                                             :style="{'--freeze': field.freeze ? i : null}"
                                             :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
 
@@ -137,14 +147,14 @@
 
                                                 <span @click.prevent="togglefield(field.id)"
                                                       v-if="sort.field == field.id">
-                                    <i class="fa"
-                                       :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-                                </span>
+                                                    <i class="fa"
+                                                       :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                                                </span>
 
                                                 <!-- quick filter -->
                                                 <span href="#">
-                                    <i class="fal fa-filter"></i>
-                                </span>
+                                                    <i class="fal fa-filter"></i>
+                                                </span>
                                             </div>
 
                                         </th>
@@ -170,7 +180,7 @@
                                                                                   :recordactionhandler="recordactionhandler"
                                                                                   :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                                             </td>-->
-                                            <td v-for="(field, i) in columns"
+                                            <td v-for="(field, i) in view.columns"
                                                 :style="{'--freeze': field.freeze ? i : null}"
                                                 :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                                                 <pckg-maestro-field :field="field" :record="record"
@@ -376,7 +386,8 @@
                      */
                     filters: {},
                     archived: false,
-                    deleted: false
+                    deleted: false,
+                    live: true
                 },
                 actions: {
                     entity: [],
@@ -389,19 +400,15 @@
             };
         },
         methods: {
+            removeColumn: function(column) {
+                utils.splice(this.view.columns, column);
+            },
             scrollTable: function ($event) {
                 this.scroll.left = $event.target.scrollLeft > 0;
                 this.scroll.right = $event.target.scrollLeft + $event.target.clientWidth < $event.target.scrollWidth;
             },
             chosen: function (selection) {
-                /**
-                 * Field (or relation) was chosen.
-                 * We need to add it to listed fields and refetch table because field was not loaded earlier.
-                 */
-                $.each(selection, function (i, j) {
-                    $vue.$set(this.view.columns, i, j);
-                    return false;
-                }.bind(this));
+                this.view.columns.push(selection);
             },
             delaySingleClick: function () {
                 if (this._quickViewDelay) {
@@ -639,23 +646,21 @@
             }
         },
         computed: {
-            columns: function () {
-                console.log('computing columns');
+            /*tableColumns: function () {
                 let columns = [];
 
                 $.each(this.view.columns, function (i, column) {
-                    if (i.indexOf('field-') === 0) {
-                        console.log('field');
-                        columns.push(this.getFieldById(column.substring(6)));
+                    if (column.type == 'field') {
+                        columns.push(this.getFieldById(column.id));
                     } else {
-                        console.log('relation');
                         columns.push(this.getFieldByRelation(this.resolveRelationField(i, column)));
                     }
                 }.bind(this));
+
                 console.log('columns', columns);
 
                 return columns;
-            }
+            }*/
         },
         watch: {
             allChecked: function (all) {

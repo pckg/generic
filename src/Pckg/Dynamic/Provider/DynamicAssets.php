@@ -30,8 +30,8 @@ class DynamicAssets extends Provider
             /**
              * Help popover
              */
-            'js/bootstrap.js',
-            'less/bootstrap.less',
+            'js/dynamic.js',
+            'less/dynamic.less',
         ];
     }
 

@@ -6,7 +6,7 @@
         <a v-if="isFinal" href="#" @click.prevent="makeSelectedFieldVisible">Add field</a>
         <pckg-maestro-customize-fields-field v-else-if="isRelation"
                                              :relation="selectedRelation"
-                                             @chosen="chosen"></pckg-maestro-customize-fields-field>
+                                             @chosen="chosen" @remove="$emit('remove', $event)"></pckg-maestro-customize-fields-field>
     </div>
 </template>
 
@@ -44,6 +44,9 @@
             }
         },
         methods: {
+            removeColumn: function(column){
+                this.$emit('remove');
+            },
             test: function () {
                 $.each(this.relations, function (i, relation) {
                     fields['relation-' + relation.id] = relation;
@@ -69,12 +72,18 @@
                 });
             },
             makeSelectedFieldVisible: function () {
-                this.$emit('chosen', this.selected);
+                let field = this.selectedField;
+                if (!field) {
+                    console.log('no field');
+                    return;
+                }
+                field.frozen = false;
+                field.type = 'field';
+
+                this.$emit('chosen', field);
             },
             chosen: function (chosen) {
-                let data = {};
-                data[this.selected] = chosen;
-                this.$emit('chosen', data);
+                this.$emit('chosen', chosen);
             },
             fetchRelation: function () {
                 http.getJSON('/api/dynamic/relation/' + this.relation.id + '?with[]=fields&with[]=relations', function (data) {
@@ -104,6 +113,10 @@
                 return this.selected && this.selected.length > 0 && this.selected.indexOf('field-') === 0;
             },
             selectedRelation: function () {
+                if (this.selected.indexOf('relation-') !== 0) {
+                    return null;
+                }
+
                 var relation = null;
                 var selectedId = parseInt(this.selected.substring('relation-'.length));
                 $.each(this.myRelations, function (i, r) {
@@ -115,6 +128,24 @@
                     return false;
                 });
                 return relation;
+            },
+            selectedField: function () {
+                if (this.selected.indexOf('field-') !== 0) {
+                    return null;
+                }
+
+                var field = null;
+                var selectedId = parseInt(this.selected.substring('field-'.length));
+                $.each(this.myFields, function (i, f) {
+                    if (f.id != selectedId) {
+                        return;
+                    }
+
+                    field = f;
+                    return false;
+                });
+
+                return field;
             },
             isRelation: function () {
                 return this.selected && this.selected.indexOf('relation-') === 0;

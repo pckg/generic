@@ -1,3 +1,7 @@
+/**
+  * Styles that belongs to Dynamic interface shared over pckg projects.
+ */
+
 .panel-heading .dropdown-menu {
   left: auto;
   right: 0;
@@ -57,41 +61,7 @@ form div.help,
 }
 
 #formDynamic {
-  input[type=text],
-  input[type=email],
-  input[type=password],
-  input[type=number],
-  textarea,
-  .dropdown.bootstrap-select .dropdown-toggle {
-    background: #f7f7f7;
-    border: none;
-    box-shadow: none;
-    position: relative;
-    border-bottom: 2px solid #eee;
-    border-radius: 0;
-    transition: all 333ms ease-in-out;
-    font-size: 16px;
-    padding: 10px;
-    height: 40px;
-    &:after {
-      transition: all 333ms ease-in-out;
-      content: '';
-      position: absolute;
-      height: 2px;
-      width: 0%;
-      top: 100%;
-      left: 0;
-    }
-    &:focus,
-    &:hover {
-      //background: #fff;
-      border-bottom: 2px solid #999;
-      &:after {
-        width: 100%;
-        background-color: #ccc;
-      }
-    }
-  }
+
   textarea {
     max-width: 100%;
   }

@@ -1,20 +1,22 @@
 <template>
     <div>
 
-        <h4>
+        <h5>
             System views
             <pckg-tooltip icon="question-circle"
                           :content="'You can save custom build views with selected fields and filters for quick access'"></pckg-tooltip>
-        </h4>
+        </h5>
+
         <div v-for="view in systemViews">
             <a href="#" @click.prevent="loadView(view)">{{ view.title }}</a>
         </div>
 
-        <h4>
+        <h5>
             Saved views
             <pckg-tooltip icon="question-circle"
                           :content="'You can save custom build views with selected fields and filters for quick access'"></pckg-tooltip>
-        </h4>
+        </h5>
+
         <div v-for="view in savedViews">
             <a href="#" @click.prevent="loadView(view)">{{ view.title }}</a>
         </div>

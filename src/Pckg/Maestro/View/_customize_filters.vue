@@ -1,12 +1,15 @@
 <template>
     <div>
-        <h4>
-            Filter
+        <h5>
+            Filter table
             <pckg-tooltip icon="question-circle"
                           :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
-        </h4>
-        <div v-for="filter in filters" class="display-block clear-both">
-            <a href="#" title="Remove condition"><i class="fal fa-minus-circle"></i></a>
+        </h5>
+
+        <div v-for="filter in filters" class="display-block clear-both" style="padding-bottom: .5rem; height: 3.8rem;">
+            <a href="#" title="Remove condition" style="vertical-align: middle;" @click.prevent="removeFilter(filter)">
+                <i class="fal fa-minus-circle"></i>
+            </a>
 
             <pckg-maestro-customize-filters-field :parent-fields="myFields"
                                                   :relations="myRelations"
@@ -33,12 +36,12 @@
             Deleted items
         </p>
 
-        <h4>
+        <h5>
             Group by / statistical view
 
             <pckg-tooltip icon="question-circle"
                           :content="'Grouping records allo'"></pckg-tooltip>
-        </h4>
+        </h5>
     </div>
 </template>
 
@@ -76,6 +79,9 @@
             };
         },
         methods: {
+            removeFilter: function (filter) {
+                utils.splice(this.filters, filter);
+            },
             addCondition: function () {
                 this.filters.push({});
             },

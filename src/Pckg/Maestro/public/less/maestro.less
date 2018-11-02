@@ -1,0 +1,422 @@
+/**
+  * Styles that belongs to Maestro interface shared over pckg projects.
+ */
+
+@text: #1c1c1c;
+@link: lightseagreen;
+
+@darkGray: #333;
+@darkGrayActive: #444;
+@midGray: #505050;
+@midGrayActive: #606060;
+@white: #FFF;
+@whiteActive: #DDD;
+
+/* HTML ELEMENTS */
+html, body {
+  font-family: "Roboto", sans-serif;
+  height: 100%;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.6rem;
+  background-color: #f7f7f7;
+}
+
+/* GENERIC */
+.box-with-padding {
+  background: #fff;
+  padding: 2.4rem;
+  border-radius: .6rem;
+  border: 1px solid #e7e7e7;
+  margin-bottom: 2.4rem;
+}.maestro-top {
+   border: none;
+   font-size: 12px;
+   margin-bottom: 0;
+   border-radius: 0;
+   z-index: 96;
+
+   a {
+     &.logo {
+       img {
+         max-height: 24px;
+       }
+     }
+     &.active {
+       font-weight: bold;
+     }
+   }
+
+   .container-fluid {
+     background: #fff;
+     border-bottom: 1px solid #eee;
+   }
+
+   .navbar-nav {
+     > li > a {
+       color: #333;
+     }
+     @media only screen and (max-width: 767px) {
+       float: left;
+
+       & > li {
+         float: left;
+       }
+
+       &.navbar-right {
+         float: right;
+
+         & > li {
+           float: right;
+         }
+       }
+     }
+     a {
+       float: left;
+       color: @darkGray;
+       text-shadow: 0 0 0 #000;
+       filter: dropshadow(color=#b31419, offx=0, offy=-1);
+
+       i {
+         font-size: 16px;
+         margin-right: 3px;
+         vertical-align: text-bottom;
+       }
+       @media only screen and (max-width: 767px) {
+         i {
+           font-size: 20px;
+           line-height: 20px;
+         }
+
+         span {
+           display: none;
+         }
+       }
+     }
+     .dropdown-menu {
+       max-width: 400px;
+       border: 0;
+       border-radius: 0;
+     }
+   }
+ }
+
+#vue-app {
+  .navbar {
+    min-height: 38px;
+  }
+  .navbar-nav > li > a {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+  &.content-container {
+    min-height: 100%;
+    position: relative;
+    &:after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+
+  .maestro-sidebar-background {
+    background: @darkGray;
+    bottom: 0;
+    top: 0;
+    transition: all 0.4s ease-in-out 0s;
+    width: 20rem;
+    z-index: -1;
+
+    body.collapsed & {
+      transition: all 0.4s ease-in-out 0.4s;
+      width: 6rem;
+    }
+  }
+  .maestro-sidebar-submenu-background {
+    background: @midGray;
+    bottom: 0;
+    display: none;
+    left: 6rem;
+    position: absolute;
+    top: 0;
+    width: 20rem;
+    z-index: 98;
+  }
+  .maestro-sidebar-inside {
+    background: #fff;
+  }
+  .maestro-sidebar {
+    background: #fff;
+    bottom: 0;
+    top: 0;
+    position: absolute;
+    float: left;
+    padding-left: 0;
+    padding-right: 0;
+    transition: all 0.4s ease-in-out 0s;
+    width: 20rem;
+    z-index: 97;
+    margin-top: 4rem;
+
+    #main-admin-nav {
+
+      a {
+        color: #272727;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          clear: both;
+          ul {
+            li {
+              a {
+                padding: .5rem 1rem .5rem 5rem;
+                font-size: 1.3rem;
+              }
+              &:first-child {
+                a {
+                  padding-top: 1rem;
+                }
+              }
+              &:last-child {
+                a {
+                  padding-bottom: 1rem;
+                }
+              }
+            }
+          }
+        }
+
+        a {
+          display: block;
+          padding: 1rem 0;
+          position: relative;
+
+          i {
+            float: left;
+            transition: all 0.2s ease-in-out 0.1s;
+            width: 5rem;
+            line-height: 2rem;
+            font-size: 2rem;
+          }
+
+          span {
+            display: block;
+            overflow: hidden;
+            transition: all 0.2s ease-in-out 0.4s;
+          }
+
+          &:hover,
+          &:active,
+          &:focus {
+            text-decoration: none;
+          }
+        }
+        /* submenu */
+        ul {
+          li {
+            a {
+              &:hover,
+              &:active,
+              &:focus {
+                background: #f7f7f7;
+              }
+            }
+          }
+        }
+      }
+      & > ul {
+        & > li {
+          &.active {
+            & > a {
+              background: #f7f7f7;
+            }
+            .active {
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+
+    .collapse-sidebar {
+      a {
+        padding: 10px 20px;
+
+        &:active,
+        &:focus,
+        &:hover {
+          color: #000;
+          text-decoration: none;
+        }
+
+        i {
+          vertical-align: middle;
+          transition: all 0.2s ease-in-out 0.1s;
+          width: 16px;
+        }
+
+        span {
+          transition: all 0.2s ease-in-out 0.4s;
+        }
+      }
+    }
+
+    body.collapsed & {
+      transition: all 0.4s ease-in-out 0.4s;
+      width: 6rem;
+
+      #main-admin-nav {
+        a.maestro {
+          font-weight: bold;
+        }
+        ul.top-level {
+          & > li {
+            &.hoveractive {
+              & > a {
+                &:after {
+                  border-bottom: 10px solid transparent;
+                  border-right: 10px solid @midGray;
+                  border-top: 10px solid transparent;
+                  content: "";
+                  height: 0;
+                  margin-top: -10px;
+                  position: absolute;
+                  right: 0;
+                  top: 50%;
+                  width: 0;
+                }
+              }
+            }
+            & > a {
+              span {
+                opacity: 0;
+                transition: all 0.2s ease-in-out 0s;
+                visibility: hidden;
+                width: 0;
+              }
+              i {
+                font-size: 2.2rem;
+                transition: all 0.2s ease-in-out 0.2s;
+                width: 6rem;
+              }
+              &:hover {
+                &:after {
+                  content: "";
+                }
+              }
+            }
+
+            ul {
+              height: auto !important;
+              left: 6rem;
+              margin-top: -40px;
+              padding-left: 0;
+              position: absolute;
+              width: 20rem;
+              z-index: 99;
+            }
+          }
+        }
+      }
+      .collapse-sidebar {
+        a {
+          i {
+            -moz-transform: scaleX(-1);
+            -o-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+            filter: FlipH;
+            -ms-filter: "FlipH";
+            transition: all 0.2s ease-in-out 0.2s;
+          }
+          span {
+            opacity: 0;
+            transition: all 0.2s ease-in-out 0s;
+            visibility: hidden;
+          }
+        }
+      }
+    }
+
+    .collapse-menu {
+      a {
+        color: #FFF;
+        padding: 10px 20px;
+
+        &:hover {
+          color: @link;
+          text-decoration: none;
+        }
+
+        i {
+          margin-right: 5px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  .maestro-content {
+    float: right;
+    padding: 2rem 0;
+    margin: 0 2rem;
+    transition: all 0.4s ease-in-out 0s;
+    width: ~"calc(100% - 24rem)";
+
+    &.login {
+      margin-left: 0;
+    }
+
+    body.collapsed & {
+      width: ~"calc(100% - 10rem)";
+    }
+  }
+}
+
+ol.breadcrumb {
+  margin-left: 120px;
+  display: inline-block;
+  padding: 10px 0;
+  margin-bottom: 0;
+  background: transparent;
+  font-size: 13px;
+}
+
+body.collapsed {
+  ol.breadcrumb {
+    margin-left: 70px;
+  }
+}
+
+/**
+ FORM STYLES FOR BACKEND
+ */
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=number],
+textarea,
+.dropdown.bootstrap-select .dropdown-toggle {
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  position: relative;
+  border-bottom: 2px solid #ccc;
+  border-radius: 0;
+  transition: all 333ms ease-in-out;
+  font-size: 1.5rem;
+  padding: .6rem;
+  height: auto;
+  &:focus,
+  &:hover {
+    border-bottom: 2px solid #999;
+  }
+}

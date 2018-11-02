@@ -286,15 +286,14 @@ class Records extends Controller
                                           'tab'       => $tab,
                                       ]);
 
-        $columns = $tableRecord->fields->keyBy(function(Field $field) {
-            return 'field-' . $field->id;
+        $columns = $tableRecord->fields->filter(function(Field $field){
+            return $field->visible;
         })->map(function(Field $field) {
-            return 'field-' . $field->id;
-        })->toArray();
-
-        /*$columns['relation-162'] = [
-            'relation-152' => 'field-455',
-        ];*/
+            $f = $field->toArray();
+            $f['type'] = 'field';
+            $f['freeze'] = false;
+            return $f;
+        })->rekey()->toArray();
 
         $filters = [];
 
