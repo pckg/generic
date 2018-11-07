@@ -52,6 +52,8 @@
     Vue.config.devtools = true;
     {% endif %}
 
+    moment.locale('en');
+
     Vue.filter('number', function (price) {
         return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price);
     });
@@ -78,6 +80,27 @@
 
     Vue.filter('datetime', function (date, format) {
         return locale.datetime(date, format);
+    });
+
+    Vue.filter('timespan', function (timespan) {
+        let format = timespan.split(' ')[1];
+        let num = parseInt(timespan.split(' ')[0]);
+        let ordinal = moment.localeData()._durationLabelsStandard;
+
+        let key = null;
+        $.each(ordinal, function(k, v){
+            if (v == format) {
+                key = k;
+                return false;
+            }
+        });
+
+        let duration = moment.duration(num, format);
+        if (!key) {
+            return duration.humanize();
+        }
+
+        return moment.duration(num, format).format(key + ' __', {trim: 'both'})
     });
 
     Vue.filter('ucfirst', function (string) {
