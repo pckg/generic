@@ -52,12 +52,12 @@ var pckgCdn = {
 
             return 'https://' + Pckg.config.cdn.host + file;
         },
-        imageCache: function(pic, type, arg) {
+        imageCache: function (pic, type, arg) {
             return pic && pic.length > 0
                 ? '/cache/img/' + type + '/' + arg + pic
                 : null;
         },
-        mediaImage: function(pic, folder) {
+        mediaImage: function (pic, folder) {
             return pic && pic.length > 0
                 ? '/storage/uploads/' + folder + '/' + pic
                 : null;
@@ -149,10 +149,11 @@ var pckgPayment = {
         collectFormData: function () {
             return this.formData;
         },
-        preFetch: function(){},
+        preFetch: function () {
+        },
         initialFetch: function () {
             this.state = 'fetching';
-            http.post(utils.url('@api.payment.init', { handler: this.handler }), {
+            http.post(utils.url('@api.payment.init', {handler: this.handler}), {
                 instalments: this.instalments.map(function (instalment) {
                     return instalment.id;
                 })
@@ -168,13 +169,15 @@ var pckgPayment = {
         afterFetch: function (data) {
         }
     },
-    created: function(){
+    created: function () {
         this.preFetch();
         this.initialFetch();
     },
     computed: {
-        total: function(){
-            return this.instalments.reduce(function(sum, instalment){ return sum + instalment.price; }, 0.0);
+        total: function () {
+            return this.instalments.reduce(function (sum, instalment) {
+                return sum + instalment.price;
+            }, 0.0);
         }
     }
 };
@@ -221,7 +224,7 @@ var pckgSync = {
 
 var pckgLocale = {
     methods: {
-        locale: function(){
+        locale: function () {
             return locale;
         }
     }
@@ -284,7 +287,7 @@ var pckgCleanRequest = {
 };
 
 var pckgSmartComponent = {
-    mixins: [pckgTranslations, pckgCdn],
+    mixins: [pckgTranslations, pckgCdn, pckgTimeout],
     props: {
         action: {
             type: Object,
@@ -319,7 +322,11 @@ var pckgSmartComponent = {
             this.listComponent = newTemplate;
         }.bind(this));
 
-        $dispatcher.$on('listSubitemSelected', function (newItem) {
+        /**
+         * @T00D00 - only one component should listen.
+         */
+        $dispatcher.$on('pckg-action:' + this.action.id + ':listSubitemSelected', function (newItem) {
+            console.log('called in pckg-generic-app-top.js');
             /**
              * Categories > Offers > Packets
              * On category page we display offers and all packets. Click on offer reload packets.
@@ -328,13 +335,20 @@ var pckgSmartComponent = {
             this.loading = true;
             let plural = newItem.type == 'offer' ? 'offers' : 'categories';
             let collection = newItem.type == 'offer' ? 'packets' : 'offers';
-            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function(data){
+            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function (data) {
                 this['my' + collection] = data[collection];
                 this.loading = false;
-            }.bind(this), function(){
+                this.$nextTick(function () {
+                    $('html, body').animate({
+                        scrollTop: $(this.$el).offset().top + 'px'
+                    }, 333);
+                }.bind(this));
+            }.bind(this), function () {
                 this.loading = false;
                 $dispatcher.$emit('notification:error', 'Error fetching ' + collection);
             }.bind(this));
+
+            return false;
         }.bind(this));
 
         $dispatcher.$on('listItemSelected', function (newItem) {
@@ -347,10 +361,10 @@ var pckgSmartComponent = {
             this.loading = true;
             let plural = newItem.type == 'category' ? 'categories' : 'offers';
             let collection = newItem.type == 'category' ? 'offers' : 'offers';
-            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function(data){
+            http.getJSON('/api/' + plural + '/' + newItem.id + '/' + collection, function (data) {
                 this['my' + collection] = data[collection];
                 this.loading = false;
-            }.bind(this), function(){
+            }.bind(this), function () {
                 this.loading = false;
                 $dispatcher.$emit('notification:error', 'Error fetching ' + collection);
             }.bind(this));
