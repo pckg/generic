@@ -29,9 +29,7 @@
         data: function () {
             return {
                 options: this.initialOptions,
-                selectedModel: this.multiple
-                    ? (Array.isArray(this.selected) ? this.selected : [this.selected])
-                    : this.selected,
+                selectedModel: this.makeModel(this.selected),
                 loading: false
             };
         },
@@ -128,12 +126,15 @@
         },
         watch: {
             selected: function (newVal, oldVal) {
-                console.log('changed prop selected', newVal);
-                this.selectedModel = newVal;
+                this.selectedModel = this.makeModel(newVal);
+            },
+            initialMultiple: function (newVal, oldVal) {
+                this.multiple = newVal;
+                this.selectedModel = this.makeModel(this.selected);
             },
             selectedModel: function (newVal, oldVal) {
-                console.log('selected to', newVal);
-                this.$emit('change', newVal);
+                //this.$emit('change', newVal);
+                this.$emit('input', newVal); // v-model
                 this.refreshPicker(newVal);
             },
             options: function (newVal) {
@@ -153,6 +154,11 @@
             }
         },
         methods: {
+            makeModel: function (value) {
+                return this.multiple
+                    ? (Array.isArray(value) ? value : [value])
+                    : value;
+            },
             getTitle: function (option, key) {
                 if (typeof option == 'string') {
                     return option;
@@ -183,7 +189,6 @@
                 this.refreshPicker(this.selectedModel);
             },
             refreshPicker: function (val) {
-                this.$emit('input', val); // v-model
                 //this.$emit('change', val); // change event
                 Vue.nextTick(function () {
                     // $(this.$el).find('select').trigger('vue.change', val);

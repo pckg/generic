@@ -739,7 +739,11 @@ class Tabelize
                 continue;
             }
 
-            $actions[] = json_decode($parsed);
+            $action = json_decode($parsed);
+            if (!$action) {
+                dd($parsed);
+            }
+            $actions[] = $action;
         }
 
         return $actions;

@@ -1,10 +1,29 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor">
 
+        <div class="click-prevent" @click.prevent="findClickedElement($event)"
+             @dblclick.prevent="findClickedElement($event)" :class="visibilityClass"
+        v-if="false"></div>
+
+        <!--<div class="clearfix"></div>
+
+        <div class="btn btn-group pull-right">
+            <a type="button" href="#" title="Close tree" class="btn btn-default btn-sm"
+               @click.prevent="toggleVisibility">
+                <i aria-hidden="true" class="fa fa-times"></i>
+            </a>
+
+            <a type="button" href="#" title="Move to other side" class="btn btn-default btn-sm"
+               @click.prevent="toggleAlignment">
+                <i aria-hidden="true" class="fa fa-arrows"></i>
+            </a>
+        </div>-->
+
         <div class="pckg-editor-settings" v-if="mode == 'add'" :class="visibilityClass">
 
-            <p class="text-center padding-vertical-xs margin-none" v-if="action.id"><b>${ action.title } #${ action.id
-                    }</b></p>
+            <p class="text-center padding-vertical-xs margin-none" v-if="action.id">
+                <b>${ action.title } #${ action.id }</b>
+            </p>
             <p class="text-center padding-vertical-xs margin-none" v-else><b>New action</b></p>
 
             <div class="clearfix"></div>
@@ -514,7 +533,6 @@
             </div>
         </div>
 
-        {# change to <pckg-modal title="Edit block"><slot name="content">...</slot></pckg-modal> #}
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
             {% block header %}
                 Edit content
@@ -581,6 +599,7 @@
                 <input type="button" class="btn btn-success" @click.prevent="saveContent" value="Save content"/>
             {% endblock %}
         {% endembed %}
+
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal'} %}
             {% block header %}
                 Delete action
@@ -590,6 +609,7 @@
                 <button class="btn btn-danger" @click.prevent="deleteAction">Yes, delete action</button>
             {% endblock %}
         {% endembed %}
+
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'switchContentModal', minHeight: '50vh'} %}
             {% block header %}
                 Switch content
@@ -806,6 +826,55 @@
             }
         },
         methods: {
+            findClickedElement: function ($event) {
+                /**
+                 * We know location of click and scroll location.
+                 * We need to find deepest child.
+                 * @T00D00 - we could show additional info or menu in this mode?
+                 */
+                var doc = document.documentElement;
+                var x = $event.clientX + (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+                var y = $event.clientY + (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+                //console.log("Checking coords", x, y);
+
+                var current = null;
+                $('[data-action-id]').each(function () {
+                    /**
+                     * Find elements which top position is above x, bottom is below x, left is before y and right is after y.
+                     */
+                    var position = $(this).offset();
+                    if (position.left > x || position.top > y) {
+                        //console.log('out first, begins after click', position);
+                        return;
+                    }
+
+                    var width = parseInt($(this).outerWidth());
+                    var height = parseInt($(this).outerHeight());
+
+                    if ((position.top + height) < y || (position.left + width) < x) {
+                        //console.log('out second, ends before click', position, width, height);
+                        return;
+                    }
+
+                    if (!current || current.size >= width * height) {
+                        //console.log('ok', $(this), position.left, position.top, width, height);
+                        current = {element: $(this), size: width * height};
+                        return;
+                    }
+
+                    //console.log('out third');
+                });
+
+                if (current && current.element) {
+                    $('#pckg-frontpage-action-' + current.element.attr('data-action-id') + ' > span').click();
+                    if ($event.type == 'dblclick' && current.element.hasClass('action')) {
+                        $('.pckg-editor .fa.fa-edit').click();
+                    }
+                }
+
+                //console.log(current);
+            },
             hash: function (value) {
                 var hash = 0, i, chr;
                 if (value.length === 0) return hash;

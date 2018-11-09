@@ -1,0 +1,64 @@
+Vue.filter('number', function (price) {
+    return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price);
+});
+
+Vue.filter('price', function (price, decimals) {
+    return locale.price(price, decimals);
+});
+
+Vue.filter('roundPrice', function (price, decimals) {
+    return locale.roundPrice(price, decimals);
+});
+
+Vue.filter('roundNumber', function (price, decimals) {
+    return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price).toFixed(decimals || 2);
+});
+
+Vue.filter('date', function (date, format) {
+    return locale.date(date, format);
+});
+
+Vue.filter('time', function (date, format) {
+    return locale.time(date, format);
+});
+
+Vue.filter('datetime', function (date, format) {
+    return locale.datetime(date, format);
+});
+
+Vue.filter('timespan', function (timespan) {
+    let format = timespan.split(' ')[1];
+    let num = parseInt(timespan.split(' ')[0]);
+    let ordinal = moment.localeData()._durationLabelsStandard;
+
+    let key = null;
+    $.each(ordinal, function(k, v){
+        if (v == format) {
+            key = k;
+            return false;
+        }
+    });
+
+    let duration = moment.duration(num, format);
+    if (!key) {
+        return duration.humanize();
+    }
+
+    return moment.duration(num, format).format(key + ' __', {trim: 'both'})
+});
+
+Vue.filter('ucfirst', function (string) {
+    if (!string) {
+        return '';
+    }
+
+    return string.charAt(0).toUpperCase() + string.slice(1);
+});
+
+Vue.filter('nl2br', function (string) {
+    if (!string) {
+        return '';
+    }
+
+    return utils.nl2br(nl2br);
+});
