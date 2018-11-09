@@ -2,6 +2,14 @@
   * Styles that belongs to Maestro interface shared over pckg projects.
  */
 
+@clr-primary: #3FB3BA;
+@clr-secondary: #4AD481;
+
+@clr-badass: #b4d455;
+@clr-badass2: #bada55;
+
+@clr-danger: #F5004B;
+
 @text: #1c1c1c;
 @link: lightseagreen;
 
@@ -421,14 +429,14 @@ textarea,
   }
 }
 
-.btn-success {
-  background: linear-gradient(-30deg, #00d28a, #00b6ab);
+.btn-primary {
+  background: linear-gradient(-30deg, @clr-primary, @clr-secondary);
   box-shadow: none;
-  border: 1px solid #00c19f;
+  border: 1px solid average(@clr-primary, @clr-secondary);
   transition: all 333ms ease-in-out;
   background-size: 100% 100%;
   &:hover {
     background-size: 200% 200%;
-    border: 1px solid #00c19f;
+    border: 1px solid average(@clr-primary, @clr-secondary);
   }
 }

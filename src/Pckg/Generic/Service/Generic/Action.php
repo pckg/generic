@@ -378,4 +378,9 @@ class Action implements \JsonSerializable
         ];
     }
 
+    public function toJSON()
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
 }

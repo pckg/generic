@@ -323,7 +323,7 @@ var pckgSmartComponent = {
         }.bind(this));
 
         /**
-         * @T00D00 - only one component should listen.
+         * @T00D00 - only one component should listen?
          */
         $dispatcher.$on('pckg-action:' + this.action.id + ':listSubitemSelected', function (newItem) {
             console.log('called in pckg-generic-app-top.js');
