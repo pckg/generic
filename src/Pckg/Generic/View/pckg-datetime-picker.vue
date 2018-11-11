@@ -133,6 +133,11 @@
             value: {
                 immediate: true,
                 handler: function (value) {
+                    if (value == this.myValue) {
+                        return;
+                    }
+
+                    console.log('changed from', this.myValue, 'to', value);
                     this._momentModel = this.moment(value);
                     this.myValue = value;
                 }
@@ -147,8 +152,20 @@
                 return m;
             },
             focused: function () {
+                console.log('focused');
                 this.visible = true;
                 if (!this.myValue || this.myValue.length == 0) {
+                    /**
+                     * @T00D00 - should we set first available hour? And date?
+                     */
+                    if (this.options.type == 'time') {
+                        this.myValue = '10:00';
+                        return;
+                    } else {
+                        this.myValue = this.moment().format(this.options.format);
+                        return;
+                    }
+
                     this.$emit('input', this.moment().format(this.options.format));
                     return;
                 }
@@ -203,6 +220,7 @@
                 return date.format(this.options.format);
             },
             select: function (value) {
+                console.log('select');
                 this.$emit('input', value);
 
                 if (this.options.type == 'date' && this.myMode == 'month') {
@@ -222,6 +240,7 @@
         },
         created: function () {
             let $t = this;
+
             $('body').on('click', function (e) {
                 let closest = $(e.target).closest('.pckg-datetime-picker');
 
