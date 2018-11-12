@@ -141,6 +141,10 @@
                 return this.selected && this.selected.length > 0 && this.selected.indexOf('field-') === 0;
             },
             selectedRelation: function () {
+                if (!this.isRelation) {
+                    return null;
+                }
+
                 var relation = null;
                 var selectedId = parseInt(this.selected.substring('relation-'.length));
                 $.each(this.myRelations, function (i, r) {

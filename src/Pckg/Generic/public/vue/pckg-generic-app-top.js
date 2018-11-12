@@ -475,3 +475,17 @@ var pckgSmartItem = {
         }
     }
 };
+
+var pckgElement = {
+    props: {
+        actionId: {
+            type: Number,
+            required: true
+        }
+    },
+    computed: {
+        action: function () {
+            return $store.getters.actionById(this.actionId);
+        }
+    }
+};

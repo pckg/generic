@@ -37,6 +37,18 @@ class Generic
 
     protected $actions = [];
 
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function getKeyedFlatActions()
+    {
+        return collect($this->actions)->keyBy(function(ActionRecord $action) {
+            return $action->pivot->id;
+        })->all();
+    }
+
     public function authCheckRoute()
     {
         try {

@@ -1,9 +1,15 @@
 /**
-  * Styles that belongs to Maestro interface shared over pckg projects.
+  * Styles that belongs to Maestro interface shared over pckg projects:
+  * - Comms
+  * - Impero
+  * - Center
+  * - Mailo
+  * - Pendo
+  * - Condo
  */
 
-@clr-primary: #3FB3BA;
-@clr-secondary: #4AD481;
+@clr-primary: #4AD481;
+@clr-secondary: #3FB3BA;
 
 @clr-badass: #b4d455;
 @clr-badass2: #bada55;
@@ -11,7 +17,6 @@
 @clr-danger: #F5004B;
 
 @text: #1c1c1c;
-@link: lightseagreen;
 
 @darkGray: #333;
 @darkGrayActive: #444;
@@ -35,6 +40,14 @@ body {
   background-color: #f7f7f7;
 }
 
+a {
+  color: @clr-secondary;
+  transition: all ease-in-out 0.25s;
+  &:hover {
+    color: @clr-primary;
+  }
+}
+
 /* GENERIC */
 .box-with-padding {
   background: #fff;
@@ -42,7 +55,9 @@ body {
   border-radius: .6rem;
   border: 1px solid #e7e7e7;
   margin-bottom: 2.4rem;
-}.maestro-top {
+}
+
+.maestro-top {
    border: none;
    font-size: 12px;
    margin-bottom: 0;
@@ -361,7 +376,6 @@ body {
         padding: 10px 20px;
 
         &:hover {
-          color: @link;
           text-decoration: none;
         }
 

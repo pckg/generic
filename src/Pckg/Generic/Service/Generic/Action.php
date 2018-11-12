@@ -158,17 +158,26 @@ class Action implements \JsonSerializable
     {
         return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
             function() use ($innerOnly) {
+                $type = $this->getType();
+
+                if (in_array($type, ['wrapper', 'container', 'row', 'column'])) {
+                    $content = '<pckg-' . $type
+                        . ' class="' . $this->action->htmlClass
+                        . '" style="' . $this->action->htmlStyle
+                        . '" :action-id="' . $this->action->pivot->id . '">';
+                    $content .= '<template slot="body">';
+                    $content .= $this->getBackgroundVideoHtml();
+                    $content .= $this->getSubHtml();
+                    $content .= '</template>';
+                    $content .= '</pckg-' . $type . '>';
+                    return $content;
+                }
 
                 $return = measure('Building pre-wrap',
                     function() {
                         return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '"' . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
                     });
                 $return .= $this->getBackgroundVideoHtml();
-                if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
-                    $return .= $this->getSubHtml() . '</div>';
-
-                    return $return;
-                }
 
                 if ($this->getClass() && $this->getMethod()) {
                     $args = array_merge(router()->get('data'), router()->getResolves());

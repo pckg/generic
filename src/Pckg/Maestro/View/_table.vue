@@ -98,6 +98,8 @@
                                     <button type="button" class="btn btn-success">Save view</button>
                                 </div>
 
+                                <div class="clearfix"></div>
+
                             </div>
                         </div>
                     </div>
