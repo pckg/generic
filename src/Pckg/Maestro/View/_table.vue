@@ -178,9 +178,6 @@
                                             </td>
                                             <!--<td class="actions freeze">
                                                 <div>Actions</div>
-                                                <pckg-maestro-actions-{{ table }} :record="record"
-                                                                                  :recordactionhandler="recordactionhandler"
-                                                                                  :identifier="identifier"></pckg-maestro-actions-{{ table }}>
                                             </td>-->
                                             <td v-for="(field, i) in view.columns"
                                                 :style="{'--freeze': field.freeze ? i : null}"

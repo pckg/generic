@@ -4,10 +4,10 @@
             <h2>
                 {{ formalize.getTitle() | raw }}
 
-                <pckg-maestro-actions-{{ table }} :recordactionhandler="recordactionhandler"
+                <pckg-maestro-actions :recordactionhandler="recordactionhandler"
                                                   :record="{{ tabelize.transformRecord(record) | json_encode | escape }}"
-                                                  :actions="{{ tabelize.getRecordActionsArray() | json_encode | escape }}"
-                                                  :identifier="'{{ table }}'"></pckg-maestro-actions-{{ table }}>
+                                                  :actions="{{ tabelize.getActionsArray() | json_encode | escape }}"
+                                                  :identifier="'{{ table }}'"></pckg-maestro-actions>
             </h2>
 
             <ul class="nav nav-pills" role="tablist" id="ajaxTabs">

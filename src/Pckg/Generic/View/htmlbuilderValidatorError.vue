@@ -6,7 +6,7 @@
     export default {
         name: 'htmlbuilder-validator-error',
         props: {
-            errors: {},
+            bag: {},
             name: {},
             message: {
                 default: 'Error'
@@ -16,22 +16,22 @@
                 type: Boolean
             }
         },
-        data: function(){
+        data: function () {
             return {
-                myErrors: this.errors
+                myErrors: this.bag
             };
         },
         watch: {
-            errors: function(newVal){
-                this.myErrors = newVal;
+            bag: function (errors) {
+                this.myErrors = errors;
             }
         },
         computed: {
             isVisible: function () {
-                return (this.errors && this.errors.has(this.name)) || this.shown;
+                return (this.myErrors && this.myErrors.has(this.name)) || this.shown;
             },
             getMessage: function () {
-                return (this.errors && this.errors.first(this.name)) || this.message;
+                return (this.myErrors && this.myErrors.first(this.name)) || this.message;
             }
         },
     }

@@ -1,3 +1,29 @@
+<template>
+    <div class="btn-group btn-group-sm pull-right">
+
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn btn-default dropdown-toggle"><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li v-for="action in actions.record"
+                v-if="action.recordHref && record[action.recordHref] || action.event">
+                <a v-if="action.recordHref && record[action.recordHref]"
+                   :href="record[action.recordHref]">
+                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    {{ action.title }}
+                </a>
+                <a v-else-if="action.event" href="#"
+                   @click.prevent="recordAction(record, action.event)">
+                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    {{ action.title }}
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</template>
+
 <script>
     export default {
         mixins: [pckgDelimiters],

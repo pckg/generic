@@ -744,9 +744,6 @@ class Records extends Controller
                                                                         'recordActions' => $actions,
                                                                         'table'         => $table->table,
                                                                     ])
-             ->addView('Pckg/Maestro:_pckg_maestro_actions_custom', [
-                                                                      'table' => $table->table,
-                                                                  ])
              ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
                                                                    'tabelize'     => $tabelize,
                                                                    'formalize'    => $formalize,

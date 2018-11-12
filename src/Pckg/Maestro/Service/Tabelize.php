@@ -720,6 +720,13 @@ class Tabelize
         return $actions;
     }
 
+    public function getActionsArray() {
+        return [
+            'entity' => $this->getEntityActionsArray(false),
+            'record' => $this->getRecordActionsArray(),
+        ];
+    }
+
     public function getRecordActionsArray()
     {
         $html = null;
