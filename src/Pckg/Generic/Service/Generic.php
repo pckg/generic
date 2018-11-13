@@ -44,8 +44,12 @@ class Generic
 
     public function getKeyedFlatActions()
     {
-        return collect($this->actions)->keyBy(function(ActionRecord $action) {
-            return $action->pivot->id;
+        return collect($this->actions)->map(function(ActionRecord $action) {
+            return new Action($action);
+        })->keyBy(function(Action $action) {
+            return $action->getAction()->pivot->id;
+        })->map(function(Action $action) {
+            return $action->getFlat();
         })->all();
     }
 

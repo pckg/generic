@@ -75,7 +75,7 @@ class Action implements \JsonSerializable
         return $this->args['content'] ?? null;
     }
 
-    public function getTree()
+    public function getFlat()
     {
         if (!$this->action) {
             return;
@@ -83,13 +83,18 @@ class Action implements \JsonSerializable
 
         $defaults = $this->jsonSerialize();
 
-        $tree = array_merge([
-            'title'    => $this->action->title,
-            'morph'    => $this->action->pivot->morph,
-            'type'     => $this->getType(),
-            'actions'  => [],
-            'slug'     => $this->action->slug,
-        ], $defaults);
+        return array_merge([
+                                'title'    => $this->action->title,
+                                'morph'    => $this->action->pivot->morph,
+                                'type'     => $this->getType(),
+                                'slug'     => $this->action->slug,
+                            ], $defaults);
+    }
+
+    public function getTree()
+    {
+        $tree = $this->getFlat();
+        $tree['actions'] = [];
 
         foreach ($this->action->getChildren as $action) {
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);

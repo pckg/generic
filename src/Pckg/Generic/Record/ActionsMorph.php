@@ -15,7 +15,7 @@ class ActionsMorph extends Record
 
     protected $entity = ActionsMorphs::class;
 
-    protected $toArray = ['variable'];
+    protected $toArray = ['variable', '+content'];
 
     public function lockToLayout()
     {

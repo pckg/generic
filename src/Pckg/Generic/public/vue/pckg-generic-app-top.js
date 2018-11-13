@@ -489,6 +489,9 @@ var pckgElement = {
     computed: {
         action: function () {
             return $store.getters.actionById(this.actionId);
+        },
+        content: function () {
+            return this.action ? this.action.content : {};
         }
     }
 };
