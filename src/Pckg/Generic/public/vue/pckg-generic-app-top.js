@@ -480,6 +480,7 @@ var pckgSmartItem = {
 };
 
 var pckgElement = {
+    mixins: [pckgCdn],
     props: {
         actionId: {
             type: Number,
@@ -492,6 +493,87 @@ var pckgElement = {
         },
         content: function () {
             return this.action ? this.action.content : {};
+        },
+        actionClass: function () {
+            let typeSuffix = 'action';
+            if (this.action.type == 'container') {
+                typeSuffix = this.action.settings.container || 'container';
+            }
+
+            if (this.action.settings.width.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.width.join(' ');
+            }
+
+            if (this.action.settings.offset.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.offset.join(' ');
+            }
+
+            if (this.action.settings.scopes.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.scopes.join(' ');
+            }
+
+            if (this.action.settings.class) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.class;
+            }
+
+            if (this.action.settings.bgVideo) {
+                typeSuffix = typeSuffix + ' has-video-background';
+            }
+
+            let mapper = {
+                'bgSize': 'bg-size',
+                'bgRepeat': 'bg-repeat',
+                'bgPosition': 'bg-position',
+            };
+            let mainClass = typeSuffix;
+            $.each(this.action.settings, function (slug, setting) {
+                if (Object.keys(mapper).indexOf(slug) < 0) {
+                    return;
+                }
+
+                if (!setting) {
+                    return;
+                }
+
+                mainClass = mainClass + ' ' + mapper[slug] + '-' + setting;
+            });
+
+            return mainClass;
+        },
+        actionStyle: function () {
+            let mapper = {
+                'bgColor': 'background-color',
+                'bgAttachment': 'background-attachment',
+                'bgImage': 'background-image',
+                'margin': 'margin', // @deprecated
+                'padding': 'padding', // @deprecated
+                'style': 'style',
+            };
+
+            let styles = [];
+            $.each(mapper, function (slug, attr) {
+                if (Object.keys(mapper).indexOf(slug) < 0) {
+                    return;
+                }
+
+                let setting = this.action.settings[slug];
+
+                if (!setting) {
+                    return;
+                }
+
+                let value;
+                if (slug == 'style') {
+                    value = setting;
+                } else if (slug == 'bgImage') {
+                    value = attr + ': url(\'' + this.cdn(setting) + '\')';
+                } else {
+                    value = attr + ': ' + setting;
+                }
+                styles.push(value);
+            }.bind(this));
+
+            return styles.join('; ');
         }
     }
 };

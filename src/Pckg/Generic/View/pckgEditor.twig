@@ -1049,10 +1049,12 @@
                 this.refreshWholeContent();
             },
             refreshSettings: function () {
-                http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), function (data) {
+                this.form.settings = this.action.settings;
+                this.parseSettings();
+                /*http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), function (data) {
                     this.form.settings = data.settings;
                     this.parseSettings();
-                }.bind(this));
+                }.bind(this));*/
             },
             refreshWholeContent: function () {
                 http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphContent'], {actionsMorph: this.action.id}), function (data) {

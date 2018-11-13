@@ -167,9 +167,7 @@ class Action implements \JsonSerializable
 
                 if (in_array($type, ['wrapper', 'container', 'row', 'column'])) {
                     $content = '<pckg-' . $type
-                        . ' class="' . $this->action->htmlClass
-                        . '" style="' . $this->action->htmlStyle
-                        . '" :action-id="' . $this->action->pivot->id . '">';
+                        . ' :action-id="' . $this->action->pivot->id . '">';
                     $content .= '<template slot="body">';
                     $content .= $this->getBackgroundVideoHtml();
                     $content .= $this->getSubHtml();
@@ -180,7 +178,7 @@ class Action implements \JsonSerializable
 
                 $return = measure('Building pre-wrap',
                     function() {
-                        return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle . '" data-action-id="' . $this->action->pivot->id . '"' . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
+                        return '<pckg-action :action-id="' . $this->action->pivot->id . '"><template slot="body">';
                     });
                 $return .= $this->getBackgroundVideoHtml();
 
@@ -280,7 +278,7 @@ class Action implements \JsonSerializable
                      */
                     $return .= $result;
                 }
-                $return .= '</div>';
+                $return .= '</template></pckg-action>';
 
                 return $return;
             });

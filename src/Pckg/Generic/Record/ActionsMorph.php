@@ -358,7 +358,7 @@ class ActionsMorph extends Record
         return $settings;
     }
 
-    protected function getDefaultSettings()
+    public function getDefaultSettings()
     {
         /**
          * Add defaults.

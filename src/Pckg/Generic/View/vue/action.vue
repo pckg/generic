@@ -1,12 +1,12 @@
 <template>
-    <div :id="'wrapper-' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle">
+    <div :id="'action-' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle">
         <slot name="body"></slot>
     </div>
 </template>
 
 <script>
     export default {
-        name: 'pckg-wrapper',
+        name: 'pckg-action',
         mixins: [pckgElement]
     }
 </script>
