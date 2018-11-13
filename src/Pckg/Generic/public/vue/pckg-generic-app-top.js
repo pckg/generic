@@ -409,7 +409,6 @@ var pckgSmartItem = {
             type: Object
         },
         action: {
-            required: true,
             type: Object
         },
         index: {
@@ -436,6 +435,10 @@ var pckgSmartItem = {
         return this.templateRender();
     },
     mounted: function () {
+        if (!this.myAction) {
+            return;
+        }
+
         $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
             this.tpl = newTemplate;
         }.bind(this));

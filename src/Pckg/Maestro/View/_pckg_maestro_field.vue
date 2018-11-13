@@ -41,7 +41,7 @@
                             :value="record[field.field]"></pckg-tabelize-field-editor>
                 </template>
                 <template v-else>
-                    <textarea>{{ model | raw }}</textarea>
+                    <textarea v-html="model">{{ model }}</textarea>
                 </template>
             </template>
             <template v-else>
