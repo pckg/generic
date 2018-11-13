@@ -7,6 +7,7 @@ use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Service\Partial\AbstractPartial;
+use Pckg\Stringify;
 
 class ActionsMorph extends Record
 {
@@ -249,6 +250,160 @@ class ActionsMorph extends Record
             'template' => $template,
             'list' => null,
             'item' => null,
+        ];
+    }
+
+    public function getSettingsArray()
+    {
+        $settings = $this->settings
+            ->map(function(
+                Setting $setting
+            ) {
+                return [
+                    'slug'  => str_replace('pckg.generic.pageStructure.', '',
+                                           $setting->slug),
+                    'value' => $setting->type == 'array'
+                        ? ($setting->pivot->value
+                            ? (json_decode($setting->pivot->value, true) ?? [])
+                            : [])
+                        : $setting->pivot->value,
+                ];
+            })->keyBy('slug')->map('value');
+
+        $defaults = $this->getDefaultSettings();
+        foreach ($defaults as $key => $val) {
+            if ($settings->hasKey($key)) {
+                continue;
+            }
+
+            $settings->push($val, $key);
+        }
+
+        $pluginDefaults = $this->getPluginSettings();
+        foreach ($pluginDefaults as $key => $val) {
+            if ($settings->hasKey($key)) {
+                continue;
+            }
+
+            $settings->push($val, $key);
+        }
+
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
+                                                                 ->unique()
+                                                                 ->removeEmpty()
+                                                                 ->all();
+        $scopeClasses = [];
+        $otherClasses = [];
+        $widthClasses = [];
+        $offsetClasses = [];
+        $containerClass = '';
+        foreach ($allClasses as $class) {
+            $found = false;
+            foreach (config('pckg.generic.scopes') as $title => $scopes) {
+                if (in_array($title, ['Padding', 'Margin'])) {
+                    foreach ($scopes as $scps) {
+                        if (array_key_exists($class, $scps)) {
+                            $scopeClasses[] = $class;
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                } else {
+                    if (array_key_exists($class, $scopes)) {
+                        $scopeClasses[] = $class;
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+            if (!$found) {
+                if (strpos($class, 'col-') === 0 && !strpos($class, '-pull-') && !strpos($class, '-push-')) {
+                    if (strpos($class, '-offset-')) {
+                        $offsetClasses[] = $class;
+                    } else {
+                        $widthClasses[] = $class;
+                    }
+                } elseif (strpos($class, 'container') === 0) {
+                    $containerClass = $class;
+                } else {
+                    $otherClasses[] = $class;
+                }
+            }
+        }
+
+        $settings->push($scopeClasses, 'scopes');
+        $settings->push($offsetClasses, 'offset');
+        $settings->push($widthClasses, 'width');
+        $settings->push($containerClass, 'container');
+        $settings->push(implode(' ', $otherClasses), 'class');
+
+        /**
+         * Add path before image.
+         */
+        $settings->push(media($settings->getKey('bgImage'), null, true, path('app_uploads')) ?? '', 'bgImage');
+
+        /**
+         * We also need to fetch some settings which are saved on layout.
+         */
+        /*if ($actionsMorph->morph_id == Layouts::class) {
+            $layout = Layout::gets(['id' => $actionsMorph->poly_id]);
+            if ($layout) {
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockHide'),
+                                'wrapperLockHide');
+                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockShow'),
+                                'wrapperLockShow');
+            }
+        }*/
+
+        return $settings;
+    }
+
+    protected function getDefaultSettings()
+    {
+        /**
+         * Add defaults.
+         *
+         * @T00D00
+         * This should be refactored to plugins. ;-)
+         */
+        return [
+            'class'             => '',
+            'container'         => '',
+            'style'             => '',
+            'width'             => [], // column
+            'offset'            => [], // column
+            'bgColor'           => '',
+            'bgImage'           => '',
+            'bgSize'            => '',
+            'bgAttachment'      => '',
+            'bgRepeat'          => '',
+            'bgPosition'        => '',
+            'bgVideo'           => '',
+            'bgVideoSource'     => '',
+            'bgVideoDisplay'    => '',
+            'bgVideoAutoplay'   => '',
+            'bgVideoControls'   => '',
+            'bgVideoLoop'       => '',
+            'bgVideoMute'       => '',
+            'wrapperLockShow'   => [],
+            'wrapperLockHide'   => [],
+            'wrapperLockSystem' => [],
+        ];
+    }
+
+    protected function getPluginSettings()
+    {
+        $separate = [];
+        foreach (config('pckg.generic.actions') as $actionKey => $actionSettings) {
+            foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
+                $separate[$settingKey] = $settingType == 'array' ? [] : '';
+            }
+        }
+
+        return [
+            'sourceOffers'    => [],
+            'sourcePackets'   => [],
+            'sourceGalleries' => [],
         ];
     }
 

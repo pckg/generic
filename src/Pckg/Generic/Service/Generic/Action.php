@@ -344,6 +344,9 @@ class Action implements \JsonSerializable
         return $default;
     }
 
+    /**
+     * @return ActionRecord
+     */
     public function getAction()
     {
         return $this->action;
@@ -383,11 +386,7 @@ class Action implements \JsonSerializable
             'classed'      => $classed,
             'method'       => $this->action->method,
             'template'     => $template,
-            'settings'     => $this->getSetting()->keyBy(function(Setting $setting) {
-                return str_replace('pckg.generic.pageStructure.', '', $setting->slug);
-            })->map(function(Setting $setting) {
-                return $setting->pivot->getFinalValueAttribute();
-            }),
+            'settings'     => $this->action->pivot->getSettingsArray(),
             'content'      => $this->getContent(),
         ];
     }

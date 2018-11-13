@@ -270,7 +270,7 @@ class Generic
     ) {
         $block = $this->touchBlock($action->pivot->variable_id ? $action->pivot->variable->slug : null);
 
-        $block->addAction($action = new Action($action, $route, $resolved));
+        $block->addAction($genericAction = new Action($action, $route, $resolved));
 
         return $action;
     }
