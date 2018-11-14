@@ -64,7 +64,7 @@
                             <div class="col-xs-12">
                                 <h4>Customize view</h4>
 
-                                <hr />
+                                <hr/>
                             </div>
                             <div class="col-xs-6">
 
@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-xs-12">
 
-                                <hr />
+                                <hr/>
 
                                 <div class="pull-right">
                                     <a href="#">Reset view</a>
@@ -196,7 +196,44 @@
                     </div>
                 </div>
             </template>
-            <div v-if="first">
+        </div>
+
+        <div class="table-floating-right-bar" :class="quickView" v-if="false">
+
+            <derive-orders-tabelize-quick-view></derive-orders-tabelize-quick-view>
+
+        </div>
+
+        <div class="table-floating-bottom-bar"
+             :class="ids.length > 0 || paginator.total > paginator.perPage ? 'in' : ''">
+            <div class="table-actions" v-if="ids.length > 0">
+                <div class="pull-left" style="margin-right: 4rem;">
+                    {{ ids.length }} records selected
+                    <template v-if="allChecked && paginator.total != ids.length">
+                        <br/>
+                        <a href="#"> Select all items from all pages</a>
+                    </template>
+                </div>
+
+                <a href="#" style="margin-right: 2rem;" v-for="action in actions.entity"
+                   @click.prevent="entityAction(action.event)">
+                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    {{ action.title }}
+                </a>
+
+                <a href="#" class="pull-right danger">
+                    <i class="fa fa-trash"></i> Delete
+                    <pckg-tooltip icon="question-circle"
+                                  :content="'This is permanent and non-reversable action. Use it with caution.'"></pckg-tooltip>
+                </a>
+                <a href="#" style="margin-right: 2rem;" class="pull-right danger"><i class="fa fa-archive"></i> Archive
+                    <pckg-tooltip icon="question-circle"
+                                  :content="'Archived items can be listed by checking \'Archived items\' on view configuration.'"></pckg-tooltip>
+                </a>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="table-paginator">
                 <pckg-dynamic-paginator :ref="'maestro-paginator'"
                                         :initial-per-page="paginator.perPage"
                                         :initial-page="computed(paginator.page)"
@@ -207,38 +244,6 @@
                                         :initial-groups="groups"
                 ></pckg-dynamic-paginator>
             </div>
-        </div>
-
-        <div class="table-floating-right-bar" :class="quickView" v-if="false">
-
-            <derive-orders-tabelize-quick-view></derive-orders-tabelize-quick-view>
-
-        </div>
-
-        <div class="table-floating-bottom-bar" :class="ids.length > 0 ? 'in' : ''">
-            <div class="pull-left" style="margin-right: 4rem;">
-                {{ ids.length }} records selected
-                <template v-if="allChecked && paginator.total != ids.length">
-                    <br/>
-                    <a href="#"> Select all items from all pages</a>
-                </template>
-            </div>
-
-            <a href="#" style="margin-right: 2rem;" v-for="action in actions.entity"
-               @click.prevent="entityAction(action.event)">
-                <i class="fa" :class="'fa-' + action.icon"></i>
-                {{ action.title }}
-            </a>
-
-            <a href="#" class="pull-right danger">
-                <i class="fa fa-trash"></i> Delete
-                <pckg-tooltip icon="question-circle"
-                              :content="'This is permanent and non-reversable action. Use it with caution.'"></pckg-tooltip>
-            </a>
-            <a href="#" style="margin-right: 2rem;" class="pull-right danger"><i class="fa fa-archive"></i> Archive
-                <pckg-tooltip icon="question-circle"
-                              :content="'Archived items can be listed by checking \'Archived items\' on view configuration.'"></pckg-tooltip>
-            </a>
         </div>
 
     </div>
@@ -399,7 +404,7 @@
             };
         },
         methods: {
-            removeColumn: function(column) {
+            removeColumn: function (column) {
                 utils.splice(this.view.columns, column);
             },
             scrollTable: function ($event) {
