@@ -26,7 +26,6 @@
 
 <script>
     export default {
-        mixins: [pckgDelimiters],
         name: 'pckg-maestro-actions',
         template: '#pckg-maestro-actions',
         props: {

@@ -13,7 +13,6 @@
 <script>
     export default {
         name: 'pckg-clipboard',
-        mixins: [pckgDelimiters],
         props: {
             type: {
                 type: String,
