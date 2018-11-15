@@ -483,18 +483,23 @@ var pckgElement = {
     mixins: [pckgCdn],
     props: {
         actionId: {
-            type: Number,
-            required: true
+            default: null
         }
     },
     computed: {
         action: function () {
-            return $store.getters.actionById(this.actionId);
+            return this.actionId ? $store.getters.actionById(this.actionId) : null;
         },
         content: function () {
             return this.action ? this.action.content : {};
         },
+        id: function () {
+            return !this.action ? null : (this.action.type + '-' + this.action.id);
+        },
         actionClass: function () {
+            if (!this.action) {
+                return;
+            }
             let typeSuffix = 'action';
             if (this.action.type == 'container') {
                 typeSuffix = this.action.settings.container || 'container';
@@ -541,6 +546,9 @@ var pckgElement = {
             return mainClass;
         },
         actionStyle: function () {
+            if (!this.action) {
+                return;
+            }
             let mapper = {
                 'bgColor': 'background-color',
                 'bgAttachment': 'background-attachment',

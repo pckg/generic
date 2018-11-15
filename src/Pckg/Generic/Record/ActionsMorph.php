@@ -253,7 +253,7 @@ class ActionsMorph extends Record
         ];
     }
 
-    public function getSettingsArray()
+    public function getSettingsArrayAttribute()
     {
         $settings = $this->settings
             ->map(function(

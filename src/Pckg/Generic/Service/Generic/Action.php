@@ -39,8 +39,8 @@ class Action implements \JsonSerializable
     public function __construct(ActionRecord $action, Route $route = null, $resolved = [])
     {
         $this->args = [
-            'content'  => $action->pivot->content,
-            'settings' => $action->pivot->settings,
+            'content'  => $action->pivot->content ?? null,
+            'settings' => $action->pivot->settings ?? [],
             'route'    => $route,
             'resolved' => $resolved,
         ];
@@ -72,7 +72,7 @@ class Action implements \JsonSerializable
      */
     public function getContent()
     {
-        return $this->args['content'] ?? null;
+        return $this->args['content'] ?? $this->action->content;
     }
 
     public function getFlat()
@@ -96,7 +96,7 @@ class Action implements \JsonSerializable
         $tree = $this->getFlat();
         $tree['actions'] = [];
 
-        foreach ($this->action->getChildren as $action) {
+        foreach ($this->action->getChildren ?? [] as $action) {
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);
             $tree['actions'][] = $genericAction->getTree();
         }
@@ -358,10 +358,14 @@ class Action implements \JsonSerializable
          * Transform template to original template
          *  - Derive/Offers:offers/list-vSquare -> Derive/Offers:offers/list
          */
-        list($before, $after) = explode(':',
-                                        str_replace(['\\', '/Controller/'],
-                                                    ['/', ':'],
-                                                    $this->action->class) . '/' . $this->action->method);
+        list($before, $after) = explode(
+            ':',
+            str_replace(
+                ['\\', '/Controller/'],
+                ['/', ':'],
+                $this->action->class
+            ) . '/' . $this->action->method
+        );
         $classed = $before . ':' . lcfirst($after);
 
 
@@ -384,7 +388,7 @@ class Action implements \JsonSerializable
             'classed'      => $classed,
             'method'       => $this->action->method,
             'template'     => $template,
-            'settings'     => $this->action->pivot->getSettingsArray(),
+            'settings'     => $this->action->pivot->settingsArray,
             'content'      => $this->getContent(),
         ];
     }

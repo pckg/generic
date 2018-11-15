@@ -353,7 +353,7 @@ class PageStructure
 
     public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
-        $settings = $actionsMorph->getSettingsArray();
+        $settings = $actionsMorph->settingsArray;
 
         return response()->respondWithSuccess([
                                                   'settings' => $settings,

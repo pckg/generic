@@ -1,5 +1,5 @@
 <template>
-    <div :id="'container-' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle">
+    <div :id="id" :data-action-id="actionId" :class="actionClass" :style="actionStyle">
         <slot name="body"></slot>
     </div>
 </template>

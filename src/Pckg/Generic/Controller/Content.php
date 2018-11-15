@@ -47,16 +47,25 @@ class Content
         );
     }
 
+    /**
+     * @param ContentRecord|null $content
+     * @param Action             $action
+     * @param                    $settings
+     *
+     * @return \Pckg\Framework\View\Twig
+     * @deprecated
+     */
     public function getTemplateAction(ContentRecord $content = null, Action $action, $settings)
     {
         return view(
-            $settings->first(
+            $action->getAction()->settings ? $action->getAction()->settings->first(
                 function(Setting $item) {
                     return $item->slug == 'pckg-generic-content-template';
                 }
-            )->pivot->value,
+            )->pivot->value : 'Pckg/Generic:content/simple',
             [
                 'content' => $content,
+                'action' => $action,
             ]
         );
     }

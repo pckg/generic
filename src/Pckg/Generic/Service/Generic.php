@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service;
 
 use Pckg\Auth\Middleware\RestrictGenericAccess;
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
@@ -35,7 +36,15 @@ class Generic
 
     protected $route;
 
-    protected $actions = [];
+    /**
+     * @var Collection
+     */
+    protected $actions;
+
+    public function __construct()
+    {
+        $this->actions = new Collection();
+    }
 
     public function getActions()
     {
