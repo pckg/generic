@@ -36,6 +36,10 @@ class CreateGenericTables extends Migration
         $this->contentsUp();
         $this->actionsUp();
 
+        $dataAttributes = $this->morphtable('data_attributes', null, null);
+        $dataAttributes->varchar('slug');
+        $dataAttributes->varchar('value');
+
         $this->save();
     }
 
