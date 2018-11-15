@@ -500,7 +500,7 @@ var pckgElement = {
             if (!this.action) {
                 return;
             }
-            let typeSuffix = 'action';
+            let typeSuffix = this.$options.name.replace('pckg-', '');
             if (this.action.type == 'container') {
                 typeSuffix = this.action.settings.container || 'container';
             }
