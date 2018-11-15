@@ -37,6 +37,9 @@
             title: {
                 default: ''
             },
+            watchInitial: {
+                default: true,
+            },
             id: {
                 default: '',
                 type: String
@@ -133,24 +136,17 @@
                 this.selectedModel = this.makeModel(this.selected);
             },
             selectedModel: function (newVal, oldVal) {
-                //this.$emit('change', newVal);
+                console.log('model changed');
                 this.$emit('input', newVal); // v-model
-                this.refreshPicker(newVal);
             },
-            options: function (newVal) {
-                Vue.nextTick(function () {
-                    try {
-                        $(this.$el).find('select').selectpicker('refresh');
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }.bind(this));
-            },
-            initialOptions: function (newVal) {
+            initialOptions: function (newVal, oldVal) {
+                if (newVal == oldVal || newVal == this.options || !this.watchInitial) {
+                    console.log('same options');
+                    return;
+                }
+                console.log('initial options changed', newVal, oldVal);
                 this.options = newVal;
-                /*Vue.nextTick(function () {
-                    $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this));*/
+                this.refreshPicker();
             }
         },
         methods: {
@@ -185,13 +181,9 @@
 
                 return option[this.id];
             },
-            changed: function () {
-                this.refreshPicker(this.selectedModel);
-            },
             refreshPicker: function (val) {
-                //this.$emit('change', val); // change event
                 Vue.nextTick(function () {
-                    // $(this.$el).find('select').trigger('vue.change', val);
+                    console.log('refreshing');
                     try {
                         $(this.$el).find('select').selectpicker('refresh');
                     } catch (e) {
@@ -216,6 +208,7 @@
                     this.loading = true;
                     http.getJSON(this.refreshUrl + '?search=' + search + '&selected=' + (Array.isArray(this.selectedModel) ? this.selectedModel.join(',') : this.selectedModel), function (data) {
                         this.options = data.records;
+                        this.refreshPicker();
                         this.loading = false;
                     }.bind(this), function () {
                         this.loading = false;
@@ -234,23 +227,7 @@
                     showTick: true
                 });
 
-                /*selectpicker.on('changed.bs.select', function() {
-                    return false;
-                });*/
-
-                try {
-                    selectpicker.selectpicker('refresh');
-                } catch (e) {
-                    console.log(e);
-                }
-
-                /*$(document).ready(function () {
-                    $(this.$el).find('select').on('change', function () {
-                        this.$nextTick(function () {
-                            this.$emit('input', $(this.$el).find('select').val());
-                        }.bind(this));
-                    }.bind(this));
-                }.bind(this));*/
+                this.refreshPicker();
 
                 $(this.$el).find('.bs-searchbox input').on('keyup', function () {
                     this.refreshList();

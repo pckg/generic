@@ -1,6 +1,6 @@
 <script>
     var Pckg = Pckg || {};
-    Pckg.data = {{ (data ? data : {}) | json_encode | raw }};
+    Pckg.data = {{ (data ? data : {}) | json_encode(JSON_NUMERIC_CHECK) | raw }};
     Pckg.config = {};
     Pckg.config.locale = {
         current: '{{ _localeManager.getCurrent() }}',
@@ -38,7 +38,7 @@
     Vue.config.devtools = true;
     {% endif %}
 
-    moment.locale('en');
+    moment.locale(Pckg.config.locale.current);
 
 </script>
 

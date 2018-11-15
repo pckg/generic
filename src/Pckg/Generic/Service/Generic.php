@@ -211,6 +211,10 @@ class Generic
                    'app',
                    1);
 
+        $layoutActions->each(function(ActionRecord $action){
+            $this->actions->push($action);
+        });
+
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {

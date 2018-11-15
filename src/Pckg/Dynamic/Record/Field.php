@@ -188,10 +188,10 @@ class Field extends DatabaseRecord
             return eval(' return ' . $eval . '; ');
         } catch (Throwable $e) {
             if (prod()) {
-                return null;
+                return '#' . $record->id;
             }
 
-            return exception($e);
+            return '#' . $record->id . ' - ' . exception($e);
         }
     }
 

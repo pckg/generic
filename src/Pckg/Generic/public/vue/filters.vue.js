@@ -27,24 +27,34 @@ Vue.filter('datetime', function (date, format) {
 });
 
 Vue.filter('timespan', function (timespan) {
-    let format = timespan.split(' ')[1];
-    let num = parseInt(timespan.split(' ')[0]);
-    let ordinal = moment.localeData()._durationLabelsStandard;
+    let format = timespan.split(' ')[1] || null;
 
-    let key = null;
-    $.each(ordinal, function(k, v){
-        if (v == format) {
-            key = k;
+    if (!format) {
+        return;
+    }
+
+    let num = parseInt(timespan.split(' ')[0]);
+    let duration = moment.duration(num, format);
+
+    let mapper = {
+        minute: 'mm',
+        hour: 'hh',
+        day: 'dd'
+    };
+
+    let f = null;
+    $.each(mapper, function(k, v){
+        if (format.indexOf(k) >= 0) {
+            f = v;
             return false;
         }
     });
 
-    let duration = moment.duration(num, format);
-    if (!key) {
-        return duration.humanize();
+    if (!f) {
+        return;
     }
 
-    return moment.duration(num, format).format(key + ' __', {trim: 'both'})
+    return moment.localeData().relativeTime(num, true, f, false);
 });
 
 Vue.filter('ucfirst', function (string) {
