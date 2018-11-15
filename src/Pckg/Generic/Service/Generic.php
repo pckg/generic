@@ -46,6 +46,11 @@ class Generic
         $this->actions = new Collection();
     }
 
+    public function setActions(Collection $actions)
+    {
+        $this->actions = $actions;
+    }
+
     public function getActions()
     {
         return $this->actions;
@@ -220,9 +225,11 @@ class Generic
                    'app',
                    1);
 
-        $layoutActions->each(function(ActionRecord $action){
-            $this->actions->push($action);
-        });
+        if ($route) {
+            $layoutActions->each(function(ActionRecord $action){
+                $this->actions->push($action);
+            });
+        }
 
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;

@@ -44,7 +44,7 @@ class Generic
         $route->applySeoSettings();
 
         return $route->layout
-            ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
+            ? view($route->layout->template ?: 'Pckg/Generic:backend', []/*$vars*/)
             : $vars;
     }
 

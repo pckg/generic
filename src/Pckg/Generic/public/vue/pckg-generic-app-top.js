@@ -289,8 +289,7 @@ var pckgCleanRequest = {
 var pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout],
     props: {
-        action: {
-            type: Object,
+        actionId: {
             required: true
         },
         content: {
@@ -300,10 +299,18 @@ var pckgSmartComponent = {
     data: function () {
         return {
             loading: false,
-            myAction: this.action,
-            listComponent: this.action.template.list || 'derive-list', // we need to resolve proper list template for action
-            itemComponent: this.action.template.item || 'derive-item',
         };
+    },
+    computed: {
+        action: function() {
+            return $store.getters.actionById(this.actionId);
+        },
+        listComponent: function(){
+            return (this.action ? this.action.template.list : null) || 'derive-list';
+        },
+        itemComponent: function(){
+            return (this.action ? this.action.template.item : null) || 'derive-item';
+        }
     },
     mounted: function () {
         $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
@@ -484,11 +491,14 @@ var pckgElement = {
     props: {
         actionId: {
             default: null
-        }
+        },
+        hardAction: {
+            default: null
+        },
     },
     computed: {
         action: function () {
-            return this.actionId ? $store.getters.actionById(this.actionId) : null;
+            return this.hardAction ? this.hardAction : (this.actionId ? $store.getters.actionById(this.actionId) : null);
         },
         content: function () {
             return this.action ? this.action.content : {};

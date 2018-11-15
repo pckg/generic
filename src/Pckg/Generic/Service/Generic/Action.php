@@ -393,6 +393,7 @@ class Action implements \JsonSerializable
             'settings'  => $this->action->pivot->settingsArray,
             'content'   => $this->getContent(),
             'build'     => $this->action->pivot->build,
+            'order'     => $this->action->pivot->order,
         ];
     }
 
