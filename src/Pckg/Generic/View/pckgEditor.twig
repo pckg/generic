@@ -3,7 +3,7 @@
 
         <div class="click-prevent" @click.prevent="findClickedElement($event)"
              @dblclick.prevent="findClickedElement($event)" :class="visibilityClass"
-        v-if="false"></div>
+            v-if="!content || !content.id"></div>
 
         <!--<div class="clearfix"></div>
 
@@ -930,6 +930,10 @@
                 if (current && current.element) {
                     $('#pckg-frontpage-action-' + current.element.attr('data-action-id') + ' > span').click();
                     if ($event.type == 'dblclick' && current.element.hasClass('action')) {
+                        initTinymce('action-' + current.element.attr('data-action-id') + ' .bind-content', {
+                            // menubar: false,
+                            inline: true,
+                        });
                         $('.pckg-editor .fa.fa-edit').click();
                     }
                 }

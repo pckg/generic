@@ -42,9 +42,10 @@ class Generic
         $vars = $this->genericService->getVariables();
 
         $route->applySeoSettings();
+        $vars['content'] = '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
 
         return $route->layout
-            ? view($route->layout->template ?: 'Pckg/Generic:backend', []/*$vars*/)
+            ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
             : $vars;
     }
 

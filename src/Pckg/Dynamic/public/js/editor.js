@@ -14,17 +14,22 @@ var destroyTinymce = function (selector) {
 };
 
 var initTinymce = function (selector, config) {
-    console.log('Initializing tinymce and dropzone on ' + selector);
     var selected = $('#' + selector);
-    var $dropzone = $('<div class="manual-dropzone"></div>');
-    selected.parent().append($dropzone);
-    $dropzone.idify();
-    var $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
-        url: '/dynamic/uploader',
-        previewsContainer: null,
-        previewTemplate: '<div></div>',
-        maxFilesize: 8
-    });
+    console.log('Initializing tinymce and dropzone on ' + selector, selected);
+    selected.idify();
+
+    let $dropzone, $dropzoneInst;
+    //if (!config || !config.inline) {
+        $dropzone = $('<div class="manual-dropzone"></div>');
+        selected.parent().append($dropzone);
+        $dropzone.idify();
+        $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
+            url: '/dynamic/uploader',
+            previewsContainer: null,
+            previewTemplate: '<div></div>',
+            maxFilesize: 8
+        });
+    //}
 
     var defaultConfig = {
         content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
@@ -32,6 +37,8 @@ var initTinymce = function (selector, config) {
         height: 500,
         convert_urls: false,
         theme: 'modern',
+        powerpaste_word_import: 'clean',
+        powerpaste_html_import: 'clean',
         link_class_list: [
             {title: 'Link', value: ''},
             {title: 'Button', value: 'button'},
@@ -294,13 +301,15 @@ var initTinymce = function (selector, config) {
         autoresize_min_height: '160px',
         allow_script_urls: true,
         file_picker_callback: function (cb, value, meta) {
-            $dropzoneInst.on('success', function (file, data) {
-                cb(data.url, {title: null, class: 'pckg-img'});
-            });
+            if ($dropzoneInst) {
+                $dropzoneInst.on('success', function (file, data) {
+                    cb(data.url, {title: null, class: 'pckg-img'});
+                });
 
-            $dropzone.trigger('click');
+                $dropzone.trigger('click');
+            }
         },
-        setup: function(editor) {
+        setup: function (editor) {
             editor.addCommand('mceInsertLink', function (ui, value) {
                 var anchor;
 
@@ -323,7 +332,7 @@ var initTinymce = function (selector, config) {
                 }
             });
 
-            editor.on('Paste Change input Undo Redo', function() {
+            editor.on('Paste Change input Undo Redo', function () {
                 console.log('changing');
                 var content = editor.getContent();
                 var updated = content.replace(/<\/?g[^>]*>/g, "");
@@ -341,7 +350,7 @@ var initTinymce = function (selector, config) {
         $.each(config, function (key, val) {
             if (key == 'setup') {
                 var tempSetup = defaultConfig.setup;
-                defaultConfig.setup = function(editor) {
+                defaultConfig.setup = function (editor) {
                     tempSetup(editor);
                     val(editor);
                 }
