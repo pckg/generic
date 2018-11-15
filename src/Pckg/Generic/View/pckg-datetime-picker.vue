@@ -5,7 +5,7 @@
 
         <div class="picker" v-if="visible" :class="'mode-' + myMode">
 
-            <template v-if="myMode != 'day'">
+            <template v-if="true || myMode != 'day'">
                 <div class="as-table">
                     <div class="prev">
                         <button type="button" class="btn btn-default btn-sm pull-left" @click.prevent="prev">
@@ -56,11 +56,12 @@
                 </template>
 
                 <template v-else-if="myMode == 'day'">
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block" @click.prevent="prevHour">
+                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
+                            @click.prevent="prevHour">
                         <i class="fa fa-chevron-up"></i>
                     </button>
 
-                    <hr v-if="false" />
+                    <hr v-if="false"/>
 
                     <table class="table table-condensed">
                         <tbody>
@@ -77,9 +78,10 @@
                         </tbody>
                     </table>
 
-                    <hr v-if="false" />
+                    <hr v-if="false"/>
 
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block" @click.prevent="nextHour">
+                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
+                            @click.prevent="nextHour">
                         <i class="fa fa-chevron-down"></i>
                     </button>
                 </template>
@@ -95,6 +97,9 @@
     export default {
         name: 'pckg-datetime-picker',
         props: {
+            localDispatcher: {
+                default: null
+            },
             placeholder: {
                 type: String
             },
@@ -151,23 +156,24 @@
 
                 return m;
             },
+            close: function () {
+                this.visible = false;
+                this.$emit('closed');
+            },
+            show: function () {
+                this.visible = true;
+                this.$emit('opened');
+            },
             focused: function () {
-                console.log('focused');
                 this.visible = true;
                 if (!this.myValue || this.myValue.length == 0) {
-                    /**
-                     * @T00D00 - should we set first available hour? And date?
-                     */
-                    if (this.options.type == 'time') {
-                        this.myValue = '10:00';
-                        return;
+                    if (this.options.getDefault) {
+                        this.myValue = this.options.getDefault();
                     } else {
-                        this.myValue = this.moment().format(this.options.format);
-                        return;
+                        this.myValue = this.moment().format(this.options.format)
                     }
 
-                    this.$emit('input', this.moment().format(this.options.format));
-                    return;
+                    this.$emit('input', this.myValue);
                 }
             },
             prev: function () {
@@ -224,6 +230,16 @@
                 this.$emit('input', value);
 
                 if (this.options.type == 'date' && this.myMode == 'month') {
+                    this.close();
+                    if (this.options.onSelected) {
+                        this.options.onSelected(this);
+                    }
+                    return;
+                } else if (this.options.type == 'time' && this.myMode == 'day') {
+                    this.close();
+                    if (this.options.onSelected) {
+                        this.options.onSelected(this);
+                    }
                     return;
                 }
 
@@ -239,6 +255,9 @@
             }
         },
         created: function () {
+            if (this.options.onCreated) {
+                this.options.onCreated(this);
+            }
             let $t = this;
 
             $('body').on('click', function (e) {
