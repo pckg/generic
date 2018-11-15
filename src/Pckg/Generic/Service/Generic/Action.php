@@ -269,6 +269,7 @@ class Action implements \JsonSerializable
                             return (string)$result;
                         });
 
+                    $this->getAction()->pivot->build = $result;
                     if ($innerOnly) {
                         return $result;
                     }
@@ -383,13 +384,15 @@ class Action implements \JsonSerializable
         }
 
         return [
-            'id'           => $this->action->pivot->id,
-            'class'        => $this->action->class,
-            'classed'      => $classed,
-            'method'       => $this->action->method,
-            'template'     => $template,
-            'settings'     => $this->action->pivot->settingsArray,
-            'content'      => $this->getContent(),
+            'id'        => $this->action->pivot->id,
+            'parent_id' => $this->action->pivot->parent_id,
+            'class'     => $this->action->class,
+            'classed'   => $classed,
+            'method'    => $this->action->method,
+            'template'  => $template,
+            'settings'  => $this->action->pivot->settingsArray,
+            'content'   => $this->getContent(),
+            'build'     => $this->action->pivot->build,
         ];
     }
 

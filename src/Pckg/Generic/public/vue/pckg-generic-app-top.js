@@ -416,6 +416,19 @@ var pckgSmartItem = {
             default: 0
         }
     },
+    mounted: function () {
+        if (!this.myAction) {
+            return;
+        }
+
+        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
+            this.tpl = newTemplate;
+        }.bind(this));
+
+        $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
+            this.myAction.settings.perRow = newVal;
+        }.bind(this));
+    },
     data: function () {
         return {
             templateRender: null,
@@ -433,19 +446,6 @@ var pckgSmartItem = {
         }
 
         return this.templateRender();
-    },
-    mounted: function () {
-        if (!this.myAction) {
-            return;
-        }
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
-            this.tpl = newTemplate;
-        }.bind(this));
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
-            this.myAction.settings.perRow = newVal;
-        }.bind(this));
     },
     watch: {
         tpl: {
@@ -495,6 +495,9 @@ var pckgElement = {
         },
         id: function () {
             return !this.action ? null : (this.action.type + '-' + this.action.id);
+        },
+        subactions: function() {
+            return $store.getters.actionChildren(this.actionId);
         },
         actionClass: function () {
             if (!this.action) {

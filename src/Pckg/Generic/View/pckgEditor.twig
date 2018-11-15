@@ -125,7 +125,35 @@
 
         <div class="pckg-editor-settings" v-else-if="action.id" :class="visibilityClass">
 
-            <p class="text-center padding-vertical-xs margin-none"><b>${ action.title } #${ action.id }</b></p>
+            <!-- action parent and children navigation -->
+            <div class="as-table padding-vertical-xs">
+                <div class="text-left">
+                    <button type="button" class="btn btn-default btn-sm" title="Go to parent" :disabled="!actionParent" @click.prevent="setAction(actionParent)">
+                        <i class="fa fa-chevron-left"></i></button>
+                </div>
+                <div class="text-center"><b>${ action.title } #${ action.id }</b></div>
+                <div class="text-right">
+
+                    <button v-if="actionChildren.length == 1" type="button" class="btn btn-default btn-sm"
+                            title="Go to parent" @click.prevent="setAction(actionChildren[0])">
+                        <i class="fa fa-chevron-right"></i></button>
+
+                    <div class="btn-group btn-group-sm" v-else>
+                        <button class="dropdown-toggle btn btn-default btn-sm"
+                                :disabled="actionChildren.length == 0" title="List children" data-toggle="dropdown"
+                                role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li v-for="childAction in actionChildren">
+                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title } #${ childAction.id }</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
 
             <div class="clearfix"></div>
 
@@ -663,9 +691,7 @@
 <script type="text/javascript">
     Vue.component('pckg-editor', {
         props: {
-            routeId: {
-                type: Number
-            },
+            routeId: {},
             visibilityClass: {
                 type: String,
                 default: 'hidden'
@@ -1348,6 +1374,12 @@
             },
             backgroundImageUploadUrl: function () {
                 return utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphBackgroundImage'], {actionsMorph: this.action.id});
+            },
+            actionParent: function () {
+                return $store.getters.actionParent(this.action.id);
+            },
+            actionChildren: function () {
+                return $store.getters.actionChildren(this.action.id);
             }
         }
     });
