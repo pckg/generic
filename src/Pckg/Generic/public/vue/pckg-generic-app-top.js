@@ -495,7 +495,7 @@ var pckgElement = {
             return this.action ? this.action.content : {};
         },
         actionClass: function () {
-            let typeSuffix = 'action';
+            let typeSuffix = this.$options.name.replace('pckg-', '');
             if (this.action.type == 'container') {
                 typeSuffix = this.action.settings.container || 'container';
             }
