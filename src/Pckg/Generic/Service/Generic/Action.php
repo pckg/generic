@@ -202,7 +202,9 @@ class Action
                     /**
                      * Awh, and check for allowed templates. :)
                      */
-                    $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
+                    if (strpos($this->action->pivot->template, '{') === false) {
+                        $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
+                    }
                 }
 
                 /**
