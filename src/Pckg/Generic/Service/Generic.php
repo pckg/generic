@@ -78,6 +78,18 @@ class Generic
         return $route->hasPermissionToView();
     }
 
+    public function getGenericRoutes()
+    {
+        return (new Routes())->joinTranslations()->nonDeleted()->all()->map(function(Route $route){
+            return [
+                'id'    => $route->id,
+                'route'     => $route->route,
+                'title'     => $route->title,
+                'resolvers' => $route->resolvers,
+            ];
+        })->all();
+    }
+
     /**
      * @param Block ...$blocks
      *
@@ -225,12 +237,6 @@ class Generic
                    'app',
                    1);
 
-        if ($route) {
-            $layoutActions->each(function(ActionRecord $action){
-                $this->actions->push($action);
-            });
-        }
-
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
@@ -272,6 +278,12 @@ class Generic
                     $route ?? new Route(),
                     $resolved
                 );
+
+                //if ($route) {
+                //$layoutActions->each(function(ActionRecord $action){
+                    $this->actions->push($action);
+                //});
+                //}
             }
         );
     }

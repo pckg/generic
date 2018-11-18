@@ -514,8 +514,8 @@ var pckgElement = {
                 return;
             }
             let typeSuffix = this.$options.name.replace('pckg-', '');
-            if (this.action.type == 'container') {
-                typeSuffix = this.action.settings.container || 'container';
+            if (this.action.type == 'container' && this.action.settings.container != 'container') {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.container;
             }
 
             if (this.action.settings.width.length > 0) {

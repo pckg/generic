@@ -32,6 +32,16 @@ class Action implements \JsonSerializable
     protected $action;
 
     /**
+     * @param string $template
+     *
+     * @return View\Twig
+     */
+    public function toView(string $template)
+    {
+        return view($template, ['action' => $this]);
+    }
+
+    /**
      * @param      $class
      * @param      $method
      * @param null $order
@@ -39,7 +49,6 @@ class Action implements \JsonSerializable
     public function __construct(ActionRecord $action, Route $route = null, $resolved = [])
     {
         $this->args = [
-            'content'  => $action->pivot->content ?? null,
             'settings' => $action->pivot->settings ?? [],
             'route'    => $route,
             'resolved' => $resolved,
@@ -72,7 +81,7 @@ class Action implements \JsonSerializable
      */
     public function getContent()
     {
-        return $this->args['content'] ?? $this->action->content;
+        return $this->action->pivot->content;
     }
 
     public function getFlat()
@@ -184,7 +193,7 @@ class Action implements \JsonSerializable
 
                 if ($this->getClass() && $this->getMethod()) {
                     $args = array_merge(router()->get('data'), router()->getResolves());
-                    $args = array_merge($args, ['action' => $this]);
+                    $args = array_merge($args, ['action' => $this, 'content' => $this->getContent()]);
                     $args = array_merge($args, $this->args);
 
                     measure('Resolving',
