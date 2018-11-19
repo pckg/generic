@@ -85,7 +85,7 @@ class Generic
                 'id'    => $route->id,
                 'route'     => $route->route,
                 'title'     => $route->title,
-                'resolvers' => $route->resolvers,
+                'resolvers' => json_decode($route->resolvers, true),
             ];
         })->all();
     }
