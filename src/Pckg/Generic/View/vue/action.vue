@@ -26,7 +26,13 @@
                 return h('div', 'Loading ...');
             }
 
-            return this.templateRender();
+            try {
+                let render = this.templateRender();
+                return render;
+            } catch (e) {
+                console.log('Error rendering template', e, this.action);
+                return h('div', 'Error rendering template: ' + e.getMessage())
+            }
         },
         watch: {
             tpl: {
