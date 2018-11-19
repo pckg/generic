@@ -192,6 +192,11 @@ class Action implements \JsonSerializable
                 $return .= $this->getBackgroundVideoHtml();
 
                 if ($this->getClass() && $this->getMethod()) {
+                    /**
+                     * Get subhtml for multi-leveled actions.
+                     */
+                    $this->getSubHtml();
+
                     $args = array_merge(router()->get('data'), router()->getResolves());
                     $args = array_merge($args, ['action' => $this, 'content' => $this->getContent()]);
                     $args = array_merge($args, $this->args);
