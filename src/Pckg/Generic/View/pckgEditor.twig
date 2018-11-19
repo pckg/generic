@@ -957,7 +957,7 @@
                 if (this.footers.length > 0) {
                     return;
                 }
-                http.getJSON($store.state.router.urls['pckg.generic.pageStructure.initialFetch'], function (data) {
+                http.getJSON(utils.url('@pckg.generic.pageStructure.initialFetch'), function (data) {
                     this.availableScopes = data.availableScopes;
                     this.availableContainers = data.availableContainers;
                     this.availableBackgroundSizes = data.availableBackgroundSizes;
@@ -994,7 +994,7 @@
                 $('#switchContentModal').modal('show');
             },
             deleteAction: function () {
-                http.deleteJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph'], {actionsMorph: this.action.id}), function (data) {
+                http.deleteJSON(utils.url('@pckg.generic.pageStructure.actionsMorph', {actionsMorph: this.action.id}), function (data) {
                     $('.modal').modal('hide');
                 });
             },
@@ -1062,8 +1062,8 @@
             },
             addAction: function (c) {
                 var url = this.action.id
-                    ? utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph.addPartial'], {actionsMorph: this.action.id})
-                    : utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorph.addRoutePartial'], {route: this.routeId});
+                    ? utils.url('@pckg.generic.pageStructure.actionsMorph.addPartial', {actionsMorph: this.action.id})
+                    : utils.url('@pckg.generic.pageStructure.actionsMorph.addRoutePartial', {route: this.routeId});
                 http.post(url, {
                     partial: c
                 }, function (data) {
@@ -1124,7 +1124,7 @@
                 }.bind(this));*/
             },
             refreshWholeContent: function () {
-                http.getJSON(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphContent'], {actionsMorph: this.action.id}), function (data) {
+                http.getJSON(utils.url('@pckg.generic.pageStructure.actionsMorphContent', {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
                 }.bind(this));
             },
@@ -1159,7 +1159,7 @@
                 }.bind(this));
             },
             saveSettings: function () {
-                http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphSettings'], {actionsMorph: this.action.id}), {
+                http.post(utils.url('@pckg.generic.pageStructure.actionsMorphSettings', {actionsMorph: this.action.id}), {
                     settings: this.form.settings,
                     template: this.action.template
                 }, function (data) {
@@ -1172,17 +1172,17 @@
                 });
             },
             duplicateContent: function (content) {
-                http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.duplicateActionsMorphContent'], {actionsMorph: this.action.id}), {}, function (data) {
+                http.post(utils.url('@pckg.generic.pageStructure.duplicateActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
                     this.content = data.content;
                 }.bind(this));
             },
             createContent: function () {
-                http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.createActionsMorphContent'], {actionsMorph: this.action.id}), {}, function (data) {
+                http.post(utils.url('@pckg.generic.pageStructure.createActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
                     this.content = data.content;
                 }.bind(this));
             },
             saveContent: function () {
-                http.post(utils.url($store.state.router.urls['pckg.generic.pageStructure.content'], {content: this.content.id}), {content: this.content}, function (data) {
+                http.post(utils.url('@pckg.generic.pageStructure.content', {content: this.content.id}), {content: this.content}, function (data) {
                     this.content = data.content;
                     $('#editBlockModal').modal('hide');
                 }.bind(this));
@@ -1377,7 +1377,7 @@
                 return sizes;
             },
             backgroundImageUploadUrl: function () {
-                return utils.url($store.state.router.urls['pckg.generic.pageStructure.actionsMorphBackgroundImage'], {actionsMorph: this.action.id});
+                return utils.url('@pckg.generic.pageStructure.actionsMorphBackgroundImage', {actionsMorph: this.action.id});
             },
             actionParent: function () {
                 return $store.getters.actionParent(this.action.id);
