@@ -1,5 +1,7 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Pckg\Concept\Reflect;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Generic\Entity\Actions;
@@ -12,7 +14,6 @@ use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
-use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Record\SettingsMorph;
 use Pckg\Generic\Service\Generic;
 use Pckg\Manager\Upload;
@@ -527,6 +528,44 @@ class PageStructure
             'success'  => false,
             'messages' => $errors,
         ];
+    }
+
+    public function getRouteResolversAction(Route $route)
+    {
+        $resolvers = $route->resolvers;
+
+        if (!$resolvers) {
+            return [
+                'resolvers' => [],
+            ];
+        }
+        $resolvers = collect(json_decode($resolvers, true))->map(function($resolver, $key) use ($route) {
+            $resolverObject = Reflect::create($resolver);
+
+            if (!method_exists($resolverObject, 'prepareEntity')) {
+                dd($resolverObject);
+            }
+
+            $entity = $resolverObject->prepareEntity();
+            $items = $entity->limit(100)->all()->keyBy($resolverObject->getBy());
+
+            return [
+                'key'   => $key,
+                'items' => $items->map(function(Record $record) use ($key, $resolverObject, $route) {
+                    return [
+                        'id'    => $record->id,
+                        'title' => $record->title,
+                        'url'   => url($route->slug, [
+                            $key         => $record->{$resolverObject->getBy()},
+                            $key . 'Url' => $record->title,
+                        ]),
+                        'value' => null,
+                    ];
+                }),
+            ];
+        });
+
+        return ['resolvers' => $resolvers];
     }
 
 }

@@ -15,6 +15,17 @@ class PageStructure extends Provider
     {
         return [
             (new Group([
+                           'urlPrefix'  => '/api/generic/route',
+                           'namePrefix' => 'pckg.generic.pageStructure',
+                           'controller' => PageStructureController::class,
+                       ]))->routes([
+                                       '.routeResolvers' => (new Route('/[route]/resolvers',
+                                                                       'routeResolvers'))->resolvers([
+                                                                                                         'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                                                                             'route'),
+                                                                                                     ]),
+                                   ]),
+            (new Group([
                            'urlPrefix'  => '/api/pckg/generic/pageStructure',
                            'namePrefix' => 'pckg.generic.pageStructure',
                            'controller' => PageStructureController::class,

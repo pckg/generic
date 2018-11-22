@@ -392,9 +392,13 @@ class Action implements \JsonSerializable
         $templates = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method . '.' . $classed, null);
         if (is_array($templates)) {
             $listTemplate = array_keys($templates['list'] ?? [])[0] ?? null;
+            if (!array_key_exists('list', $template) || !$template['list'] || !in_array($template['list'], array_keys($templates['list']))) {
+                $template['list'] = $listTemplate;
+            }
             $itemTemplate = array_keys($templates['item'] ?? [])[0] ?? null;
-            $template['list'] = $listTemplate;
-            $template['item'] = $itemTemplate;
+            if (!array_key_exists('item', $template) || !$template['item'] || !in_array($template['item'], array_keys($templates['item']))) {
+                $template['item'] = $itemTemplate;
+            }
         }
 
         return [
