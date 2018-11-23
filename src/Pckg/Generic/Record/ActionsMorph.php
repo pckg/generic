@@ -257,6 +257,10 @@ class ActionsMorph extends Record
 
     public function fillTemplateSettings($template)
     {
+        if (!$this->action) {
+            return $template;
+        }
+
         $config = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method, []);
         $listTemplates = config('pckg.generic.templateEngine.list', []);
 
