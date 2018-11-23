@@ -58,11 +58,7 @@ Vue.filter('timespan', function (timespan) {
 });
 
 Vue.filter('ucfirst', function (string) {
-    if (!string) {
-        return '';
-    }
-
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    return utils.ucfirst(string);
 });
 
 Vue.filter('nl2br', function (string) {

@@ -243,35 +243,39 @@ class Generic
             return $action->pivot->parent_id;
         }, function($action) {
             return $action->pivot->id;
+        })->filter(function(ActionRecord $action) use ($resolved, $route) {
+
+            /**
+             * Filter out hidden and shown.
+             */
+            if ($route) {
+                $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
+                if ($hide && in_array($route->id, $hide)) {
+                    /**
+                     * If action has defined hide values, hide actions on current route.
+                     */
+                    return false;
+                }
+
+                $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
+                if ($show && !in_array($route->id, $show)) {
+                    /**
+                     * If action has defined show values, hide action if route is not defined.
+                     */
+                    return false;
+                }
+            } else {
+                $system = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockSystem', []);
+                if (!in_array(router()->getName(), $system)) {
+                    return false;
+                }
+            }
+
+            return true;
         });
 
         $layoutActions->each(
             function(ActionRecord $action) use ($resolved, $route) {
-                /**
-                 * Filter out hidden and shown.
-                 */
-                if ($route) {
-                    $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
-                    if ($hide && in_array($route->id, $hide)) {
-                        /**
-                         * If action has defined hide values, hide actions on current route.
-                         */
-                        return;
-                    }
-
-                    $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
-                    if ($show && !in_array($route->id, $show)) {
-                        /**
-                         * If action has defined show values, hide action if route is not defined.
-                         */
-                        return;
-                    }
-                } else {
-                    $system = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockSystem', []);
-                    if (!in_array(router()->getName(), $system)) {
-                        return;
-                    }
-                }
 
                 $this->addAction(
                     $action,
@@ -281,11 +285,19 @@ class Generic
 
                 //if ($route) {
                 //$layoutActions->each(function(ActionRecord $action){
-                    $this->actions->push($action);
+                    $this->recursiveAddAction($action);
                 //});
                 //}
             }
         );
+    }
+
+    protected function recursiveAddAction(ActionRecord $action)
+    {
+        $this->actions->push($action);
+        collect($action->getChildren)->each(function(ActionRecord $action) {
+            $this->recursiveAddAction($action);
+        });
     }
 
     /**

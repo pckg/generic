@@ -291,9 +291,6 @@ var pckgSmartComponent = {
     props: {
         actionId: {
             required: true
-        },
-        content: {
-            type: Object
         }
     },
     data: function () {
@@ -302,14 +299,20 @@ var pckgSmartComponent = {
         };
     },
     computed: {
-        action: function() {
+        action: function () {
             return $store.getters.actionById(this.actionId);
         },
-        listComponent: function(){
+        content: function () {
+            return this.action.content;
+        },
+        listComponent: function () {
             return (this.action ? this.action.template.list : null) || 'derive-list';
         },
-        itemComponent: function(){
+        itemComponent: function () {
             return (this.action ? this.action.template.item : null) || 'derive-item';
+        },
+        templateClass: function () {
+            return this.$options.name;
         }
     },
     mounted: function () {
@@ -405,6 +408,16 @@ var pckgSmartList = {
             }
             this.itemComponent = newTemplate;
         }.bind(this));
+    },
+    computed: {
+        content: function () {
+            return this.action.content;
+        },
+        templateClass: function () {
+            return 'derive-list ' + this.$options.name
+                + ' v' + utils.ucfirst(this.$options.name.replace('derive-list-', '').replace('derive-list', 'default'))
+                + ' v' + utils.ucfirst(this.itemComponent.replace('derive-item-', '').replace('derive-item', 'default'));
+        }
     }
 };
 
@@ -412,8 +425,7 @@ var pckgSmartItem = {
     mixins: [pckgTranslations, pckgCdn],
     props: {
         content: {
-            required: true,
-            type: Object
+            required: true
         },
         action: {
             type: Object
@@ -440,7 +452,8 @@ var pckgSmartItem = {
         return {
             templateRender: null,
             tpl: 'derive-item',
-            myAction: this.action
+            myAction: this.action,
+            myContent: typeof this.content == 'string' ? JSON.parse(this.content) : this.content,
         };
     },
     render: function (h) {
@@ -453,6 +466,15 @@ var pckgSmartItem = {
         }
 
         return this.templateRender();
+    },
+    computed: {
+        templateClass: function () {
+            return 'derive-item ' + this.$options.name
+                + ' v' + utils.ucfirst(this.$options.name.replace('derive-item-', '').replace('derive-item', 'default'));
+        },
+        perRow: function () {
+            return this.myAction.settings.perRow || 3;
+        }
     },
     watch: {
         tpl: {
@@ -506,7 +528,7 @@ var pckgElement = {
         id: function () {
             return !this.action ? null : (this.action.type + '-' + this.action.id);
         },
-        subactions: function() {
+        subactions: function () {
             return $store.getters.actionChildren(this.actionId);
         },
         actionClass: function () {
