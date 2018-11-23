@@ -73,7 +73,7 @@ class Action implements \JsonSerializable
 
     public function getType()
     {
-        return $this->action->pivot->type;
+        return $this->action->pivot->type ?? 'action';
     }
 
     /**
@@ -268,11 +268,11 @@ class Action implements \JsonSerializable
                              * In template we store template, list template and item template designs.
                              */
                             $newFile = str_replace(':', '/View/', $this->action->pivot->template['template']);
-                            message('Setting file ' . $newFile);
+                            message('Using action template ' . $newFile);
                             $result->setFile($newFile);
                         }
 
-                        $result->addData('serviceAction', $this);
+                        // $result->addData('serviceAction', $this);
                     }
 
                     /**
@@ -394,7 +394,7 @@ class Action implements \JsonSerializable
         $itemTemplates = config('pckg.generic.templateEngine.item', []);
         if (is_array($templates)) {
             $listTemplate = array_keys($templates['list'] ?? $listTemplates)[0] ?? null;
-            if (!array_key_exists('list', $template) || !$template['list'] || !in_array($template['list'], array_keys($templates['list']))) {
+            if (!isset($template['list'])) {
                 $template['list'] = $listTemplate;
             }
             $itemTemplate = array_keys($templates['item'] ?? $itemTemplates)[0] ?? null;

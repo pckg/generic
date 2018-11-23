@@ -233,27 +233,51 @@ class ActionsMorph extends Record
 
     public function getTemplateAttribute() {
         $template = $this->data('template');
+
         if (!$template) {
-            /**
-             * @T00D00 - fetch defaults?
-             */
-            return [
+            return $this->fillTemplateSettings([
                 'template' => null,
                 'list' => null,
                 'item' => null,
-            ];
+            ]);
         }
 
         if (substr($template, 0, 1) == '{') {
             $template = (array)json_decode($template, true);
-            return $template;
+
+            return $this->fillTemplateSettings($template);
         }
 
-        return [
+        return $this->fillTemplateSettings([
             'template' => $template,
             'list' => null,
             'item' => null,
-        ];
+        ]);
+    }
+
+    public function fillTemplateSettings($template)
+    {
+        $config = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method, []);
+        $listTemplates = config('pckg.generic.templateEngine.list', []);
+
+        /**
+         * If config exists set first template if wrong template is set or template is not existent.
+         */
+        if ($config && (!$template['template'] || !isset($config[$template['template']]))) {
+            $template['template'] = array_keys($config)[0];
+        }
+
+        if (isset($config[$template['template']]['item'])) {
+            if (!$template['list'] || !isset($config[$template['template']]['list'][$template['list']])) {
+                $template['list'] = array_keys($listTemplates)[0];
+            }
+
+            if (!$template['item'] || !isset($config[$template['template']]['item'][$template['item']])) {
+                $template['item'] = array_keys($config[$template['template']]['item'])[0];
+            }
+        }
+
+        return $template;
     }
 
     public function getSettingsArrayAttribute()

@@ -32,7 +32,6 @@ class PageStructure
             'availableBackgroundAttachments' => config('pckg.generic.editor.bgAttachments'),
             'availableBackgroundPositions'   => config('pckg.generic.editor.bgPositions'),
             'templates'                      => config('pckg.generic.templates'),
-            'listTemplates'                  => config('pckg.generic.templateEngine.list'),
         ];
 
         foreach (['structures', 'pages', 'footers'] as $type) {
@@ -51,6 +50,19 @@ class PageStructure
                     }
                 );
             });
+        }
+
+        $listTemplates = config('pckg.generic.templateEngine.list', []);
+        foreach ($data['templates'] as $controller => $config) {
+            foreach ($config as $action => $views) {
+                foreach ($views as $view => $config) {
+                    if (!is_array($config)) {
+                        continue;
+                    }
+
+                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ?? $listTemplates;
+                }
+            }
         }
 
         $data['routes'] = (new Routes())->joinTranslations()->nonDeleted()->all();

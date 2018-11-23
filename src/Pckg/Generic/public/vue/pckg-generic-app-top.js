@@ -59,7 +59,7 @@ var pckgCdn = {
         },
         mediaImage: function (pic, folder) {
             return pic && pic.length > 0
-                ? '/storage/uploads/' + folder + '/' + pic
+                ? '/storage/uploads/' + (folder ? folder + '/' : '') + pic
                 : null;
         }
     }

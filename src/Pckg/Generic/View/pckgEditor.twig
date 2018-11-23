@@ -3,7 +3,7 @@
 
         <div class="click-prevent" @click.prevent="findClickedElement($event)"
              @dblclick.prevent="findClickedElement($event)" :class="visibilityClass"
-            v-if="false && (!content || !content.id)"></div>
+             v-if="false && (!content || !content.id)"></div>
 
         <!--<div class="clearfix"></div>
 
@@ -128,7 +128,8 @@
             <!-- action parent and children navigation -->
             <div class="as-table padding-vertical-xs">
                 <div class="text-left">
-                    <button type="button" class="btn btn-default btn-sm" title="Go to parent" :disabled="!actionParent" @click.prevent="setAction(actionParent)">
+                    <button type="button" class="btn btn-default btn-sm" title="Go to parent" :disabled="!actionParent"
+                            @click.prevent="setAction(actionParent)">
                         <i class="fa fa-chevron-left"></i></button>
                 </div>
                 <div class="text-center"><b>${ action.title } #${ action.id }</b></div>
@@ -147,7 +148,8 @@
 
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li v-for="childAction in actionChildren">
-                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title } #${ childAction.id }</a>
+                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title } #${
+                                    childAction.id }</a>
                             </li>
                         </ul>
                     </div>
@@ -746,7 +748,6 @@
                 structures: {},
                 pages: {},
                 templates: {},
-                listTemplates: {},
                 footers: {},
                 padding: {
                     top: 'no',
@@ -955,7 +956,6 @@
                     this.structures = data.structures;
                     this.pages = data.pages;
                     this.templates = data.templates;
-                    this.listTemplates = data.listTemplates;
                     this.footers = data.footers;
 
                     this.routes = data.routes;
@@ -1061,26 +1061,23 @@
                 });
             },
             setAction: function (action) {
-                /*
-                action.template = action.template || '';
-                action.listTemplate = action.listTemplate || '';
-                action.itemTemplate = action.itemTemplate || '';
-                */
                 this.action = action;
                 /**
                  * Set default action template
                  */
-                if (false
-                    && this.templates[action.class]
+                if (this.templates[action.class]
                     && this.templates[action.class][action.method]
                     && !this.templates[action.class][action.method][action.template.template]) {
                     this.action.template.template = Object.keys(this.templates[action.class][action.method])[0];
                     let name = this.templates[action.class][action.method][this.action.template];
-                    if (typeof name != 'string') {
+                    if (!name) {
+                        console.log('template is empty');
+                    } else if (typeof name != 'string') {
+                        console.log('template is not string');
                         /**
                          * Set default list template
                          */
-                        if (name.list && (!action.template.list || action.template.list.length == 0)) {
+                        if ((name.item || name.list) && (!action.template.list || action.template.list.length == 0)) {
                             this.action.template.list = Object.keys(name.list)[0];
                         }
                         /**
@@ -1089,6 +1086,8 @@
                         if (name.item && (!action.template.item || action.template.item.length == 0)) {
                             this.action.template.item = Object.keys(name.item)[0];
                         }
+                    } else {
+                        console.log('template is string', name);
                     }
                 }
                 /*
@@ -1322,19 +1321,14 @@
             },
             actionTemplates: function () {
                 if (!this.action) {
-                    return [];
+                    return {};
                 }
 
                 if (!this.templates[this.action.class] || !this.templates[this.action.class][this.action.method]) {
-                    return [];
+                    return {};
                 }
 
-                let templates = this.templates[this.action.class][this.action.method];
-                if (templates && Object.isObject(templates) && templates.item && !templates.list) {
-                    templates.list = this.listTemplates;
-                }
-
-                return templates;
+                return this.templates[this.action.class][this.action.method];
             },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
