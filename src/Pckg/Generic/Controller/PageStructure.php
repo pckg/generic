@@ -32,6 +32,7 @@ class PageStructure
             'availableBackgroundAttachments' => config('pckg.generic.editor.bgAttachments'),
             'availableBackgroundPositions'   => config('pckg.generic.editor.bgPositions'),
             'templates'                      => config('pckg.generic.templates'),
+            'listTemplates'                  => config('pckg.generic.templateEngine.list'),
         ];
 
         foreach (['structures', 'pages', 'footers'] as $type) {

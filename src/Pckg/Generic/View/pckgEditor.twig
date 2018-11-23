@@ -746,6 +746,7 @@
                 structures: {},
                 pages: {},
                 templates: {},
+                listTemplates: {},
                 footers: {},
                 padding: {
                     top: 'no',
@@ -954,6 +955,7 @@
                     this.structures = data.structures;
                     this.pages = data.pages;
                     this.templates = data.templates;
+                    this.listTemplates = data.listTemplates;
                     this.footers = data.footers;
 
                     this.routes = data.routes;
@@ -1327,7 +1329,12 @@
                     return [];
                 }
 
-                return this.templates[this.action.class][this.action.method];
+                let templates = this.templates[this.action.class][this.action.method];
+                if (templates && Object.isObject(templates) && templates.item && !templates.list) {
+                    templates.list = this.listTemplates;
+                }
+
+                return templates;
             },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};
