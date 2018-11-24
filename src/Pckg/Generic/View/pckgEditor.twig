@@ -197,6 +197,74 @@
 
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingFive">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            <i class="fa fa-eye"></i> Template
+                        </a>
+                    </div>
+                    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingFive">
+                        <div class="panel-body">
+
+                            <div v-if="Object.keys(actionTemplates).length > 0">
+                                <label>Template</label>
+                                <select class="form-control" v-model="action.template.template">
+                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl"
+                                            v-if="typeof title === 'string'">${ title }
+                                    </option>
+
+                                    <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
+                                        <option :value="tpl">${ tpl }</option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            <template
+                                    v-if="actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] !== 'string'">
+
+                                <div v-if="actionTemplates[action.template.template].list">
+                                    <label>List template</label>
+                                    <select class="form-control" v-model="action.template.list">
+                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
+                                                :value="tpl">${ title }
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div v-if="actionTemplates[action.template.template].item">
+                                    <label>Item template</label>
+                                    <select class="form-control" v-model="action.template.item">
+                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
+                                                :value="tpl">${ title }
+                                        </option>
+                                    </select>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                {% for slug, form in actionForms %}
+                    <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
+                        <div class="panel-heading" role="tab" id="headingForm{{ slug }}">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseForm{{ slug }}" aria-expanded="false"
+                               aria-controls="collapseForm{{ slug }}">
+                                <i class="fa fa-cogs"></i> Settings <!-- {{ slug }} -->
+                            </a>
+                        </div>
+                        <div id="collapseForm{{ slug }}" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingForm{{ slug }}">
+                            <div class="panel-body">
+                                {{ form | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingTwo">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
@@ -446,74 +514,6 @@
                         </div>
                     </div>
                 </div>-->
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingFive">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            <i class="fa fa-eye"></i> Template
-                        </a>
-                    </div>
-                    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingFive">
-                        <div class="panel-body">
-
-                            <div v-if="Object.keys(actionTemplates).length > 0">
-                                <label>Template</label>
-                                <select class="form-control" v-model="action.template.template">
-                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl"
-                                            v-if="typeof title === 'string'">${ title }
-                                    </option>
-
-                                    <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
-                                        <option :value="tpl">${ tpl }</option>
-                                    </template>
-                                </select>
-                            </div>
-
-                            <template
-                                    v-if="actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] !== 'string'">
-
-                                <div v-if="actionTemplates[action.template.template].list">
-                                    <label>List template</label>
-                                    <select class="form-control" v-model="action.template.list">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
-                                                :value="tpl">${ title }
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div v-if="actionTemplates[action.template.template].item">
-                                    <label>Item template</label>
-                                    <select class="form-control" v-model="action.template.item">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
-                                                :value="tpl">${ title }
-                                        </option>
-                                    </select>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-
-                {% for slug, form in actionForms %}
-                    <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
-                        <div class="panel-heading" role="tab" id="headingForm{{ slug }}">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                               href="#collapseForm{{ slug }}" aria-expanded="false"
-                               aria-controls="collapseForm{{ slug }}">
-                                <i class="fa fa-cogs"></i> Settings <!-- {{ slug }} -->
-                            </a>
-                        </div>
-                        <div id="collapseForm{{ slug }}" class="panel-collapse collapse" role="tabpanel"
-                             aria-labelledby="headingForm{{ slug }}">
-                            <div class="panel-body">
-                                {{ form | raw }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
 
                 <div class="panel panel-default" v-if="action.type == 'wrapper'">
                     <div class="panel-heading" role="tab" id="headingFormWrapper">
