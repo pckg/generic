@@ -1,5 +1,5 @@
 <templates>
-    <div :id="'action-' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle">
+    <div :id="'action-' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle" @click.self.prevent="componentClicked">
         <slot name="body">
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
@@ -11,11 +11,13 @@
         name: 'pckg-action',
         mixins: [pckgElement],
         data: function () {
-            return {
-                templateRender: null,
-                tpl: null,
-                myAction: this.action
-            };
+            let d = pckgElement.data ? pckgElement.data.call(this) : {};
+
+            d.templateRender = null;
+            d.tpl = null;
+            d.myAction = this.action;
+
+            return d;
         },
         render: function (h) {
             if (!this.templateRender) {
@@ -39,7 +41,10 @@
                 immediate: true,
                 handler: function (newVal, oldVal) {
                     let res;
-                    let b = '<div :id="\'action-\' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle">' + (this.action.build || '<p>No build?</p>') + '</div>';
+                    let b = '<div :id="\'action-\' + action.id" :data-action-id="action.id" :class="actionClass" :style="actionStyle" @click.prevent="componentClicked">'
+                        + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
+                        + (this.action.build || '<p>No build?</p>')
+                        + '</div>';
                     try {
                         res = Vue.compile(b);
                     } catch (e) {

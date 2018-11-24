@@ -1,10 +1,6 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor">
 
-        <div class="click-prevent" @click.prevent="findClickedElement($event)"
-             @dblclick.prevent="findClickedElement($event)" :class="visibilityClass"
-             v-if="false && (!content || !content.id)"></div>
-
         <!--<div class="clearfix"></div>
 
         <div class="btn btn-group pull-right">
@@ -1061,6 +1057,9 @@
                 });
             },
             setAction: function (action) {
+                $store.commit('outlineAction', {actionId: action.id});
+                $store.commit('setActiveAction', {actionId: action.id});
+                $dispatcher.$emit('frontpage-deck:setVisible');
                 this.action = action;
                 /**
                  * Set default action template

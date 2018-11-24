@@ -60,7 +60,7 @@ class PageStructure
                         continue;
                     }
 
-                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ?? $listTemplates;
+                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ?? ($config['list'] ?? $listTemplates);
                 }
             }
         }

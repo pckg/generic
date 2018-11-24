@@ -273,7 +273,7 @@ class ActionsMorph extends Record
 
         if (isset($config[$template['template']]['item'])) {
             if (!$template['list'] || !isset($config[$template['template']]['list'][$template['list']])) {
-                $template['list'] = array_keys($listTemplates)[0];
+                $template['list'] = array_keys($config['list'] ?? $listTemplates)[0];
             }
 
             if (!$template['item'] || !isset($config[$template['template']]['item'][$template['item']])) {

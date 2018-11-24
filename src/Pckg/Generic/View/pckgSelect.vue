@@ -132,7 +132,6 @@
                 this.selectedModel = this.makeModel(newVal);
             },
             initialMultiple: function (newVal, oldVal) {
-                this.multiple = newVal;
                 this.selectedModel = this.makeModel(this.selected);
             },
             selectedModel: function (newVal, oldVal) {
@@ -243,6 +242,7 @@
             if ((!this.options || this.options.length == 0) && this.refreshUrl && this.refreshUrl.length > 0) {
                 this.refreshList();
             }
+            console.log($(this.$el), this);
         }
     }
 </script>

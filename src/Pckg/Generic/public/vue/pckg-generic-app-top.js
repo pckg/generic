@@ -518,6 +518,11 @@ var pckgElement = {
             default: null
         },
     },
+    methods: {
+        componentClicked: function () {
+            $dispatcher.$emit('actionClicked', this.action);
+        }
+    },
     computed: {
         action: function () {
             return this.hardAction ? this.hardAction : (this.actionId ? $store.getters.actionById(this.actionId) : null);
@@ -577,6 +582,10 @@ var pckgElement = {
 
                 mainClass = mainClass + ' ' + mapper[slug] + '-' + setting;
             });
+
+            if (this.action.outline) {
+                mainClass = mainClass + ' ' + 'pb-active-action';
+            }
 
             return mainClass;
         },

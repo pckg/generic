@@ -36,9 +36,9 @@ class Action implements \JsonSerializable
      *
      * @return View\Twig
      */
-    public function toView(string $template)
+    public function toView(string $template, $data = [])
     {
-        return view($template, ['action' => $this]);
+        return view($template, array_merge(['action' => $this], $data));
     }
 
     /**
