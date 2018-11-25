@@ -48,10 +48,10 @@
                     <div :id="'collapse' + hash(title)" class="panel-collapse collapse" role="tabpanel"
                          :aria-labelledby="'heading' + hash(title)">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
+                            <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
                                v-for="(partial, title) in subPartials">
                                 ${ partial.title }
-                            </a>
+                            </button>
                         </div>
                     </div>
 
@@ -69,10 +69,10 @@
                     <div :id="'collapse' + 'Structures'" class="panel-collapse collapse" role="tabpanel"
                          :aria-labelledby="'heading' + 'Structures'">
                         <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
-                               v-for="(partial, title) in structures">
+                            <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
+                                    v-for="(partial, title) in structures">
                                 ${ partial.title }
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -155,8 +155,8 @@
 
             <div class="clearfix"></div>
 
-            <div class="btn btn-group pull-left">
-                <a type="button" href="#" title="Delete element" class="btn btn-danger btn-sm"
+            <div class="btn btn-group btn-group-centered">
+                <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
                    @click.prevent="openDeleteActionModal">
                     <i aria-hidden="true" class="fa fa-trash danger"></i>
                 </a>
@@ -173,12 +173,12 @@
                     <i aria-hidden="true" class="fa fa-plus"></i>
                 </a>
 
-                <a type="button" href="#" title="Edit content" class="btn btn-warning btn-sm"
+                <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
                    @click.prevent="openEditContentModal">
                     <i aria-hidden="true" class="fa fa-edit"></i>
                 </a>
 
-                <a type="button" href="#" title="Save settings" class="btn btn-success btn-sm"
+                <a type="button" href="#" title="Save settings" class="btn btn-default btn-sm"
                    @click.prevent="saveSettings">
                     <i aria-hidden="true" class="fa fa-save"></i>
                 </a>
@@ -192,7 +192,6 @@
             <div class="clearfix"></div>
 
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-
 
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingFive">

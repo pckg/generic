@@ -2,7 +2,7 @@
     <div class="pckg-htmlbuilder-dropzone" :id="id">
         <div class="row">
             <div class="preview" :class="[ current ? 'col-md-3' : '' ]">
-                <img :src="current" class="img-responsive"/>
+                <img :src="cdn(current)" class="img-responsive"/>
             </div>
             <div :class="[ current ? 'col-md-9' : 'col-md-12' ]">
                 <p>
@@ -25,7 +25,8 @@
 </template>
 
 <script>
-    export default{
+    export default {
+        mixins: [pckgCdn],
         props: {
             current: {
                 type: String,
