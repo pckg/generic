@@ -7,7 +7,7 @@ use Pckg\Generic\Service\Generic\Action;
 class Content
 {
 
-    public function getSimpleAction(ContentRecord $content = null, Action $action)
+    public function getSimpleAction(Action $action)
     {
         /**
          * Get content, set it to proper view.
@@ -15,7 +15,6 @@ class Content
         return view(
             'Pckg/Generic:content/simple',
             [
-                'content' => $content,
                 'action'  => $action,
             ]
         );
@@ -64,7 +63,6 @@ class Content
                 }
             )->pivot->value : 'Pckg/Generic:content/simple',
             [
-                'content' => $content,
                 'action' => $action,
             ]
         );
