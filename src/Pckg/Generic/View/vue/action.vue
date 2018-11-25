@@ -1,5 +1,5 @@
 <templates>
-    <div :id="'action-' + action.id" :class="actionClass" :style="actionStyle" @click.self.prevent="componentClicked">
+    <div :id="id" :class="actionClass" :style="actionStyle">
         <slot name="body">
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
@@ -41,7 +41,7 @@
                 immediate: true,
                 handler: function (newVal, oldVal) {
                     let res;
-                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click.prevent="componentClicked">'
+                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">'
                         + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
                         + (this.action.build || '<p>No build?</p>')
                         + '</div>';

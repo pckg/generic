@@ -519,11 +519,19 @@ var pckgElement = {
         },
     },
     methods: {
-        componentClicked: function () {
-            $dispatcher.$emit('actionClicked', this.action);
+        componentClicked: function ($event) {
+            if (this.genericMode == 'edit') {
+                $event.preventDefault();
+                $event.stopPropagation();
+                $dispatcher.$emit('actionClicked', this.action);
+                return false;
+            }
         }
     },
     computed: {
+        genericMode: function() {
+            return $store.state.generic.genericMode;
+        },
         action: function () {
             return this.hardAction ? this.hardAction : (this.actionId ? $store.getters.actionById(this.actionId) : null);
         },
