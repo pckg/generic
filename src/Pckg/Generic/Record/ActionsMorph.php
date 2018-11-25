@@ -267,6 +267,9 @@ class ActionsMorph extends Record
         /**
          * If config exists set first template if wrong template is set or template is not existent.
          */
+        if (!array_key_exists('template', $template)) {
+            $template['template'] = null;
+        }
         if ($config && (!$template['template'] || !isset($config[$template['template']]))) {
             $template['template'] = array_keys($config)[0];
         }
