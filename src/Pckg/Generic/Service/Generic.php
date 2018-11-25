@@ -171,6 +171,24 @@ class Generic
                    'app',
                    1);
 
+        /**
+         * Check for deprecations.
+         */
+        $deprecations = config('deprecation.actions', []);
+        $this->actions = $this->actions->map(function(ActionRecord $action) use ($deprecations) {
+            if (strpos($action->slug, 'news')) {
+                if (isset($deprecations[$action->slug])) {
+                    $newAction = ActionRecord::gets(['slug' => $deprecations[$action->slug]]);
+                    $newAction->pivot = $action->pivot;
+                    $newAction->pivot->action_id = $newAction->id;
+                    $newAction->pivot->action = $newAction;
+                    return $newAction;
+                }
+            }
+
+            return $action;
+        });
+
         $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
