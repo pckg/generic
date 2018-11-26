@@ -591,8 +591,13 @@ var pckgElement = {
                 mainClass = mainClass + ' ' + mapper[slug] + '-' + setting;
             });
 
-            if (this.action.outline) {
-                mainClass = mainClass + ' ' + 'pb-active-action';
+            if (this.genericMode == 'edit') {
+                if (this.action.type == 'action') {
+                    mainClass = mainClass + ' pb-action';
+                }
+                if (this.action.outline) {
+                    mainClass = mainClass + ' ' + 'pb-active-action';
+                }
             }
 
             return mainClass;
