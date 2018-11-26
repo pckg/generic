@@ -68,9 +68,6 @@
             title: {
                 default: ''
             },
-            watchInitial: {
-                default: true,
-            },
             id: {
                 default: '',
                 type: String
@@ -271,7 +268,7 @@
                 this.$emit('input', newVal); // v-model
             },
             initialOptions: function (newVal, oldVal) {
-                if (newVal == oldVal || newVal == this.options || !this.watchInitial) {
+                if (newVal == oldVal || newVal == this.options) {
                     console.log('same options');
                     return;
                 }
