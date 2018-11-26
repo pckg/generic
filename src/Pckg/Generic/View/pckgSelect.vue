@@ -1,8 +1,6 @@
 <template>
     <div class="pckg-select" :class="styleClass">
-        <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
-
-        <!--<div v-show="false">
+        <div v-show="false">
             <select v-if="multiple" class="form-control" multiple v-model="selectedModel" :name="name">
                 <option value v-if="withEmpty"> -- select value(s) --</option>
                 <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
@@ -17,28 +15,31 @@
                     <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
                 </optgroup>
             </select>
-        </div>-->
+        </div>
 
         <div class="btn-group">
-            <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
+                <template v-if="initialMultiple && selected && selected.length > 1">({{ selected.length }})</template>
                 {{ selectedTitle }} <span class="caret text-right"></span>
             </a>
-            <ul class="dropdown-menu">
-                <li>
+            <ul class="dropdown-menu" :style="maxHeightStyle">
+                <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
                 </li>
+                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a></li>
                 <li v-for="(option, key) in finalOptions">
-                    <a href="#" @click.prevent="toggleOption(key, option)">
-                        <i class="fa fa-check" v-if="isValueSelected(key)"></i>
-                        {{ option }}
+                    <a href="#" @click.prevent="toggleOption($event, key)">
+                        <span class="text-left">{{ option}}</span>
+                        <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
                     </a>
                 </li>
                 <template v-for="(optgroup, label) in finalOptionGroups">
                     <li><b>{{ label }}</b></li>
                     <li v-for="(option, key) in optgroup">
-                        <a href="#" @click.prevent="toggleOption(key, option)">
-                            <i class="fa fa-check" v-if="isValueSelected(key)"></i>
-                            {{ option}}
+                        <a href="#" @click.prevent="toggleOption($event, key)">
+                            <span class="text-left">{{ option}}</span>
+                            <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
                         </a>
                     </li>
                 </template>
@@ -108,6 +109,15 @@
             }
         },
         computed: {
+            maxHeightStyle: function() {
+                return null;
+                let myBottom = parseInt($(this.$el).offset().top) - parseInt($(this.$el).outerHeight());
+                let bodyBottom = parseInt($('body').outerHeight());
+                let h = bodyBottom - myBottom;
+
+                console.log(h);
+                return {'max-height': h + 'px'};
+            },
             selectedTitle: function () {
                 let selected = Array.isArray(this.selectedModel) ? this.selectedModel : [this.selectedModel];
                 let titles = [];
@@ -129,7 +139,13 @@
                     return ' - - select value - - ';
                 }
 
-                return titles.join(', ');
+                let joined = titles.join(', ');
+
+                if (joined.length > 40) {
+                    return joined.substring(0, 40) + ' ...';
+                }
+
+                return joined;
             },
             finalOptions: function () {
                 return this.extractOptions(this.options);
@@ -170,7 +186,9 @@
             },
             initialOptions: function (newVal) {
                 console.log('initial options changed', newVal, this.options);
-                this.options = this.mergeOptions(newVal);
+                if (Object.keys(newVal) != Object.keys(this.options)) {
+                    this.options = this.mergeOptions(newVal);
+                }
             },
             initialMultiple: function (newVal) {
                 if (newVal && !Array.isArray(this.selectedModel)) {
@@ -181,10 +199,21 @@
             }
         },
         methods: {
+            isOptionFiltered: function(item, key){
+                if (!this.search || this.search.length == 0) {
+                    return false;
+                }
+
+                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
+                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
+            },
             extractOptions: function (o) {
                 var options = {};
 
                 $.each(o, function (key, item) {
+                    if (this.isOptionFiltered(key, item)) {
+                        return;
+                    }
                     if (this.flat) {
                         options[this.getId(item, key)] = this.getTitle(item, key);
                         return;
@@ -203,6 +232,10 @@
                 var options = {};
                 $.each(this.options, function (key, item) {
                     if (typeof item == 'string') {
+                        return;
+                    }
+
+                    if (this.isOptionFiltered(key, item)) {
                         return;
                     }
 
@@ -256,22 +289,29 @@
 
                 return option[this.id];
             },
-            toggleOption: function (key, label) {
+            toggleOption: function ($event, key) {
                 if (this.initialMultiple) {
-                    let i = this.selectedModel.indexOf(key);
-                    if (i >= 0) {
-                        this.selectedModel.splice(i, 1);
+                    if (!this.selectedModel) {
+                        this.selectedModel = key ? [key] : [];
                     } else {
-                        if (!this.selectedModel) {
-                            this.selectedModel = [key];
+                        let i = this.selectedModel.indexOf(key);
+                        if (i >= 0) {
+                            this.selectedModel.splice(i, 1);
                         } else {
-                            this.selectedModel.push(key);
+                            if (!this.selectedModel) {
+                                this.selectedModel = [key];
+                            } else {
+                                this.selectedModel.push(key);
+                            }
                         }
                     }
-                    return;
+                } else {
+                    this.selectedModel = this.selectedModel == key ? null : key;
                 }
 
-                this.selectedModel = this.selectedModel == key ? null : key;
+                if (this.initialMultiple) {
+                    $event.stopPropagation();
+                }
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
@@ -308,19 +348,12 @@
                 return newOptions;
             }
         },
-        beforeUpdate: function(){
-            console.log('before update');
-        },
-        updated: function(){
-            console.log('updated');
-        },
         mounted: function () {
-            console.log('mounted');
             /**
              * Initial fetch.
              */
             if ((!this.options || this.options.length == 0) && this.refreshUrl && this.refreshUrl.length > 0) {
-                //this.refreshList();
+                // this.refreshList();
             }
         }
     }
