@@ -634,7 +634,7 @@ ifrm.document.close();
                     $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
                 }
 
-                $element->setAttribute(':initial-options', json_encode($options));
+                $element->setAttribute('data-options', json_encode($options));
                 $element->setAttribute(':initial-multiple', 'false');
 
                 /*$element->setAttribute(
