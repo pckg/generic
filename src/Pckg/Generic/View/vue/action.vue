@@ -1,6 +1,7 @@
 <templates>
     <div :id="id" :class="actionClass" :style="actionStyle">
         <slot name="body">
+            <pckg-action-bg :action="action"></pckg-action-bg>
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
     </div>
@@ -42,13 +43,14 @@
                 handler: function (newVal, oldVal) {
                     let res;
                     let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">'
+                        + '<pckg-action-bg :action="action"></pckg-action-bg>'
                         + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
-                        + (this.action.build || '<p>No build?</p>')
+                        + (this.action.build)
                         + '</div>';
                     try {
                         res = Vue.compile(b);
                     } catch (e) {
-                        console.log(this.action.build || '<p>No build?</p>');
+                        console.log(this.action.build);
                         console.log('error building template', b);
                         res = Vue.compile('<p>Error building template</p>');
                     }

@@ -14,7 +14,7 @@ Pckg.vue.stores.auth = {
         user: function (state) {
             return state.user;
         },
-        isLoggedIn: function(state){
+        isLoggedIn: function (state) {
             return state.user.id > 0 ? true : false;
         }
     },
@@ -28,11 +28,11 @@ Pckg.vue.stores.auth = {
                 }
             });
 
-            $store.commit('prepareAddresses', { order: params && params.order || null });
+            $store.commit('prepareAddresses', {order: params && params.order || null});
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {
-                $store.commit('prepareUser', { callback: callback });
+                $store.commit('prepareUser', {callback: callback});
             });
         }
     }
@@ -96,9 +96,6 @@ const $store = new Vuex.Store({
         translations: Pckg.translations || {}
     },
     modules: Pckg.vue.stores,
-    actions: {},
-    mutations: {},
-    getters: {}
 });
 
 if ($('nav.header').length > 0) {
@@ -117,7 +114,7 @@ const $vue = new Vue({
     el: '#vue-app',
     $store,
     // router: $router,
-    data: function(){
+    data: function () {
         return {
             alerts: [],
             //$authStore: $authStore,
@@ -138,6 +135,11 @@ const $vue = new Vue({
         }
     },
     computed: {
-        '$store': function(){ return $store; }
+        '$store': function () {
+            return $store;
+        },
+        basket: function () {
+            return $store.state.basket;
+        }
     }
 });

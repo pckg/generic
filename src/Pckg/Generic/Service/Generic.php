@@ -137,7 +137,8 @@ class Generic
         $resolved = [];//(new Router\Command\ResolveDependencies(json_decode($route->resolvers, true)));
         if ($resolvers && $route->resolvers) {
             $router = router()->get();
-            foreach (json_decode($route->resolvers, true) as $key => $conf) {
+            $decoded = @json_decode($route->resolvers, true);
+            foreach ($decoded ?? [] as $key => $conf) {
                 if (is_array($conf)) {
                     $resolver = array_keys($conf)[0];
                     $resolved[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
