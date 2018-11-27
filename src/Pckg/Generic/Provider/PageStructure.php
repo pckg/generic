@@ -35,17 +35,17 @@ class PageStructure extends Provider
                                        '.getVariables'                 => new Route('/variables', 'variables'),
                                        '.getContents'                  => new Route('/contents', 'contents'),
                                        '.getActions'                   => new Route('/actions', 'actions'),
-                                       '.route'                        => (new Route('/routes/[route]', 'route'))
-                                           ->resolvers([
-                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
-                                                                                                               'route'),
-                                                       ]),
+                                       '.newRoute'                     => new Route('/new-route', 'newRoute'),
+                                       '.route'                        => (new Route('/routes/[route]',
+                                                                                     'route'))->resolvers([
+                                                                                                              'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                                                                                  'route'),
+                                                                                                          ]),
                                        '.cloneRoute'                   => (new Route('/routes/[route]/clone',
-                                                                                     'cloneRoute'))
-                                           ->resolvers([
-                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
-                                                                                                               'route'),
-                                                       ]),
+                                                                                     'cloneRoute'))->resolvers([
+                                                                                                                   'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                                                                                       'route'),
+                                                                                                               ]),
                                        '.getRouteActions'              => new Route('/routes/[route]/actions',
                                                                                     'routeActions'),
                                        '.routeExport'                  => new Route('/routes/[route]/export',
@@ -60,11 +60,10 @@ class PageStructure extends Provider
                                                                                                                                                                    'route'),
                                                                                                                           ]),
                                        '.routeSeo'                     => (new Route('/routes/[route]/route-seo',
-                                                                                     'routeSeo'))
-                                           ->resolvers([
-                                                           'route' => (new RouteResolver())->by('id',
-                                                                                                'route'),
-                                                       ]),
+                                                                                     'routeSeo'))->resolvers([
+                                                                                                                 'route' => (new RouteResolver())->by('id',
+                                                                                                                                                      'route'),
+                                                                                                             ]),
                                        '.setActionsMorphPermissions'   => new Route('/actionsMorph/[actionsMorph]/permissions',
                                                                                     'actionsMorphPermissions'),
                                        '.addActionsMorph'              => new Route('/actionsMorph/add',
@@ -75,10 +74,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorph'))->resolvers([
                                                                                                                      'actionsMorph' => ActionsMorph::class,
                                                                                                                  ]),
-                                       '.content'                      => (new Route('/content/[content]', 'content'))
-                                           ->resolvers([
-                                                           'content' => Content::class,
-                                                       ]),
+                                       '.content'                      => (new Route('/content/[content]',
+                                                                                     'content'))->resolvers([
+                                                                                                                'content' => Content::class,
+                                                                                                            ]),
                                        '.actionsMorphSettings'         => (new Route('/actionsMorph/[actionsMorph]/settings',
                                                                                      'actionsMorphSettings'))->resolvers([
                                                                                                                              'actionsMorph' => ActionsMorph::class,
@@ -96,17 +95,15 @@ class PageStructure extends Provider
                                                                                                                                'actionsMorph' => ActionsMorph::class,
                                                                                                                            ]),
                                        '.actionsMorph.addRoutePartial' => (new Route('/actionsMorph/[route]/addRoutePartial',
-                                                                                     'actionsMorphAddRoutePartial'))
-                                           ->resolvers([
-                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
-                                                                                                               'route'),
-                                                       ]),
+                                                                                     'actionsMorphAddRoutePartial'))->resolvers([
+                                                                                                                                    'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                                                                                                        'route'),
+                                                                                                                                ]),
                                        '.actionsMorph.routeTree'       => (new Route('/actionsMorph/[route]/tree',
-                                                                                     'routeTree'))
-                                           ->resolvers([
-                                                           'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
-                                                                                                               'route'),
-                                                       ]),
+                                                                                     'routeTree'))->resolvers([
+                                                                                                                  'route' => (new \Pckg\Generic\Resolver\Route())->by('id',
+                                                                                                                                                                      'route'),
+                                                                                                              ]),
                                        '.duplicateActionsMorphContent' => (new Route('/actionsMorph/[actionsMorph]/duplicateContent',
                                                                                      'duplicateActionsMorphContent'))->resolvers([
                                                                                                                                      'actionsMorph' => ActionsMorph::class,

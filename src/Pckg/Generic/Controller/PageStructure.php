@@ -10,6 +10,7 @@ use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
+use Pckg\Generic\Form\NewRoute;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
@@ -523,6 +524,11 @@ class PageStructure
         }
 
         return response()->respondWithSuccess();
+    }
+
+    public function postNewRouteAction(NewRoute $newRoute)
+    {
+        dd($newRoute->getData());
     }
 
     public function postCloneRouteAction(Route $route)
