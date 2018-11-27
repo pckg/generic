@@ -413,6 +413,9 @@ var pckgSmartList = {
         content: function () {
             return this.action.content;
         },
+        subactions: function () {
+            return $store.getters.actionChildren(this.action.id);
+        },
         templateClass: function () {
             return 'derive-list ' + this.$options.name
                 + ' v' + utils.ucfirst(this.$options.name.replace('derive-list-', '').replace('derive-list', 'default'))

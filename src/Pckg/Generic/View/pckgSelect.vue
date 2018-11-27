@@ -117,6 +117,19 @@
                 console.log(h);
                 return {'max-height': h + 'px'};
             },
+            finalOptions: function () {
+                return this.extractOptions(this.options);
+            },
+            finalOptionGroups: function () {
+                if (this.flat) {
+                    return {};
+                }
+
+                return this.extractOptionGroups(this.options);
+            },
+            multiple: function () {
+                return this.initialMultiple;
+            },
             selectedTitle: function () {
                 let selected = Array.isArray(this.selectedModel) ? this.selectedModel : [this.selectedModel];
                 let titles = [];
@@ -146,19 +159,6 @@
 
                 return joined;
             },
-            finalOptions: function () {
-                return this.extractOptions(this.options);
-            },
-            finalOptionGroups: function () {
-                if (this.flat) {
-                    return {};
-                }
-
-                return this.extractOptionGroups(this.options);
-            },
-            multiple: function () {
-                return this.initialMultiple;
-            }
         },
         watch: {
             search: function () {
@@ -197,66 +197,6 @@
                 }
             }
         },
-        methods: {
-            isOptionFiltered: function (item, key) {
-                if (!this.search || this.search.length == 0) {
-                    return false;
-                }
-
-                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
-                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
-            },
-            extractOptions: function (o) {
-                var options = {};
-
-                $.each(o, function (key, item) {
-                    if (this.isOptionFiltered(key, item)) {
-                        return;
-                    }
-                    if (this.flat) {
-                        options[this.getId(item, key)] = this.getTitle(item, key);
-                        return;
-                    }
-
-                    if (typeof item != 'string') {
-                        return;
-                    }
-
-                    options[this.getId(item, key)] = this.getTitle(item, key);
-                }.bind(this));
-
-                return options;
-            },
-            extractOptionGroups: function (o) {
-                var options = {};
-                $.each(this.options, function (key, item) {
-                    if (typeof item == 'string') {
-                        return;
-                    }
-
-                    if (this.isOptionFiltered(key, item)) {
-                        return;
-                    }
-
-                    if (Array.isArray(item)) {
-                        $.each(item, function (subKey, subItem) {
-                            var k = this.getId(subItem, subKey);
-                            if (!options[key]) {
-                                options[key] = {};
-                            }
-                            options[key][k] = this.getTitle(subItem, subKey);
-                        }.bind(this));
-                    } else {
-                        options[this.getId(item, key)] = this.getTitle(item, key);
-                    }
-                }.bind(this));
-
-                return options;
-            },
-            multiple: function () {
-                return this.initialMultiple;
-            }
-        },
         watch: {
             selected: function (newVal, oldVal) {
                 this.selectedModel = this.makeModel(newVal);
@@ -275,10 +215,78 @@
                 }
                 console.log('initial options changed', newVal, oldVal);
                 this.options = newVal;
-                this.refreshPicker();
             }
         },
         methods: {
+            isOptionFiltered: function (item, key) {
+                if (!this.search || this.search.length == 0) {
+                    return false;
+                }
+
+                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
+                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
+            },
+            extractOptions: function (o) {
+                var options = {};
+
+                $.each(o, function (key, item) {
+                    if (this.flat) {
+                        let title = this.getTitle(item, key);
+                        let k = this.getId(item, key);
+                        if (this.isOptionFiltered(k, title)) {
+                            return;
+                        }
+                        options[k] = title;
+                        return;
+                    }
+
+                    if (typeof item != 'string') {
+                        return;
+                    }
+
+                    let title = this.getTitle(item, key);
+                    let k = this.getId(item, key);
+
+                    if (this.isOptionFiltered(k, title)) {
+                        return;
+                    }
+                    options[k] = title;
+                }.bind(this));
+
+                return options;
+            },
+            extractOptionGroups: function (o) {
+                var options = {};
+                $.each(this.options, function (key, item) {
+                    if (typeof item == 'string') {
+                        return;
+                    }
+
+                    if (Array.isArray(item)) {
+                        $.each(item, function (subKey, subItem) {
+                            var k = this.getId(subItem, subKey);
+                            let title = this.getTitle(subItem, subKey)
+                            if (this.isOptionFiltered(k, title)) {
+                                return;
+                            }
+                            if (!options[key]) {
+                                options[key] = {};
+                            }
+                            options[key][k] = title;
+                        }.bind(this));
+                        return
+                    }
+
+                    let k = this.getId(item, key);
+                    let title = this.getTitle(item, key);
+                    if (this.isOptionFiltered(k, title)) {
+                        return;
+                    }
+                    options[k] = title;
+                }.bind(this));
+
+                return options;
+            },
             makeModel: function (value) {
                 return this.multiple
                     ? (Array.isArray(value) ? value : [value])
@@ -352,7 +360,6 @@
                     this.loading = true;
                     http.getJSON(this.refreshUrl + '?search=' + this.search + '&selected=' + (Array.isArray(this.selectedModel) ? this.selectedModel.join(',') : this.selectedModel), function (data) {
                         this.options = data.records;
-                        this.refreshPicker();
                         this.loading = false;
                     }.bind(this), function () {
                         this.loading = false;
