@@ -197,7 +197,7 @@
                     <div class="panel-heading" role="tab" id="headingFive">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            <i class="fa fa-eye"></i> Template
+                            <i class="fa fa-palette"></i> Template
                         </a>
                     </div>
                     <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
@@ -260,11 +260,77 @@
                     </div>
                 {% endfor %}
 
+                <div class="panel panel-default" v-if="action.type == 'wrapper'">
+                    <div class="panel-heading" role="tab" id="headingFormWrapper">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFormWrapper" aria-expanded="false"
+                           aria-controls="collapseFormWrapper">
+                            <i class="fa fa-cogs"></i> Wrapper
+                        </a>
+                    </div>
+                    <div id="collapseFormWrapper" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingFormWrapper">
+                        <div class="panel-body">
+                            <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
+                                <label>Lock to layout
+                                    <pckg-tooltip
+                                            content="Click this if you want to display module on all pages"
+                                            icon="question-circle"></pckg-tooltip>
+                                </label>
+                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
+                                            class="fa-unlock"></i>
+                                </button>
+                            </template>
+                            <template v-else>
+                                <label>Lock to route
+                                    <pckg-tooltip
+                                            content="Click this if you want to display module only on this page"
+                                            icon="question-circle"></pckg-tooltip>
+                                </label>
+                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
+                                            class="fa fa-lock"></i>
+                                </button>
+                                <div>
+                                    <label>Hide on pages
+                                        <pckg-tooltip
+                                                content="Element is by default visible on all pages"
+                                                icon="question-circle"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                                 title="route" id="id" :flat="true"
+                                                 v-model="form.settings.wrapperLockHide"></pckg-select>
+                                </div>
+                                <div>
+                                    <label>Show on pages
+                                        <pckg-tooltip
+                                                content="Element is by default visible on all pages"
+                                                icon="question-circle"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                                 title="route" id="id" :flat="true"
+                                                 v-model="form.settings.wrapperLockShow"></pckg-select>
+                                </div>
+                                <div>
+                                    <label>Show on system pages
+                                        <pckg-tooltip
+                                                content="Show element on system pages"
+                                                icon="question-circle"></pckg-tooltip>
+                                    </label>
+                                    <pckg-select :initial-options="systemRoutes" :with-empty="false"
+                                                 :initial-multiple="true"
+                                                 title="title" id="slug" :flat="true"
+                                                 v-model="form.settings.wrapperLockSystem"></pckg-select>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingTwo">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            <i class="fa fa-th-large"></i> Box
+                            <i class="fal fa-square"></i> Box
                         </a>
                     </div>
                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
@@ -380,18 +446,12 @@
                     <div class="panel-heading" role="tab" id="headingFour">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                            <i class="fa fa-cog"></i> Style
+                            <i class="fa fa-magic"></i> Style
                         </a>
                     </div>
                     <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
                          aria-labelledby="headingFour">
                         <div class="panel-body">
-                            <label>Class</label>
-                            <input class="form-control" v-model="form.settings.class"/>
-
-                            <label>Style</label>
-                            <input class="form-control" v-model="form.settings.style"/>
-
                             <div class="row">
                                 <template v-for="(scopes, sectionTitle) in availableScopes">
                                     <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
@@ -495,6 +555,26 @@
                 </div>
 
 
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingCustom">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseCustom" aria-expanded="false" aria-controls="collapseCustom">
+                            <i class="fa fa-cog"></i> Custom
+                        </a>
+                    </div>
+                    <div id="collapseCustom" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="headingCustom">
+                        <div class="panel-body">
+                            <label>Class</label>
+                            <input class="form-control" v-model="form.settings.class"/>
+
+                            <label>Style</label>
+                            <input class="form-control" v-model="form.settings.style"/>
+                        </div>
+                    </div>
+                </div>
+
+
                 <!--<div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingThree">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
@@ -509,72 +589,6 @@
                         </div>
                     </div>
                 </div>-->
-
-                <div class="panel panel-default" v-if="action.type == 'wrapper'">
-                    <div class="panel-heading" role="tab" id="headingFormWrapper">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseFormWrapper" aria-expanded="false"
-                           aria-controls="collapseFormWrapper">
-                            <i class="fa fa-cogs"></i> Wrapper
-                        </a>
-                    </div>
-                    <div id="collapseFormWrapper" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingFormWrapper">
-                        <div class="panel-body">
-                            <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
-                                <label>Lock to layout
-                                    <pckg-tooltip
-                                            content="Click this if you want to display module on all pages"
-                                            icon="question-circle"></pckg-tooltip>
-                                </label>
-                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
-                                            class="fa-unlock"></i>
-                                </button>
-                            </template>
-                            <template v-else>
-                                <label>Lock to route
-                                    <pckg-tooltip
-                                            content="Click this if you want to display module only on this page"
-                                            icon="question-circle"></pckg-tooltip>
-                                </label>
-                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
-                                            class="fa fa-lock"></i>
-                                </button>
-                                <div>
-                                    <label>Hide on pages
-                                        <pckg-tooltip
-                                                content="Element is by default visible on all pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true"
-                                                 v-model="form.settings.wrapperLockHide"></pckg-select>
-                                </div>
-                                <div>
-                                    <label>Show on pages
-                                        <pckg-tooltip
-                                                content="Element is by default visible on all pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true"
-                                                 v-model="form.settings.wrapperLockShow"></pckg-select>
-                                </div>
-                                <div>
-                                    <label>Show on system pages
-                                        <pckg-tooltip
-                                                content="Show element on system pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="systemRoutes" :with-empty="false"
-                                                 :initial-multiple="true"
-                                                 title="title" id="slug" :flat="true"
-                                                 v-model="form.settings.wrapperLockSystem"></pckg-select>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 

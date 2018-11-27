@@ -27,7 +27,8 @@
                 <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
                 </li>
-                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a></li>
+                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a>
+                </li>
                 <li v-for="(option, key) in finalOptions">
                     <a href="#" @click.prevent="toggleOption($event, key)">
                         <span class="text-left">{{ option}}</span>
@@ -107,7 +108,7 @@
             }
         },
         computed: {
-            maxHeightStyle: function() {
+            maxHeightStyle: function () {
                 return null;
                 let myBottom = parseInt($(this.$el).offset().top) - parseInt($(this.$el).outerHeight());
                 let bodyBottom = parseInt($('body').outerHeight());
@@ -197,7 +198,7 @@
             }
         },
         methods: {
-            isOptionFiltered: function(item, key){
+            isOptionFiltered: function (item, key) {
                 if (!this.search || this.search.length == 0) {
                     return false;
                 }

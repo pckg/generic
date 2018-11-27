@@ -1,11 +1,12 @@
-<templates>
+<TEMPLATE-IS-IN-SCRIPT>
     <div :id="id" :class="actionClass" :style="actionStyle">
         <slot name="body">
             <pckg-action-bg :action="action"></pckg-action-bg>
+            <frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
     </div>
-</templates>
+</TEMPLATE-IS-IN-SCRIPT>
 
 <script>
     export default {

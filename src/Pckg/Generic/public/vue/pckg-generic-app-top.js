@@ -523,7 +523,8 @@ var pckgElement = {
             if (this.genericMode == 'edit') {
                 $event.preventDefault();
                 $event.stopPropagation();
-                $dispatcher.$emit('actionClicked', this.action);
+                $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
+                // $dispatcher.$emit('actionClicked', this.action);
                 return false;
             }
         }
