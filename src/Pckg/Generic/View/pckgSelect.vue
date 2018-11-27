@@ -1,20 +1,50 @@
 <template>
     <div class="pckg-select" :class="styleClass">
-        <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
-        <select v-if="multiple" class="form-control" multiple v-model="selectedModel" :name="name">
-            <option value v-if="withEmpty"> -- select value(s) --</option>
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
-            <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
-            </optgroup>
-        </select>
-        <select v-else class="form-control" v-model="selectedModel" :name="name">
-            <option value v-if="withEmpty"> -- select value --</option>
-            <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
-            <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
-            </optgroup>
-        </select>
+        <div v-show="false">
+            <select v-if="multiple" class="form-control" multiple v-model="selectedModel" :name="name">
+                <option value v-if="withEmpty"> -- select value(s) --</option>
+                <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+                <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
+                    <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+                </optgroup>
+            </select>
+            <select v-else class="form-control" v-model="selectedModel" :name="name">
+                <option value v-if="withEmpty"> -- select value --</option>
+                <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
+                <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
+                    <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
+                <template v-if="initialMultiple && selected && selected.length > 1">({{ selected.length }})</template>
+                {{ selectedTitle }} <span class="caret text-right"></span>
+            </a>
+            <ul class="dropdown-menu" :style="maxHeightStyle">
+                <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
+                    <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
+                </li>
+                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a></li>
+                <li v-for="(option, key) in finalOptions">
+                    <a href="#" @click.prevent="toggleOption($event, key)">
+                        <span class="text-left">{{ option}}</span>
+                        <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
+                    </a>
+                </li>
+                <template v-for="(optgroup, label) in finalOptionGroups">
+                    <li><b>{{ label }}</b></li>
+                    <li v-for="(option, key) in optgroup">
+                        <a href="#" @click.prevent="toggleOption($event, key)">
+                            <span class="text-left">{{ option}}</span>
+                            <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -30,9 +60,10 @@
             return {
                 options: this.initialOptions,
                 selectedModel: this.multiple
-                    ? (Array.isArray(this.selected) ? this.selected : [this.selected])
+                    ? (Array.isArray(this.selected) ? this.selected : (this.selected ? [this.selected] : []))
                     : this.selected,
-                loading: false
+                loading: false,
+                search: ''
             };
         },
         props: {
@@ -78,10 +109,111 @@
             }
         },
         computed: {
+            maxHeightStyle: function() {
+                return null;
+                let myBottom = parseInt($(this.$el).offset().top) - parseInt($(this.$el).outerHeight());
+                let bodyBottom = parseInt($('body').outerHeight());
+                let h = bodyBottom - myBottom;
+
+                console.log(h);
+                return {'max-height': h + 'px'};
+            },
+            selectedTitle: function () {
+                let selected = Array.isArray(this.selectedModel) ? this.selectedModel : [this.selectedModel];
+                let titles = [];
+
+                $.each(this.finalOptions, function (i, option) {
+                    if (selected.indexOf(i) >= 0) {
+                        titles.push(option);
+                    }
+                });
+                $.each(this.finalOptionGroups, function (i, optionGroup) {
+                    $.each(optionGroup, function (j, option) {
+                        if (selected.indexOf(j) >= 0) {
+                            titles.push(option);
+                        }
+                    });
+                });
+
+                if (titles.length == 0) {
+                    return ' - - select value - - ';
+                }
+
+                let joined = titles.join(', ');
+
+                if (joined.length > 40) {
+                    return joined.substring(0, 40) + ' ...';
+                }
+
+                return joined;
+            },
             finalOptions: function () {
+                return this.extractOptions(this.options);
+            },
+            finalOptionGroups: function () {
+                if (this.flat) {
+                    return {};
+                }
+
+                return this.extractOptionGroups(this.options);
+            },
+            multiple: function () {
+                return this.initialMultiple;
+            }
+        },
+        watch: {
+            search: function () {
+                this.refreshList();
+            },
+            selected: function (newVal, oldVal) {
+                if (!this.initialMultiple) {
+                    this.selectedModel = newVal;
+                    return;
+                }
+
+                if (!newVal) {
+                    this.selectedModel = [];
+                    return;
+                }
+
+                this.selectedModel = Array.isArray(newVal) ? newVal : [newVal];
+            },
+            selectedModel: function (newVal, oldVal) {
+                console.log('selected to', newVal);
+                this.$emit('input', newVal);
+            },
+            options: function (newVal) {
+            },
+            initialOptions: function (newVal) {
+                console.log('initial options changed', newVal, this.options);
+                if (Object.keys(newVal) != Object.keys(this.options)) {
+                    this.options = this.mergeOptions(newVal);
+                }
+            },
+            initialMultiple: function (newVal) {
+                if (newVal && !Array.isArray(this.selectedModel)) {
+                    this.selectedModel = this.selectedModel ? [this.selectedModel] : [];
+                } else if (!newVal && Array.isArray(this.selectedModel)) {
+                    this.selectedModel = this.selectedModel[0];
+                }
+            }
+        },
+        methods: {
+            isOptionFiltered: function(item, key){
+                if (!this.search || this.search.length == 0) {
+                    return false;
+                }
+
+                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
+                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
+            },
+            extractOptions: function (o) {
                 var options = {};
 
-                $.each(this.options, function (key, item) {
+                $.each(o, function (key, item) {
+                    if (this.isOptionFiltered(key, item)) {
+                        return;
+                    }
                     if (this.flat) {
                         options[this.getId(item, key)] = this.getTitle(item, key);
                         return;
@@ -96,14 +228,14 @@
 
                 return options;
             },
-            finalOptionGroups: function () {
-                if (this.flat) {
-                    return {};
-                }
-
+            extractOptionGroups: function (o) {
                 var options = {};
                 $.each(this.options, function (key, item) {
                     if (typeof item == 'string') {
+                        return;
+                    }
+
+                    if (this.isOptionFiltered(key, item)) {
                         return;
                     }
 
@@ -122,37 +254,15 @@
 
                 return options;
             },
-            multiple: function () {
-                return this.initialMultiple;
-            }
-        },
-        watch: {
-            selected: function (newVal, oldVal) {
-                console.log('changed prop selected', newVal);
-                this.selectedModel = newVal;
+            extractFlatOptions: function (o) {
+                let options = this.extractOptions(o);
+                $.each(this.extractOptionGroups(o), function (i, group) {
+                    $.each(group, function (j, option) {
+                        options[j] = option;
+                    });
+                });
+                return options;
             },
-            selectedModel: function (newVal, oldVal) {
-                console.log('selected to', newVal);
-                this.$emit('change', newVal);
-                this.refreshPicker(newVal);
-            },
-            options: function (newVal) {
-                Vue.nextTick(function () {
-                    try {
-                        $(this.$el).find('select').selectpicker('refresh');
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }.bind(this));
-            },
-            initialOptions: function (newVal) {
-                this.options = newVal;
-                /*Vue.nextTick(function () {
-                    $(this.$el).find('select').selectpicker('refresh');
-                }.bind(this));*/
-            }
-        },
-        methods: {
             getTitle: function (option, key) {
                 if (typeof option == 'string') {
                     return option;
@@ -179,20 +289,29 @@
 
                 return option[this.id];
             },
-            changed: function () {
-                this.refreshPicker(this.selectedModel);
-            },
-            refreshPicker: function (val) {
-                this.$emit('input', val); // v-model
-                //this.$emit('change', val); // change event
-                Vue.nextTick(function () {
-                    // $(this.$el).find('select').trigger('vue.change', val);
-                    try {
-                        $(this.$el).find('select').selectpicker('refresh');
-                    } catch (e) {
-                        console.log(e);
+            toggleOption: function ($event, key) {
+                if (this.initialMultiple) {
+                    if (!this.selectedModel) {
+                        this.selectedModel = key ? [key] : [];
+                    } else {
+                        let i = this.selectedModel.indexOf(key);
+                        if (i >= 0) {
+                            this.selectedModel.splice(i, 1);
+                        } else {
+                            if (!this.selectedModel) {
+                                this.selectedModel = [key];
+                            } else {
+                                this.selectedModel.push(key);
+                            }
+                        }
                     }
-                }.bind(this));
+                } else {
+                    this.selectedModel = this.selectedModel == key ? null : key;
+                }
+
+                if (this.initialMultiple) {
+                    $event.stopPropagation();
+                }
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
@@ -200,16 +319,8 @@
                         return;
                     }
 
-                    /**
-                     * @T00D00 - we should keep already selected options.
-                     */
-                    var search = $(this.$el).find('.bs-searchbox input').val();
-                    if (search.length < 1) {
-                        return;
-                    }
-
                     this.loading = true;
-                    http.getJSON(this.refreshUrl + '?search=' + search + '&selected=' + (Array.isArray(this.selectedModel) ? this.selectedModel.join(',') : this.selectedModel), function (data) {
+                    http.getJSON(this.refreshUrl + '?search=' + this.search + '&selected=' + (Array.isArray(this.selectedModel) ? this.selectedModel.join(',') : this.selectedModel), function (data) {
                         this.options = data.records;
                         this.loading = false;
                     }.bind(this), function () {
@@ -217,49 +328,32 @@
                     });
                 }.bind(this), 333);
             },
-            initPicker: function () {
-                var selectpicker = $(this.$el).find('select').selectpicker({
-                    liveSearch: true,
-                    actionsBox: true,
-                    dropupAuto: false,
-                    //dropdownAlignRight: 'auto',
-                    liveSearchNormalize: true,
-                    //mobile: true,
-                    //width: 'auto',
-                    showTick: true
+            isValueSelected: function (val) {
+                return this.initialMultiple ? this.selectedModel && this.selectedModel.indexOf(val) >= 0 : (val == this.selectedModel);
+            },
+            mergeOptions: function (newOptions) {
+                let selected = this.initialMultiple ? this.selectedModel : [this.selectedModel];
+
+                /**
+                 * Find options that are selected but does not exist in collection.
+                 */
+                let allOptions = this.extractFlatOptions(this.options);
+                $.each(selected, function (i, val) {
+                    if (!newOptions[val] && allOptions[val]) {
+                        console.log('non existent', val, selected);
+                        newOptions[val] = allOptions[val];
+                    }
                 });
 
-                /*selectpicker.on('changed.bs.select', function() {
-                    return false;
-                });*/
-
-                try {
-                    selectpicker.selectpicker('refresh');
-                } catch (e) {
-                    console.log(e);
-                }
-
-                /*$(document).ready(function () {
-                    $(this.$el).find('select').on('change', function () {
-                        this.$nextTick(function () {
-                            this.$emit('input', $(this.$el).find('select').val());
-                        }.bind(this));
-                    }.bind(this));
-                }.bind(this));*/
-
-                $(this.$el).find('.bs-searchbox input').on('keyup', function () {
-                    this.refreshList();
-                }.bind(this));
+                return newOptions;
             }
         },
         mounted: function () {
-            this.$nextTick(this.initPicker);
-
             /**
              * Initial fetch.
              */
             if ((!this.options || this.options.length == 0) && this.refreshUrl && this.refreshUrl.length > 0) {
-                this.refreshList();
+                // this.refreshList();
             }
         }
     }

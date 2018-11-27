@@ -26,6 +26,7 @@
         data: function () {
             return {
                 form: {{ form.getData() | json_encode | raw }},
+                initialOptions: {{ form.getInitialOptions() | json_encode | raw }},
                 buttons: ['submit', 'as_new'],
                 submitting: false
             };
