@@ -10,15 +10,12 @@ class NewRoute extends Bootstrap implements ResolvesOnRequest
 
     public function initFields()
     {
-        $text = $this->addText('slug');
-        $text->required();
-        $text->addValidator((new Custom(function($value, Custom $validator) {
+        $text = $this->addText('slug')->required()->addValidator((new Custom(function($value, Custom $validator) {
             $validator->setMsg('Enter unique identifier, slug already exists');
 
             return !((new Routes())->where('slug', $value)->one());
-        })));
-        $text->addValidator((new Custom(function($value, Custom $validator) {
-            $validator->setMsg('Slug should contain only alphanumeric characters and minus sign');
+        })))->addValidator((new Custom(function($value, Custom $validator) {
+            $validator->setMsg('Slug should contain only alphanumeric characters, minus and dot');
 
             return $value == sluggify($value);
         })));
@@ -30,7 +27,7 @@ class NewRoute extends Bootstrap implements ResolvesOnRequest
         })))->addValidator((new Custom(function($value, Custom $validator) {
             $validator->setMsg('Enter valid url');
 
-            return $value == sluggify($value, '-', '\/\[\]');
+            return $value == sluggify($value, '-', '\/\[\]\.');
         })))->addValidator((new Custom(function($value, Custom $validator) {
             $validator->setMsg('Url should start with /');
 
