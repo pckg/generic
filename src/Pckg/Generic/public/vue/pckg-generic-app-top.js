@@ -28,7 +28,7 @@ var pckgPlatformSettings = {
 
                     $.each(response.responseJSON.descriptions || [], function (name, message) {
                         this.errors.remove(name);
-                        this.errors.add(name, message);
+                        this.errors.add({field: name, msg: message});
                     }.bind(this));
                 }.bind(this));
             }.bind(this));

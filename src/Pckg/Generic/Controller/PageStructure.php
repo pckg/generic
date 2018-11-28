@@ -45,11 +45,9 @@ class PageStructure
         foreach (['partials'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partials) {
 
-                return collect($partials)->map(
-                    function($partial) {
-                        return (new $partial)->forJson();
-                    }
-                );
+                return collect($partials)->map(function($partial) {
+                    return (new $partial)->forJson();
+                });
             });
         }
 
@@ -61,7 +59,8 @@ class PageStructure
                         continue;
                     }
 
-                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ?? ($config['list'] ?? $listTemplates);
+                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ??
+                        ($config['list'] ?? $listTemplates);
                 }
             }
         }
@@ -74,9 +73,7 @@ class PageStructure
     public function getRoutesAction()
     {
         return [
-            'routes' => (new Routes())
-                ->all()
-                ->transform(['id', 'route', 'title', 'slug', 'layout_id']),
+            'routes' => (new Routes())->all()->transform(['id', 'route', 'title', 'slug', 'layout_id']),
         ];
     }
 
@@ -121,14 +118,13 @@ class PageStructure
                 $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
-            })
-                                     ->map(function(Action $action) {
-                                         $array = $action->toArray();
-                                         $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                                         $array['pivot']['content'] = $action->pivot->content;
+            })->map(function(Action $action) {
+                    $array = $action->toArray();
+                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                    $array['pivot']['content'] = $action->pivot->content;
 
-                                         return $array;
-                                     }),
+                    return $array;
+                }),
         ];
     }
 
@@ -160,17 +156,15 @@ class PageStructure
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
                 $actions->getMiddleEntity()->withContent();
-            })
-                                    ->sortBy(function(Action $action) {
-                                        return $action->pivot->order;
-                                    })
-                                    ->map(function(Action $action) {
-                                        $array = $action->toArray();
-                                        $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                                        $array['pivot']['content'] = $action->pivot->content;
+            })->sortBy(function(Action $action) {
+                    return $action->pivot->order;
+                })->map(function(Action $action) {
+                    $array = $action->toArray();
+                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                    $array['pivot']['content'] = $action->pivot->content;
 
-                                        return $array;
-                                    }),
+                    return $array;
+                }),
         ];
     }
 
@@ -390,10 +384,9 @@ class PageStructure
         /**
          * Add scopes.
          */
-        $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
-                            . ' ' . implode(' ', post('settings.width', []))
-                            . ' ' . implode(' ', post('settings.offset', []))
-                            . ' ' . post('settings.container', '');
+        $values['class'] .= ' ' . implode(' ', post('settings.scopes', [])) . ' ' .
+            implode(' ', post('settings.width', [])) . ' ' . implode(' ', post('settings.offset', [])) . ' ' .
+            post('settings.container', '');
         $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
                                                             ->unique()
                                                             ->removeEmpty()
@@ -528,7 +521,14 @@ class PageStructure
 
     public function postNewRouteAction(NewRoute $newRoute)
     {
-        dd($newRoute->getData());
+        $data = $newRoute->getData();
+        dd('got data', $data);
+        $route = Route::create($data);
+
+        return [
+            'route'   => $route,
+            'success' => true,
+        ];
     }
 
     public function postCloneRouteAction(Route $route)
