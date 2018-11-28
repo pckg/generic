@@ -185,8 +185,8 @@
                     return false;
                 }
 
-                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
-                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
+                return (typeof item == 'string' && item.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search)
+                    && (typeof key == 'string' && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search);
             },
             extractOptions: function (o) {
                 var options = {};
