@@ -164,67 +164,29 @@
             search: function () {
                 this.refreshList();
             },
-            selected: function (newVal, oldVal) {
-                if (!this.initialMultiple) {
-                    this.selectedModel = newVal;
-                    return;
-                }
-
-                if (!newVal) {
-                    this.selectedModel = [];
-                    return;
-                }
-
-                this.selectedModel = Array.isArray(newVal) ? newVal : [newVal];
-            },
             selectedModel: function (newVal, oldVal) {
-                console.log('selected to', newVal);
                 this.$emit('input', newVal);
             },
-            options: function (newVal) {
-            },
             initialOptions: function (newVal) {
-                console.log('initial options changed', newVal, this.options);
                 if (Object.keys(newVal) != Object.keys(this.options)) {
                     this.options = this.mergeOptions(newVal);
                 }
             },
-            initialMultiple: function (newVal) {
-                if (newVal && !Array.isArray(this.selectedModel)) {
-                    this.selectedModel = this.selectedModel ? [this.selectedModel] : [];
-                } else if (!newVal && Array.isArray(this.selectedModel)) {
-                    this.selectedModel = this.selectedModel[0];
-                }
-            }
-        },
-        watch: {
             selected: function (newVal, oldVal) {
                 this.selectedModel = this.makeModel(newVal);
             },
             initialMultiple: function (newVal, oldVal) {
                 this.selectedModel = this.makeModel(this.selected);
-            },
-            selectedModel: function (newVal, oldVal) {
-                console.log('model changed');
-                this.$emit('input', newVal); // v-model
-            },
-            initialOptions: function (newVal, oldVal) {
-                if (newVal == oldVal || newVal == this.options) {
-                    console.log('same options');
-                    return;
-                }
-                console.log('initial options changed', newVal, oldVal);
-                this.options = newVal;
             }
         },
         methods: {
-            isOptionFiltered: function (item, key) {
+            isOptionFiltered: function (key, item) {
                 if (!this.search || this.search.length == 0) {
                     return false;
                 }
 
-                return item.toLowerCase().indexOf(this.search.toLowerCase()) < 0
-                    && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0;
+                return (typeof item == 'string' && item.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search)
+                    && (typeof key == 'string' && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search);
             },
             extractOptions: function (o) {
                 var options = {};
@@ -393,7 +355,6 @@
             if ((!this.options || this.options.length == 0) && this.refreshUrl && this.refreshUrl.length > 0) {
                 // this.refreshList();
             }
-            console.log($(this.$el), this);
         }
     }
 </script>
