@@ -64,7 +64,6 @@ class Records extends Controller
         $entity = $field->getEntityForSelect($record, null);
 
         $relation = (new Relations())->where('on_field_id', $field->id)->one();
-        $relation = (new Relations())->where('on_field_id', $field->id)->one();
 
         $relations = (new Relations())->withShowTable()
                                       ->withOnField()

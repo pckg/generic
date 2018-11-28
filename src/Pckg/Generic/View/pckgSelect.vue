@@ -27,7 +27,8 @@
                 <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
                 </li>
-                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a></li>
+                <li v-if="!initialMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a>
+                </li>
                 <li v-for="(option, key) in finalOptions">
                     <a href="#" @click.prevent="toggleOption($event, key)">
                         <span class="text-left">{{ option}}</span>
@@ -59,9 +60,7 @@
         data: function () {
             return {
                 options: this.initialOptions,
-                selectedModel: this.multiple
-                    ? (Array.isArray(this.selected) ? this.selected : (this.selected ? [this.selected] : []))
-                    : this.selected,
+                selectedModel: this.makeModel(this.selected),
                 loading: false,
                 search: ''
             };
@@ -109,7 +108,7 @@
             }
         },
         computed: {
-            maxHeightStyle: function() {
+            maxHeightStyle: function () {
                 return null;
                 let myBottom = parseInt($(this.$el).offset().top) - parseInt($(this.$el).outerHeight());
                 let bodyBottom = parseInt($('body').outerHeight());
@@ -117,6 +116,19 @@
 
                 console.log(h);
                 return {'max-height': h + 'px'};
+            },
+            finalOptions: function () {
+                return this.extractOptions(this.options);
+            },
+            finalOptionGroups: function () {
+                if (this.flat) {
+                    return {};
+                }
+
+                return this.extractOptionGroups(this.options);
+            },
+            multiple: function () {
+                return this.initialMultiple;
             },
             selectedTitle: function () {
                 let selected = Array.isArray(this.selectedModel) ? this.selectedModel : [this.selectedModel];
@@ -147,59 +159,28 @@
 
                 return joined;
             },
-            finalOptions: function () {
-                return this.extractOptions(this.options);
-            },
-            finalOptionGroups: function () {
-                if (this.flat) {
-                    return {};
-                }
-
-                return this.extractOptionGroups(this.options);
-            },
-            multiple: function () {
-                return this.initialMultiple;
-            }
         },
         watch: {
             search: function () {
                 this.refreshList();
             },
-            selected: function (newVal, oldVal) {
-                if (!this.initialMultiple) {
-                    this.selectedModel = newVal;
-                    return;
-                }
-
-                if (!newVal) {
-                    this.selectedModel = [];
-                    return;
-                }
-
-                this.selectedModel = Array.isArray(newVal) ? newVal : [newVal];
-            },
             selectedModel: function (newVal, oldVal) {
-                console.log('selected to', newVal);
                 this.$emit('input', newVal);
             },
-            options: function (newVal) {
-            },
             initialOptions: function (newVal) {
-                console.log('initial options changed', newVal, this.options);
                 if (Object.keys(newVal) != Object.keys(this.options)) {
                     this.options = this.mergeOptions(newVal);
                 }
             },
-            initialMultiple: function (newVal) {
-                if (newVal && !Array.isArray(this.selectedModel)) {
-                    this.selectedModel = this.selectedModel ? [this.selectedModel] : [];
-                } else if (!newVal && Array.isArray(this.selectedModel)) {
-                    this.selectedModel = this.selectedModel[0];
-                }
+            selected: function (newVal, oldVal) {
+                this.selectedModel = this.makeModel(newVal);
+            },
+            initialMultiple: function (newVal, oldVal) {
+                this.selectedModel = this.makeModel(this.selected);
             }
         },
         methods: {
-            isOptionFiltered: function(item, key){
+            isOptionFiltered: function (item, key) {
                 if (!this.search || this.search.length == 0) {
                     return false;
                 }
@@ -211,11 +192,13 @@
                 var options = {};
 
                 $.each(o, function (key, item) {
-                    if (this.isOptionFiltered(key, item)) {
-                        return;
-                    }
                     if (this.flat) {
-                        options[this.getId(item, key)] = this.getTitle(item, key);
+                        let title = this.getTitle(item, key);
+                        let k = this.getId(item, key);
+                        if (this.isOptionFiltered(k, title)) {
+                            return;
+                        }
+                        options[k] = title;
                         return;
                     }
 
@@ -223,7 +206,13 @@
                         return;
                     }
 
-                    options[this.getId(item, key)] = this.getTitle(item, key);
+                    let title = this.getTitle(item, key);
+                    let k = this.getId(item, key);
+
+                    if (this.isOptionFiltered(k, title)) {
+                        return;
+                    }
+                    options[k] = title;
                 }.bind(this));
 
                 return options;
@@ -235,24 +224,35 @@
                         return;
                     }
 
-                    if (this.isOptionFiltered(key, item)) {
-                        return;
-                    }
-
                     if (Array.isArray(item)) {
                         $.each(item, function (subKey, subItem) {
                             var k = this.getId(subItem, subKey);
+                            let title = this.getTitle(subItem, subKey)
+                            if (this.isOptionFiltered(k, title)) {
+                                return;
+                            }
                             if (!options[key]) {
                                 options[key] = {};
                             }
-                            options[key][k] = this.getTitle(subItem, subKey);
+                            options[key][k] = title;
                         }.bind(this));
-                    } else {
-                        options[this.getId(item, key)] = this.getTitle(item, key);
+                        return
                     }
+
+                    let k = this.getId(item, key);
+                    let title = this.getTitle(item, key);
+                    if (this.isOptionFiltered(k, title)) {
+                        return;
+                    }
+                    options[k] = title;
                 }.bind(this));
 
                 return options;
+            },
+            makeModel: function (value) {
+                return this.multiple
+                    ? (Array.isArray(value) ? value : [value])
+                    : value;
             },
             extractFlatOptions: function (o) {
                 let options = this.extractOptions(o);
