@@ -180,7 +180,7 @@
             }
         },
         methods: {
-            isOptionFiltered: function (item, key) {
+            isOptionFiltered: function (key, item) {
                 if (!this.search || this.search.length == 0) {
                     return false;
                 }
