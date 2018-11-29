@@ -413,25 +413,33 @@
                 let hours = [];
                 let hour = [];
                 let minute = this.moment(startOfDay);
+                let available = false;
                 while (minute.isBefore(endOfDay)) {
 
+                    let hourAvailable = this.options.checkEnabled && !this.options.checkEnabled(minute, 'time');
                     hour.push({
                         minute: minute.format('mm'),
                         time: minute.format('HH:mm'),
-                        disabled: this.options.checkEnabled && !this.options.checkEnabled(minute, 'time'),
+                        disabled: !hourAvailable,
                         transparent: false,
                         active: minute.format('HH:mm') == m.format('HH:mm'),
                     });
+                    if (hourAvailable) {
+                        available = true;
+                    }
 
-                    if (hour.length == 6) {
-                        hours.push(hour);
+                    if (hour.length == 12) {
+                        if (available) {
+                            hours.push(hour);
+                            available = false;
+                        }
                         hour = [];
                     }
 
-                    minute.add(10, 'minutes');
+                    minute.add(5, 'minutes');
                 }
 
-                if (hour.length > 0) {
+                if (available && hour.length > 0) {
                     hours.push(hour);
                     hour = [];
                 }
