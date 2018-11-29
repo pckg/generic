@@ -77,6 +77,12 @@
                     }
                 }
             }
+        },
+        mounted: function () {
+            this.$emit('update', $(this.$el).html());
+        },
+        updated: function () {
+            this.$emit('update', $(this.$el).html());
         }
     }
 </script>
