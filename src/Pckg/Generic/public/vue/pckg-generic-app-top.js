@@ -12,10 +12,11 @@ var pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
-var pckgPlatformSettings = {
+const pckgPlatformSettings = {
     data: function () {
         return {
-            form: {}
+            form: {},
+            loading: false
         };
     },
     methods: {
