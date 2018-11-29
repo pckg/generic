@@ -1,4 +1,12 @@
-<TEMPLATE-IS-IN-SCRIPT></TEMPLATE-IS-IN-SCRIPT>
+<TEMPLATE-IS-IN-SCRIPT>
+    <div :id="id" :class="actionClass" :style="actionStyle">
+        <slot name="body">
+            <pckg-action-bg :action="action"></pckg-action-bg>
+            <frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>
+            <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
+        </slot>
+    </div>
+</TEMPLATE-IS-IN-SCRIPT>
 
 <script>
     export default {
@@ -35,11 +43,12 @@
                 immediate: true,
                 handler: function (newVal, oldVal) {
                     let res;
-                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">'
+                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)">'
                         + '<pckg-action-bg :action="action"></pckg-action-bg>'
                         + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
                         + (this.action.build)
                         + '</div>';
+                    b = this.action.build;
                     try {
                         res = Vue.compile(b);
                     } catch (e) {

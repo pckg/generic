@@ -303,6 +303,13 @@ var pckgSmartComponent = {
         action: function () {
             return $store.getters.actionById(this.actionId);
         },
+        subactions: function () {
+            if (!this.action) {
+                return;
+            }
+
+            return $store.getters.actionChildren(this.actionId);
+        },
         content: function () {
             return this.action.content;
         },
