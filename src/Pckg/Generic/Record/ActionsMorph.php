@@ -283,7 +283,7 @@ class ActionsMorph extends Record
                 }
             }
 
-            if (isset($subconfig['list'])) {
+            if (isset($subconfig['list']) || isset($subconfig['item'])) {
                 $listTemplates = config('pckg.generic.templateEngine.list', []);
                 if (!isset($template['list']) || !isset($subconfig['list'][$template['list']])) {
                     $template['list'] = array_keys($subconfig['list'] ?? $listTemplates)[0];
