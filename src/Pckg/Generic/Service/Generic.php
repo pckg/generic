@@ -11,9 +11,11 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
+use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Record\Action as ActionRecord;
+use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
@@ -25,6 +27,7 @@ use Throwable;
  * Class Generic
  *
  * @package Pckg\Generic\Service
+ * @property ActionsMorph pivot
  */
 class Generic
 {
@@ -134,8 +137,8 @@ class Generic
         /**
          * Route resolvers.
          */
-        $resolved = [];//(new Router\Command\ResolveDependencies(json_decode($route->resolvers, true)));
-        if ($resolvers && $route->resolvers) {
+        $resolved = [];
+        if ($resolvers && $route->resolvers && false) {
             $router = router()->get();
             $decoded = @json_decode($route->resolvers, true);
             foreach ($decoded ?? [] as $key => $conf) {
@@ -149,28 +152,14 @@ class Generic
             }
         }
 
-        $this->actions = true
-            ? $route->actions(function(MorphedBy $actions) {
+        $this->actions = $route->actions(function(MorphedBy $actions) {
             // $actions->getMiddleEntity()->joinPermissionTo('read');
             $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable();
-        })
-            : cache(Generic::class . ':readRoute:' . $route->id,
-            function() use ($route) {
-                return $route->actions(function(MorphedBy $actions) {
-                    // $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                        $content->withContents();
-                    })->withSettings(function(MorphedBy $settings) {
-                        $settings->getMiddleEntity()->withSetting();
-                    })->withVariable();
-                });
-            },
-                   'app',
-                   1);
+            })->withVariable()->withAction();
+        });
 
         /**
          * Check for deprecations.
@@ -195,8 +184,10 @@ class Generic
              * And action.
              */
             if (isset($deprecations[$action->slug])) {
-                message('Deprecating action ' . $action->slug . ' to ' . $deprecations[$action->slug] . ' ' . json_encode($template));
-                $newAction = ActionRecord::gets(['slug' => $deprecations[$action->slug]]);
+                //message('Deprecating action ' . $action->slug . ' to ' . $deprecations[$action->slug] . ' ' . json_encode($template));
+                measure('1');
+                $newAction = (new Actions())->where('slug', $deprecations[$action->slug])->one();
+                measure('2');
                 if (!$newAction) {
                     $action->class = config('pckg.generic.actions.' . $deprecations[$action->slug] . '.class');
                     $action->method = config('pckg.generic.actions.' . $deprecations[$action->slug] . '.method');
@@ -265,7 +256,7 @@ class Generic
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable();
+            })->withVariable()->withAction();
         })
             : cache(Generic::class . ':readLayout:' . $layout->id,
             function() use ($layout) {
@@ -435,9 +426,10 @@ class Generic
                             continue;
                         }
 
-                        $variables[$block][] = (string)$html;
+                        $string = (string)$html;
+                        $variables[$block][] = $string;
                     } catch (Throwable $e) {
-                        if (dev()) {
+                        if (!prod()) {
                             throw $e;
                         }
                     }
@@ -450,6 +442,15 @@ class Generic
         }
 
         return $variables;
+    }
+
+    public function build()
+    {
+        $args = array_merge(router()->get('data'), router()->getResolves());
+
+        $this->actions->each(function(ActionRecord $action) use ($args) {
+            (new Action($action))->build($args);
+        });
     }
 
     /**

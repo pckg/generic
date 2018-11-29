@@ -60,7 +60,7 @@ class Dynamic extends Provider
         return [
             'url' => array_merge_array(
                 [
-                    'tags' => ['group:admin'],
+                    'tags' => ['group:admin', 'layout:backend'],
                 ],
                 array_merge_array(
                     [

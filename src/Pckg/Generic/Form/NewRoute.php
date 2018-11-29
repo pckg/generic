@@ -15,9 +15,9 @@ class NewRoute extends Bootstrap implements ResolvesOnRequest
 
             return !((new Routes())->where('slug', $value)->one());
         })))->addValidator((new Custom(function($value, Custom $validator) {
-            $validator->setMsg('Slug should contain only alphanumeric characters, minus and dot');
+            $validator->setMsg('Slug should contain only lower case alphanumeric characters, minus and dot');
 
-            return $value == sluggify($value);
+            return $value == sluggify($value, '-', '\.');
         })));
 
         $this->addText('route')->required()->addValidator((new Custom(function($value, Custom $validator) {

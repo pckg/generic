@@ -2,6 +2,7 @@
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Generic\Entity\Actions;
@@ -14,6 +15,7 @@ use Pckg\Generic\Form\NewRoute;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
+use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\SettingsMorph;
 use Pckg\Generic\Service\Generic;
@@ -490,14 +492,45 @@ class PageStructure
     {
         $partial = $actionsMorph->addPartial(post('partial', null));
 
-        return response()->respondWithSuccess(['actionsMorph' => $partial]);
+        $parent = $partial->mostParent;
+
+        $flatActions = $parent->flattenForGenericResponse(collect());
+        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action){
+            return (new Generic\Action($action))->buildAndJsonSerialize();
+        })->all();
+
+        return response()->respondWithSuccess([
+                                                  'actionsMorph' => $partial,
+                                                  'actions'      => $fetchedActions,
+                                              ]);
     }
 
     public function postActionsMorphAddRoutePartialAction(Route $route)
     {
-        $route->addPartial(post('partial', null));
+        $partial = $route->addPartial(post('partial', null));
 
-        return response()->respondWithSuccess();
+        $parent = $partial->mostParent;
+
+        $flatActions = $parent->flattenForGenericResponse(collect());
+        $fetchedActions = $route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action){
+            return (new Generic\Action($action))->buildAndJsonSerialize();
+        })->all();
+
+        return response()->respondWithSuccess([
+                                                  'actions' => $fetchedActions,
+                                              ]);
     }
 
     public function getRouteTreeAction(Route $route, Generic $genericService)
@@ -522,7 +555,7 @@ class PageStructure
     public function postNewRouteAction(NewRoute $newRoute)
     {
         $data = $newRoute->getData();
-        dd('got data', $data);
+        $data['layout_id'] = Layout::getOrFail(['slug' => 'frontend'])->id;
         $route = Route::create($data);
 
         return [

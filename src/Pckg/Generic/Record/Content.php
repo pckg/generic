@@ -20,7 +20,7 @@ class Content extends Record
 
     protected $preparsedData = [];
 
-    protected $toArray = ['+contents'];
+    protected $toArray = ['+contents', 'image'];
 
     public function getImageAttribute()
     {

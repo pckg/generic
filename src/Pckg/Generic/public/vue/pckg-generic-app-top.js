@@ -523,17 +523,66 @@ var pckgElement = {
     },
     methods: {
         componentClicked: function ($event) {
-            if (this.genericMode == 'edit') {
-                $event.preventDefault();
-                $event.stopPropagation();
-                $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
-                // $dispatcher.$emit('actionClicked', this.action);
-                return false;
+            if (this.genericMode != 'edit') {
+                return;
             }
+
+            $event.preventDefault();
+            $event.stopPropagation();
+            $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
+            return false;
+        },
+        componentDblClicked: function ($event) {
+            console.log('dbl');
+            if (this.genericMode != 'edit') {
+                console.log('not edit');
+                return;
+            }
+
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            if ($(this.$el).find('.bind-content').length == 0) {
+                console.log('no content');
+                return;
+            }
+            console.log('initializing');
+
+            initTinymce(this.id + ' .bind-content', {
+                menubar: false,
+                inline: true,
+                //theme: 'inlite',
+                content_css: null,
+                /*plugins: [
+                    'autolink',
+                    'codesample',
+                    'contextmenu',
+                    'link',
+                    'linkchecker',
+                    'lists',
+                    'mediaembed',
+                    'powerpaste',
+                    'table',
+                    'textcolor',
+                    'image'
+                ],*/
+                toolbar: [
+                    'undo redo | bold italic underline | fontselect fontsizeselect',
+                    'forecolor backcolor | alignleft aligncenter alignright alignfull | link unlink | numlist bullist outdent indent'
+                ],
+                insert_toolbar: 'quicktable image',
+                selection_toolbar: 'bold italic | h2 h3 | blockquote quicklink',
+                contextmenu: 'inserttable | cell row column deletetable',
+            });
+            console.log('initialized');
+
+            //$dispatcher.$emit('pckg-frontpage:editContent', this.action);
+
+            return false;
         }
     },
     computed: {
-        genericMode: function() {
+        genericMode: function () {
             return $store.state.generic.genericMode;
         },
         action: function () {

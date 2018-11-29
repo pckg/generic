@@ -20,16 +20,13 @@
             <p class="text-center padding-vertical-xs margin-none" v-if="action.id">
                 <b>${ action.title } #${ action.id }</b>
             </p>
-            <p class="text-center padding-vertical-xs margin-none" v-else><b>New action</b></p>
-
-            <div class="clearfix"></div>
-
-            <div class="btn btn-group pull-left">
-                <a type="button" href="#" title="Close plugins" class="btn btn-default btn-sm"
-                   @click.prevent="mode = 'view'">
+            <p class="text-center padding-xs margin-none" v-else>
+                <b>New action</b>
+                <a href="#" title="Close modules" class="btn btn-default btn-xs pull-right"
+                   @click.prevent="close">
                     <i aria-hidden="true" class="fa fa-times"></i>
                 </a>
-            </div>
+            </p>
 
             <div class="clearfix"></div>
 
@@ -49,7 +46,7 @@
                          :aria-labelledby="'heading' + hash(title)">
                         <div class="panel-body">
                             <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
-                               v-for="(partial, title) in subPartials">
+                                    v-for="(partial, title) in subPartials">
                                 ${ partial.title }
                             </button>
                         </div>
@@ -193,7 +190,7 @@
 
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                <div class="panel panel-default">
+                <div class="panel panel-default" v-if="hasTemplateSelection">
                     <div class="panel-heading" role="tab" id="headingFive">
                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
@@ -204,7 +201,7 @@
                          aria-labelledby="headingFive">
                         <div class="panel-body">
 
-                            <div v-if="Object.keys(actionTemplates).length > 0">
+                            <div v-if="hasMultipleTemplates">
                                 <label>Template</label>
                                 <select class="form-control" v-model="action.template.template">
                                     <option v-for="(title,tpl) in actionTemplates" :value="tpl"
@@ -217,27 +214,24 @@
                                 </select>
                             </div>
 
-                            <template
-                                    v-if="actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] !== 'string'">
+                            <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
+                                <label>Item template</label>
+                                <select class="form-control" v-model="action.template.item">
+                                    <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
+                                            :value="tpl">${ title }
+                                    </option>
+                                </select>
+                            </div>
 
-                                <div v-if="actionTemplates[action.template.template].list">
-                                    <label>List template</label>
-                                    <select class="form-control" v-model="action.template.list">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
-                                                :value="tpl">${ title }
-                                        </option>
-                                    </select>
-                                </div>
+                            <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
+                                <label>List template</label>
+                                <select class="form-control" v-model="action.template.list">
+                                    <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
+                                            :value="tpl">${ title }
+                                    </option>
+                                </select>
+                            </div>
 
-                                <div v-if="actionTemplates[action.template.template].item">
-                                    <label>Item template</label>
-                                    <select class="form-control" v-model="action.template.item">
-                                        <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
-                                                :value="tpl">${ title }
-                                        </option>
-                                    </select>
-                                </div>
-                            </template>
                         </div>
                     </div>
                 </div>
@@ -786,6 +780,10 @@
             $dispatcher.$on('pckg-editor:actionChanged', this.setAction);
             $dispatcher.$on('pckg-editor:addChild', this.addChild);
             $dispatcher.$on('pckg-editor:addRootChild', this.addRootChild);
+
+            if (this.rootElements.length == 0) {
+                this.addRootChild();
+            }
         },
         watch: {
             padding: {
@@ -870,19 +868,26 @@
                 },
                 deep: true
             },
-            visibilityClass: function (newValue) {
-                if (newValue != 'visible') {
-                    return;
-                }
+            visibilityClass: {
+                handler: function (newValue) {
+                    if (newValue != 'visible') {
+                        return;
+                    }
 
-                if (this.routes.length > 0) {
-                    return;
-                }
+                    if (this.footers.length > 0) {
+                        return;
+                    }
 
-                this.initialFetch();
+                    this.initialFetch();
+                },
+                immediate: true
             }
         },
         methods: {
+            close: function() {
+                this.mode = 'view';
+                this.$emit('close');
+            },
             hash: function (value) {
                 var hash = 0, i, chr;
                 if (value.length === 0) return hash;
@@ -938,8 +943,12 @@
             },
             deleteAction: function () {
                 http.deleteJSON(utils.url('@pckg.generic.pageStructure.actionsMorph', {actionsMorph: this.action.id}), function (data) {
-                    $('.modal').modal('hide');
+
                 });
+                $store.commit('removeGenericAction', this.action);
+                this.action = {};
+                this.$emit('close');
+                $('.modal').modal('hide');
             },
             toggleTransparency: function () {
                 $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
@@ -995,9 +1004,8 @@
                 $('#deleteActionModal').modal('show');
             },
             addChild: function () {
-                this.initialFetch();
                 this.mode = 'add';
-                this.visibilityClass = 'visible';
+                this.$emit('open');
             },
             addRootChild: function () {
                 this.action = {};
@@ -1013,6 +1021,9 @@
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
                         $dispatcher.$emit('pckg-frontpage:fetchTree');
+                    }
+                    if (data.actions) {
+                        $store.commit('addGenericActions', data.actions);
                     }
                 });
             },
@@ -1276,6 +1287,9 @@
             }
         },
         computed: {
+            rootElements: function () {
+                return $store.getters.actionChildren(null);
+            },
             cssSizes: function () {
                 return ['no', 'auto', 'xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
             },
@@ -1289,6 +1303,42 @@
                 }
 
                 return this.templates[this.action.class][this.action.method];
+            },
+            hasMultipleTemplates: function () {
+                let templates = this.actionTemplates;
+                if (!templates) {
+                    return false;
+                }
+
+                return Object.keys(templates).length > 1;
+            },
+            hasTemplateSelection: function () {
+                let templates = this.actionTemplates;
+                if (!templates) {
+                    return false;
+                }
+
+                if (Object.keys(templates).length > 1) {
+                    return true;
+                }
+                if (Object.keys(templates).length == 0) {
+                    return false; // no templates?
+                }
+
+                let template = templates[Object.keys(templates)[0]];
+
+                if (typeof template == 'string') {
+                    /**
+                     * Single twig template
+                     */
+                    return false;
+                }
+
+                /**
+                 * Is not title, so it's object, and it has either list or item templates.
+                 */
+                return (template.list && Object.keys(template.list).length > 1)
+                    || (template.item && Object.keys(template.item) > 1);
             },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="loading" class="pckg-loader display-block text-center">
+    <div v-if="myLoading" class="pckg-loader display-block text-center">
         <i class="fa fa-spinner-third fa-spin fa-2x"></i>
     </div>
 </template>

@@ -9,41 +9,12 @@ class Content
 
     public function getSimpleAction(Action $action)
     {
-        /**
-         * Get content, set it to proper view.
-         */
-        return view(
-            'Pckg/Generic:content/simple',
-            [
-                'action'  => $action,
-            ]
-        );
+        return $action->toView('Pckg/Generic:content/simple');
     }
 
-    public function getListedAction(ContentRecord $content = null)
+    public function getTreeAction(Action $action)
     {
-        /**
-         * Get content, set it to proper view, also set subcontents.
-         */
-        return view(
-            'content\simple',
-            [
-                'content' => $content,
-            ]
-        );
-    }
-
-    public function getTreeAction(ContentRecord $content = null)
-    {
-        /**
-         * Get content, set it to proper view, also set it as tree.
-         */
-        return view(
-            'content\tree',
-            [
-                'content' => $content,
-            ]
-        );
+        return $action->toView('Pckg/Generic:content/tree');
     }
 
     /**
@@ -54,7 +25,7 @@ class Content
      * @return \Pckg\Framework\View\Twig
      * @deprecated
      */
-    public function getTemplateAction(ContentRecord $content = null, Action $action, $settings)
+    public function getTemplateAction(Action $action, $settings)
     {
         return view(
             $action->getAction()->settings ? $action->getAction()->settings->first(

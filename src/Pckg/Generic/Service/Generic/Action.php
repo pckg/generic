@@ -42,6 +42,17 @@ class Action implements \JsonSerializable
     }
 
     /**
+     * @param string $component
+     * @param array  $props
+     *
+     * @return string
+     */
+    public function toVue(string $component, $props = [])
+    {
+        return '<' . $component . ' :action-id="' . $this->getAction()->pivot->id . '"></' . $component . '>';
+    }
+
+    /**
      * @param      $class
      * @param      $method
      * @param null $order
@@ -90,14 +101,7 @@ class Action implements \JsonSerializable
             return;
         }
 
-        $defaults = $this->jsonSerialize();
-
-        return array_merge([
-                                'title'    => $this->action->title,
-                                'morph'    => $this->action->pivot->morph,
-                                'type'     => $this->getType(),
-                                'slug'     => $this->action->slug,
-                            ], $defaults);
+        return $this->jsonSerialize();
     }
 
     public function getTree()
@@ -197,96 +201,7 @@ class Action implements \JsonSerializable
                      */
                     $this->getSubHtml();
 
-                    $args = array_merge(router()->get('data'), router()->getResolves());
-                    $args = array_merge($args, ['action' => $this, 'content' => $this->getContent()]);
-                    $args = array_merge($args, $this->args);
-
-                    measure('Resolving',
-                        function() use (&$args) {
-                            if (isset($args['settings'])) {
-                                $args['settings']->each(function(Setting $setting) use (&$args) {
-                                    $setting->pivot->resolve($args);
-                                });
-                            }
-
-                            foreach ($args['resolved'] as $key => $val) {
-                                $args[$key] = $val;
-                            }
-
-                            /**
-                             * Proper resolve by setting implementation, remove others.
-                             */
-                            $actionsMorphResolver = $this->action->pivot->settings->keyBy('slug')
-                                                                                  ->getKey('pckg.generic.actionsMorph.resolver');
-                            if ($actionsMorphResolver) {
-                                foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
-                                    if (isset($conf['resolver'])) {
-                                        /**
-                                         * @deprecated
-                                         */
-                                        $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
-                                    } elseif (is_array($conf)) {
-                                        $resolver = array_keys($conf)[0];
-                                        $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
-                                    }
-                                }
-                            }
-                        });
-
-                    /**
-                     * Get plugin output.
-                     */
-                    $pluginService = new Plugin();
-                    $result = null;
-                    try {
-                        $result = measure('Making plugin ' . $this->getClass() . ' @ ' . $this->getMethod(),
-                            function() use ($pluginService, $args) {
-                                return $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
-                            });
-                    } catch (Throwable $e) {
-                        if (!prod()) {
-                            throw new Exception(exception($e) . ':' . $this->getClass() . ' ' . $this->getMethod());
-                        }
-                    }
-
-                    /**
-                     * Array should be returned directly.
-                     */
-                    if (is_array($result)) {
-                        return $result;
-                    }
-
-                    /**
-                     * Allow custom template.
-                     */
-                    if ($result instanceof View\Twig) {
-                        /**
-                         * Awh, and check for allowed templates. :)
-                         */
-                        if ($this->action->pivot->template['template']) {
-                            /**
-                             * In template we store template, list template and item template designs.
-                             */
-                            $newFile = str_replace(':', '/View/', $this->action->pivot->template['template']);
-                            message('Using action template ' . $newFile . ' ' . $this->action->slug);
-                            $result->setFile($newFile);
-                        }
-
-                        // $result->addData('serviceAction', $this);
-                    }
-
-                    /**
-                     * Parse view to string in all cases.
-                     */
-                    $result = measure('Parsing to string',
-                        function() use ($result) {
-                            return (string)$result;
-                        });
-
-                    $this->getAction()->pivot->build = $result;
-                    if ($innerOnly) {
-                        return $result;
-                    }
+                    $result = $this->build();
 
                     /**
                      * Return built output.
@@ -297,6 +212,24 @@ class Action implements \JsonSerializable
 
                 return $return;
             });
+    }
+
+    public function buildAndJsonSerialize()
+    {
+        $this->build();
+
+        return $this->jsonSerialize();
+    }
+
+    public function build($args = [])
+    {
+        $args = array_merge($args, ['action' => $this]);
+
+        $this->getAction()->pivot->resolveSettings($args);
+
+        $build = $this->getAction()->pivot->buildHtml($args);
+
+        $this->getAction()->pivot->build = $build;
     }
 
     public function getBackgroundVideoHtml()
@@ -367,54 +300,7 @@ class Action implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        $template = $this->action->pivot->template;
-
-        /**
-         * Transform template to original template
-         *  - Derive/Offers:offers/list-vSquare -> Derive/Offers:offers/list
-         */
-        list($before, $after) = explode(
-            ':',
-            str_replace(
-                ['\\', '/Controller/'],
-                ['/', ':'],
-                $this->action->class
-            ) . '/' . $this->action->method
-        );
-        $classed = $before . ':' . lcfirst($after);
-
-
-        /**
-         * Make sure that vue templates are set.
-         */
-        $listTemplate = null;
-        $itemTemplate = null;
-        $templates = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method . '.' . $classed, null);
-        $listTemplates = config('pckg.generic.templateEngine.list', []);
-        $itemTemplates = config('pckg.generic.templateEngine.item', []);
-        if (is_array($templates)) {
-            $listTemplate = array_keys($templates['list'] ?? $listTemplates)[0] ?? null;
-            if (!isset($template['list'])) {
-                $template['list'] = $listTemplate;
-            }
-            $itemTemplate = array_keys($templates['item'] ?? $itemTemplates)[0] ?? null;
-            if (!array_key_exists('item', $template) || !$template['item'] || !in_array($template['item'], array_keys($templates['item']))) {
-                $template['item'] = $itemTemplate;
-            }
-        }
-
-        return [
-            'id'        => $this->action->pivot->id,
-            'parent_id' => $this->action->pivot->parent_id,
-            'class'     => $this->action->class,
-            'classed'   => $classed,
-            'method'    => $this->action->method,
-            'template'  => $template,
-            'settings'  => $this->action->pivot->settingsArray,
-            'content'   => $this->getContent(),
-            'build'     => $this->action->pivot->build,
-            'order'     => $this->action->pivot->order,
-        ];
+        return $this->getAction()->pivot->jsonSerialize();
     }
 
     public function toJSON()

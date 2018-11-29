@@ -43,7 +43,7 @@
                 immediate: true,
                 handler: function (newVal, oldVal) {
                     let res;
-                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">'
+                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)">'
                         + '<pckg-action-bg :action="action"></pckg-action-bg>'
                         + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
                         + (this.action.build)

@@ -1,15 +1,10 @@
 <?php namespace Pckg\Generic\Controller;
 
-use Derive\Orders\Entity\Orders;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
-use Pckg\Locale\Entity\Languages;
-use Pckg\Locale\Record\Language;
-use Pckg\Manager\Asset as AssetManager;
-use Pckg\Manager\Seo as SeoManager;
 
 /**
  * Class Generic
@@ -37,16 +32,25 @@ class Generic
 
     public function getGenericAction(Route $route)
     {
-        $this->genericService->readRoute($route);
+        measure('Reading route', function() use ($route) {
+            $this->genericService->readRoute($route);
+        });
 
-        $vars = $this->genericService->getVariables();
+        measure('Building actions', function() {
+            $this->genericService->build();
+        });
 
         $route->applySeoSettings();
-        $vars['content'] = '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
 
-        return $route->layout
-            ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
-            : $vars;
+        return measure('Stringifying output', function() use ($route) {
+            $vars = [
+                'content' => '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>',
+            ];
+
+            return (string)($route->layout
+                ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
+                : $vars);
+        });
     }
 
     public function postGenericAction(Route $route)
@@ -63,9 +67,9 @@ class Generic
         return null;
     }
 
-    public function wrapIntoGeneric($view, $template = 'Pckg/Generic:backend')
+    public function wrapIntoGeneric($view, $template = 'Pckg/Generic:frontend')
     {
-        message('Wrapping into generic');
+        message('Wrapping into generic ' . $template);
         $center = $this->genericService->touchBlock('content');
 
         /**
@@ -80,7 +84,7 @@ class Generic
         return view($template, $vars);
     }
 
-    public function wrapIntoGenericContainer($view, $template = 'Pckg/Generic:backend')
+    public function wrapIntoGenericContainer($view, $template = 'Pckg/Generic:frontend')
     {
         message('Wrapping into container');
         $view = '<div class="container">' . $view . '</div>';

@@ -28,7 +28,7 @@ class EncapsulateResponse
                                                                              ) != '<!doctype'
             ) {
                 $tags = router()->get('tags', []);
-                $template = config('pckg.generic.layouts.default', 'Pckg/Generic:backend');
+                $template = config('pckg.generic.layouts.default', 'Pckg/Generic:frontend');
                 $disable = false;
                 foreach ($tags as $tag) {
                     if ($tag == EncapsulateResponse::class . '.disable') {
@@ -45,8 +45,9 @@ class EncapsulateResponse
 
                 if (!$disable) {
                     $output = $template == 'Pckg/Generic:backend'
-                        ? Reflect::create(Generic::class)->wrapIntoGeneric($output, $template)
-                        : Reflect::create(Generic::class)->wrapIntoGenericContainer($output, $template);
+                                            ? Reflect::create(Generic::class)->wrapIntoGeneric($output, $template)
+                                                : Reflect::create(Generic::class)->wrapIntoGenericContainer($output, $template);
+                    // $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
                     $this->response->setOutput($output);
                 }
             }

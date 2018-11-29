@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Record;
 
 use Complex\Exception;
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\ActionsMorphs;
@@ -94,9 +95,7 @@ class ActionsMorph extends Record
             'id'        => $this->id,
             'data'      => $data,
             'settings'  => $settings,
-            'content'   => $this->content_id
-                ? $this->content->data()
-                : [],
+            'content'   => $this->content_id ? $this->content->data() : [],
         ];
     }
 
@@ -151,7 +150,7 @@ class ActionsMorph extends Record
     {
         if (!$content) {
             $content = [];
-        } else if (is_string($content)) {
+        } elseif (is_string($content)) {
             $content = ['content' => $content];
         }
 
@@ -197,7 +196,7 @@ class ActionsMorph extends Record
 
         return $settingsMorph->setAndSave([
                                               'value' => $settingsMorph->value . ($settingsMorph->value ? ' ' : '') .
-                                                         $class,
+                                                  $class,
                                           ]);
     }
 
@@ -231,15 +230,16 @@ class ActionsMorph extends Record
         return $this;
     }
 
-    public function getTemplateAttribute() {
+    public function getTemplateAttribute()
+    {
         $template = $this->data('template');
 
         if (!$template) {
             return $this->fillTemplateSettings([
-                'template' => null,
-                'list' => null,
-                'item' => null,
-            ]);
+                                                   'template' => null,
+                                                   'list'     => null,
+                                                   'item'     => null,
+                                               ]);
         }
 
         if (substr($template, 0, 1) == '{') {
@@ -249,20 +249,19 @@ class ActionsMorph extends Record
         }
 
         return $this->fillTemplateSettings([
-            'template' => $template,
-            'list' => null,
-            'item' => null,
-        ]);
+                                               'template' => $template,
+                                               'list'     => null,
+                                               'item'     => null,
+                                           ]);
     }
 
     public function fillTemplateSettings($template)
     {
-        if (!$this->action) {
+        $config = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method, []);
+
+        if (!$config) {
             return $template;
         }
-
-        $config = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method, []);
-        $listTemplates = config('pckg.generic.templateEngine.list', []);
 
         /**
          * If config exists set first template if wrong template is set or template is not existent.
@@ -270,17 +269,25 @@ class ActionsMorph extends Record
         if (!array_key_exists('template', $template)) {
             $template['template'] = null;
         }
-        if ($config && (!$template['template'] || !isset($config[$template['template']]))) {
+
+        if (!$template['template'] || !isset($config[$template['template']])) {
             $template['template'] = array_keys($config)[0];
         }
 
-        if (isset($config[$template['template']]['item'])) {
-            if (!$template['list'] || !isset($config[$template['template']]['list'][$template['list']])) {
-                $template['list'] = array_keys($config['list'] ?? $listTemplates)[0];
+        if (!is_string($config[$template['template']])) {
+            $subconfig = $config[$template['template']];
+
+            if (isset($subconfig['item'])) {
+                if (!isset($template['item']) || !isset($subconfig['item'][$template['item']])) {
+                    $template['item'] = array_keys($subconfig['item'])[0];
+                }
             }
 
-            if (!$template['item'] || !isset($config[$template['template']]['item'][$template['item']])) {
-                $template['item'] = array_keys($config[$template['template']]['item'])[0];
+            if (isset($subconfig['list'])) {
+                $listTemplates = config('pckg.generic.templateEngine.list', []);
+                if (!isset($template['list']) || !isset($subconfig['list'][$template['list']])) {
+                    $template['list'] = array_keys($subconfig['list'] ?? $listTemplates)[0];
+                }
             }
         }
 
@@ -289,20 +296,16 @@ class ActionsMorph extends Record
 
     public function getSettingsArrayAttribute()
     {
-        $settings = $this->settings
-            ->map(function(
-                Setting $setting
-            ) {
-                return [
-                    'slug'  => str_replace('pckg.generic.pageStructure.', '',
-                                           $setting->slug),
-                    'value' => $setting->type == 'array'
-                        ? ($setting->pivot->value
-                            ? (json_decode($setting->pivot->value, true) ?? [])
-                            : [])
-                        : $setting->pivot->value,
-                ];
-            })->keyBy('slug')->map('value');
+        $settings = $this->settings->map(function(
+            Setting $setting
+        ) {
+            return [
+                'slug'  => str_replace('pckg.generic.pageStructure.', '', $setting->slug),
+                'value' => $setting->type == 'array' ? ($setting->pivot->value ? (json_decode($setting->pivot->value,
+                                                                                              true) ?? []) : [])
+                    : $setting->pivot->value,
+            ];
+        })->keyBy('slug')->map('value');
 
         $defaults = $this->getDefaultSettings();
         foreach ($defaults as $key => $val) {
@@ -439,6 +442,166 @@ class ActionsMorph extends Record
             'sourcePackets'   => [],
             'sourceGalleries' => [],
         ];
+    }
+
+    public function getBuildAttribute()
+    {
+        if ($this->hasKey('build')) {
+            return $this->data('build');
+        }
+
+        $build = $this->buildHtml();
+        $this->set('build', $build);
+
+        return $build;
+    }
+
+    public function buildHtml($args = [])
+    {
+        if ($this->type != 'action') {
+            return;
+        }
+
+        try {
+            return $this->action->build($args);
+        } catch (\Throwable $e) {
+            if (!prod()) {
+                throw $e;
+            }
+        }
+    }
+
+    public function overloadViewTemplate($result)
+    {
+        if (!($result instanceof View\Twig)) {
+            return;
+        }
+
+        /**
+         * Awh, and check for allowed templates. :)
+         */
+        if (!$this->template['template']) {
+            return;
+        }
+
+        /**
+         * In template we store template, list template and item template designs.
+         */
+        message('Using action template ' . $newFile . ' ' . $this->action->slug);
+        $newFile = str_replace(':', '/View/', $this->template['template']);
+        $result->setFile($newFile);
+    }
+
+    public function resolveSettings(&$args = [])
+    {
+        measure('Resolving', function() use (&$args) {
+            if (isset($args['settings'])) {
+                $args['settings']->each(function(Setting $setting) use (&$args) {
+                    $setting->pivot->resolve($args);
+                });
+            }
+
+            foreach ($args['resolved'] ?? [] as $key => $val) {
+                $args[$key] = $val;
+            }
+
+            /**
+             * Proper resolve by setting implementation, remove others.
+             */
+            $actionsMorphResolver = $this->settings->keyBy('slug')->getKey('pckg.generic.actionsMorph.resolver');
+            if ($actionsMorphResolver) {
+                foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
+                    if (isset($conf['resolver'])) {
+                        /**
+                         * @deprecated
+                         */
+                        $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
+                    } elseif (is_array($conf)) {
+                        $resolver = array_keys($conf)[0];
+                        $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
+                    }
+                }
+            }
+        });
+    }
+
+    public function getFinalTemplateAttribute()
+    {
+        $template = $this->template;
+
+        /**
+         * Transform template to original template
+         *  - Derive/Offers:offers/list-vSquare -> Derive/Offers:offers/list
+         */
+        list($before, $after) = explode(':',
+                                        str_replace(['\\', '/Controller/'], ['/', ':'], $this->action->class) . '/' .
+                                        $this->action->method);
+        $classed = $before . ':' . lcfirst($after);
+
+        /**
+         * Make sure that vue templates are set.
+         */
+        /*$listTemplate = null;
+        $itemTemplate = null;
+        $templates = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method . '.' .
+                            $classed, null);
+        $listTemplates = config('pckg.generic.templateEngine.list', []);
+        $itemTemplates = config('pckg.generic.templateEngine.item', []);
+        if (is_array($templates)) {
+            $listTemplate = array_keys($templates['list'] ?? $listTemplates)[0] ?? null;
+            if (!isset($template['list'])) {
+                $template['list'] = $listTemplate;
+            }
+            $itemTemplate = array_keys($templates['item'] ?? $itemTemplates)[0] ?? null;
+            if (!array_key_exists('item', $template) || !$template['item'] ||
+                !in_array($template['item'], array_keys($templates['item']))) {
+                $template['item'] = $itemTemplate;
+            }
+        }*/
+
+        return $template;
+    }
+
+    public function jsonSerialize()
+    {
+
+        return [
+            'id'        => $this->id,
+            'title'     => $this->action->title,
+            'morph'     => $this->morph,
+            'type'      => $this->type,
+            'slug'      => $this->action->slug,
+            'parent_id' => $this->parent_id,
+            'class'     => $this->action->class,
+            'method'    => $this->action->method,
+            'settings'  => $this->settingsArray,
+            'content'   => $this->content,
+            'build'     => $this->getBuildAttribute(),
+            'template'  => $this->finalTemplate,
+            'order'     => $this->order,
+        ];
+    }
+
+    public function flattenForGenericResponse(Collection $collection)
+    {
+        $action = $this->action;
+        $action->pivot = $this;
+        $collection->push($this);
+
+        foreach ($this->subActions as $action) {
+            $action->flattenForGenericResponse($collection);
+        }
+
+        return $collection;
+    }
+
+    public function getMostParentAttribute()
+    {
+        if (!$this->parent_id) {
+            return $this;
+        }
+
+        return $this->parentAction->mostParent;
     }
 
 }

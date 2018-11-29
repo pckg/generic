@@ -92,7 +92,7 @@ class Route extends Record
     public function addPartial($partial)
     {
         $partial = $this->preparePartial($partial);
-        $partial->addToRoute($this);
+        return $partial->addToRoute($this);
     }
 
     /**
