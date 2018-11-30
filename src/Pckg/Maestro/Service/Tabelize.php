@@ -700,6 +700,7 @@ class Tabelize
         $data['tabelize'] = $this;
         $actions = [];
         foreach ($this->getEntityActions() as $action) {
+            try {
             $template = null;
             if (isset($action->slug) && isset($action->entityTemplate)) {
                 $template = 'tabelize/entityActions/' . $action->entityTemplate;
@@ -722,6 +723,11 @@ class Tabelize
 
                 $actions[] = json_decode($parsed);
             }
+            } catch (Throwable $e) {
+                if (!prod()) {
+                    throw $e;
+                }
+            }
         }
 
         return $actions;
@@ -742,6 +748,7 @@ class Tabelize
         $data['tabelize'] = $this;
         $actions = [];
         foreach ($this->getRecordActions() as $action) {
+            try {
             $template = 'tabelize/recordActions/' .
                 (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
 
@@ -760,6 +767,11 @@ class Tabelize
                 dd($parsed);
             }
             $actions[] = $action;
+            } catch (Throwable $e) {
+                if (!prod()) {
+                    throw $e;
+                }
+            }
         }
 
         return $actions;
