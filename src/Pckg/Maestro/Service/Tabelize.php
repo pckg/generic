@@ -104,8 +104,8 @@ class Tabelize
         $this->entity = $entity;
         $this->fields = $fields;
         $this->view = view('Pckg/Maestro:tabelize', [
-                                                      'tabelize' => $this,
-                                                  ]);
+            'tabelize' => $this,
+        ]);
     }
 
     public function make()
@@ -365,7 +365,8 @@ class Tabelize
                     }
 
                     return $this->dataOnly ? $eval
-                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' . $eval . '</a>');
+                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' .
+                            $eval . '</a>');
                 }
             }
 
@@ -457,56 +458,62 @@ class Tabelize
          */
         foreach ([$this->views, $this->listActions] as $data) {
             foreach ($data as $key => $view) {
-                /**
-                 * @T00D00 - this should be automatic ...
-                 */
-                if (is_string($key) && in_array($key, ['delete', 'clone'])) {
-                    $view = $key;
-                }
-
-                $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
-
-                $wasObject = false;
-                $listAction = true;
-                if (is_object($view)) {
-                    if ($view instanceof View\Twig) {
-                        $view = $view->autoparse();
-                        $wasObject = true;
-                    } else {
-                        $view = $view->template;
-                    }
-                }
-
-                if (!is_string($view)) {
-                    $string .= "\n" . '<!-- entity view (string) -->';
-                    $string .= $view;
-                } elseif (!$wasObject && strpos($view, '@')) {
-                    list($class, $method) = explode('@', $view);
-                    if (strpos($method, ':')) {
-                        list($method, $view) = explode(':', $method);
+                try {
+                    /**
+                     * @T00D00 - this should be automatic ...
+                     */
+                    if (is_string($key) && in_array($key, ['delete', 'clone'])) {
+                        $view = $key;
                     }
 
-                    $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
-                    $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
-                } elseif (!$wasObject && $view) {
-                    if ($listAction) {
-                        $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                        if ($view === 'delete') {
-                            $delete = new Delete();
-                            $string .= $delete->getListAction($this);
-                        } elseif ($view === 'clone') {
-                            $cloner = new Cloner();
-                            $string .= $cloner->getListAction($this);
+                    $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
+
+                    $wasObject = false;
+                    $listAction = true;
+                    if (is_object($view)) {
+                        if ($view instanceof View\Twig) {
+                            $view = $view->autoparse();
+                            $wasObject = true;
                         } else {
-                            $string .= view('tabelize/listActions/' . $view)->autoparse();
+                            $view = $view->template;
                         }
                     }
-                } else {
-                    $string .= "\n" . '<!-- entity view (else) -->';
-                    $string .= $view;
-                }
 
-                $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
+                    if (!is_string($view)) {
+                        $string .= "\n" . '<!-- entity view (string) -->';
+                        $string .= $view;
+                    } elseif (!$wasObject && strpos($view, '@')) {
+                        list($class, $method) = explode('@', $view);
+                        if (strpos($method, ':')) {
+                            list($method, $view) = explode(':', $method);
+                        }
+
+                        $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
+                        $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
+                    } elseif (!$wasObject && $view) {
+                        if ($listAction) {
+                            $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
+                            if ($view === 'delete') {
+                                $delete = new Delete();
+                                $string .= $delete->getListAction($this);
+                            } elseif ($view === 'clone') {
+                                $cloner = new Cloner();
+                                $string .= $cloner->getListAction($this);
+                            } else {
+                                $string .= view('tabelize/listActions/' . $view)->autoparse();
+                            }
+                        }
+                    } else {
+                        $string .= "\n" . '<!-- entity view (else) -->';
+                        $string .= $view;
+                    }
+
+                    $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
+                } catch (Throwable $e) {
+                    if (!prod()) {
+                        throw $e;
+                    }
+                }
             }
         }
 
@@ -720,7 +727,8 @@ class Tabelize
         return $actions;
     }
 
-    public function getActionsArray() {
+    public function getActionsArray()
+    {
         return [
             'entity' => $this->getEntityActionsArray(false),
             'record' => $this->getRecordActionsArray(),
@@ -734,7 +742,8 @@ class Tabelize
         $data['tabelize'] = $this;
         $actions = [];
         foreach ($this->getRecordActions() as $action) {
-            $template = 'tabelize/recordActions/' . (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
+            $template = 'tabelize/recordActions/' .
+                (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
 
             $parsed = trim(view($template, $data)->autoparse());
 
@@ -759,11 +768,11 @@ class Tabelize
     public function getPaginator()
     {
         return [
-            'perPage' => $this->getPerPage(),
-            'page'    => $this->getPage(),
-            'filtered'   => $this->getTotal(),
-            'total'   => $this->getTotal(),
-            'url'     => router()->getUri(),
+            'perPage'  => $this->getPerPage(),
+            'page'     => $this->getPage(),
+            'filtered' => $this->getTotal(),
+            'total'    => $this->getTotal(),
+            'url'      => router()->getUri(),
         ];
     }
 
@@ -782,46 +791,46 @@ class Tabelize
     public function getResetViewUrl()
     {
         return url('dynamic.record.view.reset', [
-                                                  'table' => $this->table,
-                                              ]);
+            'table' => $this->table,
+        ]);
     }
 
     public function getSaveViewUrl()
     {
         return url($this->tableView ? 'dynamic.record.view.savePlusView' : 'dynamic.record.view.save', [
-                                                                                                         'table'     => $this->table,
-                                                                                                         'tableView' => $this->tableView,
-                                                                                                     ]);
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function getImportUrl()
     {
         return url('dynamic.record.import', [
-                                              'table' => $this->table,
-                                          ]);
+            'table' => $this->table,
+        ]);
     }
 
     public function getExportUrl($type)
     {
         return url('dynamic.record.export', [
-                                              'table' => $this->table,
-                                              'type'  => $type,
-                                          ]);
+            'table' => $this->table,
+            'type'  => $type,
+        ]);
     }
 
     public function getAddUrl()
     {
         if ($this->dynamicRelation && $this->dynamicRecord) {
             return url('dynamic.record.add.related', [
-                                                       'table'    => $this->table,
-                                                       'relation' => $this->dynamicRelation,
-                                                       'foreign'  => $this->dynamicRecord,
-                                                   ]);
+                'table'    => $this->table,
+                'relation' => $this->dynamicRelation,
+                'foreign'  => $this->dynamicRecord,
+            ]);
         }
 
         return url('dynamic.record.add', [
-                                           'table' => $this->table,
-                                       ]);
+            'table' => $this->table,
+        ]);
     }
 
     public function getSavedViews()
@@ -843,26 +852,26 @@ class Tabelize
     public function getTabUrl($tab)
     {
         return url('dynamic.record.tab', [
-                                           'tab'    => $tab,
-                                           'table'  => $this->table,
-                                           'record' => $this->dynamicRecord,
-                                       ]);
+            'tab'    => $tab,
+            'table'  => $this->table,
+            'record' => $this->dynamicRecord,
+        ]);
     }
 
     public function getViewUrl()
     {
         return url('dynamic.record.list' . ($this->tableView ? 'View' : ''), [
-                                                                               'table'     => $this->table,
-                                                                               'tableView' => $this->tableView,
-                                                                           ]);
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function getConfigureUrl()
     {
         return url('dynamic.record.list' . ($this->tableView ? 'View' : '') . 'Configure', [
-                                                                                             'table'     => $this->table,
-                                                                                             'tableView' => $this->tableView,
-                                                                                         ]);
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function setTableView(TableView $tableView = null)
