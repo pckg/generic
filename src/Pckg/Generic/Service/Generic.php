@@ -138,7 +138,7 @@ class Generic
          * Route resolvers.
          */
         $resolved = [];
-        if ($resolvers && $route->resolvers && false) {
+        if ($resolvers && $route->resolvers) {
             $router = router()->get();
             $decoded = @json_decode($route->resolvers, true);
             foreach ($decoded ?? [] as $key => $conf) {

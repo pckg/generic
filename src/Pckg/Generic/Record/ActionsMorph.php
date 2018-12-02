@@ -463,7 +463,9 @@ class ActionsMorph extends Record
         }
 
         try {
-            return $this->action->build($args);
+            $build = $this->action->build($args);
+            $this->set('build', $build);
+            return $build;
         } catch (\Throwable $e) {
             if (!prod()) {
                 throw $e;

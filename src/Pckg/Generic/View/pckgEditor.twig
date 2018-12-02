@@ -15,12 +15,9 @@
             </a>
         </div>-->
 
-        <div class="pckg-editor-settings" v-if="mode == 'add'" :class="visibilityClass">
+        <div class="pckg-editor-settings" v-if="myMode == 'add'">
 
-            <p class="text-center padding-vertical-xs margin-none" v-if="action.id">
-                <b>${ action.title } #${ action.id }</b>
-            </p>
-            <p class="text-center padding-xs margin-none" v-else>
+            <p class="text-center padding-xs margin-none">
                 <b>New action</b>
                 <a href="#" title="Close modules" class="btn btn-default btn-xs pull-right"
                    @click.prevent="close">
@@ -116,74 +113,116 @@
             </div>
         </div>
 
-        <div class="pckg-editor-settings" v-else-if="action.id" :class="visibilityClass">
+        <div class="pckg-editor-settings" v-else-if="action">
 
             <!-- action parent and children navigation -->
             <div class="as-table padding-vertical-xs">
                 <div class="text-left">
-                    <button type="button" class="btn btn-default btn-sm" title="Go to parent" :disabled="!actionParent"
-                            @click.prevent="setAction(actionParent)">
-                        <i class="fa fa-chevron-left"></i></button>
+                    <table class="navigator">
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-sm" title="Go to previous element"
+                                        @click.prevent="openPrevious" :disabled="!previousAction">
+                                    <i class="fa fa-chevron-up"></i></button>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-default btn-sm" title="Go to parent"
+                                        :disabled="!actionParent"
+                                        @click.prevent="setAction(actionParent)">
+                                    <i class="fa fa-chevron-left"></i></button>
+                            </td>
+                            <td></td>
+                            <td>
+                                <button v-if="actionChildren.length <= 1" type="button" class="btn btn-default btn-sm"
+                                        title="Go to child" @click.prevent="setAction(actionChildren[0])"
+                                        :disabled="actionChildren.length == 0">
+                                    <i class="fa fa-chevron-right"></i></button>
+
+                                <div class="btn-group btn-group-sm" v-else>
+                                    <button class="dropdown-toggle btn btn-default btn-sm"
+                                            title="List children" data-toggle="dropdown"
+                                            role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-left">
+                                        <li v-for="childAction in actionChildren">
+                                            <a href="#" @click.prevent="setAction(childAction)">${ childAction.title }
+                                                #${
+                                                childAction.id }</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-sm" title="Go to next element"
+                                        @click.prevent="openNext" :disabled="!nextAction">
+                                    <i class="fa fa-chevron-down"></i></button>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="text-center"><b>${ action.title } #${ action.id }</b></div>
                 <div class="text-right">
 
-                    <button v-if="actionChildren.length == 1" type="button" class="btn btn-default btn-sm"
-                            title="Go to parent" @click.prevent="setAction(actionChildren[0])">
-                        <i class="fa fa-chevron-right"></i></button>
+                    <a type="button" href="#" title="Save settings" class="btn btn-default btn-sm"
+                       @click.prevent="saveSettings">
+                        <i aria-hidden="true" class="fa fa-save"></i>
+                    </a>
 
-                    <div class="btn-group btn-group-sm" v-else>
-                        <button class="dropdown-toggle btn btn-default btn-sm"
-                                :disabled="actionChildren.length == 0" title="List children" data-toggle="dropdown"
-                                role="button" aria-haspopup="true" aria-expanded="false">
+                    <div class="btn-group text-left">
+                        <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                                role="button"
+                                aria-haspopup="true"
+                                aria-expanded="false" title="More page options">
                             <i class="fa fa-ellipsis-v"></i>
                         </button>
-
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li v-for="childAction in actionChildren">
-                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title } #${
-                                    childAction.id }</a>
+                            <li>
+                                <a type="button" href="#" title="Add child" class="btn btn-default btn-sm"
+                                   @click.prevent="addChild">
+                                    <i aria-hidden="true" class="fa fa-plus"></i> Add element
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
+                                   @click.prevent="openEditContentModal">
+                                    <i aria-hidden="true" class="fa fa-edit"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
+                                    <i aria-hidden="true" class="fa fa-download"></i> Export element
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
+                                    <i aria-hidden="true" class="fa fa-upload"></i> Import element
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
+                                   @click.prevent="openDeleteActionModal">
+                                    <i aria-hidden="true" class="fa fa-trash danger"></i> Delete
+                                </a>
                             </li>
                         </ul>
                     </div>
 
+                    <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
+                       @click.prevent="setAction(null)">
+                        <i aria-hidden="true" class="fa fa-times"></i>
+                    </a>
+
                 </div>
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="btn btn-group btn-group-centered">
-                <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
-                   @click.prevent="openDeleteActionModal">
-                    <i aria-hidden="true" class="fa fa-trash danger"></i>
-                </a>
-
-                <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
-                    <i aria-hidden="true" class="fa fa-download"></i>
-                </a>
-
-                <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
-                    <i aria-hidden="true" class="fa fa-upload"></i>
-                </a>
-
-                <a type="button" href="#" title="Add child" class="btn btn-default btn-sm" @click.prevent="addChild">
-                    <i aria-hidden="true" class="fa fa-plus"></i>
-                </a>
-
-                <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
-                   @click.prevent="openEditContentModal">
-                    <i aria-hidden="true" class="fa fa-edit"></i>
-                </a>
-
-                <a type="button" href="#" title="Save settings" class="btn btn-default btn-sm"
-                   @click.prevent="saveSettings">
-                    <i aria-hidden="true" class="fa fa-save"></i>
-                </a>
-
-                <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
-                   @click.prevent="closeSettings">
-                    <i aria-hidden="true" class="fa fa-times"></i>
-                </a>
             </div>
 
             <div class="clearfix"></div>
@@ -586,7 +625,7 @@
             </div>
         </div>
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action.id'} %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action'} %}
             {% block header %}
                 Edit content
             {% endblock %}
@@ -653,7 +692,7 @@
             {% endblock %}
         {% endembed %}
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal'} %}
+        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal', vueLoading: '!action'} %}
             {% block header %}
                 Delete action
             {% endblock %}
@@ -681,10 +720,9 @@
 <script type="text/javascript">
     Vue.component('pckg-editor', {
         props: {
-            routeId: {},
-            visibilityClass: {
-                type: String,
-                default: 'hidden'
+            route: {},
+            mode: {
+                default: 'edit'
             }
         },
         name: 'pckg-editor',
@@ -735,13 +773,6 @@
                 availableVideoLoops: {'yes': 'Yes', 'no': 'No'},
                 availableVideoAutoplays: {'no': 'No', 'yes': 'Yes', 'on-scroll': 'On scroll'},
                 availableHeadings: {'h1': 'H1', 'h2': 'H2', 'h3': 'H3', 'h4': 'H4', 'h5': 'H5'},
-                action: {
-                    template: {
-                        template: '',
-                        list: '',
-                        item: '',
-                    },
-                },
                 content: {
                     content: '',
                     contents: []
@@ -773,19 +804,23 @@
                 ],
                 showSubcontents: false,
                 tempSubcontents: {},
-                mode: null
+                myMode: this.mode
             };
         },
         created: function () {
             $dispatcher.$on('pckg-editor:actionChanged', this.setAction);
             $dispatcher.$on('pckg-editor:addChild', this.addChild);
             $dispatcher.$on('pckg-editor:addRootChild', this.addRootChild);
+            this.initialFetch();
 
             if (this.rootElements.length == 0) {
                 this.addRootChild();
             }
         },
         watch: {
+            mode: function (newVal) {
+                this.myMode = newVal;
+            },
             padding: {
                 handler: function (newVal, oldVal) {
                     var classes = this.getNormalizedClasses(newVal, 'padding');
@@ -867,26 +902,11 @@
                     this.changeContent(this.content);
                 },
                 deep: true
-            },
-            visibilityClass: {
-                handler: function (newValue) {
-                    if (newValue != 'visible') {
-                        return;
-                    }
-
-                    if (this.footers.length > 0) {
-                        return;
-                    }
-
-                    this.initialFetch();
-                },
-                immediate: true
             }
         },
         methods: {
-            close: function() {
-                this.mode = 'view';
-                this.$emit('close');
+            close: function () {
+                this.$emit('mode', 'view');
             },
             hash: function (value) {
                 var hash = 0, i, chr;
@@ -945,9 +965,8 @@
                 http.deleteJSON(utils.url('@pckg.generic.pageStructure.actionsMorph', {actionsMorph: this.action.id}), function (data) {
 
                 });
-                $store.commit('removeGenericAction', this.action);
-                this.action = {};
-                this.$emit('close');
+                $store.commit('setActiveAction', null);
+                $store.commit('removeGenericAction', action);
                 $('.modal').modal('hide');
             },
             toggleTransparency: function () {
@@ -1004,17 +1023,16 @@
                 $('#deleteActionModal').modal('show');
             },
             addChild: function () {
-                this.mode = 'add';
-                this.$emit('open');
+                this.$emit('mode', 'add');
             },
             addRootChild: function () {
-                this.action = {};
+                $store.commit('setActiveAction', null);
                 this.addChild();
             },
             addAction: function (c) {
                 var url = this.action.id
                     ? utils.url('@pckg.generic.pageStructure.actionsMorph.addPartial', {actionsMorph: this.action.id})
-                    : utils.url('@pckg.generic.pageStructure.actionsMorph.addRoutePartial', {route: this.routeId});
+                    : utils.url('@pckg.generic.pageStructure.actionsMorph.addRoutePartial', {route: this.route.id});
                 http.post(url, {
                     partial: c
                 }, function (data) {
@@ -1028,11 +1046,15 @@
                 });
             },
             setAction: function (action) {
-                $store.commit('outlineAction', {actionId: action.id});
-                $store.commit('setActiveAction', {actionId: action.id});
+                $store.commit('setActiveAction', action ? action.id : null);
+
+                if (!action) {
+                    return;
+                }
+
                 $dispatcher.$emit('frontpage-deck:setVisible');
                 $('body').addClass('editor-right-opened');
-                this.action = action;
+
                 /**
                  * Set default action template
                  */
@@ -1099,7 +1121,7 @@
                 this.form.settings.wrapperLockSystem = [];
             },
             closeSettings: function () {
-                this.action = {};
+                $store.commit('setActiveAction', null);
             },
             lockToRoute: function () {
                 this.toggleLock();
@@ -1109,7 +1131,7 @@
             },
             toggleLock: function () {
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.toggleActionsMorphLock') }}', {actionsMorph: this.action.id}), {
-                    route: this.routeId
+                    route: this.route.id
                 }, function (data) {
                     this.action.morph = data.actionsMorph.morph_id;
                     $dispatcher.$emit('notification:success', 'Lock moved');
@@ -1284,11 +1306,32 @@
                     11: '11/12',
                     12: '12/12'
                 };
-            }
+            },
+            openPrevious: function () {
+                this.setAction(this.previousAction);
+            },
+            openNext: function () {
+                this.setAction(this.nextAction);
+            },
         },
         computed: {
             rootElements: function () {
                 return $store.getters.actionChildren(null);
+            },
+            action: function () {
+                return $store.getters.selectedGenericAction;
+            },
+            previousAction: function () {
+                if (!this.action) {
+                    return null;
+                }
+                return $store.getters.prevAction(this.action.id);
+            },
+            nextAction: function () {
+                if (!this.action) {
+                    return null;
+                }
+                return $store.getters.nextAction(this.action.id);
             },
             cssSizes: function () {
                 return ['no', 'auto', 'xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
@@ -1376,9 +1419,17 @@
                 return utils.url('@pckg.generic.pageStructure.actionsMorphBackgroundImage', {actionsMorph: this.action.id});
             },
             actionParent: function () {
+                if (!this.action) {
+                    return null;
+                }
+
                 return $store.getters.actionParent(this.action.id);
             },
             actionChildren: function () {
+                if (!this.action) {
+                    return [];
+                }
+
                 return $store.getters.actionChildren(this.action.id);
             }
         }

@@ -2,7 +2,7 @@
     <div :id="id" :class="actionClass" :style="actionStyle">
         <slot name="body">
             <pckg-action-bg :action="action"></pckg-action-bg>
-            <frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>
+            <frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
     </div>
@@ -45,7 +45,7 @@
                     let res;
                     let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)">'
                         + '<pckg-action-bg :action="action"></pckg-action-bg>'
-                        + '<frontpage-action-outline :action="action" v-if="action.outline"></frontpage-action-outline>'
+                        + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
                         + (this.action.build)
                         + '</div>';
                     b = this.action.build;

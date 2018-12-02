@@ -2,7 +2,7 @@
     <div :id="id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">
         <slot name="body">
             <pckg-action-bg :action="action"></pckg-action-bg>
-            <frontpage-action-outline :action="action" v-if="action && action.outline"></frontpage-action-outline>
+            <frontpage-action-outline :action="action" v-if="action && action.active"></frontpage-action-outline>
             <component v-for="a in subactions" :action-id="a.id" :is="'pckg-' + a.type" :key="a.id"></component>
         </slot>
     </div>

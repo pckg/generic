@@ -656,7 +656,7 @@ var pckgElement = {
                 if (this.action.type == 'action') {
                     mainClass = mainClass + ' pb-action';
                 }
-                if (this.action.outline) {
+                if (this.action.active) {
                     mainClass = mainClass + ' ' + 'pb-active-action';
                 }
             }
