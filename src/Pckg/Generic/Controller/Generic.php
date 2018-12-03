@@ -41,15 +41,22 @@ class Generic
         });
 
         $route->applySeoSettings();
+        $auth = auth();
 
-        return measure('Stringifying output', function() use ($route) {
+        return measure('Stringifying output', function() use ($route, $auth) {
+            $structure = '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
+
+            if ($auth->isLoggedIn() && $auth->isAdmin()) {
+                $structure = '<pckg-frontpage-deck v-if="$store.getters.genericRoute"></pckg-frontpage-deck>' .
+                    '<template v-if="[\'threesome\', \'device\'].indexOf($store.state.generic.genericMode) >= 0"><pckg-threesome></pckg-threesome></template>' .
+                    '<template v-else>' . $structure . '</template>';
+            }
+
             $vars = [
-                'content' => '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>',
+                'content' => $structure,
             ];
 
-            return (string)($route->layout
-                ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)
-                : $vars);
+            return (string)($route->layout ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars) : $vars);
         });
     }
 
@@ -94,22 +101,16 @@ class Generic
 
     public function getContentAction(Action $action)
     {
-        return view(
-            'contents',
-            [
-                'contents' => (new Contents())->all(),
-            ]
-        );
+        return view('contents', [
+                                  'contents' => (new Contents())->all(),
+                              ]);
     }
 
     public function getLanguagesAction()
     {
-        return view(
-            'languages',
-            [
-                'languages' => localeManager()->getFrontendLanguages(),
-            ]
-        );
+        return view('languages', [
+                                   'languages' => localeManager()->getFrontendLanguages(),
+                               ]);
     }
 
 }
