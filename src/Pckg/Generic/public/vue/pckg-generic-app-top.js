@@ -243,11 +243,19 @@ var pckgTimeout = {
             this.setTimeout(name, callback, timeout, object);
         },
         removeTimeout: function (name, object) {
+            if (typeof object == 'undefined') {
+                object = this;
+            }
+
             if (object['_pckgTimeout' + name]) {
                 clearTimeout(this['_pckgTimeout' + name]);
             }
         },
         setTimeout: function (name, callback, timeout, object) {
+            if (typeof object == 'undefined') {
+                object = this;
+            }
+
             object['_pckgTimeout' + name] = setTimeout(callback, timeout);
         }
     }
@@ -520,7 +528,7 @@ var pckgSmartItem = {
 };
 
 var pckgElement = {
-    mixins: [pckgCdn],
+    mixins: [pckgCdn, pckgTimeout],
     props: {
         actionId: {
             default: null
@@ -531,17 +539,7 @@ var pckgElement = {
     },
     methods: {
         componentClicked: function ($event) {
-            if (this.genericMode != 'edit') {
-                return;
-            }
-
-            $event.preventDefault();
-            $event.stopPropagation();
-            $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
-            return false;
-        },
-        componentDblClicked: function ($event) {
-            console.log('dbl');
+            console.log('componentClicked');
             if (this.genericMode != 'edit') {
                 console.log('not edit');
                 return;
@@ -550,10 +548,38 @@ var pckgElement = {
             $event.preventDefault();
             $event.stopPropagation();
 
+            if ($(this.$el).find('.mce-content-body').length > 0) {
+                console.log('already initialized, single');
+                return false;
+            }
+
+            this.timeout('componentClicked', function () {
+                $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
+            }.bind(this), 333);
+
+            return false;
+        },
+        componentDblClicked: function ($event) {
+            console.log('componentDblClicked');
+            if (this.genericMode != 'edit') {
+                console.log('not edit');
+                return;
+            }
+
+            this.removeTimeout('componentClicked');
+            $event.preventDefault();
+            $event.stopPropagation();
+
             if ($(this.$el).find('.bind-content').length == 0) {
                 console.log('no content');
                 return;
             }
+
+            if ($(this.$el).find(this.id + '.mce-content-body').length > 0) {
+                console.log('already initialized');
+                return;
+            }
+
             console.log('initializing');
 
             initTinymce(this.id + ' .bind-content', {
@@ -561,26 +587,23 @@ var pckgElement = {
                 inline: true,
                 //theme: 'inlite',
                 content_css: null,
-                /*plugins: [
-                    'autolink',
-                    'codesample',
-                    'contextmenu',
-                    'link',
-                    'linkchecker',
-                    'lists',
-                    'mediaembed',
-                    'powerpaste',
-                    'table',
-                    'textcolor',
-                    'image'
-                ],*/
-                toolbar: [
-                    'undo redo | bold italic underline | fontselect fontsizeselect',
-                    'forecolor backcolor | alignleft aligncenter alignright alignfull | link unlink | numlist bullist outdent indent'
-                ],
-                insert_toolbar: 'quicktable image',
-                selection_toolbar: 'bold italic | h2 h3 | blockquote quicklink',
-                contextmenu: 'inserttable | cell row column deletetable',
+                toolbar: (function () {
+                    let toolbar = tinyMceConfig.toolbar.slice(0);
+                    if (toolbar[0].indexOf('save') !== 0) {
+                        toolbar[0] = 'save cancel | ' + toolbar[0];
+                    }
+                    return toolbar;
+                })(),
+                save_onsavecallback: function (editor) {
+                    let content = this.content;
+                    content.content = editor.getContent();
+                    $store.commit('setActionContent', {action: this.action, content: content});
+
+                    http.post(utils.url('@pckg.generic.pageStructure.content', {content: this.content.id}), {content: this.content}, function (data) {
+                    }.bind(this));
+
+                    editor.destroy();
+                }.bind(this)
             });
             console.log('initialized');
 

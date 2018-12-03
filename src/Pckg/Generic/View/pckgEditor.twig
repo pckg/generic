@@ -980,7 +980,7 @@
                     return;
                 }
 
-                var $action = $('#' + this.action.type + '-' + this.action.id);
+                /*var $action = $('#' + this.action.type + '-' + this.action.id);
 
                 var $content = $action.find('.bind-content-' + content.id);
 
@@ -992,7 +992,7 @@
                     if ($content.length > 0) {
                         $content.html(content.content);
                     }
-                }
+                }*/
 
                 $store.commit('setActionContent', {action: this.action, content: content});
             },
@@ -1052,6 +1052,7 @@
                     return;
                 }
 
+                this.$emit('mode', 'edit');
                 $dispatcher.$emit('frontpage-deck:setVisible');
                 $('body').addClass('editor-right-opened');
 
