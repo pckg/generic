@@ -581,6 +581,9 @@ class ActionsMorph extends Record
             'build'     => $this->getBuildAttribute(),
             'template'  => $this->finalTemplate,
             'order'     => $this->order,
+            'focus' => false,
+            'active' => false,
+            'slots' => [],
         ];
     }
 

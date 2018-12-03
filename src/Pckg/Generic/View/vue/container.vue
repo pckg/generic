@@ -1,5 +1,5 @@
 <template>
-    <div :id="id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)">
+    <div :id="id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @mouseenter="componentEnter($event)" @mouseleave="componentLeave($event)">
         <slot name="body">
             <pckg-action-bg :action="action"></pckg-action-bg>
             <frontpage-action-outline :action="action" v-if="action && action.active"></frontpage-action-outline>

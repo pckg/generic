@@ -610,6 +610,22 @@ var pckgElement = {
             //$dispatcher.$emit('pckg-frontpage:editContent', this.action);
 
             return false;
+        },
+        componentEnter: function (e) {
+            console.log('componentEnter');
+            if (this.genericMode != 'edit') {
+                console.log('not edit');
+                return;
+            }
+            $store.commit('setActionData', {actionId: this.action.id, data: {focus: true}});
+        },
+        componentLeave: function (e) {
+            console.log('componentLeave');
+            if (this.genericMode != 'edit') {
+                console.log('not edit');
+                return;
+            }
+            $store.commit('setActionData', {actionId: this.action.id, data: {focus: false}});
         }
     },
     computed: {

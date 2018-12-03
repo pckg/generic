@@ -1022,7 +1022,10 @@
             openDeleteActionModal: function () {
                 $('#deleteActionModal').modal('show');
             },
-            addChild: function () {
+            addChild: function (action) {
+                if (action) {
+                    $store.commit('setActiveAction', action.id);
+                }
                 this.$emit('mode', 'add');
             },
             addRootChild: function () {
@@ -1038,7 +1041,7 @@
                 }, function (data) {
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
-                        $dispatcher.$emit('pckg-frontpage:fetchTree');
+                        // $dispatcher.$emit('pckg-frontpage:fetchTree');
                     }
                     if (data.actions) {
                         $store.commit('addGenericActions', data.actions);
