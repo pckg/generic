@@ -1033,7 +1033,7 @@
                 this.addChild();
             },
             addAction: function (c) {
-                var url = this.action.id
+                var url = this.action
                     ? utils.url('@pckg.generic.pageStructure.actionsMorph.addPartial', {actionsMorph: this.action.id})
                     : utils.url('@pckg.generic.pageStructure.actionsMorph.addRoutePartial', {route: this.route.id});
                 http.post(url, {
