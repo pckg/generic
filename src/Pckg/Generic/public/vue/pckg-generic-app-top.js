@@ -612,20 +612,20 @@ var pckgElement = {
             return false;
         },
         componentEnter: function (e) {
-            console.log('componentEnter');
+            //console.log('componentEnter');
             if (this.genericMode != 'edit') {
-                console.log('not edit');
+                //console.log('not edit');
                 return;
             }
-            $store.commit('setActionData', {actionId: this.action.id, data: {focus: true}});
+            $store.commit('setActionFocus', {actionId: this.action.id, focus: true});
         },
         componentLeave: function (e) {
-            console.log('componentLeave');
+            //console.log('componentLeave');
             if (this.genericMode != 'edit') {
-                console.log('not edit');
+                //console.log('not edit');
                 return;
             }
-            $store.commit('setActionData', {actionId: this.action.id, data: {focus: false}});
+            $store.commit('setActionFocus', {actionId: this.action.id, focus: false});
         }
     },
     computed: {

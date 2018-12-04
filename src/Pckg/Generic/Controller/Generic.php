@@ -44,7 +44,7 @@ class Generic
         $auth = auth();
 
         return measure('Stringifying output', function() use ($route, $auth) {
-            $structure = '<component v-for="a in $store.getters.actionChildren(null)" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
+            $structure = '<component v-for="a in $store.getters.rootElements" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
 
             if ($auth->isLoggedIn() && $auth->isAdmin()) {
                 $structure = '<pckg-frontpage-deck v-if="$store.getters.genericRoute"></pckg-frontpage-deck>' .

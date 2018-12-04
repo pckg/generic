@@ -15,614 +15,581 @@
             </a>
         </div>-->
 
-        <div class="pckg-editor-settings" v-if="myMode == 'add'">
+        <div class="pckg-editor-settings mode-add" v-if="myMode == 'add'">
 
             <p class="text-center padding-xs margin-none">
                 <b>New action</b>
                 <a href="#" title="Close modules" class="btn btn-default btn-xs pull-right"
-                   @click.prevent="close">
+                   @click.prevent="closeSettings">
                     <i aria-hidden="true" class="fa fa-times"></i>
                 </a>
             </p>
 
             <div class="clearfix"></div>
 
-            <div class="panel-group" id="accordionAdd" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default" v-for="(subPartials, title) in partials">
 
-                <div class="panel panel-default" v-for="(subPartials, title) in partials">
-
-                    <div class="panel-heading" role="tab" :id="'heading' + hash(title)">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + hash(title)" aria-expanded="false"
-                           :aria-controls="'collapse' + hash(title)">
-                            <i class="fa fa-th-large"></i> ${ title }
-                        </a>
-                    </div>
-
-                    <div :id="'collapse' + hash(title)" class="panel-collapse collapse" role="tabpanel"
-                         :aria-labelledby="'heading' + hash(title)">
-                        <div class="panel-body">
-                            <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
-                                    v-for="(partial, title) in subPartials">
-                                ${ partial.title }
-                            </button>
-                        </div>
-                    </div>
-
+                <div class="panel-heading">
+                    <i class="fa fa-th-large"></i> ${ title }
                 </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" :id="'heading' + 'Structures'">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + 'Structures'" aria-expanded="false"
-                           :aria-controls="'collapse' + 'Structures'">
-                            <i class="fa fa-th-large"></i> Structures
-                        </a>
+                <div class="panel-body">
+
+                    <div class="display-block">
+                        <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
+                                v-for="(partial, title) in subPartials">
+                            ${ partial.title }
+                        </button>
                     </div>
 
-                    <div :id="'collapse' + 'Structures'" class="panel-collapse collapse" role="tabpanel"
-                         :aria-labelledby="'heading' + 'Structures'">
-                        <div class="panel-body">
-                            <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
-                                    v-for="(partial, title) in structures">
-                                ${ partial.title }
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" :id="'heading' + 'Pages'">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + 'Pages'" aria-expanded="false" :aria-controls="'collapse' + 'Pages'">
-                            <i class="fa fa-th-large"></i> Pages
-                        </a>
-                    </div>
-
-                    <div :id="'collapse' + 'Pages'" class="panel-collapse collapse" role="tabpanel"
-                         :aria-labelledby="'heading' + 'Pages'">
-                        <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
-                               v-for="(partial, title) in pages">
-                                ${ partial.title }
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" :id="'heading' + 'Footers'">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordionAdd"
-                           :href="'#collapse' + 'Footers'" aria-expanded="false"
-                           :aria-controls="'collapse' + 'Footers'">
-                            <i class="fa fa-th-large"></i> Footers
-                        </a>
-                    </div>
-
-                    <div :id="'collapse' + 'Footers'" class="panel-collapse collapse" role="tabpanel"
-                         :aria-labelledby="'heading' + 'Footers'">
-                        <div class="panel-body">
-                            <a href="#" class="display-block" @click.prevent="addAction(partial.obj)"
-                               v-for="(partial, title) in footers">
-                                ${ partial.title }
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
             </div>
-        </div>
 
-        <div class="pckg-editor-settings" v-else-if="action">
 
-            <!-- action parent and children navigation -->
-            <div class="as-table padding-vertical-xs">
-                <div class="text-left">
-                    <table class="navigator">
-                        <tr>
-                            <td></td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-sm" title="Go to previous element"
-                                        @click.prevent="openPrevious" :disabled="!previousAction">
-                                    <i class="fa fa-chevron-up"></i></button>
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button type="button" class="btn btn-default btn-sm" title="Go to parent"
-                                        :disabled="!actionParent"
-                                        @click.prevent="setAction(actionParent)">
-                                    <i class="fa fa-chevron-left"></i></button>
-                            </td>
-                            <td></td>
-                            <td>
-                                <button v-if="actionChildren.length <= 1" type="button" class="btn btn-default btn-sm"
-                                        title="Go to child" @click.prevent="setAction(actionChildren[0])"
-                                        :disabled="actionChildren.length == 0">
-                                    <i class="fa fa-chevron-right"></i></button>
+            <div class="panel panel-default">
 
-                                <div class="btn-group btn-group-sm" v-else>
-                                    <button class="dropdown-toggle btn btn-default btn-sm"
-                                            title="List children" data-toggle="dropdown"
-                                            role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-h"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-left">
-                                        <li v-for="childAction in actionChildren">
-                                            <a href="#" @click.prevent="setAction(childAction)">${ childAction.title }
-                                                #${
-                                                childAction.id }</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-sm" title="Go to next element"
-                                        @click.prevent="openNext" :disabled="!nextAction">
-                                    <i class="fa fa-chevron-down"></i></button>
-                            </td>
-                            <td></td>
-                        </tr>
-                    </table>
+                <div class="panel-heading">
+                    <i class="fa fa-th-large"></i> Structures
                 </div>
-                <div class="text-center"><b>${ action.title } #${ action.id }</b></div>
-                <div class="text-right">
 
-                    <a type="button" href="#" title="Save settings" class="btn btn-default btn-sm"
-                       @click.prevent="saveSettings">
-                        <i aria-hidden="true" class="fa fa-save"></i>
-                    </a>
+                <div class="panel-body">
 
-                    <div class="btn-group text-left">
-                        <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                                role="button"
-                                aria-haspopup="true"
-                                aria-expanded="false" title="More page options">
-                            <i class="fa fa-ellipsis-v"></i>
+                    <div class="display-block">
+                        <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
+                                v-for="(partial, title) in structures">
+                            ${ partial.title }
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li>
-                                <a type="button" href="#" title="Add child" class="btn btn-default btn-sm"
-                                   @click.prevent="addChild">
-                                    <i aria-hidden="true" class="fa fa-plus"></i> Add element
-                                </a>
-                            </li>
-                            <li>
-                                <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
-                                   @click.prevent="openEditContentModal">
-                                    <i aria-hidden="true" class="fa fa-edit"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
-                                    <i aria-hidden="true" class="fa fa-download"></i> Export element
-                                </a>
-                            </li>
-                            <li>
-                                <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
-                                    <i aria-hidden="true" class="fa fa-upload"></i> Import element
-                                </a>
-                            </li>
-                            <li>
-                                <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
-                                   @click.prevent="openDeleteActionModal">
-                                    <i aria-hidden="true" class="fa fa-trash danger"></i> Delete
-                                </a>
-                            </li>
-                        </ul>
                     </div>
 
-                    <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
-                       @click.prevent="setAction(null)">
-                        <i aria-hidden="true" class="fa fa-times"></i>
-                    </a>
+                </div>
 
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <i class="fa fa-th-large"></i> Pages
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="display-block">
+                        <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
+                                v-for="(partial, title) in pages">
+                            ${ partial.title }
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <i class="fa fa-th-large"></i> Footers
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="display-block">
+                        <button type="button" class="btn btn-default" @click.prevent="addAction(partial.obj)"
+                                v-for="(partial, title) in footers">
+                            ${ partial.title }
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pckg-editor-settings mode-edit" v-else-if="action">
+
+            <!-- action parent and children navigation -->
+            <div class="fixed-to-top">
+                <div class="as-table padding-vertical-xxs">
+                    <div class="text-left">
+                        <table class="navigator">
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="button" class="btn btn-default btn-sm" title="Go to previous element"
+                                            @click.prevent="openPrevious" :disabled="!previousAction">
+                                        <i class="fa fa-chevron-up"></i></button>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-default btn-sm" title="Go to parent"
+                                            :disabled="!actionParent"
+                                            @click.prevent="setAction(actionParent)">
+                                        <i class="fa fa-chevron-left"></i></button>
+                                </td>
+                                <td></td>
+                                <td>
+                                    <button v-if="actionChildren.length <= 1" type="button"
+                                            class="btn btn-default btn-sm"
+                                            title="Go to child" @click.prevent="setAction(actionChildren[0])"
+                                            :disabled="actionChildren.length == 0">
+                                        <i class="fa fa-chevron-right"></i></button>
+
+                                    <div class="btn-group btn-group-sm" v-else>
+                                        <button class="dropdown-toggle btn btn-default btn-sm"
+                                                title="List children" data-toggle="dropdown"
+                                                role="button" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-h"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-left">
+                                            <li v-for="childAction in actionChildren">
+                                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title
+                                                    }
+                                                    #${
+                                                    childAction.id }</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="button" class="btn btn-default btn-sm" title="Go to next element"
+                                            @click.prevent="openNext" :disabled="!nextAction">
+                                        <i class="fa fa-chevron-down"></i></button>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-center"><b>${ action.title } #${ action.id }</b></div>
+                    <div class="text-right">
+
+                        <a type="button" href="#" title="Save settings" class="btn btn-default btn-sm"
+                           @click.prevent="saveSettings">
+                            <i aria-hidden="true" class="fa fa-save"></i>
+                        </a>
+
+                        <div class="btn-group text-left">
+                            <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                                    role="button"
+                                    aria-haspopup="true"
+                                    aria-expanded="false" title="More page options">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a type="button" href="#" title="Add child" class="btn btn-default btn-sm"
+                                       @click.prevent="addChild">
+                                        <i aria-hidden="true" class="fa fa-plus"></i> Add element
+                                    </a>
+                                </li>
+                                <li>
+                                    <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
+                                       @click.prevent="openEditContentModal">
+                                        <i aria-hidden="true" class="fa fa-edit"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
+                                        <i aria-hidden="true" class="fa fa-download"></i> Export element
+                                    </a>
+                                </li>
+                                <li>
+                                    <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
+                                        <i aria-hidden="true" class="fa fa-upload"></i> Import element
+                                    </a>
+                                </li>
+                                <li>
+                                    <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
+                                       @click.prevent="openDeleteActionModal">
+                                        <i aria-hidden="true" class="fa fa-trash danger"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
+                           @click.prevent="setAction(null)">
+                            <i aria-hidden="true" class="fa fa-times"></i>
+                        </a>
+
+                    </div>
                 </div>
             </div>
 
             <div class="clearfix"></div>
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                <div class="panel panel-default" v-if="hasTemplateSelection">
-                    <div class="panel-heading" role="tab" id="headingFive">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            <i class="fa fa-palette"></i> Template
-                        </a>
-                    </div>
-                    <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingFive">
-                        <div class="panel-body">
+            <div class="panel panel-default" v-if="hasTemplateSelection">
 
-                            <div v-if="hasMultipleTemplates">
-                                <label>Template</label>
-                                <select class="form-control" v-model="action.template.template">
-                                    <option v-for="(title,tpl) in actionTemplates" :value="tpl"
-                                            v-if="typeof title === 'string'">${ title }
-                                    </option>
-
-                                    <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
-                                        <option :value="tpl">${ tpl }</option>
-                                    </template>
-                                </select>
-                            </div>
-
-                            <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
-                                <label>Item template</label>
-                                <select class="form-control" v-model="action.template.item">
-                                    <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
-                                            :value="tpl">${ title }
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
-                                <label>List template</label>
-                                <select class="form-control" v-model="action.template.list">
-                                    <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
-                                            :value="tpl">${ title }
-                                    </option>
-                                </select>
-                            </div>
-
-                        </div>
-                    </div>
+                <div class="panel-heading">
+                    <i class="fa fa-palette"></i> Template
                 </div>
 
-                {% for slug, form in actionForms %}
-                    <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
-                        <div class="panel-heading" role="tab" id="headingForm{{ slug }}">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                               href="#collapseForm{{ slug }}" aria-expanded="false"
-                               aria-controls="collapseForm{{ slug }}">
-                                <i class="fa fa-cogs"></i> Settings <!-- {{ slug }} -->
-                            </a>
-                        </div>
-                        <div id="collapseForm{{ slug }}" class="panel-collapse collapse" role="tabpanel"
-                             aria-labelledby="headingForm{{ slug }}">
-                            <div class="panel-body">
-                                {{ form | raw }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+                <div class="panel-body">
 
-                <div class="panel panel-default" v-if="action.type == 'wrapper'">
-                    <div class="panel-heading" role="tab" id="headingFormWrapper">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseFormWrapper" aria-expanded="false"
-                           aria-controls="collapseFormWrapper">
-                            <i class="fa fa-cogs"></i> Wrapper
-                        </a>
-                    </div>
-                    <div id="collapseFormWrapper" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingFormWrapper">
-                        <div class="panel-body">
-                            <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
-                                <label>Lock to layout
-                                    <pckg-tooltip
-                                            content="Click this if you want to display module on all pages"
-                                            icon="question-circle"></pckg-tooltip>
-                                </label>
-                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
-                                            class="fa-unlock"></i>
-                                </button>
+                    <div v-if="hasMultipleTemplates">
+                        <label>Template</label>
+                        <select class="form-control" v-model="action.template.template">
+                            <option v-for="(title,tpl) in actionTemplates" :value="tpl"
+                                    v-if="typeof title === 'string'">${ title }
+                            </option>
+
+                            <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
+                                <option :value="tpl">${ tpl }</option>
                             </template>
-                            <template v-else>
-                                <label>Lock to route
-                                    <pckg-tooltip
-                                            content="Click this if you want to display module only on this page"
-                                            icon="question-circle"></pckg-tooltip>
-                                </label>
-                                <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
-                                            class="fa fa-lock"></i>
-                                </button>
-                                <div>
-                                    <label>Hide on pages
-                                        <pckg-tooltip
-                                                content="Element is by default visible on all pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true"
-                                                 v-model="form.settings.wrapperLockHide"></pckg-select>
-                                </div>
-                                <div>
-                                    <label>Show on pages
-                                        <pckg-tooltip
-                                                content="Element is by default visible on all pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
-                                                 title="route" id="id" :flat="true"
-                                                 v-model="form.settings.wrapperLockShow"></pckg-select>
-                                </div>
-                                <div>
-                                    <label>Show on system pages
-                                        <pckg-tooltip
-                                                content="Show element on system pages"
-                                                icon="question-circle"></pckg-tooltip>
-                                    </label>
-                                    <pckg-select :initial-options="systemRoutes" :with-empty="false"
-                                                 :initial-multiple="true"
-                                                 title="title" id="slug" :flat="true"
-                                                 v-model="form.settings.wrapperLockSystem"></pckg-select>
-                                </div>
-                            </template>
-                        </div>
+                        </select>
                     </div>
+
+                    <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
+                        <label>Item template</label>
+                        <select class="form-control" v-model="action.template.item">
+                            <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
+                                    :value="tpl">${ title }
+                            </option>
+                        </select>
+                    </div>
+
+                    <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
+                        <label>List template</label>
+                        <select class="form-control" v-model="action.template.list">
+                            <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
+                                    :value="tpl">${ title }
+                            </option>
+                        </select>
+                    </div>
+
                 </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingTwo">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            <i class="fal fa-square"></i> Box
-                        </a>
-                    </div>
-                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                        <div class="panel-body">
-                            <div v-if="action.type == 'container'">
-                                <label>Container</label>
-                                <pckg-select v-model="form.settings.container"
-                                             :initial-options="availableContainers"
-                                             :initial-multiple="false"></pckg-select>
-                            </div>
-                            <div v-else-if="action.type == 'column'">
-
-                                <!--<label>Screen size</label>
-                                <div class="btn-group btn-group-justified">
-                                    <div class="btn-group">
-                                        <button class="btn btn-default btn-sm">XS</button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-default btn-sm">SM</button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-default btn-sm">MD</button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-default btn-sm">LG</button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-default btn-sm">XL</button>
-                                    </div>
-                                </div>-->
-
-                                <label>Width</label>
-                                <pckg-select v-model="form.settings.width"
-                                             :initial-options="availableWidths"></pckg-select>
-
-                                <label>Offset</label>
-                                <pckg-select v-model="form.settings.offset"
-                                             :initial-options="availableOffsets"></pckg-select>
-                            </div>
-
-                            <label>Padding</label>
-                            <div>
-                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
-                                    <select v-model="padding.top">
-                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%; clear: both;">
-                                    <div style="width: 33%; text-align: center; float: left;">
-                                        <select v-model="padding.left">
-                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                        </select>
-                                    </div>
-                                    <div style="width: 33%; text-align: center; float: right;">
-                                        <select v-model="padding.right">
-                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
-                                    <select v-model="padding.bottom">
-                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <label>Margin</label>
-                            <div>
-                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
-                                    <select v-model="margin.top">
-                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                    </select>
-                                </div>
-                                <div style="width: 100%; clear: both;">
-                                    <div style="width: 33%; text-align: center; float: left;">
-                                        <select v-model="margin.left">
-                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                        </select>
-                                    </div>
-                                    <div style="width: 33%; text-align: center; float: right;">
-                                        <select v-model="margin.right">
-                                            <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
-                                    <select v-model="margin.bottom">
-                                        <option v-for="size in cssSizes" :value="size" v-html="size"></option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!--<div class="row row-grid">
-                                <div class="col-md-12" v-for="(scopes, sectionTitle) in availableScopes"
-                                     v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1">
-                                    <template v-for="(scopes, css) in scopes">
-                                        <label v-text="sectionTitle + ' ' + css"></label>
-                                        <div class="btn-group btn-group" role="group" aria-label="...">
-                                            <a class="btn"
-                                               v-for="(title, css) in scopes"
-                                               :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                               @click.prevent="toggleScope(css)">${ title }</a>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>-->
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingFour">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                            <i class="fa fa-magic"></i> Style
-                        </a>
-                    </div>
-                    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingFour">
-                        <div class="panel-body">
-                            <div class="row">
-                                <template v-for="(scopes, sectionTitle) in availableScopes">
-                                    <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
-                                        <div class="col-md-12">
-                                            <label v-text="sectionTitle"></label>
-                                            <div class="btn-group btn-group" role="group" aria-label="...">
-                                                <a class="btn"
-                                                   v-for="(title, css) in scopes"
-                                                   :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
-                                                   @click.prevent="toggleScope(css)">${ title }</a>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                           aria-expanded="true" aria-controls="collapseOne">
-                            <i class="fa fa-image"></i> Background
-                        </a>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <label>Color</label>
-                            <input class="form-control" v-model="form.settings.bgColor"/>
-
-                            <label>Image</label>
-                            <pckg-htmlbuilder-dropzone
-                                    :current="form.settings.bgImage"
-                                    :url="backgroundImageUploadUrl"
-                                    id="pckg-editor-dropzone"
-                                    v-model="form.settings.bgImage"></pckg-htmlbuilder-dropzone>
-
-                            <template v-if="form.settings.bgImage && form.settings.bgImage.length">
-                                <label>Attachment</label>
-                                <pckg-select v-model="form.settings.bgAttachment"
-                                             :initial-options="availableBackgroundAttachments"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Position</label>
-                                <pckg-select v-model="form.settings.bgPosition"
-                                             :initial-options="availableBackgroundPositions"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Repeat</label>
-                                <pckg-select v-model="form.settings.bgRepeat"
-                                             :initial-options="availableBackgroundRepeats"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Size</label>
-                                <pckg-select v-model="form.settings.bgSize"
-                                             :initial-options="availableBackgroundSizes"
-                                             :initial-multiple="false"></pckg-select>
-                            </template>
-
-                            <label>Video</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <pckg-select v-model="form.settings.bgVideoSource"
-                                                 :initial-options="availableBgVideoSources"
-                                                 :initial-multiple="false"></pckg-select>
-                                </div>
-                                <div class="col-md-6"
-                                     v-if="form.settings.bgVideoSource && form.settings.bgVideoSource.length">
-                                    <input class="form-control" v-model="form.settings.bgVideo" placeholder="Video ID"/>
-                                </div>
-                            </div>
-                            <template v-if="form.settings.bgVideo && form.settings.bgVideo.length">
-                                <label>Display</label>
-                                <pckg-select v-model="form.settings.bgVideoDisplay"
-                                             :initial-options="availableVideoDisplays"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Autoplay</label>
-                                <pckg-select v-model="form.settings.bgVideoAutoplay"
-                                             :initial-options="availableVideoAutoplays"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Loop</label>
-                                <pckg-select v-model="form.settings.bgVideoLoop"
-                                             :initial-options="availableVideoLoops"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Controls</label>
-                                <pckg-select v-model="form.settings.bgVideoControls"
-                                             :initial-options="availableVideoControls"
-                                             :initial-multiple="false"></pckg-select>
-
-                                <label>Mute</label>
-                                <input type="checkbox" value="1" v-model="form.settings.bgVideoMute"/>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingCustom">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseCustom" aria-expanded="false" aria-controls="collapseCustom">
-                            <i class="fa fa-cog"></i> Custom
-                        </a>
-                    </div>
-                    <div id="collapseCustom" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingCustom">
-                        <div class="panel-body">
-                            <label>Class</label>
-                            <input class="form-control" v-model="form.settings.class"/>
-
-                            <label>Style</label>
-                            <input class="form-control" v-model="form.settings.style"/>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!--<div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingThree">
-                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-                           href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            <i class="fa fa-users"></i> Permissions
-                        </a>
-                    </div>
-                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
-                         aria-labelledby="headingThree">
-                        <div class="panel-body">
-                            <p>... are waiting to be copied from backend</p>
-                        </div>
-                    </div>
-                </div>-->
             </div>
+
+            {% for slug, form in actionForms %}
+                <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
+
+                    <div class="panel-heading">
+                        <i class="fa fa-cogs"></i> Settings <!-- {{ slug }} -->
+                    </div>
+
+                    <div class="panel-body">
+                        {{ form | raw }}
+                    </div>
+
+                </div>
+            {% endfor %}
+
+            <div class="panel panel-default" v-if="action.type == 'wrapper'">
+
+                <div class="panel-heading">
+                    <i class="fa fa-cogs"></i> Wrapper
+                </div>
+
+                <div class="panel-body">
+                    <template v-if="action.morph == 'Pckg\\Generic\\Entity\\Routes'">
+                        <label>Lock to layout
+                            <pckg-tooltip
+                                    content="Click this if you want to display module on all pages"
+                                    icon="question-circle"></pckg-tooltip>
+                        </label>
+                        <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToLayout"><i
+                                    class="fa-unlock"></i>
+                        </button>
+                    </template>
+                    <template v-else>
+                        <label>Lock to route
+                            <pckg-tooltip
+                                    content="Click this if you want to display module only on this page"
+                                    icon="question-circle"></pckg-tooltip>
+                        </label>
+                        <button type="button" class="btn btn-sm btn-default" @click.prevent="lockToRoute"><i
+                                    class="fa fa-lock"></i>
+                        </button>
+                        <div>
+                            <label>Hide on pages
+                                <pckg-tooltip
+                                        content="Element is by default visible on all pages"
+                                        icon="question-circle"></pckg-tooltip>
+                            </label>
+                            <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                         title="route" id="id" :flat="true"
+                                         v-model="form.settings.wrapperLockHide"></pckg-select>
+                        </div>
+                        <div>
+                            <label>Show on pages
+                                <pckg-tooltip
+                                        content="Element is by default visible on all pages"
+                                        icon="question-circle"></pckg-tooltip>
+                            </label>
+                            <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                                         title="route" id="id" :flat="true"
+                                         v-model="form.settings.wrapperLockShow"></pckg-select>
+                        </div>
+                        <div>
+                            <label>Show on system pages
+                                <pckg-tooltip
+                                        content="Show element on system pages"
+                                        icon="question-circle"></pckg-tooltip>
+                            </label>
+                            <pckg-select :initial-options="systemRoutes" :with-empty="false"
+                                         :initial-multiple="true"
+                                         title="title" id="slug" :flat="true"
+                                         v-model="form.settings.wrapperLockSystem"></pckg-select>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <i class="fal fa-square"></i> Box
+                </div>
+
+                <div class="panel-body">
+                    <div v-if="action.type == 'container'">
+                        <label>Container</label>
+                        <pckg-select v-model="form.settings.container"
+                                     :initial-options="availableContainers"
+                                     :initial-multiple="false"></pckg-select>
+                    </div>
+                    <div v-else-if="action.type == 'column'">
+
+                        <!--<label>Screen size</label>
+                        <div class="btn-group btn-group-justified">
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-sm">XS</button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-sm">SM</button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-sm">MD</button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-sm">LG</button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default btn-sm">XL</button>
+                            </div>
+                        </div>-->
+
+                        <label>Width</label>
+                        <pckg-select v-model="form.settings.width"
+                                     :initial-options="availableWidths"></pckg-select>
+
+                        <label>Offset</label>
+                        <pckg-select v-model="form.settings.offset"
+                                     :initial-options="availableOffsets"></pckg-select>
+                    </div>
+
+                    <label>Padding</label>
+                    <div>
+                        <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                            <select v-model="padding.top">
+                                <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                            </select>
+                        </div>
+                        <div style="width: 100%; clear: both;">
+                            <div style="width: 33%; text-align: center; float: left;">
+                                <select v-model="padding.left">
+                                    <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                </select>
+                            </div>
+                            <div style="width: 33%; text-align: center; float: right;">
+                                <select v-model="padding.right">
+                                    <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                            <select v-model="padding.bottom">
+                                <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label>Margin</label>
+                    <div>
+                        <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                            <select v-model="margin.top">
+                                <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                            </select>
+                        </div>
+                        <div style="width: 100%; clear: both;">
+                            <div style="width: 33%; text-align: center; float: left;">
+                                <select v-model="margin.left">
+                                    <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                </select>
+                            </div>
+                            <div style="width: 33%; text-align: center; float: right;">
+                                <select v-model="margin.right">
+                                    <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="width: 33%; text-align: center; margin: 0 auto; clear: both;">
+                            <select v-model="margin.bottom">
+                                <option v-for="size in cssSizes" :value="size" v-html="size"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--<div class="row row-grid">
+                        <div class="col-md-12" v-for="(scopes, sectionTitle) in availableScopes"
+                             v-if="['Padding', 'Margin'].indexOf(sectionTitle) !== -1">
+                            <template v-for="(scopes, css) in scopes">
+                                <label v-text="sectionTitle + ' ' + css"></label>
+                                <div class="btn-group btn-group" role="group" aria-label="...">
+                                    <a class="btn"
+                                       v-for="(title, css) in scopes"
+                                       :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                       @click.prevent="toggleScope(css)">${ title }</a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <i class="fa fa-magic"></i> Style
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="row">
+                        <template v-for="(scopes, sectionTitle) in availableScopes">
+                            <template v-if="['Padding', 'Margin'].indexOf(sectionTitle) === -1">
+                                <div class="col-md-12">
+                                    <label v-text="sectionTitle"></label>
+                                    <div class="btn-group btn-group" role="group" aria-label="...">
+                                        <a class="btn"
+                                           v-for="(title, css) in scopes"
+                                           :class="scopeSelected(css) ? 'btn-primary' : 'btn-default'"
+                                           @click.prevent="toggleScope(css)">${ title }</a>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <i class="fa fa-image"></i> Background
+                </div>
+
+                <div class="panel-body">
+                    <label>Color</label>
+                    <input class="form-control" v-model="form.settings.bgColor"/>
+
+                    <label>Image</label>
+                    <pckg-htmlbuilder-dropzone
+                            :current="form.settings.bgImage"
+                            :url="backgroundImageUploadUrl"
+                            id="pckg-editor-dropzone"
+                            v-model="form.settings.bgImage"></pckg-htmlbuilder-dropzone>
+
+                    <template v-if="form.settings.bgImage && form.settings.bgImage.length">
+                        <label>Attachment</label>
+                        <pckg-select v-model="form.settings.bgAttachment"
+                                     :initial-options="availableBackgroundAttachments"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Position</label>
+                        <pckg-select v-model="form.settings.bgPosition"
+                                     :initial-options="availableBackgroundPositions"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Repeat</label>
+                        <pckg-select v-model="form.settings.bgRepeat"
+                                     :initial-options="availableBackgroundRepeats"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Size</label>
+                        <pckg-select v-model="form.settings.bgSize"
+                                     :initial-options="availableBackgroundSizes"
+                                     :initial-multiple="false"></pckg-select>
+                    </template>
+
+                    <label>Video</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <pckg-select v-model="form.settings.bgVideoSource"
+                                         :initial-options="availableBgVideoSources"
+                                         :initial-multiple="false"></pckg-select>
+                        </div>
+                        <div class="col-md-6"
+                             v-if="form.settings.bgVideoSource && form.settings.bgVideoSource.length">
+                            <input class="form-control" v-model="form.settings.bgVideo" placeholder="Video ID"/>
+                        </div>
+                    </div>
+                    <template v-if="form.settings.bgVideo && form.settings.bgVideo.length">
+                        <label>Display</label>
+                        <pckg-select v-model="form.settings.bgVideoDisplay"
+                                     :initial-options="availableVideoDisplays"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Autoplay</label>
+                        <pckg-select v-model="form.settings.bgVideoAutoplay"
+                                     :initial-options="availableVideoAutoplays"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Loop</label>
+                        <pckg-select v-model="form.settings.bgVideoLoop"
+                                     :initial-options="availableVideoLoops"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Controls</label>
+                        <pckg-select v-model="form.settings.bgVideoControls"
+                                     :initial-options="availableVideoControls"
+                                     :initial-multiple="false"></pckg-select>
+
+                        <label>Mute</label>
+                        <input type="checkbox" value="1" v-model="form.settings.bgVideoMute"/>
+                    </template>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-cog"></i> Custom
+                </div>
+
+                <div class="panel-body">
+                    <label>Class</label>
+                    <input class="form-control" v-model="form.settings.class"/>
+
+                    <label>Style</label>
+                    <input class="form-control" v-model="form.settings.style"/>
+                </div>
+            </div>
+
+
+            <!--<div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        <i class="fa fa-users"></i> Permissions
+                    </a>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                     aria-labelledby="headingThree">
+                    <div class="panel-body">
+                        <p>... are waiting to be copied from backend</p>
+                    </div>
+                </div>
+            </div>-->
         </div>
 
         {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action'} %}
@@ -689,16 +656,6 @@
                 </div>
 
                 <input type="button" class="btn btn-success" @click.prevent="saveContent" value="Save content"/>
-            {% endblock %}
-        {% endembed %}
-
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'deleteActionModal', vueLoading: '!action'} %}
-            {% block header %}
-                Delete action
-            {% endblock %}
-            {% block body %}
-                Do you really want to delete action #${ action.id }?
-                <button class="btn btn-danger" @click.prevent="deleteAction">Yes, delete action</button>
             {% endblock %}
         {% endembed %}
 
@@ -856,32 +813,11 @@
             'form.settings.perRow': {
                 deep: true,
                 handler: function (newVal) {
+                    if (!this.action) {
+                        return;
+                    }
                     $dispatcher.$emit('pckg-action:' + this.action.id + ':perRow-changed', newVal);
                 }
-            },
-            'form.settings.width': {
-                handler: function (newVal, oldVal) {
-                    $.each(oldVal, function (i, width) {
-                        this.removeActionClass(width);
-                    }.bind(this));
-
-                    $.each(newVal, function (i, width) {
-                        this.addActionClass(width);
-                    }.bind(this));
-                },
-                deep: true
-            },
-            'form.settings.offset': {
-                handler: function (newVal, oldVal) {
-                    $.each(oldVal, function (i, width) {
-                        this.removeActionClass(width);
-                    }.bind(this));
-
-                    $.each(newVal, function (i, width) {
-                        this.addActionClass(width);
-                    }.bind(this));
-                },
-                deep: true
             },
             'content.contents': {
                 handler: function (newVal, oldVal) {
@@ -905,9 +841,6 @@
             }
         },
         methods: {
-            close: function () {
-                this.$emit('mode', 'view');
-            },
             hash: function (value) {
                 var hash = 0, i, chr;
                 if (value.length === 0) return hash;
@@ -943,6 +876,10 @@
                 }.bind(this));
             },
             saveChangedContent: function () {
+                if (!this.action) {
+                    return;
+                }
+
                 http.post(
                     utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}),
                     {
@@ -961,14 +898,6 @@
             switchContent: function () {
                 $('#switchContentModal').modal('show');
             },
-            deleteAction: function () {
-                http.deleteJSON(utils.url('@pckg.generic.pageStructure.actionsMorph', {actionsMorph: this.action.id}), function (data) {
-
-                });
-                $store.commit('setActiveAction', null);
-                $store.commit('removeGenericAction', action);
-                $('.modal').modal('hide');
-            },
             toggleTransparency: function () {
                 $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
             },
@@ -976,7 +905,7 @@
                 return this.form.settings.scopes.indexOf(scope) >= 0;
             },
             changeContent: function (content) {
-                if (!content || this.action.type != 'action') {
+                if (!content || !this.action || this.action.type != 'action') {
                     return;
                 }
 
@@ -996,14 +925,6 @@
 
                 $store.commit('setActionContent', {action: this.action, content: content});
             },
-            removeActionClass: function (c) {
-                var $action = $('#' + this.action.type + '-' + this.action.id);
-                $action.removeClass(c);
-            },
-            addActionClass: function (c) {
-                var $action = $('#' + this.action.type + '-' + this.action.id);
-                $action.addClass(c);
-            },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
                     this.removeFullClass(scope);
@@ -1013,14 +934,12 @@
             },
             addFullClass: function (scope) {
                 this.form.settings.scopes.push(scope);
-                this.addActionClass(scope);
             },
             removeFullClass: function (scope) {
                 utils.splice(this.form.settings.scopes, scope);
-                this.removeActionClass(scope);
             },
             openDeleteActionModal: function () {
-                $('#deleteActionModal').modal('show');
+                $dispatcher.$emit('frontpage-plugin-delete-action:openDeleteActionModal', this.action);
             },
             addChild: function (action) {
                 if (action) {
@@ -1036,16 +955,22 @@
                 var url = this.action
                     ? utils.url('@pckg.generic.pageStructure.actionsMorph.addPartial', {actionsMorph: this.action.id})
                     : utils.url('@pckg.generic.pageStructure.actionsMorph.addRoutePartial', {route: this.route.id});
+                $dispatcher.$emit('frontpage-deck:loading:increase');
                 http.post(url, {
                     partial: c
                 }, function (data) {
+                    $dispatcher.$emit('frontpage-deck:loading:decrease');
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
-                        // $dispatcher.$emit('pckg-frontpage:fetchTree');
+                        if (data.actions) {
+                            $store.commit('addGenericActions', data.actions);
+                        }
+                    } else {
+                        $dispatcher.$emit('notification:success', 'Error adding action');
                     }
-                    if (data.actions) {
-                        $store.commit('addGenericActions', data.actions);
-                    }
+                }, function () {
+                    $dispatcher.$emit('frontpage-deck:loading:decrease');
+                    $dispatcher.$emit('notification:success', 'Error adding action');
                 });
             },
             setAction: function (action) {
@@ -1107,6 +1032,9 @@
                 }.bind(this));*/
             },
             refreshWholeContent: function () {
+                if (!this.action) {
+                    return;
+                }
                 http.getJSON(utils.url('@pckg.generic.pageStructure.actionsMorphContent', {actionsMorph: this.action.id}), function (data) {
                     this.content = data.content;
                 }.bind(this));
@@ -1126,6 +1054,7 @@
             },
             closeSettings: function () {
                 $store.commit('setActiveAction', null);
+                this.$emit('mode', 'view');
             },
             lockToRoute: function () {
                 this.toggleLock();
@@ -1134,6 +1063,9 @@
                 this.toggleLock();
             },
             toggleLock: function () {
+                if (!this.action) {
+                    return;
+                }
                 http.post(utils.url('{{ url('pckg.generic.pageStructure.toggleActionsMorphLock') }}', {actionsMorph: this.action.id}), {
                     route: this.route.id
                 }, function (data) {
@@ -1142,6 +1074,10 @@
                 }.bind(this));
             },
             saveSettings: function () {
+                if (!this.action) {
+                    return;
+                }
+
                 http.post(utils.url('@pckg.generic.pageStructure.actionsMorphSettings', {actionsMorph: this.action.id}), {
                     settings: this.form.settings,
                     template: this.action.template
@@ -1155,11 +1091,17 @@
                 });
             },
             duplicateContent: function (content) {
+                if (!this.action) {
+                    return;
+                }
                 http.post(utils.url('@pckg.generic.pageStructure.duplicateActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
                     this.content = data.content;
                 }.bind(this));
             },
             createContent: function () {
+                if (!this.action) {
+                    return;
+                }
                 http.post(utils.url('@pckg.generic.pageStructure.createActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
                     this.content = data.content;
                 }.bind(this));
@@ -1320,7 +1262,7 @@
         },
         computed: {
             rootElements: function () {
-                return $store.getters.actionChildren(null);
+                return $store.getters.rootElements;
             },
             action: function () {
                 return $store.getters.selectedGenericAction;
@@ -1420,6 +1362,9 @@
                 return sizes;
             },
             backgroundImageUploadUrl: function () {
+                if (!this.action) {
+                    return;
+                }
                 return utils.url('@pckg.generic.pageStructure.actionsMorphBackgroundImage', {actionsMorph: this.action.id});
             },
             actionParent: function () {
