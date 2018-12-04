@@ -225,7 +225,7 @@
             <div class="clearfix"></div>
 
 
-            <div class="panel panel-default" v-if="hasTemplateSelection">
+            <div class="panel panel-default" v-if="hasTemplateSelection || Object.keys(getSlotSelection).length > 0">
 
                 <div class="panel-heading">
                     <i class="fa fa-palette"></i> Template
@@ -233,36 +233,46 @@
 
                 <div class="panel-body">
 
-                    <div v-if="hasMultipleTemplates">
-                        <label>Template</label>
-                        <select class="form-control" v-model="action.template.template">
-                            <option v-for="(title,tpl) in actionTemplates" :value="tpl"
-                                    v-if="typeof title === 'string'">${ title }
-                            </option>
-
-                            <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
-                                <option :value="tpl">${ tpl }</option>
-                            </template>
-                        </select>
-                    </div>
-
-                    <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
-                        <label>Item template</label>
-                        <select class="form-control" v-model="action.template.item">
-                            <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
-                                    :value="tpl">${ title }
+                    <div v-if="Object.keys(getSlotSelection).length > 0">
+                        <label>Slot</label>
+                        <select class="form-control" v-model="action.template.slot">
+                            <option v-for="(title, slot) in getSlotSelection" :value="slot">${ title }
                             </option>
                         </select>
                     </div>
 
-                    <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
-                        <label>List template</label>
-                        <select class="form-control" v-model="action.template.list">
-                            <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
-                                    :value="tpl">${ title }
-                            </option>
-                        </select>
-                    </div>
+                    <template v-if="hasTemplateSelection">
+                        <div v-if="hasMultipleTemplates">
+                            <label>Template</label>
+                            <select class="form-control" v-model="action.template.template">
+                                <option v-for="(title,tpl) in actionTemplates" :value="tpl"
+                                        v-if="typeof title === 'string'">${ title }
+                                </option>
+
+                                <template v-for="(title,tpl) in actionTemplates" v-if="typeof title !== 'string'">
+                                    <option :value="tpl">${ tpl }</option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
+                            <label>Item template</label>
+                            <select class="form-control" v-model="action.template.item">
+                                <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
+                                        :value="tpl">${ title }
+                                </option>
+                            </select>
+                        </div>
+
+                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
+                            <label>List template</label>
+                            <select class="form-control" v-model="action.template.list">
+                                <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
+                                        :value="tpl">${ title }
+                                </option>
+                            </select>
+                        </div>
+                    </template>
 
                 </div>
             </div>
@@ -792,6 +802,9 @@
                 },
                 deep: true
             },
+            action: function() {
+                this.refreshSettings();
+            },
             'action.template.template': function (newVal) {
                 if (!this.action) {
                     return;
@@ -1300,6 +1313,18 @@
                 }
 
                 return Object.keys(templates).length > 1;
+            },
+            getSlotSelection: function () {
+                if (!this.action) {
+                    return {};
+                }
+
+                let parent = $store.getters.actionParent(this.action.id);
+                if (!parent) {
+                    return {};
+                }
+
+                return parent.slots || {};
             },
             hasTemplateSelection: function () {
                 let templates = this.actionTemplates;

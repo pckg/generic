@@ -295,7 +295,7 @@ var pckgCleanRequest = {
     }
 };
 
-var pckgSmartComponent = {
+const pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout],
     props: {
         actionId: {
@@ -330,6 +330,29 @@ var pckgSmartComponent = {
         templateClass: function () {
             return this.$options.name;
         }
+    },
+    methods: {
+        getSlotActions: function(slot) {
+            if (!Array.isArray(slot)) {
+                slot = [slot];
+            }
+            return this.subactions.filter(function(item, i) {
+                if (item.template && item.template.slot) {
+                    return slot.indexOf(item.template.slot) >= 0;
+                }
+
+                let indexed = slot.indexOf(i) < 0 ? null : item;
+                if (!indexed) {
+                    return false;
+                }
+
+                if (item.template && item.template.slot && slot.indexOf(item.template.slot) <= 0) {
+                    return false;
+                }
+
+                return true;
+            });
+        },
     },
     mounted: function () {
         $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {

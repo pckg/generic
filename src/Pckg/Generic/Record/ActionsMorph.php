@@ -239,6 +239,7 @@ class ActionsMorph extends Record
                                                    'template' => null,
                                                    'list'     => null,
                                                    'item'     => null,
+                                                   'slot'     => null,
                                                ]);
         }
 
@@ -252,6 +253,7 @@ class ActionsMorph extends Record
                                                'template' => $template,
                                                'list'     => null,
                                                'item'     => null,
+                                               'slot'     => null,
                                            ]);
     }
 
@@ -290,6 +292,10 @@ class ActionsMorph extends Record
                     $template['list'] = array_keys($subconfig['list'] ?? $listTemplates)[0];
                 }
             }
+        }
+
+        if (!isset($template['slot'])) {
+            $template['slot'] = null;
         }
 
         return $template;
@@ -466,6 +472,7 @@ class ActionsMorph extends Record
         try {
             $build = $this->action->build($args);
             $this->set('build', $build);
+
             return $build;
         } catch (\Throwable $e) {
             if (!prod()) {
@@ -530,6 +537,8 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
+        $slots = config('pckg.generic.actions.' . $this->action->slug . '.slots', []);
+
         $data = [
             'id'        => $this->id,
             'title'     => $this->action->title,
@@ -544,9 +553,9 @@ class ActionsMorph extends Record
             'build'     => $this->getBuildAttribute(),
             'template'  => $this->template,
             'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
-            'focus' => false,
-            'active' => false,
-            'slots' => [],
+            'focus'     => false,
+            'active'    => false,
+            'slots'     => $slots,
         ];
 
         return $data;
