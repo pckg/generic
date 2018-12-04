@@ -583,4 +583,33 @@ class ActionsMorph extends Record
         return $this->parentAction->mostParent;
     }
 
+    public function cloneRecursively($overwrite = [])
+    {
+        /**
+         * Clone content.
+         */
+        $contentId = $this->content_id;
+        if ($contentId) {
+            $overwrite['content_id'] = $this->content->saveAs()->id;
+        }
+        /**
+         * Clone actions morph.
+         */
+        $newActionsMorph = $this->saveAs($overwrite);
+        /**
+         * Clone settings.
+         */
+        $this->settings->each(function(Setting $setting) use ($newActionsMorph) {
+            $setting->pivot->saveAs(['poly_id' => $newActionsMorph->id]);
+        });
+        /**
+         * Clone subactions.
+         */
+        $this->subActions->each(function(ActionsMorph $subaction) use ($newActionsMorph) {
+            $subaction->cloneRecursively(['parent_id' => $newActionsMorph->id]);
+        });
+
+        return $newActionsMorph;
+    }
+
 }

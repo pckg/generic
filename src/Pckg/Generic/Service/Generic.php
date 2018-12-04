@@ -164,46 +164,8 @@ class Generic
         /**
          * Check for deprecations.
          */
-        $deprecations = config('deprecation.actions', []);
-        $deprecationsTemplates = config('deprecation.templates', []);
-        $this->actions = $this->actions->map(function(ActionRecord $action) use ($deprecations, $deprecationsTemplates) {
-            /**
-             * We need to properly change template.
-             */
-            $template = $action->pivot->template;
-            if (isset($template['template']) && !isset($template['item']) && isset($deprecationsTemplates[$template['template']])) {
-                $deprecation = $deprecationsTemplates[$template['template']];
-                $t = $deprecationsTemplates[$template['template']];
-                $t2 = array_key_exists('template', $t) ? $t['template'] : $template['template'];
-
-                message('Deprecating template ' . $template['template'] . ' to ' . json_encode($t));
-                $action->pivot->template = json_encode($deprecationsTemplates[$template['template']]);
-            }
-
-            /**
-             * And action.
-             */
-            if (isset($deprecations[$action->slug])) {
-                message('Deprecating action ' . $action->slug . ' to ' . $deprecations[$action->slug] . ' ' . json_encode($template));
-                measure('1');
-                $newAction = (new Actions())->where('slug', $deprecations[$action->slug])->one();
-                measure('2');
-                if (!$newAction) {
-                    $action->class = config('pckg.generic.actions.' . $deprecations[$action->slug] . '.class');
-                    $action->method = config('pckg.generic.actions.' . $deprecations[$action->slug] . '.method');
-                    $action->slug = $deprecations[$action->slug];
-                    return $action;
-
-                } else {
-                    $newAction->pivot = $action->pivot;
-                    $newAction->pivot->action_id = $newAction->id;
-                    $newAction->pivot->action = $newAction;
-                }
-
-                return $newAction;
-            }
-
-            return $action;
+        $this->actions = $this->actions->map(function(ActionRecord $action) {
+            return $action->checkDeprecation();
         });
 
         $actions = $this->actions->sortBy(function($item) {

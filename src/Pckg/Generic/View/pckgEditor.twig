@@ -191,10 +191,16 @@
                                 <li>
                                     <a type="button" href="#" title="Edit content" class="btn btn-default btn-sm"
                                        @click.prevent="openEditContentModal">
-                                        <i aria-hidden="true" class="fa fa-edit"></i>
+                                        <i aria-hidden="true" class="fa fa-edit"></i> Edit content
                                     </a>
                                 </li>
                                 <li>
+                                    <a type="button" href="#" title="Clone element" class="btn btn-default btn-sm"
+                                       @click.prevent="cloneAction">
+                                        <i aria-hidden="true" class="fa fa-clone"></i> Clone action
+                                    </a>
+                                </li>
+                                <!--<li>
                                     <a type="button" href="#" title="Export element" class="btn btn-default btn-sm">
                                         <i aria-hidden="true" class="fa fa-download"></i> Export element
                                     </a>
@@ -203,7 +209,7 @@
                                     <a type="button" href="#" title="Import element" class="btn btn-default btn-sm">
                                         <i aria-hidden="true" class="fa fa-upload"></i> Import element
                                     </a>
-                                </li>
+                                </li>-->
                                 <li>
                                     <a type="button" href="#" title="Delete element" class="btn btn-default btn-sm"
                                        @click.prevent="openDeleteActionModal">
@@ -802,7 +808,7 @@
                 },
                 deep: true
             },
-            action: function() {
+            action: function () {
                 this.refreshSettings();
             },
             'action.template.template': function (newVal) {
@@ -1031,6 +1037,22 @@
                 $dispatcher.$emit('pckg-action:' + this.action.id + ':itemTemplate-changed', this.action.itemTemplate);
 */
                 this.refreshSettings();
+            },
+            cloneAction: function () {
+                $dispatcher.$emit('frontpage-deck:loading:increase');
+                http.post(utils.url('@pckg.generic.pageStructure.actionsMorphClone', {actionsMorph: this.action.id}), {}, function (data) {
+                    $dispatcher.$emit('frontpage-deck:loading:decrease');
+                    if (data.success) {
+                        $dispatcher.$emit('notification:success', 'Action cloned');
+                        if (data.actions) {
+                            $store.commit('addGenericActions', data.actions);
+                        }
+                    } else {
+                        $dispatcher.$emit('notification:success', 'Error cloning action');
+                    }
+                }, function () {
+                    $dispatcher.$emit('frontpage-deck:loading:decrease');
+                });
             },
             openEditContentModal: function () {
                 $('#editBlockModal').modal('show');

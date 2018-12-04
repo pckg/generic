@@ -502,7 +502,7 @@ class PageStructure
                 $settings->getMiddleEntity()->withSetting();
             })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action){
-            return (new Generic\Action($action))->buildAndJsonSerialize();
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
 
         return response()->respondWithSuccess([
@@ -525,7 +525,27 @@ class PageStructure
                 $settings->getMiddleEntity()->withSetting();
             })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action){
-            return (new Generic\Action($action))->buildAndJsonSerialize();
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+        })->all();
+
+        return response()->respondWithSuccess([
+                                                  'actions' => $fetchedActions,
+                                              ]);
+    }
+
+    public function postActionsMorphCloneAction(ActionsMorph $actionsMorph)
+    {
+        $newActionsMorph = $actionsMorph->cloneRecursively();
+
+        $flatActions = $newActionsMorph->flattenForGenericResponse(collect());
+        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action){
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
 
         return response()->respondWithSuccess([
