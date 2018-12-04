@@ -280,7 +280,6 @@ class ActionsMorph extends Record
 
             if (isset($subconfig['item'])) {
                 if (!isset($template['item']) || !isset($subconfig['item'][$template['item']])) {
-                    d('item?');
                     $template['item'] = array_keys($subconfig['item'])[0];
                 }
             }
@@ -529,43 +528,6 @@ class ActionsMorph extends Record
         });
     }
 
-    public function getFinalTemplateAttribute()
-    {
-        $template = $this->template;
-
-        /**
-         * Transform template to original template
-         *  - Derive/Offers:offers/list-vSquare -> Derive/Offers:offers/list
-         */
-        list($before, $after) = explode(':',
-                                        str_replace(['\\', '/Controller/'], ['/', ':'], $this->action->class) . '/' .
-                                        $this->action->method);
-        $classed = $before . ':' . lcfirst($after);
-
-        /**
-         * Make sure that vue templates are set.
-         */
-        /*$listTemplate = null;
-        $itemTemplate = null;
-        $templates = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method . '.' .
-                            $classed, null);
-        $listTemplates = config('pckg.generic.templateEngine.list', []);
-        $itemTemplates = config('pckg.generic.templateEngine.item', []);
-        if (is_array($templates)) {
-            $listTemplate = array_keys($templates['list'] ?? $listTemplates)[0] ?? null;
-            if (!isset($template['list'])) {
-                $template['list'] = $listTemplate;
-            }
-            $itemTemplate = array_keys($templates['item'] ?? $itemTemplates)[0] ?? null;
-            if (!array_key_exists('item', $template) || !$template['item'] ||
-                !in_array($template['item'], array_keys($templates['item']))) {
-                $template['item'] = $itemTemplate;
-            }
-        }*/
-
-        return $template;
-    }
-
     public function jsonSerialize()
     {
         $data = [
@@ -580,16 +542,12 @@ class ActionsMorph extends Record
             'settings'  => $this->settingsArray,
             'content'   => $this->content,
             'build'     => $this->getBuildAttribute(),
-            'template'  => $this->finalTemplate,
+            'template'  => $this->template,
             'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
             'focus' => false,
             'active' => false,
             'slots' => [],
         ];
-
-        if ($data['id'] == 835) {
-            //dd($data);
-        }
 
         return $data;
     }
