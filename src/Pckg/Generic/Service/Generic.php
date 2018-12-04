@@ -171,7 +171,7 @@ class Generic
              * We need to properly change template.
              */
             $template = $action->pivot->template;
-            if ($template['template'] && isset($deprecationsTemplates[$template['template']])) {
+            if (isset($template['template']) && !isset($template['item']) && isset($deprecationsTemplates[$template['template']])) {
                 $deprecation = $deprecationsTemplates[$template['template']];
                 $t = $deprecationsTemplates[$template['template']];
                 $t2 = array_key_exists('template', $t) ? $t['template'] : $template['template'];
@@ -184,7 +184,7 @@ class Generic
              * And action.
              */
             if (isset($deprecations[$action->slug])) {
-                //message('Deprecating action ' . $action->slug . ' to ' . $deprecations[$action->slug] . ' ' . json_encode($template));
+                message('Deprecating action ' . $action->slug . ' to ' . $deprecations[$action->slug] . ' ' . json_encode($template));
                 measure('1');
                 $newAction = (new Actions())->where('slug', $deprecations[$action->slug])->one();
                 measure('2');

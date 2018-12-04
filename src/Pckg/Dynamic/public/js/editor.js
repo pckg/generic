@@ -13,6 +13,55 @@ var destroyTinymce = function (selector) {
     //}
 };
 
+tinymce.PluginManager.add('comms', function (editor, url) {
+    editor.addButton('close', {
+        text: 'Close',
+        icon: false,
+        onclick: function () {
+            console.log('reverting changes and closing editor');
+            // Open window
+            /*editor.windowManager.open({
+                title: 'Example plugin',
+                body: [
+                    {type: 'textbox', name: 'title', label: 'Title'}
+                ],
+                onsubmit: function (e) {
+                    // Insert content when the window form is submitted
+                    editor.insertContent('Title: ' + e.data.title);
+                }
+            });*/
+        }
+    });
+
+    // Adds a menu item to the tools menu
+    /*editor.addMenuItem('example', {
+        text: 'Example plugin',
+        context: 'tools',
+        onclick: function() {
+            // Open window with a specific url
+            editor.windowManager.open({
+                title: 'TinyMCE site',
+                url: 'https://www.tinymce.com',
+                width: 800,
+                height: 600,
+                buttons: [{
+                    text: 'Close',
+                    onclick: 'close'
+                }]
+            });
+        }
+    });*/
+
+    return {
+        getMetadata: function () {
+            return {
+                name: "Comms TinyMCE plugin",
+                url: "https://startcomms.com/"
+            };
+        }
+    };
+});
+
 let tinyMceConfig = {
     link_class_list: [
         {title: 'Link', value: ''},
@@ -168,7 +217,7 @@ let tinyMceConfig = {
         {title: 'Rounded (.img-rounded)', value: 'img-rounded'}
     ],
     plugins: [ // help
-        'autosave advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
+        'comms autosave advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
         'searchreplace wordcount visualblocks visualchars code fullscreen',
         'hr insertdatetime media nonbreaking save table contextmenu directionality',
         'emoticons template paste textcolor colorpicker textpattern imagetools codesample pckg noneditable'

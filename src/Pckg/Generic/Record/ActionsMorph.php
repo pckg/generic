@@ -257,7 +257,8 @@ class ActionsMorph extends Record
 
     public function fillTemplateSettings($template)
     {
-        $config = config('pckg.generic.templates.' . $this->action->class . '.' . $this->action->method, []);
+        $configKey = 'pckg.generic.templates.' . $this->action->class . '.' . $this->action->method;
+        $config = config($configKey, []);
 
         if (!$config) {
             return $template;
@@ -279,6 +280,7 @@ class ActionsMorph extends Record
 
             if (isset($subconfig['item'])) {
                 if (!isset($template['item']) || !isset($subconfig['item'][$template['item']])) {
+                    d('item?');
                     $template['item'] = array_keys($subconfig['item'])[0];
                 }
             }
@@ -566,11 +568,10 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-
-        return [
+        $data = [
             'id'        => $this->id,
             'title'     => $this->action->title,
-            'morph'     => $this->morph,
+            'morph'     => $this->morph_id,
             'type'      => $this->type,
             'slug'      => $this->action->slug,
             'parent_id' => $this->parent_id,
@@ -580,11 +581,17 @@ class ActionsMorph extends Record
             'content'   => $this->content,
             'build'     => $this->getBuildAttribute(),
             'template'  => $this->finalTemplate,
-            'order'     => $this->order,
+            'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
             'focus' => false,
             'active' => false,
             'slots' => [],
         ];
+
+        if ($data['id'] == 835) {
+            //dd($data);
+        }
+
+        return $data;
     }
 
     public function flattenForGenericResponse(Collection $collection)

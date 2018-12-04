@@ -590,7 +590,7 @@ var pckgElement = {
                 toolbar: (function () {
                     let toolbar = tinyMceConfig.toolbar.slice(0);
                     if (toolbar[0].indexOf('save') !== 0) {
-                        toolbar[0] = 'save cancel | ' + toolbar[0];
+                        toolbar[0] = 'save cancel close | ' + toolbar[0];
                     }
                     return toolbar;
                 })(),
@@ -603,6 +603,9 @@ var pckgElement = {
                     }.bind(this));
 
                     editor.destroy();
+                }.bind(this),
+                init_instance_callback: function (editor) {
+                    editor.execCommand('mceFocus', false);
                 }.bind(this)
             });
             console.log('initialized');
