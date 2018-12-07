@@ -7,24 +7,27 @@
                      :initial-multiple="false"
                      class="field-relation"></pckg-select>
 
-        <template v-if="isRelation">
-            <i class="fa fa-cogs" @click.prevent="customizeRelation = !customizeRelation"></i>
+        <template v-if="selection">
+            <template v-if="isRelation">
+                <i class="fa fa-cogs" @click.prevent="customizeRelation = !customizeRelation"></i>
 
-            <pckg-maestro-customize-filters-field v-if="customizeRelation"
-                                                  :relation="selectedRelation"
-                                                  @chosen="chosen"></pckg-maestro-customize-filters-field>
+                <pckg-maestro-customize-filters-field v-if="customizeRelation"
+                                                      :relation="selectedRelation"
+                                                      @chosen="chosen"></pckg-maestro-customize-filters-field>
 
-            <pckg-maestro-customize-filters-field-filter v-else
-                                                         type="relation"
-                                                         :selection="selection"></pckg-maestro-customize-filters-field-filter>
-        </template>
-        <template v-else-if="isField">
+                <pckg-maestro-customize-filters-field-filter v-else
+                                                             type="relation"
+                                                             :selection="selection"></pckg-maestro-customize-filters-field-filter>
+            </template>
+            <template v-else-if="isField">
 
-            <!-- when field is selected we display field comparators and input for value -->
-            <pckg-maestro-customize-filters-field-filter v-if="selected"
-                                                         type="field"
-                                                         :selection="selection"></pckg-maestro-customize-filters-field-filter>
+                <!-- when field is selected we display field comparators and input for value -->
+                <pckg-maestro-customize-filters-field-filter v-if="selected"
+                                                             type="field"
+                                                             :selection="selection"
+                                                             :filter="filter"></pckg-maestro-customize-filters-field-filter>
 
+            </template>
         </template>
 
     </div>
@@ -38,7 +41,7 @@
                 type: Object,
                 default: null
             },
-            parentFields: {
+            filterFields: {
                 type: Array,
                 default: function () {
                     return [];
@@ -49,13 +52,19 @@
                 default: function () {
                     return [];
                 }
-            }
+            },
+            filter: {}
+        },
+        model: {
+            prop: 'filter'
         },
         data: function () {
             return {
-                selected: null,
+                selected: this.filter.field ? (typeof this.filter.field == 'string'
+                    ? 'field-' + this.filter.field
+                    : ('relation-' + Object.keys(this.filter.field)[0])) : null,
                 myRelations: this.relations,
-                myFields: this.parentFields,
+                myFields: this.filterFields,
                 customizeRelation: false
             }
         },
@@ -63,10 +72,10 @@
             relation: function (newVal) {
                 this.fetchRelation();
             },
-            parentFields: function (fields) {
+            filterFields: function (fields) {
                 this.myFields = fields;
             },
-            relation: function (relations) {
+            relations: function (relations) {
                 this.myRelations = relations;
             }
         },
@@ -87,6 +96,9 @@
             }
         },
         computed: {
+            isStringField: function () {
+                return this.filter && this.filter.field && typeof this.filter.field == 'string';
+            },
             selectionType: function () {
                 let minus = this.selected.indexOf('-');
                 if (minus === -1) {
@@ -97,14 +109,14 @@
             },
             selection: function () {
                 if (!this.selected || this.selected.length == 0) {
-                    return null;
+                    return false;
                 }
 
                 let found = null;
                 if (this.selected.indexOf('field-') === 0) {
                     let selected = this.selected.substring(6);
                     $.each(this.myFields, function (i, field) {
-                        if (field.id == selected) {
+                        if (field.field == selected) {
                             found = field;
                             return false;
                         }
@@ -114,7 +126,7 @@
                 if (this.selected.indexOf('relation-') === 0) {
                     let selected = this.selected.substring(9);
                     $.each(this.myRelations, function (i, relation) {
-                        if (relation.id == selected) {
+                        if (relation.alias == selected) {
                             found = relation;
                             return false;
                         }
@@ -130,11 +142,11 @@
                 };
 
                 $.each(this.myFields, function (i, field) {
-                    options.fields['field-' + field.id] = field.title;
+                    options.fields['field-' + field.field] = field.title;
                 });
 
                 $.each(this.myRelations, function (i, relation) {
-                    options.relations['relation-' + relation.id] = relation.title;
+                    options.relations['relation-' + relation.alias] = relation.title;
                 });
 
                 return options;

@@ -74,7 +74,7 @@
                             </div>
                             <div class="col-xs-3">
 
-                                <pckg-maestro-customize-fields :parent-fields="myFields"
+                                <pckg-maestro-customize-fields :fields="myFields"
                                                                :columns="view.columns"
                                                                :relations="relations"
                                                                :table="table"
@@ -251,10 +251,12 @@
 
 <script type="text/javascript">
 
+    import {Entity, HttpRepository, Record, Repository} from "../../../../../helpers-js/webpack/orm";
+
     export class DynamicEntity extends Entity {
 
-        constructor() {
-            super();
+        constructor(repository) {
+            super(repository);
             this.$record = DynamicRecord;
         }
 
@@ -605,14 +607,18 @@
             refreshData: function (params) {
                 this.loading = true;
 
-                let dynamicEntity = (new DynamicEntity());
+                let repositoryHandler = new HttpRepository(null);
+                let repository = new Repository(repositoryHandler);
+                let dynamicEntity = new DynamicEntity(repository);
+
+                dynamicEntity.where('id', 5000, '<')
+                    .limit(this.paginator.perPage)
+                    .page(this.paginator.page);
 
 
-                http.getJSON(this.paginator.url, function (data) {
+                dynamicEntity.all(this.paginator.url, function(data){
+
                     if (data.tabelizes) {
-                        /**
-                         * @T00D00 - auto detect index for multiple tables?
-                         */
                         var d = data.tabelizes[0];
                         this.records = d.records;
                         this.groups = d.groups;
@@ -627,6 +633,10 @@
                         this.setPaginatorTotal(data.paginator.total);
                     }
                     this.loading = false;
+
+                }.bind(this)).then(function (data) {
+                    console.log('got data', data);
+
                 }.bind(this));
             },
             setRecords: function (records) {

@@ -33,7 +33,7 @@
                 <i class="fal fa-plus-circle"></i>
             </a>
             <template v-else-if="mode == 'add'">
-                <pckg-maestro-customize-fields-field :parent-fields="myFields"
+                <pckg-maestro-customize-fields-field :fields="myFields"
                                                      :relations="relations"
                                                      @chosen="chosen"></pckg-maestro-customize-fields-field>
             </template>

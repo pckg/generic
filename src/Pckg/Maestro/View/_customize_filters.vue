@@ -6,12 +6,13 @@
                           :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
         </h5>
 
-        <div v-for="filter in filters" class="display-block clear-both" style="padding-bottom: .5rem; height: 3.8rem;">
-            <a href="#" title="Remove condition" style="vertical-align: middle;" @click.prevent="removeFilter(filter)">
+        <div v-for="(filter, i) in Object.keys(filters)" class="display-block clear-both" style="padding-bottom: .5rem; height: 3.8rem;">
+            <a href="#" title="Remove condition" style="vertical-align: middle;" @click.prevent="removeFilter(filters[filter])">
                 <i class="fal fa-minus-circle"></i>
             </a>
 
-            <pckg-maestro-customize-filters-field :parent-fields="myFields"
+            <pckg-maestro-customize-filters-field v-model="filters[i]"
+                                                :filter-fields="myFields"
                                                   :relations="myRelations"
                                                   @chosen="chosen"></pckg-maestro-customize-filters-field>
 
@@ -45,7 +46,6 @@
             {{ filters }}
 
             <p><b>User selects</b></p>
-            <p>Disabled IS NOT</p>
             <p>Email NOT schtr4jh@schtr4jh.net</p>
             <p>Language IS En, Hr, Sl</p>
             <p>Status IS User</p>
@@ -61,24 +61,23 @@
 
             <p><b>JS dynamic object should be</b></p>
             <p>[</p>
-            <p>{field: 'disabled', value: false, comp: 'is'}</p>
-            <p>{field: 'email', value: 'schtr4jh@schtr4jh.net', comp: 'not'}</p>
+            <p>{field: 'email', value: 'schtr4jh@schtr4jh.net', comp: 'notEquals'}</p>
             <p>{field: 'language_id', value: ['en', 'sl', 'hr'], comp: 'in'}</p>
-            <p>{field: 'status_id', value: 2, comp: 'is'}</p>
-            <p>{field: 'mailo_open_rate', value: 75, comp: 'lessThan'}</p>
-            <p>{field: 'mailo_open_rate', value: 0, comp: 'moreThan'}</p>
+            <p>{field: 'status_id', value: 2, comp: 'equals'}</p>
+            <p>{field: 'mailo_open_rate', value: 75, comp: 'less'}</p>
+            <p>{field: 'mailo_open_rate', value: 0, comp: 'more'}</p>
             <p>{field: 'email', value: '%gmail.com', comp: 'like'}</p>
             <p>{field: 'born_at', value: '1980-01-01', comp: 'moreOrEquals'}</p>
             <p>{field: { orders: { field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals' }}}</p>
             <p>{field: { orders: { field: 'language_id', value: ['en', 'sl'], comp: 'in' }}}</p>
-            <p>{field: { orders: { field: { ordersUsers: { field: 'status_id', value: 'confirmed', comp: 'is' }}}}}</p>
+            <p>{field: { orders: { field: { ordersUsers: { field: 'status_id', value: 'confirmed', comp: 'equals' }}}}}</p>
             <p>{field: { orders: { field: { ordersUsers: { field: 'packet_id', value: [1, 3, 6], comp: 'in' }}}}}</p>
-            <p>{field: { orders: { field: { ordersUsers: { field: { packet: { field: 'vat_level', value: 'regular', comp: 'not' }}}}}}}</p>
+            <p>{field: { orders: { field: { ordersUsers: { field: { packet: { field: 'vat_level', value: 'regular',
+                comp: 'notEquals' }}}}}}}</p>
             <p>]</p>
 
             <p><b>JS builds</b></p>
             <p>(new Users())</p>
-            <p>.where('disabled', false)</p>
             <p>.where('email', 'schtr4jh@schtr4jh.net', '!=')</p>
             <p>.where('language_id', ['en', 'sl', 'hr'], 'in')</p>
             <p>.where('status_id', 2)</p>
@@ -114,7 +113,7 @@
             <p>->where('users.born_at', '1980-01-01', '>=')</p>
             <p><i>->join(function(HasMany $orders){</i></p>
             <p><i> $orders->joinOrdersUsers(function(HasMany $ordersUsers){</i></p>
-            <p><i>  $ordersUsers->joinPacket();</i></p>
+            <p><i> $ordersUsers->joinPacket();</i></p>
             <p><i> });</i></p>
             <p><i>});</i></p>
             <p>->where('orders.dt_added', '2018-01-01', '>=')</p>
@@ -150,7 +149,34 @@
         data: function () {
             return {
                 filters: [
-                    {}
+                    {field: 'email', value: 'schtr4jh@schtr4jh.net', comp: 'notEquals'},
+                    {field: 'language_id', value: ['en', 'sl', 'hr'], comp: 'in'},
+                    {field: 'status_id', value: 2, comp: 'equals'},
+                    {field: 'mailo_open_rate', value: 75, comp: 'less'},
+                    {field: 'mailo_open_rate', value: 0, comp: 'more'},
+                    {field: 'email', value: '%gmail.com', comp: 'like'},
+                    {field: 'born_at', value: '1980-01-01', comp: 'moreOrEquals'},
+                    {field: {orders: {field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals'}}},
+                    {field: {orders: {field: 'language_id', value: ['en', 'sl'], comp: 'in'}}},
+                    {field: {orders: {field: {ordersUsers: {field: 'status_id', value: 'confirmed', comp: 'equals'}}}}},
+                    {field: {orders: {field: {ordersUsers: {field: 'packet_id', value: [1, 3, 6], comp: 'in'}}}}},
+                    {
+                        field: {
+                            orders: {
+                                field: {
+                                    ordersUsers: {
+                                        field: {
+                                            packet: {
+                                                field: 'vat_level',
+                                                value: 'regular',
+                                                comp: 'notEquals'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                 ],
                 myFields: this.columns,
                 myRelations: this.relations,
