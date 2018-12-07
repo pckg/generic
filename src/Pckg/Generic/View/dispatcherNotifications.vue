@@ -35,6 +35,7 @@
                     this.removeNotification(notification);
                 }.bind(this), 5000, notification);
             }.bind(this));
+
             $dispatcher.$on('notification:error', function (msg) {
                 var notification = {
                     content: msg,
@@ -43,7 +44,7 @@
                 this.notifications.push(notification);
                 this.timeout('autoclose', function () {
                     this.removeNotification(notification);
-                }.bind(this), 5000, notification);
+                }.bind(this), 15000, notification);
             }.bind(this));
         }
     }

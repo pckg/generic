@@ -24,6 +24,7 @@ use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
+use Pckg\Payment\Entity\Payments;
 use Throwable;
 
 class Records extends Controller
@@ -290,9 +291,6 @@ class Records extends Controller
             $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2))
                    . path('ds') . 'View' . path('ds');
             Twig::addDir($dir);
-            /**
-             * This is needed for table actions.
-             */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
             Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
         }
@@ -613,11 +611,16 @@ class Records extends Controller
         $tableEntity = $table->createEntity();
 
         $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2))
-               . path('ds') . 'View' . path('ds');
+            . path('ds') . 'View' . path('ds');
         Twig::addDir($dir);
-        /**
-         * This is needed for table actions.
-         */
+
+        if (config('app') != config('app_parent')) {
+            $partial = implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2))
+                . path('ds') . 'View' . path('ds');
+            $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
+            Twig::addDir($dir);
+        }
+
         Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
         Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
 
