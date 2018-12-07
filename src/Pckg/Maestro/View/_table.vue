@@ -250,6 +250,25 @@
 </template>
 
 <script type="text/javascript">
+
+    export class DynamicEntity extends Entity {
+
+        constructor() {
+            super();
+            this.$record = DynamicRecord;
+        }
+
+    }
+
+    export class DynamicRecord extends Record {
+
+        constructor() {
+            super();
+            this.$entity = DynamicEntity;
+        }
+
+    }
+
     export default {
         name: 'pckg-maestro-table',
         mixins: [pckgTimeout],
@@ -585,6 +604,10 @@
             },
             refreshData: function (params) {
                 this.loading = true;
+
+                let dynamicEntity = (new DynamicEntity());
+
+
                 http.getJSON(this.paginator.url, function (data) {
                     if (data.tabelizes) {
                         /**

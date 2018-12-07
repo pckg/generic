@@ -2,7 +2,7 @@
     <div class="pckg-maestro-customize-filters-field-filter">
 
         <pckg-select v-model="operator" :initial-options="initialOptions"
-                     :initial-multiple="initialMultiple"></pckg-select>
+                     :initial-multiple="false"></pckg-select>
 
         <template v-if="fieldType == 'text'">
             <input type="text" class="form-control" v-model="search"/>
@@ -69,28 +69,57 @@
                 search: null
             }
         },
-        methods: {},
+        methods: {
+            removeOperators: function (remove) {
+                let operators = {};
+                $.each(this.operators, function (key, title) {
+                    if (remove.indexOf(key) >= 0) {
+                        return;
+                    }
+
+                    operators[key] = title;
+                });
+                return operators;
+            },
+            onlyOperators: function (only) {
+                let operators = {};
+                $.each(this.operators, function (key, title) {
+                    if (only.indexOf(key) < 0) {
+                        return;
+                    }
+
+                    operators[key] = title;
+                });
+                return operators;
+            },
+        },
         computed: {
             selectionOperators: function () {
                 let type = this.fieldType;
             },
             fieldType: function () {
-                if (this.selection.fieldType) {
-                    if (['email', 'text', 'edit', 'slug', 'hash', 'textarea', 'file', 'picture', 'json', 'pdf', 'geo', 'mysql']) {
+                if (this.myType == 'field') {
+                    if (['email', 'text', 'edit', 'slug', 'hash', 'textarea', 'file', 'picture', 'json', 'pdf', 'geo', 'mysql'].indexOf(this.selection.fieldType.slug) >= 0) {
                         return 'text';
                     }
 
-                    if (['id', 'integer', 'order', 'decimal']) {
+                    if (['id', 'integer', 'order', 'decimal'].indexOf(this.selection.fieldType.slug) >= 0) {
                         return 'number';
                     }
 
-                    return this.selection.fieldType;
+                    return this.selection.fieldType.slug;
                 }
             },
             initialOptions: function () {
-                /**
-                 * @T00D00 - filter them by type
-                 */
+                let fieldType = this.fieldType;
+                if (fieldType == 'number') {
+                    return this.removeOperators(['notIn', 'in', 'like', 'notLike']);
+                }
+
+                if (fieldType == 'text') {
+                    return this.onlyOperators(['equals', 'notEquals', 'like', 'notLike']);
+                }
+
                 return this.operators;
             },
             initialMultiple: function () {

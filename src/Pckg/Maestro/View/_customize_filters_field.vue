@@ -1,6 +1,7 @@
 <template>
     <div class="pckg-maestro-customize-filters-field">
 
+        <!-- field or relation is selected -->
         <pckg-select v-model="selected"
                      :initial-options="options"
                      :initial-multiple="false"
@@ -17,8 +18,9 @@
                                                          type="relation"
                                                          :selection="selection"></pckg-maestro-customize-filters-field-filter>
         </template>
-        <template v-else>
+        <template v-else-if="isField">
 
+            <!-- when field is selected we display field comparators and input for value -->
             <pckg-maestro-customize-filters-field-filter v-if="selected"
                                                          type="field"
                                                          :selection="selection"></pckg-maestro-customize-filters-field-filter>
@@ -159,6 +161,9 @@
             },
             isRelation: function () {
                 return this.selected && this.selected.indexOf('relation-') === 0;
+            },
+            isField: function () {
+                return this.selected && this.selected.indexOf('field-') === 0;
             }
         },
         created: function () {
