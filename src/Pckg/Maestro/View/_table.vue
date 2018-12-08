@@ -66,7 +66,7 @@
 
                                 <hr/>
                             </div>
-                            <div class="col-xs-6">
+                            <div class="col-xs-9">
 
                                 <pckg-maestro-customize-filters :columns="myFields"
                                                                 :relations="relations"></pckg-maestro-customize-filters>
@@ -81,9 +81,6 @@
                                                                @chosen="chosen"
                                                                @remove="removeColumn"
                                                                @reorder="view.columns = $event"></pckg-maestro-customize-fields>
-
-                            </div>
-                            <div class="col-xs-3">
 
                                 <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
 

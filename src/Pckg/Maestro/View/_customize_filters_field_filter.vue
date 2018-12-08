@@ -2,7 +2,7 @@
     <div class="pckg-maestro-customize-filters-field-filter">
 
         <pckg-select v-model="myFilter.comp" :initial-options="initialOptions"
-                     :initial-multiple="false"></pckg-select>
+                     :initial-multiple="false" key="search"></pckg-select>
 
         <template v-if="fieldType == 'text'">
             <input type="text" class="form-control" v-model="myFilter.value"/>
@@ -23,7 +23,8 @@
             <input type="checkbox" class="form-control" value="1" v-model="myFilter.value"/>
         </template>
         <template v-else-if="fieldType == 'select'">
-            <pckg-select v-model="myFilter.value"></pckg-select>
+            <pckg-select v-model="myFilter.value" key="select" :refresh-url="filterUrl" :initial-refresh="true"
+                         :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
         </template>
         <template v-else>
             <pckg-tooltip :content="'Field not supported yet'" icon="question-circle"></pckg-tooltip>
@@ -46,8 +47,24 @@
             selection: function (newVal) {
                 this.mySelection = newVal;
             },
-            filter: function(newVal){
+            filter: function (newVal) {
                 this.myFilter = newVal;
+            },
+            'myFilter.comp': function(newVal){
+                let arr = ['in', 'notIn'];
+                if (arr.indexOf(newVal) >= 0) {
+                    if (Array.isArray(this.myFilter.value)) {
+                        return;
+                    }
+                    if (!this.myFilter.value) {
+                        this.$emit('filter-value', []);
+                        return;
+                    }
+                    this.$emit('filter-value', [this.myFilter.value]);
+                    return;
+                } else if (Array.isArray(this.myFilter.value)) {
+                    this.$emit('filter-value', this.myFilter.value[0] || null);
+                }
             }
         },
         data: function () {
@@ -62,13 +79,13 @@
                     like: 'like',
                     notLike: 'not like',
                     equals: 'is',
-                    notEquals: 'it not',
+                    notEquals: 'is not',
                     in: 'in',
                     notIn: 'not in',
-                    more: '> - more than',
-                    less: '< - less than',
-                    moreOrEquals: '>= - more than or equals',
-                    lessOrEquals: '<= - less than or equals',
+                    more: '>',
+                    less: '<',
+                    moreOrEquals: '>=',
+                    lessOrEquals: '<=',
                 },
             }
         },
@@ -113,6 +130,31 @@
                     return this.fetchFieldType;
                 }
             },
+            filterUrl: function () {
+                if (this.fieldType != 'select') {
+                    return;
+                }
+
+                return utils.url('@dynamic.records.field.selectList.none', {
+                    table: this.mySelection.dynamic_table_id,
+                    field: this.mySelection.id
+                });
+            },
+            selectOptions: function () {
+                if (this.fieldType != 'select') {
+                    return [];
+                }
+
+                if (this.myType == 'relation') {
+                    return this.selection.values || [];
+                }
+
+                if (this.myType == 'field') {
+                    return [];
+                }
+
+                return [];
+            },
             fetchFieldType: function () {
                 if (this.myType == 'field') {
                     return this.mySelection.fieldType.slug;
@@ -126,6 +168,10 @@
 
                 if (fieldType == 'text') {
                     return this.onlyOperators(['equals', 'notEquals', 'like', 'notLike']);
+                }
+
+                if (fieldType == 'select') {
+                    return this.onlyOperators(['in', 'notIn', 'equals', 'notEquals']);
                 }
 
                 return this.operators;
