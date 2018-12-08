@@ -74,6 +74,8 @@
                             </div>
                             <div class="col-xs-3">
 
+                                <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
+
                                 <pckg-maestro-customize-fields :fields="myFields"
                                                                :columns="view.columns"
                                                                :relations="relations"
@@ -81,8 +83,6 @@
                                                                @chosen="chosen"
                                                                @remove="removeColumn"
                                                                @reorder="view.columns = $event"></pckg-maestro-customize-fields>
-
-                                <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
 
                             </div>
                             <div class="col-xs-12">
