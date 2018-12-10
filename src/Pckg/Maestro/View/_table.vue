@@ -612,7 +612,6 @@
                     .limit(this.paginator.perPage)
                     .page(this.paginator.page);
 
-
                 dynamicEntity.all(this.paginator.url, function(data){
 
                     if (data.tabelizes) {

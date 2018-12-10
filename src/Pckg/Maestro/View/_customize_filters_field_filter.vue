@@ -2,33 +2,40 @@
     <div class="pckg-maestro-customize-filters-field-filter">
 
         <pckg-select v-model="myFilter.comp" :initial-options="initialOptions"
-                     :initial-multiple="false" key="search"></pckg-select>
+                     :initial-multiple="false" key="search" class="inline-block"></pckg-select>
 
-        <template v-if="fieldType == 'text'">
-            <input type="text" class="form-control" v-model="myFilter.value"/>
-        </template>
-        <template v-else-if="fieldType == 'number'">
-            <input type="number" class="form-control" v-model="myFilter.value"/>
-        </template>
-        <template v-else-if="fieldType == 'date'">
-            <pckg-datetime v-model="myFilter.value" format="YYYY-MM-DD HH:mm"></pckg-datetime>
-        </template>
-        <template v-else-if="fieldType == 'datetime'">
-            <pckg-datetime v-model="myFilter.value" format="YYYY-MM-DD"></pckg-datetime>
-        </template>
-        <template v-else-if="fieldType == 'time'">
-            <pckg-datetime v-model="myFilter.value" format="HH:mm"></pckg-datetime>
-        </template>
-        <template v-else-if="fieldType == 'checkbox'">
-            <input type="checkbox" class="form-control" value="1" v-model="myFilter.value"/>
-        </template>
-        <template v-else-if="fieldType == 'select'">
-            <pckg-select v-model="myFilter.value" key="select" :refresh-url="filterUrl" :initial-refresh="true"
-                         :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
-        </template>
-        <template v-else>
-            <pckg-tooltip :content="'Field not supported yet'" icon="question-circle"></pckg-tooltip>
-        </template>
+        <div class="inline-block">
+
+            <template v-if="fieldType == 'text'">
+                <input type="text" class="form-control" v-model="myFilter.value"/>
+            </template>
+            <template v-else-if="fieldType == 'number'">
+                <input type="number" class="form-control" v-model="myFilter.value"/>
+            </template>
+            <template v-else-if="fieldType == 'date'">
+                <pckg-datetime-picker v-model="myFilter.value" :options="{format: 'YYYY-MM-DD HH:mm'}"></pckg-datetime-picker>
+            </template>
+            <template v-else-if="fieldType == 'datetime'">
+                <pckg-datetime-picker v-model="myFilter.value" :options="{format: 'YYYY-MM-DD'}"></pckg-datetime-picker>
+            </template>
+            <template v-else-if="fieldType == 'time'">
+                <pckg-datetime-picker v-model="myFilter.value" :options="{format: 'HH:mm'}"></pckg-datetime-picker>
+            </template>
+            <template v-else-if="fieldType == 'checkbox'">
+                <input type="checkbox" class="form-control" value="1" v-model="myFilter.value"/>
+            </template>
+            <template v-else-if="fieldType == 'select'">
+                <pckg-select v-model="myFilter.value" key="select-field" :refresh-url="filterUrl" :initial-refresh="true"
+                             :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
+            </template>
+            <template v-else-if="fieldType == 'relation'">
+                <pckg-select v-model="myFilter.value" key="select-relation" :refresh-url="filterUrl" :initial-refresh="true"
+                             :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
+            </template>
+            <template v-else>
+                <pckg-tooltip :content="'Field not supported yet'" icon="question-circle"></pckg-tooltip>
+            </template>
+        </div>
     </div>
 </template>
 
@@ -50,7 +57,7 @@
             filter: function (newVal) {
                 this.myFilter = newVal;
             },
-            'myFilter.comp': function(newVal){
+            'myFilter.comp': function (newVal) {
                 let arr = ['in', 'notIn'];
                 if (arr.indexOf(newVal) >= 0) {
                     if (Array.isArray(this.myFilter.value)) {

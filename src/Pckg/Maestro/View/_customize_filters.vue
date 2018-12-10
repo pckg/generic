@@ -61,7 +61,7 @@
                 <p>Orders -> Language IN En, Sl</p>
                 <p>Orders -> Orders users -> Status IS Confirmed</p>
                 <p>Orders -> Orders users -> Packet IS Foo, Bar and Baz</p>
-                <p>Orders -> Orders users -> Packet -> Vat NOT Regular</p>
+                <p>Orders -> Orders users -> Packet -> Vat NOT Standard</p>
 
                 <p><b>JS dynamic object should be</b></p>
                 <p>[</p>
@@ -79,7 +79,7 @@
                     }}}}}</p>
                 <p>{field: { orders: { field: { ordersUsers: { field: 'packet_id', value: [3, 11, 12], comp: 'in'
                     }}}}}</p>
-                <p>{field: { orders: { field: { ordersUsers: { field: { packet: { field: 'vat_level', value: 'regular',
+                <p>{field: { orders: { field: { ordersUsers: { field: { packet: { field: 'vat_level', value: 'standard',
                     comp: 'notEquals' }}}}}}}</p>
                 <p>]</p>
 
@@ -97,14 +97,13 @@
                 <p>.where('orders.language_id', ['en', 'sl'])</p>
                 <p>.where('orders.ordersUsers.status_id', 'confirmed')</p>
                 <p>.where('orders.ordersUsers.packet_id', [3, 11, 12])</p>
-                <p>.where('orders.ordersUsers.packet.vat_level', 'regular', '!=')</p>
-                <p>.limit(100)</p>
+                <p>.where('orders.ordersUsers.packet.vat_level', 'standard', '!=')</p>
+                <p>.limit(100)</p>X-Pckk-Orm-Filters:
                 <p>.page(3)</p>
                 <p>.all()</p>
 
                 <p><b>HTTP REST gets</b></p>
                 <p>/api/dynamic/tables/list/1 ? perPage=100 & page=3</p>
-                <p></p>
 
                 <p><b>HTTP QL gets</b></p>
                 <p>/api/dynamic/tables/list/1 BODY {paginator:{perPage:100,page:3}, fields: ..., filters: ...</p>
@@ -129,7 +128,7 @@
                 <p>->where('orders.language_id', ['en', 'sl'])</p>
                 <p>->where('orders_users.status_id', 'confirmed')</p>
                 <p>->where('orders_users.packet_id', [3, 11, 12])</p>
-                <p>->where('packets.vat_level', 'regular', '!=')</p>
+                <p>->where('packets.vat_level', 'standard', '!=')</p>
                 <p><i>->groupBy('users.id')</i></p>
             </div>
 
@@ -179,8 +178,8 @@
                                     ordersUsers: {
                                         field: {
                                             packet: {
-                                                field: 'vat_level',
-                                                value: 'regular',
+                                                field: 'vat',
+                                                value: 'standard',
                                                 comp: 'notEquals'
                                             }
                                         }
@@ -204,7 +203,7 @@
                 utils.splice(this.filters, filter);
             },
             addCondition: function () {
-                this.filters.push({field: null, value: null, comp: 'is'});
+                this.filters.push({field: null, value: null, comp: 'equals'});
             },
             chosen: function () {
 

@@ -5,28 +5,10 @@
         <pckg-select v-model="selected"
                      :initial-options="options"
                      :initial-multiple="false"
-                     class="field-relation" key="field-relation"></pckg-select>
+                     class="field-relation inline-block" key="field-relation"></pckg-select>
 
         <template v-if="selection">
-            <template v-if="isRelation">
-                <i class="fa fa-cogs" @click.prevent="customizeRelation = !customizeRelation"
-                   :title="customizeRelation ? 'yes' : 'no'"></i>
-
-                <pckg-maestro-customize-filters-field v-if="customizeRelation"
-                                                      :relation="selection"
-                                                      v-model="subModel"
-                                                      @set-filter="setSubFilter($event)"
-                                                      @chosen="chosen"
-                                                      key="customize-relation"></pckg-maestro-customize-filters-field>
-
-                <pckg-maestro-customize-filters-field-filter v-else
-                                                             type="relation"
-                                                             :selection="selection"
-                                                             :filter="myFilter"
-                                                             key="relation-filter"
-                                                             @filter-value="setFilterValue($event)"></pckg-maestro-customize-filters-field-filter>
-            </template>
-            <template v-else-if="isField">
+            <template v-if="isField">
 
                 <!-- when field is selected we display field comparators and input for value -->
                 <pckg-maestro-customize-filters-field-filter v-if="selected"
@@ -34,8 +16,26 @@
                                                              :selection="selection"
                                                              :filter="myFilter"
                                                              @filter-value="setFilterValue($event)"
-                                                             key="field-filter"></pckg-maestro-customize-filters-field-filter>
+                                                             key="field-filter" class="inline-block"></pckg-maestro-customize-filters-field-filter>
 
+            </template>
+            <template v-else-if="isRelation">
+                <i v-if="customizeRelation" class="fa fa-cog" @click.prevent="customizeRelation = false"></i>
+                <i v-else class="fa fa-cogs" @click.prevent="customizeRelation = true"></i>
+
+                <pckg-maestro-customize-filters-field v-if="customizeRelation"
+                                                      :relation="selection"
+                                                      v-model="subModel"
+                                                      @set-filter="setSubFilter($event)"
+                                                      @chosen="chosen"
+                                                      key="customize-relation" class="inline-block"></pckg-maestro-customize-filters-field>
+
+                <pckg-maestro-customize-filters-field-filter v-else
+                                                             type="relation"
+                                                             :selection="selection"
+                                                             :filter="myFilter"
+                                                             key="relation-filter"
+                                                             @filter-value="setFilterValue($event)" class="inline-block"></pckg-maestro-customize-filters-field-filter>
             </template>
         </template>
 
@@ -68,12 +68,10 @@
             prop: 'filter'
         },
         data: function () {
-            let selected = this.filter
-                ? (typeof this.filter == 'string'
-                        ? null
-                        : (typeof this.filter.field == 'string'
-                            ? 'field-' + this.filter.field
-                            : ('relation-' + Object.keys(this.filter.field)[0]))
+            let selected = this.filter && this.filter.field
+                ? (typeof this.filter.field == 'string'
+                        ? 'field-' + this.filter.field
+                        : ('relation-' + Object.keys(this.filter.field)[0])
                 ) : '';
 
             let field = this.filter && this.filter.field && typeof this.filter.field == 'object'
@@ -107,16 +105,37 @@
             filter: function (filter) {
                 this.myFilter = filter;
             },
-            selected: function() {
-                this.setFilterValue(null);
-                this.setSubFilter({field: null, value: null, comp: 'is'});
+            selected: function (newValue) {
+                if (!newValue || newValue.length == 0) {
+                    console.log('no selected value, setting filter as null');
+                    this.setFilterField(null);
+                    return;
+                }
+
+                if (newValue.indexOf('field-') === 0) {
+                    console.log('field selected, setting value ' + newValue.substr(6))
+                    this.setFilterField(newValue.substr(6));
+                    return;
+                }
+
+                if (newValue.indexOf('relation-') === 0) {
+                    console.log('relation selected, setting value ' + newValue.substr(6));
+                    let filter = {field:{}};
+                    filter.field[newValue.substr(9)] = {field: null, value: null, comp: 'is'};
+                    //this.setFilter(filter);
+                    this.setFilter(filter);
+                    return;
+                }
+
+                //this.setFilterValue(null);
+                //this.setSubFilter({field: '', value: '', comp: 'is'});
             },
         },
         methods: {
             makeSelectedFieldVisible: function () {
                 this.$emit('chosen', this.selected);
             },
-            setSubFilter: function($event) {
+            setSubFilter: function ($event) {
                 this.subModel = $event;
                 this.myFilter.field = this.subModel;
                 this.$emit('set-filter', this.myFilter);
@@ -127,6 +146,14 @@
             },
             setFilterValue: function (value) {
                 this.myFilter.value = value;
+                this.$emit('set-filter', this.myFilter);
+            },
+            setFilterField: function (field) {
+                this.myFilter.field = field;
+                if (typeof this.myFilter.field == 'object') {
+                    delete this.myFilter.comp;
+                    delete this.myFilter.value;
+                }
                 this.$emit('set-filter', this.myFilter);
             },
             chosen: function (chosen) {
@@ -232,6 +259,11 @@
             isField: function () {
                 return this.myFilter && this.myFilter.field && typeof this.myFilter.field == 'string';
                 // return this.selected && this.selected.indexOf('field-') === 0;
+            }
+        },
+        created: function(){
+            if (!this.filter) {
+                this.setFilter({field: null, value: null, comp: 'equals'});
             }
         }
     };
