@@ -29,6 +29,7 @@ class Dynamic extends Provider
     {
         return [
             FrontendProvider::class,
+            HttpQl::class,
         ];
     }
 

@@ -5,7 +5,7 @@
                 <template v-if="!editable">
                     <pckg-tabelize-field-boolean :field="field.id"
                                                  :record="record.id"
-                                                 :value="record[field.field]"
+                                                 :value="value"
                                                  :table="table"
                                                  :url="toggleFieldUrl"></pckg-tabelize-field-boolean>
                 </template>
@@ -17,7 +17,7 @@
                 <pckg-tabelize-field-order :key="record.id"
                                            :field="field.id"
                                            :record="record.id"
-                                           :value="record[field.field]"
+                                           :value="value"
                                            :table="table"
                                            :url="orderFieldUrl"></pckg-tabelize-field-order>
             </template>
@@ -25,7 +25,7 @@
                 <template v-if="!editable">
                     <pckg-tabelize-field-datetime :field="field.id"
                                                   :record="record.id"
-                                                  :value="record[field.field]"
+                                                  :value="value"
                                                   :table="table"
                                                   :min="field.minTogglable"
                                                   :max="field.maxTogglable"
@@ -38,7 +38,7 @@
             <template v-else-if="type == 'editor'">
                 <template v-if="!editable">
                     <pckg-tabelize-field-editor
-                            :value="record[field.field]"></pckg-tabelize-field-editor>
+                            :value="value"></pckg-tabelize-field-editor>
                 </template>
                 <template v-else>
                     <textarea v-html="model">{{ model }}</textarea>
@@ -46,14 +46,14 @@
             </template>
             <template v-else>
                 <template v-if="!editable">
-                    <template v-if="field.field == 'id'">
-                        <a :href="record.viewUrl" v-html="record[field.field]" class="nobr" title="Open record"></a>
+                    <template v-if="key == 'id'">
+                        <a :href="record.viewUrl" v-html="value" class="nobr" title="Open record"></a>
                     </template>
-                    <template v-else-if="field.field == 'title'">
-                        <a :href="record.viewUrl" v-html="record[field.field]" title="Open record"></a>
+                    <template v-else-if="key == 'title'">
+                        <a :href="record.viewUrl" v-html="value" title="Open record"></a>
                     </template>
-                    <template v-else-if="field.isRaw"><span class="raw">{{ record[field.field] }}</span></template>
-                    <template v-else><span v-html="record[field.field]" class="else"></span></template>
+                    <template v-else-if="field.isRaw"><span class="raw">{{ value }}</span></template>
+                    <template v-else><span v-html="value" class="else"></span></template>
                 </template>
                 <template v-else>
                     <input type="text" v-model="model"/>
@@ -87,15 +87,29 @@
                 type: Object,
                 required: true
             },
-            model: {
-                required: true
+            relations: {},
+            parentFields: {}
+        },
+        watch: {
+            field: function (field) {
+                this.myField = field;
+            },
+            relations: function (relations) {
+                this.myRelations = relations;
+            },
+            parentFields: function (fields) {
+                this.myFields = fields;
             }
         },
         data: function () {
             return {
+                myField: this.field,
+                myRelations: this.relations,
+                myFields: this.parentFields,
                 editable: false,
                 toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle'],
-                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order']
+                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order'],
+                model: null
             };
         },
         methods: {
@@ -111,7 +125,33 @@
         },
         computed: {
             type: function () {
-                return this.field.fieldType ? this.field.fieldType.slug : null;
+                if (typeof this.myField.field == 'string') {
+                    let t;
+                    $.each(this.myFields, function (i, field) {
+                        if (field.field != this.myField.field) {
+                            return;
+                        }
+
+                        t = field.fieldType.slug;
+                        return false;
+                    }.bind(this));
+
+                    return t;
+                }
+
+                return 'relation';
+            },
+            key: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.myField.field;
+                }
+            },
+            value: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.record[this.key];
+                }
+                // for fields: value
+                // for relations: record[relation.alias]...[field]
             }
         },
         mounted: function () {

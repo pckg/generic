@@ -2,11 +2,11 @@
     <div class="pckg-maestro-customize-fields-field">
         <pckg-select v-model="selected"
                      :initial-options="options"
-                     :initial-multiple="false"></pckg-select>
-        <a v-if="isFinal" href="#" @click.prevent="makeSelectedFieldVisible">Add field</a>
-        <pckg-maestro-customize-fields-field v-else-if="isRelation"
+                     :initial-multiple="false" @change="checkFinal"></pckg-select>
+        <pckg-maestro-customize-fields-field v-if="!isFinal && isRelation"
                                              :relation="selectedRelation"
-                                             @chosen="chosen" @remove="$emit('remove', $event)"></pckg-maestro-customize-fields-field>
+                                             @chosen="chosen"
+                                             @remove="$emit('remove', $event)"></pckg-maestro-customize-fields-field>
     </div>
 </template>
 
@@ -41,10 +41,25 @@
         watch: {
             relation: function (newVal) {
                 this.fetchRelation();
+            },
+            relations: function (relations) {
+                this.myRelations = relations;
+            },
+            parentFields: function (fields) {
+                this.myFields = fields;
             }
         },
         methods: {
-            removeColumn: function(column){
+            checkFinal: function () {
+                this.$nextTick(function () {
+                    if (!this.isFinal) {
+                        return;
+                    }
+
+                    this.makeSelectedFieldVisible();
+                }.bind(this));
+            },
+            removeColumn: function (column) {
                 this.$emit('remove');
             },
             test: function () {

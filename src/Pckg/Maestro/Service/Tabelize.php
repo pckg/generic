@@ -572,12 +572,10 @@ class Tabelize
      */
     public function transformRecords()
     {
-        $records = $this->transformCollection($this->getRecords());
-
-        return $records;
+        return $this->transformCollection($this->getRecords());
     }
 
-    protected function transformCollection($collection)
+    public function transformCollection($collection)
     {
         $records = [];
         foreach ($collection as $key => $record) {
@@ -603,9 +601,7 @@ class Tabelize
                 ? $key : (is_string($field)
                     ? $field : (is_object($field) ? $field->field
                         : $field['field']));
-            //measure('field.' . $realKey, function() use (&$transformed, $realKey, $field, $record) {
             $transformed[$realKey] = $this->getRecordValue($field, $record);
-            //});
         }
 
         /**
@@ -613,9 +609,7 @@ class Tabelize
          */
         foreach ($this->getFieldTransformations() as $key => $field) {
             $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
-            measure('transformation.' . $key, function() use (&$transformed, $realKey, $field, $record) {
-                $transformed[$realKey] = $this->getRecordValue($field, $record);
-            });
+            $transformed[$realKey] = $this->getRecordValue($field, $record);
         }
 
         if ($this->dataOnly) {
@@ -650,10 +644,16 @@ class Tabelize
         $transformed = array_merge($record->getToArrayValues(), $transformed);
         $transformed = array_merge($transformed, $record->getToJsonValues());
 
+        /**
+         * ID is mandatory.
+         */
         if (!isset($transformed['id'])) {
             $transformed['id'] = $record->id;
         }
 
+        /**
+         * @T00D00 - tabelize class is not needed anymore?
+         */
         if (!isset($transformed['tabelizeClass']) && method_exists($record, 'getTabelizeClassAttribute')) {
             $transformed['tabelizeClass'] = $record->tabelizeClass;
         }

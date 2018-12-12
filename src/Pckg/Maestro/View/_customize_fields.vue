@@ -13,7 +13,7 @@
         >
 
             <div v-for="(column, i) in myColumns" :key="i">
-                <a href="#"><i class="fal fa-minus-circle" @click.prevent="$emit('remove', column)"></i></a>
+                <a href="#"><i class="fal fa-minus-circle" @click.prevent="remove(column)"></i></a>
                 <a href="#" style="cursor: move;" class="move-handle"><i class="fas fa-ellipsis-v"></i></a>
                 {{ getColumnTitle(column) }}
                 <a href="#" v-if="column.freeze">
@@ -21,7 +21,7 @@
                        @click.prevent="column.freeze = false"></i>
                 </a>
                 <a href="#" v-else>
-                    <i class="pull-right fa fa-thumbtack"
+                    <i class="pull-right fal fa-thumbtack"
                        @click.prevent="column.freeze = true"></i>
                 </a>
             </div>
@@ -33,9 +33,9 @@
                 <i class="fal fa-plus-circle"></i>
             </a>
             <template v-else-if="mode == 'add'">
-                <pckg-maestro-customize-fields-field :fields="myFields"
-                                                     :relations="relations"
-                                                     @chosen="chosen"></pckg-maestro-customize-fields-field>
+                <pckg-maestro-customize-fields-field :parent-fields="myFields"
+                                                     :relations="myRelations"
+                                                     @chosen="addField"></pckg-maestro-customize-fields-field>
             </template>
         </div>
     </div>
@@ -62,7 +62,8 @@
                 newField: '',
                 mode: 'view',
                 myFields: this.parentFields,
-                myColumns: this.columns
+                myRelations: this.relations,
+                myColumns: this.columns,
             };
         },
         watch: {
@@ -72,14 +73,48 @@
             columns: function (columns) {
                 this.myColumns = columns;
             },
+            relations: function (relations) {
+                this.myRelations = relations;
+            },
         },
         methods: {
             getColumnTitle: function (column) {
-                return column.title;
+                if (typeof column.field == 'string') {
+                    let f;
+                    $.each(this.myFields, function (i, field) {
+                        if (field.field != column.field) {
+                            return;
+                        }
+
+                        f = field;
+                        return false;
+                    });
+
+                    if (!f) {
+                        console.log('fetch relation!');
+                        return column.field;
+                    }
+
+                    return f.title;
+                }
+
+                let k = Object.keys(column.field)[0];
+                let f;
+                $.each(this.myRelations, function (i, relation) {
+                    if (relation.alias != k) {
+                        return;
+                    }
+
+                    f = relation.alias + ' > ' + this.getColumnTitle(column.field[k]);
+
+                    return false;
+                }.bind(this));
+
+                return f;
             },
             emitTreeChange: function () {
                 console.log('emitting', this.myColumns);
-                this.$emit('reorder', this.myColumns);
+                this.$emit('change', this.myColumns);
             },
             makeSelectedFieldVisible: function () {
                 $.each(this.myFields, function (i, field) {
@@ -91,8 +126,17 @@
                 }.bind(this));
                 this.newField = '';
             },
+            remove: function (data) {
+                utils.splice(this.myColumns, data);
+                this.$emit('change', this.myColumns);
+            },
+            addField: function (data) {
+                this.myColumns.push(data);
+                this.$emit('change', this.myColumns);
+            },
             chosen: function (data) {
-                this.$emit('chosen', data);
+                this.myColumns.push(data);
+                this.$emit('change', this.myColumns);
                 this.mode = 'view';
             }
         },

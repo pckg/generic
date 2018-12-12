@@ -19,7 +19,7 @@
 
         <div class="btn-group">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i v-if="loading" class="fa fa-spin fa-spinner position-absolute"></i>
+                <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
                 <template v-if="myMultiple && Array.isArray(selected) && selected.length > 1">({{ selected.length }})
                 </template>
                 {{ selectedTitle }} <span class="caret text-right"></span>
@@ -167,6 +167,7 @@
                 this.refreshList();
             },
             selectedModel: function (newVal, oldVal) {
+                this.$emit('change', newVal);
                 this.$emit('input', newVal);
             },
             initialOptions: function (newVal) {

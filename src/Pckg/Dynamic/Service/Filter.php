@@ -105,46 +105,57 @@ class Filter extends AbstractService
         )->keyBy('field');
     }
 
-    public function applyOnEntity(Entity $entity)
+    public function applyOnEntity(Entity $entity, $filters)
     {
-        $session = $this->getSession();
+        $signMapper = $this->getTypeMethods();
 
-        $signMapper = $this->getTypeMethods(true);
+        /**
+         * Field filters.
+         */
+        foreach ($filters as $filter) {
+            if (!is_string($filter['k'])) {
+                continue;
+            }
 
-        foreach ($session['fields']['filters'] ?? [] as $filter) {
-            $field = (new Fields())->where('id', $filter['field'])->oneOrFail();
+            $field = (new Fields())->where('field', $filter['k'])->where('dynamic_table_id', $this->table->id)->oneOrFail();
 
             if ($field->fieldType->slug == 'boolean') {
-                $entity->where($field->field, $filter['value'] ? 1 : null, $signMapper[$filter['method']]);
+                $entity->where($field->field, $filter['v'] ? 1 : null, $signMapper[$filter['c']]);
                 continue;
             }
 
             if (in_array($field->fieldType->slug, ['mysql'])) {
                 if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
-                    $entity->having('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
+                    $entity->having('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
                 }
                 continue;
             }
 
             if (in_array($field->fieldType->slug, ['php'])) {
                 if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
-                    $entity->where('`' . $field->field . '`', $filter['value'], $signMapper[$filter['method']]);
+                    $entity->where('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
                 }
                 continue;
             }
 
             $entity->where(
                 $field->field,
-                $filter['value'],
-                $signMapper[$filter['method']]
+                $filter['v'],
+                $signMapper[$filter['c']]
             );
         }
 
         /**
-         * @T00D00 - join translations
+         * Relation filters
          */
         $joined = false;
-        foreach ($session['relations']['filters'] ?? [] as $relationFilter) {
+        foreach ($filters as $filter) {
+            if (is_string($filter['k'])) {
+                continue;
+            }
+
+            continue;
+
             $relation = (new Relations())->withOnField()
                                          ->withShowTable()
                                          ->withOnTable()
@@ -279,7 +290,7 @@ class Filter extends AbstractService
         }
     }
 
-    public function getTypeMethods($backwardsCompatible = false)
+    public function getTypeMethods()
     {
         $data = [
             'equals'          => '=',
@@ -289,14 +300,12 @@ class Filter extends AbstractService
             'lowerOrEquals'   => '<=',
             'not'             => '!=',
             'like'            => 'LIKE',
-            'notLike'            => 'NOT LIKE',
+            'notLike'         => 'NOT LIKE',
             'isNull'          => 'IS NULL',
             'notNull'         => 'IS NOT NULL',
+            'in'              => 'IN',
+            'notIn'           => 'NOT IN',
         ];
-
-        if ($backwardsCompatible) {
-            $data['in'] = 'IN';
-        }
 
         return $data;
     }

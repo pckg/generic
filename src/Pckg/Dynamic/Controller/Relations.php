@@ -17,7 +17,9 @@ class Relations
         }
 
         if (in_array('relations', $with)) {
-            $data['relations'] = (new \Pckg\Dynamic\Entity\Relations())->where('on_table_id', $relation->show_table_id)->all()->toArray();
+            $data['relations'] = (new \Pckg\Dynamic\Entity\Relations())->where('on_table_id', $relation->show_table_id)
+                                                                       ->all()
+                                                                       ->toArray();
         }
 
         return [

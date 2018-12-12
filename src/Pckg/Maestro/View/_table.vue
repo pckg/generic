@@ -5,7 +5,8 @@
         <div class="header">
             <div class="sec">
                 <h2>
-                    {{ table.title ? table.title : table.table }} {{ paginator.filtered }}/{{ paginator.total }}
+                    <template v-if="table">{{ table.title ? table.title : table.table }}</template>
+                    <template v-if="paginator">{{ paginator.filtered }}/{{ paginator.total }}</template>
                 </h2>
             </div>
 
@@ -68,21 +69,20 @@
                             </div>
                             <div class="col-xs-9">
 
-                                <pckg-maestro-customize-filters :columns="myFields"
-                                                                :relations="relations"></pckg-maestro-customize-filters>
+                                <pckg-maestro-customize-filters :columns="dbFields"
+                                                                :relations="dbRelations"
+                                                                :filters="myFilters"></pckg-maestro-customize-filters>
 
                             </div>
                             <div class="col-xs-3">
 
                                 <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
 
-                                <pckg-maestro-customize-fields :fields="myFields"
-                                                               :columns="view.columns"
-                                                               :relations="relations"
+                                <pckg-maestro-customize-fields :parent-fields="dbFields"
+                                                               :columns="myFields"
+                                                               :relations="dbRelations"
                                                                :table="table"
-                                                               @chosen="chosen"
-                                                               @remove="removeColumn"
-                                                               @reorder="view.columns = $event"></pckg-maestro-customize-fields>
+                                                               @change="myFields = $event"></pckg-maestro-customize-fields>
 
                             </div>
                             <div class="col-xs-12">
@@ -136,22 +136,22 @@
                                                 </div>
                                             </div>
                                         </th>
-                                        <th v-for="(field, i) in view.columns"
+                                        <th v-for="(field, i) in myFields"
                                             :style="{'--freeze': field.freeze ? i : null}"
-                                            :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '']">
+                                            :class="[field.freeze ? 'freeze' : '', getFieldTypeClass(field)]">
 
                                             <!-- quick sort -->
                                             <div>
-                                                <span @click.prevent="togglefield(field.id)">{{ field.title }}</span>
+                                                <span @click.prevent="togglefield(field.field)" :data-field="field.field">{{ getColumnTitle(field) }}</span>
 
                                                 <span @click.prevent="togglefield(field.id)"
-                                                      v-if="sort.field == field.id">
+                                                      v-if="getFieldTypeClass(field) != 'relation' && sort.field == field.field">
                                                     <i class="fa"
                                                        :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
                                                 </span>
 
                                                 <!-- quick filter -->
-                                                <span href="#">
+                                                <span href="#" v-if="getFieldTypeClass(field) != 'relation'">
                                                     <i class="fal fa-filter"></i>
                                                 </span>
                                             </div>
@@ -176,12 +176,11 @@
                                             <!--<td class="actions freeze">
                                                 <div>Actions</div>
                                             </td>-->
-                                            <td v-for="(field, i) in view.columns"
+                                            <td v-for="(field, i) in myFields"
                                                 :style="{'--freeze': field.freeze ? i : null}"
-                                                :class="[field.freeze ? 'freeze' : '', field.fieldType && field.fieldType.slug ? field.fieldType.slug : '', record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
+                                                :class="[field.freeze ? 'freeze' : '', getFieldTypeClass(field), record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                                                 <pckg-maestro-field :field="field" :record="record"
-                                                                    :model="record[field.field]"
-                                                                    :table="table"></pckg-maestro-field>
+                                                                    :table="table" :parent-fields="dbFields" :relations="dbRelations"></pckg-maestro-field>
                                             </td>
                                         </tr>
 
@@ -248,7 +247,7 @@
 
 <script type="text/javascript">
 
-    import {Entity, HttpRepository, Record, Repository} from "../../../../../helpers-js/webpack/orm";
+    import {Entity, HttpQLRepository, Record, Repository} from "../../../../../helpers-js/webpack/orm";
 
     export class DynamicEntity extends Entity {
 
@@ -289,11 +288,6 @@
             /**
              * Old
              */
-            initialFields: {
-                default: function () {
-                    return [];
-                }
-            },
             depth: {
                 default: 0
             },
@@ -330,6 +324,48 @@
         },
         data: function () {
             return {
+                myFilters: [
+                    /*{field: 'email', value: 'schtr4jh@schtr4jh.net', comp: 'notEquals'},
+                    {field: 'user_group_id', value: 2, comp: 'equals'},
+                    {field: {userGroup: {field: 'title', value: 'User', comp: 'equals'}}},
+                    {field: 'mailo_open_rate', value: 75, comp: 'less'},
+                    {field: 'mailo_open_rate', value: 0, comp: 'more'},
+                    {field: 'email', value: '%gmail.com', comp: 'like'},
+                    {field: 'dt_birth', value: '1980-01-01', comp: 'moreOrEquals'},
+                    {field: {ordersUsers: {field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals'}}},
+                    {field: {orders: {field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals'}}},
+                    {field: {orders: {field: 'language_id', value: ['en', 'sl'], comp: 'in'}}},
+                    {field: {orders: {field: {ordersUsers: {field: 'status_id', value: 'confirmed', comp: 'equals'}}}}},
+                    {field: {orders: {field: {ordersUsers: {field: 'packet_id', value: [3, 11, 12], comp: 'in'}}}}},
+                    {field: {orders: {field: {ordersUsers: {field: 'packet_id', value: 11, comp: 'equals'}}}}},
+                    {
+                        field: {
+                            orders: {
+                                field: {
+                                    ordersUsers: {
+                                        field: {
+                                            packet: {
+                                                field: 'vat',
+                                                value: 'standard',
+                                                comp: 'notEquals'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },*/
+                ],
+                myFields: [
+                    /*
+                    {field: 'id', freeze: false},
+                    {field: 'email', freeze: false},
+                    {field: 'user_group_id', freeze: false},
+                    {field: {userGroup: {field: 'title'}}, freeze: false}, // belongs to
+                    {field: {orders: {field: 'num'}}, freeze: false}, // has many
+                    {field: {orders: {field: {unit: {field: 'title'}}}}, freeze: false}, // has many
+                    */
+                ],
                 paginator: {
                     perPage: 50,
                     page: 1,
@@ -381,9 +417,10 @@
                 allChecked: false,
                 loading: false,
                 /**
-                 * All available table fields.
+                 * All available table fields and relations.
                  */
-                myFields: this.initialFields,
+                dbFields: [],
+                dbRelations: [],
                 contextMenuShown: false,
                 /**
                  * Current table info.
@@ -397,7 +434,6 @@
                 quickView: 'closed',
                 _quickViewDelay: null,
                 doubleClickDiff: null,
-                relations: [],
                 view: {
                     /**
                      * Visible columns.
@@ -422,8 +458,70 @@
             };
         },
         methods: {
-            removeColumn: function (column) {
-                utils.splice(this.view.columns, column);
+            setLive: function(live){
+                this.view.live = live;
+            },
+            getColumnTitle: function (column) {
+                if (typeof column.field == 'string') {
+                    let f;
+                    $.each(this.dbFields, function(i, field){
+                        if (field.field != column.field) {
+                            return;
+                        }
+
+                        f = field;
+                        return false;
+                    });
+
+                    if (!f) {
+                        console.log('fetch relation!');
+                        return column.field;
+                    }
+
+                    return f.title;
+                }
+
+                let k = Object.keys(column.field)[0];
+                let f;
+                $.each(this.dbRelations, function(i, relation){
+                    if (relation.alias != k) {
+                        return;
+                    }
+
+                    f = relation.alias + ' > ' + this.getColumnTitle(column.field[k]);
+
+                    return false;
+                }.bind(this));
+
+                return f;
+            },
+            getFieldTypeClass: function (column) {
+                if (typeof column.field == 'string') {
+                    let f;
+                    $.each(this.dbFields, function (i, field) {
+                        if (field.field != column.field) {
+                            return;
+                        }
+
+                        f = field;
+                        return false;
+                    });
+
+                    if (!f) {
+                        // @T00D00 - fetch relation fields!
+                        return;
+                    }
+
+                    return f.fieldType.slug;
+                }
+
+                return 'relation';
+                let k = Object.keys(column.field)[0];
+                $.each(this.dbRelations, function(i, relation){
+                    if (relation.alias != k) {
+                        return;
+                    }
+                });
             },
             scrollTable: function ($event) {
                 this.scroll.left = $event.target.scrollLeft > 0;
@@ -483,14 +581,14 @@
                      *  - current page
                      *  - paginator, fetch and search urls
                      */
-                    this.myFields = data.fields;
-                    this.relations = data.relations;
-                    this.records = data.records;
+                    this.dbFields = data.fields;
+                    this.dbRelations = data.relations;
                     this.table = data.table;
                     this.view = data.view;
                     this.actions = data.actions;
-                    this.paginator = data.paginator;
                     this.loading = false;
+                    this.myFields = data.view.columns;
+                    this.refreshData();
                 }.bind(this));
             },
             recordAction: function (record, action) {
@@ -601,18 +699,101 @@
             delaySearch: function () {
                 this.timeout('search', this.refreshData, 500);
             },
+            applyFields: function (entity) {
+                $.each(this.myFields, function (i, field) {
+                    this.applyField(entity, field);
+                }.bind(this));
+            },
+            applyField: function (entity, filter) {
+                let keys = [];
+                let value = null;
+                let comp = null;
+                let tempKey;
+                let field = filter.field;
+                do {
+                    if (!field) {
+                        break;
+                    }
+
+                    if (typeof field == 'string') {
+                        keys.push(field);
+                        value = filter.value;
+                        comp = filter.comp;
+
+                        break;
+                    }
+
+                    tempKey = Object.keys(field)[0];
+                    keys.push(tempKey);
+                    filter = field[tempKey];
+                    field = filter.field;
+                } while (true);
+
+                entity.getQuery().addSelect(keys.join('.'));
+            },
+            mapComp: function (comp) {
+                let data = {
+                    'equals': '=',
+                    'notEquals': '!=',
+                    'in': 'IN',
+                    'notIn': 'NOT IN',
+                    'more': '>',
+                    'less': '<',
+                    'moreOrEquals': '>=',
+                    'lessOrEquals': '<=',
+                    'like': 'LIKE',
+                    'notLike': 'NOT LIKE',
+                };
+
+                return data[comp];
+            },
+            applyFilters: function (entity) {
+                $.each(this.myFilters, function (i, filter) {
+                    this.applyFilter(entity, filter);
+                }.bind(this));
+            },
+            applyFilter: function (entity, filter) {
+                let keys = [];
+                let value = null;
+                let comp = null;
+                let tempKey;
+                let field = filter.field;
+                do {
+                    if (!field) {
+                        break;
+                    }
+
+                    if (typeof field == 'string') {
+                        keys.push(field);
+                        value = filter.value;
+                        comp = filter.comp;
+
+                        break;
+                    }
+
+                    tempKey = Object.keys(field)[0];
+                    keys.push(tempKey);
+                    filter = field[tempKey];
+                    field = filter.field;
+                } while (true);
+
+                entity.where(keys.join('.'), value, this.mapComp(comp));
+            },
             refreshData: function (params) {
                 this.loading = true;
 
-                let repositoryHandler = new HttpRepository(null);
+                let repositoryHandler = new HttpQLRepository('/api/http-ql');
                 let repository = new Repository(repositoryHandler);
                 let dynamicEntity = new DynamicEntity(repository);
 
-                dynamicEntity.where('id', 5000, '<')
-                    .limit(this.paginator.perPage)
+                this.applyFields(dynamicEntity);
+                console.log("refreshing data", this.myFields, dynamicEntity);
+                this.applyFilters(dynamicEntity);
+
+                dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);
 
-                dynamicEntity.all(this.paginator.url, function(data){
+                dynamicEntity.all(this.table.id, function (data) {
 
                     if (data.tabelizes) {
                         var d = data.tabelizes[0];
@@ -643,7 +824,7 @@
             },
             getFieldById: function (fieldId) {
                 var field = null;
-                $.each(this.myFields, function (i, f) {
+                $.each(this.dbFields, function (i, f) {
                     if (f.id != fieldId) {
                         return;
                     }
@@ -696,6 +877,9 @@
             }*/
         },
         watch: {
+            myFilters: function() {
+                this.refreshData();
+            },
             allChecked: function (all) {
                 if (all) {
                     $.each(this.records, function (i, record) {

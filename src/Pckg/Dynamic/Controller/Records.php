@@ -146,8 +146,28 @@ class Records extends Controller
         ];
     }
 
+    public function searchViewTableAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        Entity $entity = null,
+        $viewType = 'full',
+        $returnTabelize = false,
+        Tab $tab = null,
+        $dynamicRecord = null,
+        $dynamicRelation = null,
+        TableView $tableView = null
+    )
+    {
+        return $this->getViewTableApiApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab, $dynamicRecord, $dynamicRelation, $tableView);
+        return [
+            'records' => [],
+        ];
+    }
+
     /**
      * List table records.
+     * This action will then first fetch fields and relations.
+     * Then it will load records and paginator.
      *
      * @param Table  $tableRecord
      * @param Entity $entity
@@ -166,16 +186,15 @@ class Records extends Controller
         TableView $tableView = null
     ) {
         $tabelize = new Tabelize();
-
         $tabelize->setEntityActions($tableRecord->getEntityActions())
                  ->setRecordActions($tableRecord->getRecordActions())
                  ->setViews($tableRecord->actions()->keyBy('slug'));
 
         return $tabelize->__toStringParsedViews()
-            . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
-            ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
-            ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
-            '></pckg-maestro-table>';
+                . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
+                ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
+                ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
+                '></pckg-maestro-table>';
     }
 
     public function getViewTableApiApiAction(
@@ -193,18 +212,6 @@ class Records extends Controller
          * Set table so sub-services can reuse it later.
          */
         $dynamicService->setTable($tableRecord);
-
-        $ajaxData = null;
-        if (!get('html') &&
-            (get('search') || get('dir') || get('page') || get('perPage') || $this->request()->isAjax() ||
-                $this->request()->isJson())) {
-            $ajaxData = $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $relation, $relation ? 'related' : 'full',
-                                                     $returnTabelize, $tab, $record, $tableView);
-        }
-
-        if ($viewType == 'full') {
-            $this->seoManager()->setTitle($tableRecord->title . ' - ' . config('site.title'));
-        }
 
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
@@ -238,20 +245,6 @@ class Records extends Controller
          */
 
         $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        if ($groups) {
-            $entity->addCount();
-            $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
-
-            if ($tableRecord->id == 26) {
-                $entity->addSelect(['sumPrice' => 'SUM(orders_bills.price)', 'sumPayed' => 'SUM(orders_bills.payed)']);
-                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
-                $listedFields->push(['field' => 'sumPayed', 'title' => 'Sum payed', 'type' => 'decimal']);
-            } elseif ($tableRecord->id == 76) {
-                $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
-                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
-            }
-        }
-
         $entity->groupBy('`' . $entity->getTable() . '`.`id`');
 
         /**
@@ -289,9 +282,9 @@ class Records extends Controller
         $columns = $tableRecord->fields->filter(function(Field $field){
             return $field->visible;
         })->map(function(Field $field) {
-            $f = $field->toArray();
-            $f['type'] = 'field';
+            $f['field'] = $field->field;
             $f['freeze'] = false;
+            
             return $f;
         })->rekey()->toArray();
 
@@ -305,8 +298,6 @@ class Records extends Controller
             'table'     => $tableRecord,
             'fields'    => $tableRecord->fields,
             'relations' => $tableRecord->relations,
-            'records'   => $ajaxData['records'] ?? [],
-            'paginator' => $tabelize->getPaginator(),
             'view'      => [
                 'columns' => $columns,
                 'filters' => $filters,
