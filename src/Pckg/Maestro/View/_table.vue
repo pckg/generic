@@ -762,24 +762,23 @@
                 let value = null;
                 let comp = null;
                 let tempKey;
-                let field = filter.field;
                 do {
-                    if (!field) {
+                    console.log('filter', filter);
+                    if (!filter.field) {
                         break;
                     }
 
-                    if (typeof field == 'string') {
-                        keys.push(field);
+                    if (typeof filter.field == 'string') {
+                        keys.push(filter.field);
                         value = filter.value;
                         comp = filter.comp;
 
                         break;
                     }
 
-                    tempKey = Object.keys(field)[0];
+                    tempKey = Object.keys(filter.field)[0];
                     keys.push(tempKey);
-                    filter = field[tempKey];
-                    field = filter.field;
+                    filter = filter.field[tempKey];
                 } while (true);
 
                 entity.where(keys.join('.'), value, this.mapComp(comp));
@@ -792,11 +791,14 @@
                 let dynamicEntity = new DynamicEntity(repository);
 
                 this.applyFields(dynamicEntity);
-                console.log("refreshing data", this.myFields, dynamicEntity);
                 this.applyFilters(dynamicEntity);
 
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);
+
+                /**
+                 * Fetch data only when data really changed?
+                 */
 
                 dynamicEntity.all(this.table.id, function (data) {
 
