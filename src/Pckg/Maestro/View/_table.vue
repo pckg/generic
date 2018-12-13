@@ -142,7 +142,8 @@
 
                                             <!-- quick sort -->
                                             <div>
-                                                <span @click.prevent="togglefield(field.field)" :data-field="field.field">{{ getColumnTitle(field) }}</span>
+                                                <span @click.prevent="togglefield(field.field)"
+                                                      :data-field="field.field">{{ getColumnTitle(field) }}</span>
 
                                                 <span @click.prevent="togglefield(field.id)"
                                                       v-if="getFieldTypeClass(field) != 'relation' && sort.field == field.field">
@@ -180,7 +181,8 @@
                                                 :style="{'--freeze': field.freeze ? i : null}"
                                                 :class="[field.freeze ? 'freeze' : '', getFieldTypeClass(field), record[field.field] && (record[field.field].length > 120 || typeof record[field.field] == 'object') ? 'long' : '']">
                                                 <pckg-maestro-field :field="field" :record="record"
-                                                                    :table="table" :parent-fields="dbFields" :relations="dbRelations"></pckg-maestro-field>
+                                                                    :table="table" :parent-fields="dbFields"
+                                                                    :relations="dbRelations"></pckg-maestro-field>
                                             </td>
                                         </tr>
 
@@ -458,13 +460,16 @@
             };
         },
         methods: {
-            setLive: function(live){
+            timeoutRefreshData: function(timeout){
+                this.setTimeout('refreshData', this.refreshData, timeout);
+            },
+            setLive: function (live) {
                 this.view.live = live;
             },
             getColumnTitle: function (column) {
                 if (typeof column.field == 'string') {
                     let f;
-                    $.each(this.dbFields, function(i, field){
+                    $.each(this.dbFields, function (i, field) {
                         if (field.field != column.field) {
                             return;
                         }
@@ -483,7 +488,7 @@
 
                 let k = Object.keys(column.field)[0];
                 let f;
-                $.each(this.dbRelations, function(i, relation){
+                $.each(this.dbRelations, function (i, relation) {
                     if (relation.alias != k) {
                         return;
                     }
@@ -517,7 +522,7 @@
 
                 return 'relation';
                 let k = Object.keys(column.field)[0];
-                $.each(this.dbRelations, function(i, relation){
+                $.each(this.dbRelations, function (i, relation) {
                     if (relation.alias != k) {
                         return;
                     }
@@ -877,8 +882,15 @@
             }*/
         },
         watch: {
-            myFilters: function() {
-                this.refreshData();
+            myFilters: {
+                handler: function () {
+                    this.timeoutRefreshData(1000);
+                }, deep: true
+            },
+            myFields: {
+                handler: function () {
+                    this.timeoutRefreshData(1000);
+                }, deep: true
             },
             allChecked: function (all) {
                 if (all) {

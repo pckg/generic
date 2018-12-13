@@ -117,7 +117,15 @@ class Filter extends AbstractService
                 continue;
             }
 
-            $field = (new Fields())->where('field', $filter['k'])->where('dynamic_table_id', $this->table->id)->oneOrFail();
+            if (!in_array($filter['c'], $signMapper)) {
+                continue;
+            }
+
+            $field = (new Fields())->where('field', $filter['k'])->where('dynamic_table_id', $this->table->id)->one();
+
+            if (!$field) {
+                continue;
+            }
 
             if ($field->fieldType->slug == 'boolean') {
                 $entity->where($field->field, $filter['v'] ? 1 : null, $signMapper[$filter['c']]);
@@ -141,7 +149,7 @@ class Filter extends AbstractService
             $entity->where(
                 $field->field,
                 $filter['v'],
-                $signMapper[$filter['c']]
+                $filter['c']
             );
         }
 

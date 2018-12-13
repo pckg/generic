@@ -41,6 +41,7 @@ class HttpQl
         /**
          * Apply filter, sort, group, limit and fields sub-services.
          */
+        $dynamicService->setTable($table);
         $dynamicService->getFilterService()->applyOnEntity($entity, $ormFilters);
         $dynamicService->getPaginateService()->applyOnEntity($entity, $ormPaginator);
 
