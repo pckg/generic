@@ -318,25 +318,16 @@ Style tds
     }
   }
 
-  tr {
-    &.selected {
+  tbody tr {
+    &.selected,
+    &:hover {
       background-color: #f7f7f7;
+    }
 
-      tr.checkboxes,
-      td.freeze {
-        & + td:not(.freeze) {
-          // position: relative;
-          &:before {
-            content: '';
-            display: block;
-            background-color: @clr-primary;
-            width: 4px;
-            height: max-content;
-            position: absolute;
-            left: 0;
-            top: 0;
-          }
-        }
+    tr.checkboxes,
+    td.freeze {
+      & + td:not(.freeze) {
+        padding-left: 1rem;
       }
     }
   }

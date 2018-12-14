@@ -40,7 +40,11 @@ class Sort extends AbstractService
         $field = (new Fields())->withFieldType()
                                ->where('field', $paginator['sort'])
                                ->where('dynamic_table_id', $this->table->id)
-                               ->oneOrFail();
+                               ->one();
+
+        if (!$field) {
+            return;
+        }
 
         $directionMapper = [
             'up'   => 'ASC',

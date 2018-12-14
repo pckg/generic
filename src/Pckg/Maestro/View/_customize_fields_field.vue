@@ -14,6 +14,9 @@
     export default {
         name: 'pckg-maestro-customize-fields-field',
         props: {
+            columns: {
+                type: Object
+            },
             relation: {
                 type: Object,
                 default: null
@@ -114,7 +117,12 @@
                     relations: {},
                 };
 
+                let selectedFields = this.columns.map(function(column){ return column.field; });
                 $.each(this.myFields, function (i, field) {
+                    if (selectedFields.indexOf(field.field) >= 0) {
+                        return;
+                    }
+                    
                     options.fields['field-' + field.id] = field.title;
                 });
 
