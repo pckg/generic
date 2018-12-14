@@ -218,6 +218,7 @@ Style tds
     min-width: 60px;
     vertical-align: middle;
     border-top: 1px solid #eee;
+    padding: 1rem 1rem 1rem 0;
 
     &.actions,
     &.checkboxes {
@@ -319,7 +320,24 @@ Style tds
 
   tr {
     &.selected {
-      background-color: #eee;
+      background-color: #f7f7f7;
+
+      tr.checkboxes,
+      td.freeze {
+        & + td:not(.freeze) {
+          // position: relative;
+          &:before {
+            content: '';
+            display: block;
+            background-color: @clr-primary;
+            width: 4px;
+            height: max-content;
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+        }
+      }
     }
   }
 }
@@ -798,6 +816,10 @@ div.form-control {
 .pckg-maestro-tabelize {
   padding-bottom: 6rem;
 
+  table.table > thead > tr > th {
+    padding: 1rem 1rem 1rem 0;
+  }
+
   .sortable-ghost {
     background-color: @border-grey;
   }
@@ -1069,6 +1091,10 @@ table {
 
 .table-cell {
   display: table-cell;
+}
+
+.table-paginator {
+  box-shadow: 2px -4px 6px #eee;
 }
 
 .no-body-padding {

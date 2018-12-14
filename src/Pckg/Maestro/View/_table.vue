@@ -123,17 +123,13 @@
                         <div class="clearfix"></div>
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
-                        <div style="padding-left: 3rem;">
+                        <div style="padding-left: 4rem;">
                             <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes">
-                                            <div>
-                                                <div>
-                                                    <d-input-checkbox v-model="allChecked"></d-input-checkbox>
-                                                </div>
-                                            </div>
+                                            <d-input-checkbox v-model="allChecked"></d-input-checkbox>
                                         </th>
                                         <th v-for="(field, i) in myFields"
                                             :style="{'--freeze': field.freeze ? i : null}"
@@ -141,10 +137,10 @@
 
                                             <!-- quick sort -->
                                             <div>
-                                                <span @click.prevent="togglefield(field.field)"
+                                                <span @click.prevent="toggleFieldSort(field.field)"
                                                       :data-field="field.field">{{ getColumnTitle(field) }}</span>
 
-                                                <span @click.prevent="togglefield(field.id)"
+                                                <span @click.prevent="toggleFieldSort(field.field)"
                                                       v-if="getFieldTypeClass(field) != 'relation' && sort.field == field.field">
                                                     <i class="fa"
                                                        :class="[sort.dir == 'up' ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
@@ -168,10 +164,7 @@
                                             @click.stop="delaySingleClick(record)"
                                             @dblclick.stop="doubleClick(record)">
                                             <td class="checkboxes freeze" @click.prevent>
-                                                <div>
-                                                    <d-input-checkbox v-model="ids"
-                                                                      :value="record.id"></d-input-checkbox>
-                                                </div>
+                                                <d-input-checkbox v-model="ids" :value="record.id"></d-input-checkbox>
                                             </td>
                                             <!--<td class="actions freeze">
                                                 <div>Actions</div>
@@ -455,7 +448,7 @@
                 this.myFilters = [];
                 this.myFields = this.dbFields.filter(function (field) {
                     return field.visible;
-                }).map(function(){
+                }).map(function () {
                     return {
                         field: field.field,
                         freeze: false
@@ -624,9 +617,9 @@
 
                 return selected;
             },
-            togglefield: function (fieldId) {
-                if (this.sort.field != fieldId) {
-                    this.sort.field = fieldId;
+            toggleFieldSort: function (field) {
+                if (this.sort.field != field) {
+                    this.sort.field = field;
                 } else {
                     this.sort.dir = this.sort.dir == 'up'
                         ? 'down'
@@ -636,18 +629,11 @@
             },
             makeSort: function () {
                 var newValue = this.sort;
-                /*if (this._sortTimeout) {
-                    this._sortTimeout.abort();
-                }*/
 
                 this.resetPaginatorUrl({
                     field: newValue.field,
                     dir: newValue.dir
                 });
-
-                /*this._sortTimeout = http.getJSON(this.paginator.url, function (data) {
-                    this.records = data.records;
-                }.bind(this));*/
             },
             setUrlParams: function (params) {
                 params = params || {};
@@ -798,6 +784,7 @@
                 this.applyFields(dynamicEntity);
                 this.applyFilters(dynamicEntity);
                 dynamicEntity.getQuery().search(this.search);
+                dynamicEntity.getQuery().sort(this.sort.field).direction(this.sort.dir);
 
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);

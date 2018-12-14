@@ -3,7 +3,7 @@
         <div @dblclick.prevent="toggleEditable">
             <template v-if="type == 'boolean'">
                 <template v-if="!editable">
-                    <pckg-tabelize-field-boolean :field="field.id"
+                    <pckg-tabelize-field-boolean :field="fieldId"
                                                  :record="record.id"
                                                  :value="value"
                                                  :table="table"
@@ -15,7 +15,7 @@
             </template>
             <template v-else-if="type == 'order'">
                 <pckg-tabelize-field-order :key="record.id"
-                                           :field="field.id"
+                                           :field="fieldId"
                                            :record="record.id"
                                            :value="value"
                                            :table="table"
@@ -23,7 +23,7 @@
             </template>
             <template v-else-if="type == 'datetime' && field.isTogglable">
                 <template v-if="!editable">
-                    <pckg-tabelize-field-datetime :field="field.id"
+                    <pckg-tabelize-field-datetime :field="fieldId"
                                                   :record="record.id"
                                                   :value="value"
                                                   :table="table"
@@ -124,6 +124,19 @@
             }
         },
         computed: {
+            fieldId: function () {
+                let fieldId = null;
+                $.each(this.myFields, function (i, field) {
+                    if (field.field != this.myField.field) {
+                        return;
+                    }
+
+                    fieldId = field.id;
+                    return false;
+                }.bind(this));
+
+                return fieldId;
+            },
             type: function () {
                 if (typeof this.myField.field == 'string') {
                     let t;

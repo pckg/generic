@@ -45,6 +45,7 @@ class HttpQl
         $dynamicService->getFilterService()->applyOnEntity($entity, $ormFilters);
         $dynamicService->getPaginateService()->applyOnEntity($entity, $ormPaginator);
         $dynamicService->getFilterService()->filterByGet($entity, null, $ormSearch);
+        $dynamicService->getSortService()->applyOnEntity($entity, $ormPaginator);
 
         /**
          * Join extensions (translations, permissions and deletable).
