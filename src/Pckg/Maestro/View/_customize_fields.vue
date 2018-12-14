@@ -15,7 +15,7 @@
             <div v-for="(column, i) in myColumns" :key="i">
                 <a href="#"><i class="fal fa-minus-circle" @click.prevent="remove(column)"></i></a>
                 {{ getColumnTitle(column) }}
-                <a href="#" style="cursor: move;" class="pull-right move-handle"><i class="fas fa-arrows"></i></a>
+                <a href="#" style="cursor: move;" class="move-handle"><i style="margin-left: .5rem;" class="pull-right fas fa-arrows"></i></a>
                 <a href="#" v-if="column.freeze">
                     <i class="pull-right fas fa-thumbtack"
                        @click.prevent="column.freeze = false"></i>

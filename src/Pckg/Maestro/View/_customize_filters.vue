@@ -26,7 +26,7 @@
 
         <p>
             <d-input-checkbox v-model="view.live"></d-input-checkbox>
-            Live search
+            Realtime updates
         </p>
 
         <p>
