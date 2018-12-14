@@ -1,19 +1,27 @@
 <template>
-    <div class="btn-group btn-group-sm">
-        <a type="button" class="dropdown-toggle" href="#"
-           title="" data-toggle="dropdown"
-           aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-ellipsis-h"></i> More
+    <div>
+
+        <a :href="'/dynamic/records/add/' + table.id" class="btn btn-default btn-sm">
+            Add new
         </a>
-        <ul class="dropdown-menu dropdown-menu-right">
-            <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
-            <li><a href="#"><i class="fa fa-upload"></i> Import</a></li>
-            <li v-for="action in actions">
-                <a href="#" @click.prevent="entityAction(action.event)">
-                    <i class="fa" :class="'fa-' + action.icon"></i>
-                    {{ action.title }}</a>
-            </li>
-        </ul>
+
+        <div class="btn-group btn-group-sm">
+            <a type="button" class="dropdown-toggle btn btn-default" href="#"
+               title="" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-h"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
+                <li><a href="#"><i class="fa fa-upload"></i> Import</a></li>
+                <li v-for="action in actions">
+                    <a href="#" @click.prevent="entityAction(action.event)">
+                        <i class="fa" :class="'fa-' + action.icon"></i>
+                        {{ action.title }}</a>
+                </li>
+            </ul>
+        </div>
+
     </div>
 
 </template>

@@ -27,7 +27,7 @@
                     <li>
                         <a :class="{ disabled: page == 1 }" href="#" aria-label="Previous"
                            @click.prevent="prev">
-                            <span aria-hidden="true">&laquo;</span>
+                            <i class="fa fa-chevron-left"></i>
                         </a>
                     </li>
                     <li v-for="(p,i) in pages" :key="i" :class="{ active: p == page }">
@@ -37,7 +37,7 @@
                     <li>
                         <a :class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next"
                            @click.prevent="next">
-                            <span aria-hidden="true">&raquo;</span>
+                            <i class="fa fa-chevron-right"></i>
                         </a>
                     </li>
                 </ul>

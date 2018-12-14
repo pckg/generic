@@ -2,7 +2,7 @@
     <div class="pckg-maestro-tabelize">
 
         <!-- Header template and entity actions -->
-        <div class="header">
+        <div class="header" v-if="table && table.id">
             <div class="sec">
                 <h2>
                     <template v-if="table">{{ table.title ? table.title : table.table }}</template>
@@ -10,23 +10,21 @@
                 </h2>
             </div>
 
-            <div class="sec quick-search" v-if="table && table.id">
+            <div class="sec quick-search">
                 <input type="text" v-model="search" class="form-control"
                        :placeholder="'Quick search ' + paginator.total + ' ' + (table.title ? table.title : table.table)"/>
             </div>
 
-            <div class="sec table-actions">
-                <a :href="'/dynamic/records/add/' + table.id">
-                    <i class="fa fa-plus"></i> Add
-                </a>
-
+            <div class="sec customize-view">
                 <a href="#" v-if="configureSection == 'closed'" @click.prevent="configureSection = 'opened'">
-                    <i class="fa fa-chevron-down"></i> Customize view
+                    <i class="fa fa-sliders-h"></i>
                 </a>
                 <a href="#" v-else @click.prevent="configureSection = 'closed'">
-                    <i class="fa fa-chevron-up"></i> Hide configuration
+                    <i class="fal fa-sliders-h"></i>
                 </a>
+            </div>
 
+            <div class="sec table-actions">
                 <pckg-maestro-table-actions :table="table" :actions="actions.entity"
                                             @entity-action="entityAction"></pckg-maestro-table-actions>
 
@@ -35,7 +33,7 @@
 
         <div class="clearfix"></div>
 
-        <pckg-loader :loading="loading"></pckg-loader>
+        <pckg-loader :loading="loading" class="fixed-centered"></pckg-loader>
 
         <!-- table template -->
         <div class="pckg-maestro-table">
@@ -152,7 +150,7 @@
                                                 </span>
 
                                                 <!-- quick filter -->
-                                                <span href="#" v-if="getFieldTypeClass(field) != 'relation'">
+                                                <span href="#" v-if="hasQuickFilter(field)">
                                                     <i class="fal fa-filter"></i>
                                                 </span>
                                             </div>
@@ -460,6 +458,9 @@
             };
         },
         methods: {
+            hasQuickFilter: function(field) {
+                return ['relation', 'datetime', 'date'].indexOf(this.getFieldTypeClass(field)) >= 0;
+            },
             timeoutRefreshData: function(timeout){
                 this.setTimeout('refreshData', this.refreshData, timeout);
             },
@@ -514,7 +515,7 @@
 
                     if (!f) {
                         // @T00D00 - fetch relation fields!
-                        return;
+                        return 'relation';
                     }
 
                     return f.fieldType.slug;
