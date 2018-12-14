@@ -329,7 +329,7 @@
                                         content="Element is by default visible on all pages"
                                         icon="question-circle"></pckg-tooltip>
                             </label>
-                            <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                            <pckg-select :initial-options="routes" :with-empty="null" :initial-multiple="true"
                                          title="route" id="id" :flat="true"
                                          v-model="form.settings.wrapperLockHide"></pckg-select>
                         </div>
@@ -339,7 +339,7 @@
                                         content="Element is by default visible on all pages"
                                         icon="question-circle"></pckg-tooltip>
                             </label>
-                            <pckg-select :initial-options="routes" :with-empty="false" :initial-multiple="true"
+                            <pckg-select :initial-options="routes" :with-empty="null" :initial-multiple="true"
                                          title="route" id="id" :flat="true"
                                          v-model="form.settings.wrapperLockShow"></pckg-select>
                         </div>
@@ -349,7 +349,7 @@
                                         content="Show element on system pages"
                                         icon="question-circle"></pckg-tooltip>
                             </label>
-                            <pckg-select :initial-options="systemRoutes" :with-empty="false"
+                            <pckg-select :initial-options="systemRoutes" :with-empty="null"
                                          :initial-multiple="true"
                                          title="title" id="slug" :flat="true"
                                          v-model="form.settings.wrapperLockSystem"></pckg-select>

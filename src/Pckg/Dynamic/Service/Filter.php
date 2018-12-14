@@ -248,9 +248,12 @@ class Filter extends AbstractService
         }
     }
 
-    public function filterByGet(Entity $entity, Collection $relations = null)
+    public function filterByGet(Entity $entity, Collection $relations = null, $search = null)
     {
-        if ($search = get('search')) {
+        if (!$search) {
+            $search = get('search');
+        }
+        if ($search) {
             /**
              * We will build new part of sql.
              */
@@ -269,7 +272,7 @@ class Filter extends AbstractService
                      *  - search on orders_users.* -> orders_users.id => orders_bills.orders_user_id
                      */
                     $relationEntity = $relation->showTable->createEntity();
-                    $this->filterByGet($relationEntity, null);
+                    $this->filterByGet($relationEntity, null, $search);
                     $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->all();
                     if ($data) {
                         $where->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .

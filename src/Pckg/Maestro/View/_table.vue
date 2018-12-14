@@ -63,18 +63,21 @@
                             <div class="col-xs-12">
                                 <h4>Customize view</h4>
 
+                                <div class="pull-right nobr">
+                                    Select view
+                                    <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
+                                </div>
+
                                 <hr/>
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-8 col-md-9">
 
                                 <pckg-maestro-customize-filters :columns="dbFields"
                                                                 :relations="dbRelations"
                                                                 :filters="myFilters"></pckg-maestro-customize-filters>
 
                             </div>
-                            <div class="col-xs-3">
-
-                                <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
+                            <div class="col-xs-4 col-md-3">
 
                                 <pckg-maestro-customize-fields :parent-fields="dbFields"
                                                                :columns="myFields"
@@ -83,15 +86,13 @@
                                                                @change="myFields = $event"></pckg-maestro-customize-fields>
 
                             </div>
-                            <div class="col-xs-12">
+                            <div class="col-xs-12 text-right">
 
                                 <hr/>
 
-                                <div class="pull-right">
-                                    <a href="#">Reset view</a>
+                                <a href="#" style="margin-right: 1.6rem;" @click.prevent="resetView">Reset view</a>
 
-                                    <button type="button" class="btn btn-success">Save view</button>
-                                </div>
+                                <button type="button" class="btn btn-success">Save view</button>
 
                                 <div class="clearfix"></div>
 
@@ -211,21 +212,13 @@
                     </template>
                 </div>
 
-                <a href="#" style="margin-right: 2rem;" v-for="action in actions.entity"
-                   @click.prevent="entityAction(action.event)">
-                    <i class="fa" :class="'fa-' + action.icon"></i>
-                    {{ action.title }}
-                </a>
-
-                <a href="#" class="pull-right danger">
-                    <i class="fa fa-trash"></i> Delete
-                    <pckg-tooltip icon="question-circle"
-                                  :content="'This is permanent and non-reversable action. Use it with caution.'"></pckg-tooltip>
-                </a>
-                <a href="#" style="margin-right: 2rem;" class="pull-right danger"><i class="fa fa-archive"></i> Archive
-                    <pckg-tooltip icon="question-circle"
-                                  :content="'Archived items can be listed by checking \'Archived items\' on view configuration.'"></pckg-tooltip>
-                </a>
+                <div class="pull-right">
+                    <a href="#" style="margin-left: 2rem;" v-for="action in actions.entity"
+                       @click.prevent="entityAction(action.event)">
+                        <i class="fa" :class="'fa-' + action.icon"></i>
+                        {{ action.title }}
+                    </a>
+                </div>
 
                 <div class="clearfix"></div>
             </div>
@@ -458,10 +451,21 @@
             };
         },
         methods: {
-            hasQuickFilter: function(field) {
+            resetView: function () {
+                this.myFilters = [];
+                this.myFields = this.dbFields.filter(function (field) {
+                    return field.visible;
+                }).map(function(){
+                    return {
+                        field: field.field,
+                        freeze: false
+                    };
+                });
+            },
+            hasQuickFilter: function (field) {
                 return ['relation', 'datetime', 'date'].indexOf(this.getFieldTypeClass(field)) >= 0;
             },
-            timeoutRefreshData: function(timeout){
+            timeoutRefreshData: function (timeout) {
                 this.setTimeout('refreshData', this.refreshData, timeout);
             },
             setLive: function (live) {
@@ -793,6 +797,7 @@
 
                 this.applyFields(dynamicEntity);
                 this.applyFilters(dynamicEntity);
+                dynamicEntity.getQuery().search(this.search);
 
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);

@@ -1,7 +1,7 @@
 <template>
     <div>
-
-        <h5>
+        <pckg-select :initial-options="savedViews" :initial-multiple="false" @change="selectView" :flat="true"></pckg-select>
+        <!--<h5>
             System views
             <pckg-tooltip icon="question-circle"
                           :content="'You can save custom build views with selected fields and filters for quick access'"></pckg-tooltip>
@@ -19,7 +19,7 @@
 
         <div v-for="view in savedViews">
             <a href="#" @click.prevent="loadView(view)">{{ view.title }}</a>
-        </div>
+        </div>-->
 
     </div>
 </template>
@@ -35,15 +35,24 @@
         data: function () {
             return {};
         },
+        methods: {
+            selectView: function (viewId) {
+
+            }
+        },
         computed: {
             savedViews: function () {
                 return this.views.filter(function (view) {
                     return view.type == 'saved';
+                }).map(function (view) {
+                    view.title;
                 });
             },
             systemViews: function () {
                 return this.views.filter(function (view) {
                     return view.type == 'system';
+                }).map(function (view) {
+                    view.title;
                 });
             }
         }

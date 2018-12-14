@@ -44,6 +44,7 @@ class HttpQl
         $dynamicService->setTable($table);
         $dynamicService->getFilterService()->applyOnEntity($entity, $ormFilters);
         $dynamicService->getPaginateService()->applyOnEntity($entity, $ormPaginator);
+        $dynamicService->getFilterService()->filterByGet($entity, null, $ormSearch);
 
         /**
          * Join extensions (translations, permissions and deletable).
@@ -66,11 +67,6 @@ class HttpQl
         foreach ($relations as $r) {
             $r->loadOnEntity($entity, $dynamicService);
         }
-
-        /**
-         * Filter records by $_GET['search']
-         */
-        $dynamicService->getFilterService()->filterByGet($entity, $relations);
 
         /**
          * Transform custom fields (php, geo).

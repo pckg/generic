@@ -2,7 +2,7 @@
     <div class="pckg-select" :class="styleClass">
         <div v-if="false">
             <select v-if="myMultiple" class="form-control" multiple v-model="selectedModel" :name="name">
-                <option value v-if="withEmpty"> -- select value(s) --</option>
+                <option value v-if="withEmpty">{{ withEmpty }}</option>
                 <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
                 <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
                     <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
@@ -28,7 +28,7 @@
                 <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
                 </li>
-                <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)"> - </a></li>
+                <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty }}</a></li>
                 <li v-for="(option, key) in finalOptions">
                     <a href="#" @click.prevent="toggleOption($event, key)">
                         <span class="text-left">{{ option}}</span>
@@ -79,7 +79,7 @@
                 type: Boolean
             },
             withEmpty: {
-                default: true
+                default: ' - - select item - -'
             },
             initialOptions: {
                 default: function () {

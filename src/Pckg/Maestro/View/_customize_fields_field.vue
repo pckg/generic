@@ -2,7 +2,7 @@
     <div class="pckg-maestro-customize-fields-field">
         <pckg-select v-model="selected"
                      :initial-options="options"
-                     :initial-multiple="false" @change="checkFinal"></pckg-select>
+                     :initial-multiple="false" @change="checkFinal" :with-empty="'Select column'"></pckg-select>
         <pckg-maestro-customize-fields-field v-if="!isFinal && isRelation"
                                              :relation="selectedRelation"
                                              @chosen="chosen"

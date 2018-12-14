@@ -30,13 +30,6 @@ fieldset.submit {
     width: 100%;
 }
 
-.pckg-maestro-formalize .form-group > label {
-    padding-top: 6px;
-    color: grey;
-    font-size: 13px;
-    text-transform: uppercase;
-}
-
 td.actions a > i.fa {
     min-width: 16px;
 }
