@@ -21,14 +21,14 @@
                                            :table="table"
                                            :url="orderFieldUrl"></pckg-tabelize-field-order>
             </template>
-            <template v-else-if="type == 'datetime' && field.isTogglable">
+            <template v-else-if="type == 'datetime' && isTogglable">
                 <template v-if="!editable">
                     <pckg-tabelize-field-datetime :field="fieldId"
                                                   :record="record.id"
                                                   :value="value"
                                                   :table="table"
-                                                  :min="field.minTogglable"
-                                                  :max="field.maxTogglable"
+                                                  :min="minTogglable"
+                                                  :max="maxTogglable"
                                                   :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
                 </template>
                 <template v-else>
@@ -136,6 +136,47 @@
                 }.bind(this));
 
                 return fieldId;
+            },
+            dbField: function () {
+                if (typeof this.myField.field != 'string') {
+                    return null;
+                }
+
+                let t;
+                $.each(this.myFields, function (i, field) {
+                    if (field.field != this.myField.field) {
+                        return;
+                    }
+
+                    t = field;
+                    return false;
+                }.bind(this));
+
+                return t;
+            },
+            isTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.isTogglable;
+            },
+            minTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.minTogglable;
+            },
+            maxTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.maxTogglable;
             },
             type: function () {
                 if (typeof this.myField.field == 'string') {
