@@ -122,7 +122,7 @@
                     if (selectedFields.indexOf(field.field) >= 0) {
                         return;
                     }
-                    
+
                     options.fields['field-' + field.id] = field.title;
                 });
 

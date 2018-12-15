@@ -1,6 +1,7 @@
 <?php namespace Pckg\Dynamic\Controller;
 
 use Pckg\Dynamic\Record\Field;
+use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Resolver\TableQl;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Maestro\Service\Tabelize;
@@ -23,6 +24,7 @@ class HttpQl
         $ormFilters = json_decode(post('X-Pckg-Orm-Filters'), true);
         $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator'), true);
         $ormSearch = json_decode(post('X-Pckg-Orm-Search'), true);
+        $ormMeta = json_decode(post('X-Pckg-Orm-Meta'), true);
 
         /**
          * When relation is set we want to display only values for related product.
@@ -46,6 +48,14 @@ class HttpQl
         $dynamicService->getPaginateService()->applyOnEntity($entity, $ormPaginator);
         $dynamicService->getFilterService()->filterByGet($entity, null, $ormSearch);
         $dynamicService->getSortService()->applyOnEntity($entity, $ormPaginator);
+
+        /**
+         * Apply relation
+         */
+        if ($ormMeta && isset($ormMeta['relation'])) {
+            $relation = Relation::gets($ormMeta['relation']);
+            $entity->where($relation->onField->field, $ormMeta['record']);
+        }
 
         /**
          * Join extensions (translations, permissions and deletable).

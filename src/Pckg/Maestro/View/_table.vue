@@ -26,7 +26,7 @@
 
             <div class="sec table-actions">
                 <pckg-maestro-table-actions :table="table" :actions="actions.entity"
-                                            @entity-action="entityAction"></pckg-maestro-table-actions>
+                                            @entity-action="entityAction" :relation-id="relationId" :record-id="recordId"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -310,48 +310,8 @@
         },
         data: function () {
             return {
-                myFilters: [
-                    /*{field: 'email', value: 'schtr4jh@schtr4jh.net', comp: 'notEquals'},
-                    {field: 'user_group_id', value: 2, comp: 'equals'},
-                    {field: {userGroup: {field: 'title', value: 'User', comp: 'equals'}}},
-                    {field: 'mailo_open_rate', value: 75, comp: 'less'},
-                    {field: 'mailo_open_rate', value: 0, comp: 'more'},
-                    {field: 'email', value: '%gmail.com', comp: 'like'},
-                    {field: 'dt_birth', value: '1980-01-01', comp: 'moreOrEquals'},
-                    {field: {ordersUsers: {field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals'}}},
-                    {field: {orders: {field: 'dt_added', value: '2018-01-01', comp: 'moreOrEquals'}}},
-                    {field: {orders: {field: 'language_id', value: ['en', 'sl'], comp: 'in'}}},
-                    {field: {orders: {field: {ordersUsers: {field: 'status_id', value: 'confirmed', comp: 'equals'}}}}},
-                    {field: {orders: {field: {ordersUsers: {field: 'packet_id', value: [3, 11, 12], comp: 'in'}}}}},
-                    {field: {orders: {field: {ordersUsers: {field: 'packet_id', value: 11, comp: 'equals'}}}}},
-                    {
-                        field: {
-                            orders: {
-                                field: {
-                                    ordersUsers: {
-                                        field: {
-                                            packet: {
-                                                field: 'vat',
-                                                value: 'standard',
-                                                comp: 'notEquals'
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },*/
-                ],
-                myFields: [
-                    /*
-                    {field: 'id', freeze: false},
-                    {field: 'email', freeze: false},
-                    {field: 'user_group_id', freeze: false},
-                    {field: {userGroup: {field: 'title'}}, freeze: false}, // belongs to
-                    {field: {orders: {field: 'num'}}, freeze: false}, // has many
-                    {field: {orders: {field: {unit: {field: 'title'}}}}, freeze: false}, // has many
-                    */
-                ],
+                myFilters: [],
+                myFields: [],
                 paginator: {
                     perPage: 50,
                     page: 1,
@@ -783,8 +743,13 @@
 
                 this.applyFields(dynamicEntity);
                 this.applyFilters(dynamicEntity);
-                dynamicEntity.getQuery().search(this.search);
-                dynamicEntity.getQuery().sort(this.sort.field).direction(this.sort.dir);
+                let query = dynamicEntity.getQuery();
+                query.search(this.search);
+                query.sort(this.sort.field).direction(this.sort.dir);
+
+                if (this.relationId && this.recordId) {
+                    query.setMeta({relation: this.relationId, record: this.recordId});
+                }
 
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);

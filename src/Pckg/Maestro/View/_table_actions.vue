@@ -1,7 +1,8 @@
 <template>
     <div>
 
-        <a :href="'/dynamic/records/add/' + table.id" class="btn btn-default btn-sm">
+        <a :href="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
+           class="btn btn-default btn-sm">
             Add new
         </a>
 
@@ -35,6 +36,12 @@
             },
             actions: {
                 type: Array
+            },
+            relationId: {
+                default: null
+            },
+            recordId: {
+                default: null
             }
         },
         data: function () {
