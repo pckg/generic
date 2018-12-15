@@ -1,5 +1,5 @@
 <template>
-    <a @click.prevent="toggle" href="#" class="pckg-tabelize-field-boolean">
+    <a @click.prevent="toggle" href="#" class="pckg-tabelize-field-boolean" :class="onClass">
         <i class="fa" :class="iconClass"></i>
     </a>
 </template>
@@ -30,9 +30,12 @@
             }
         },
         computed: {
+            onClass: function () {
+                return this.value > 0 ? 'on' : 'off';
+            },
             iconClass: function () {
-                return this.value > 0 ? 'fa-toggle-on' : 'fa-toggle-off';
-            }
+                return 'fa-toggle-' + this.onClass;
+            },
         }
     }
 </script>

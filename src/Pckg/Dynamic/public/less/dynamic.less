@@ -189,6 +189,12 @@ Style tds
 .pckg-maestro-tabelize table.table {
   .pckg-tabelize-field-boolean {
     font-size: 2rem;
+    &.on {
+      color: @clr-success;
+    }
+    &.off {
+      color: @midGray;
+    }
   }
 
   th {
@@ -903,7 +909,7 @@ div.form-control {
 .tab-tabelize {
   position: relative;
 
-  .pckg-maestro-tabelize {
+  /*.pckg-maestro-tabelize {
     .header {
       position: absolute;
       top: 0;
@@ -916,7 +922,7 @@ div.form-control {
     .pckg-maestro-table {
       margin-top: 10rem;
     }
-  }
+  }*/
 
   .pckg-select {
     display: inline-block;

@@ -38,6 +38,11 @@ class Menu
             return $entity->all();
         }, $locale);
 
+        if ($slug == 'admin') {
+            $menuItems = new Collection();
+        }
+        trigger(Menu::class . '.collectMenuItems.' . $slug, $menuItems);
+
         return view(
             'Pckg\Generic:menu\\' . $menu->template,
             [
