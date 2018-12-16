@@ -25,7 +25,7 @@
         </p>
 
         <p>
-            <d-input-checkbox v-model="view.live"></d-input-checkbox>
+            <d-input-checkbox v-model="realtime" @change="$emit('realtime', $event)"></d-input-checkbox>
             Realtime updates
         </p>
 
@@ -78,9 +78,9 @@
                 myRelations: this.relations,
                 view: {
                     archived: false,
-                    deleted: false,
-                    live: true
-                }
+                    deleted: false
+                },
+                realtime: false
             };
         },
         methods: {

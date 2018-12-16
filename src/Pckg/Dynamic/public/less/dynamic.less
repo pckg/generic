@@ -189,9 +189,11 @@ Style tds
 .pckg-maestro-tabelize table.table {
   .pckg-tabelize-field-boolean {
     font-size: 2rem;
+
     &.on {
       color: @clr-success;
     }
+
     &.off {
       color: @midGray;
     }
@@ -490,30 +492,24 @@ table tr.strong > td:not(.actions) {
   font-weight: bold;
 }
 
-.pckg-dynamic-record-singular,
-.pckg-dynamic-record-tabs {
-  h2 {
-    margin: 0;
-    padding: 0 0 2rem 0;
+.tab-content {
+  margin-top: 2rem;
+}
 
-    > .btn-group {
-      > div.btn {
-        display: none
-      }
-    }
-  }
+h1, h2, h3 {
+  margin: 0 0 2rem 0;
+}
 
-  > .tab-content {
-    margin-top: 2rem;
-  }
+h1 {
+  font-size: 3rem;
+}
 
-  /*> :first-child {
-    margin-left: -25px;
-    margin-right: -20px;
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
-  }*/
+h2 {
+  font-size: 2.6rem;
+}
+
+h3 {
+  font-size: 2.2rem;
 }
 
 textarea.form-control {
@@ -626,7 +622,7 @@ input[type=number].narrow {
 
   .pagination {
     > li > a {
-      margin: .5rem;
+      margin: 0 .5rem;
       border: 2px solid @border-grey;
       background: transparent;
       color: @midGray;
@@ -811,8 +807,6 @@ div.form-control {
 }
 
 .pckg-maestro-tabelize {
-  padding-bottom: 6rem;
-
   table.table > thead > tr > th {
     padding: 1rem 1rem 1rem 0;
   }
@@ -826,7 +820,7 @@ div.form-control {
     white-space: nowrap;
     width: 100%;
     height: auto;
-    padding: 1rem 0 0 0;
+    padding: 0;
     z-index: 100;
     display: table;
     box-sizing: border-box;
@@ -873,7 +867,7 @@ div.form-control {
 
     .customize-view {
       padding: .5rem;
-      margin-left: 1rem;
+      margin-left: 2rem;
 
       i {
         font-size: 3.6rem;
@@ -886,8 +880,9 @@ div.form-control {
       white-space: nowrap;
       background: #fff;
       border: 1px solid #eee;
-      border-width: 1px 1px 0 1px;
-      border-radius: .5rem .5rem 0 0;
+      //border-width: 1px 1px 0 1px;
+      //border-radius: .5rem .5rem 0 0;
+      border-radius: .5rem;
       /*input {
         position: absolute;
         top: 0;
@@ -904,6 +899,10 @@ div.form-control {
       }*/
     }
   }
+}
+
+.pckg-maestro-table {
+  margin-top: 2rem;
 }
 
 .tab-tabelize {

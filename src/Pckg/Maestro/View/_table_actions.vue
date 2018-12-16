@@ -2,7 +2,7 @@
     <div>
 
         <a :href="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
-           class="btn btn-default btn-sm">
+           class="btn btn-primary btn-sm">
             Add new
         </a>
 

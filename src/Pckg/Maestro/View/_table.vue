@@ -6,7 +6,7 @@
             <div class="sec">
                 <h2>
                     <template v-if="table">{{ table.title ? table.title : table.table }}</template>
-                    <template v-if="paginator">{{ paginator.filtered }}/{{ paginator.total }}</template>
+                    <span v-if="paginator" class="clr-grey">{{ paginator.filtered }}/{{ paginator.total }}</span>
                 </h2>
             </div>
 
@@ -17,16 +17,17 @@
 
             <div class="sec customize-view">
                 <a href="#" v-if="configureSection == 'closed'" @click.prevent="configureSection = 'opened'">
-                    <i class="fa fa-sliders-h"></i>
+                    <i class="fal fa-sliders-h"></i>
                 </a>
                 <a href="#" v-else @click.prevent="configureSection = 'closed'">
-                    <i class="fal fa-sliders-h"></i>
+                    <i class="fa fa-sliders-h"></i>
                 </a>
             </div>
 
             <div class="sec table-actions">
                 <pckg-maestro-table-actions :table="table" :actions="actions.entity"
-                                            @entity-action="entityAction" :relation-id="relationId" :record-id="recordId"></pckg-maestro-table-actions>
+                                            @entity-action="entityAction" :relation-id="relationId"
+                                            :record-id="recordId"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -74,7 +75,8 @@
 
                                 <pckg-maestro-customize-filters :columns="dbFields"
                                                                 :relations="dbRelations"
-                                                                :filters="myFilters"></pckg-maestro-customize-filters>
+                                                                :filters="myFilters"
+                                                                @realtime="view.live = $event"></pckg-maestro-customize-filters>
 
                             </div>
                             <div class="col-xs-4 col-md-3">
@@ -92,7 +94,8 @@
 
                                 <a href="#" style="margin-right: 1.6rem;" @click.prevent="resetView">Reset view</a>
 
-                                <button type="button" class="btn btn-success">Save view</button>
+                                <button type="button" class="btn btn-success" @click.prevent="saveView">Save view
+                                </button>
 
                                 <div class="clearfix"></div>
 
@@ -125,7 +128,7 @@
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
                         <div style="padding-left: 4rem;">
                             <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
-                                <table class="table table-hover">
+                                <table class="table table-hover table-striped">
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes">
@@ -310,6 +313,7 @@
         },
         data: function () {
             return {
+                refreshDataRequestNum: 0,
                 myFilters: [],
                 myFields: [],
                 paginator: {
@@ -404,6 +408,10 @@
             };
         },
         methods: {
+            saveView: function () {
+                this.refreshData();
+                this.configureSection = 'closed';
+            },
             resetView: function () {
                 this.myFilters = [];
                 this.myFields = this.dbFields.filter(function (field) {
@@ -420,9 +428,6 @@
             },
             timeoutRefreshData: function (timeout) {
                 this.setTimeout('refreshData', this.refreshData, timeout);
-            },
-            setLive: function (live) {
-                this.view.live = live;
             },
             getColumnTitle: function (column) {
                 if (typeof column.field == 'string') {
@@ -551,7 +556,10 @@
                     this.actions = data.actions;
                     this.loading = false;
                     this.myFields = data.view.columns;
-                    this.refreshData();
+
+                    if (!this.view.live) {
+                        this.refreshData();
+                    }
                 }.bind(this));
             },
             recordAction: function (record, action) {
@@ -757,8 +765,12 @@
                 /**
                  * Fetch data only when data really changed?
                  */
-
+                this.refreshDataRequestNum++;
+                let refreshDataRequestNum = this.refreshDataRequestNum;
                 dynamicEntity.all(this.table.id, function (data) {
+                    if (this.refreshDataRequestNum != refreshDataRequestNum) {
+                        return;
+                    }
 
                     if (data.tabelizes) {
                         var d = data.tabelizes[0];
@@ -772,7 +784,10 @@
                     } else {
                         this.records = data.records;
                         this.groups = data.groups;
-                        this.setPaginatorTotal(data.paginator.total);
+                        if (this.paginator.total < 1) {
+                            this.setPaginatorTotal(data.paginator.total);
+                        }
+                        this.setPaginatorFiltered(data.paginator.total);
                     }
                     this.loading = false;
 
@@ -786,6 +801,9 @@
             },
             setPaginatorTotal: function (total) {
                 $vue.$set(this.paginator, 'total', total);
+            },
+            setPaginatorFiltered: function (total) {
+                $vue.$set(this.paginator, 'filtered', total);
             },
             getFieldById: function (fieldId) {
                 var field = null;
@@ -844,11 +862,17 @@
         watch: {
             myFilters: {
                 handler: function () {
+                    if (!this.view.live) {
+                        return;
+                    }
                     this.timeoutRefreshData(1000);
                 }, deep: true
             },
             myFields: {
                 handler: function () {
+                    if (!this.view.live) {
+                        return;
+                    }
                     this.timeoutRefreshData(1000);
                 }, deep: true
             },

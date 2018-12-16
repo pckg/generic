@@ -10,21 +10,29 @@ html {
 
 body {
   font-size: 1.4rem;
+}
+
+body, body.scope-bg-system {
   background-color: #f7f7f7;
 }
 
 a {
-  color: @clr-secondary;
+  color: @clr-primary;
   transition: all ease-in-out 0.25s;
 
   &:hover {
-    color: @clr-primary;
+    color: @clr-secondary;
   }
 }
 
 .clr-success {
   color: @clr-success;
 }
+
+.clr-grey {
+  color: @lightGray;
+}
+
 .clr-error {
   color: @clr-error;
 }
@@ -168,7 +176,7 @@ a {
   .maestro-sidebar {
     background: #fff;
     bottom: 0;
-    top: 0;
+    top: -2px;
     position: absolute;
     float: left;
     padding-left: 0;
@@ -177,6 +185,7 @@ a {
     width: 20rem;
     z-index: 97;
     margin-top: 4rem;
+    border-right: 1px solid @border-grey;
 
     #main-admin-nav {
 
@@ -321,13 +330,22 @@ a {
             }
 
             ul {
-              height: auto !important;
-              left: 6rem;
+              height: auto;
+              left: 5rem;
               margin-top: -40px;
               padding-left: 0;
               position: absolute;
               width: 20rem;
               z-index: 99;
+              background: #fff;
+              border: 1px solid @border-grey;
+              border-width: 1px 1px 1px 0;
+
+              li {
+                a {
+                  padding: 1rem;
+                }
+              }
             }
           }
         }
@@ -433,4 +451,43 @@ textarea,
 h5 {
   padding-top: 6px;
   .label-style-uppercase();
+}
+
+ul.nav-tabs {
+  border: none;
+  margin: 0 0 2rem 0;
+  border-bottom: 2px solid @whiteActive;
+
+  > li {
+    margin-right: 3rem;
+
+    > a {
+      border: none;
+      padding: 0 0 1rem 0;
+      color: @midGray;
+    }
+
+    &.active,
+    &:hover {
+      > a {
+        position: relative;
+        &, &:focus {
+          background: transparent;
+          border: none;
+          color: @clr-secondary;
+          &:after {
+            position: absolute;
+            top: 100%;
+            margin-top: -1px;
+            height: 2px;
+            left: 0;
+            width: 100%;
+            display: block;
+            content: '';
+            background: @clr-secondary;
+          }
+        }
+      }
+    }
+  }
 }

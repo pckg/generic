@@ -22,7 +22,7 @@
         </div>
 
         <div>
-            <nav style="display: table; margin: 0 auto;" v-if="perPage != 'all' && total > perPage">
+            <nav class="text-center" v-if="perPage != 'all' && total > perPage">
                 <ul class="pagination pagination-sm">
                     <li>
                         <a :class="{ disabled: page == 1 }" href="#" aria-label="Previous"
