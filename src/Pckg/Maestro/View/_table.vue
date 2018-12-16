@@ -131,7 +131,9 @@
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes">
-                                            <d-input-checkbox v-model="allChecked"></d-input-checkbox>
+                                            <div>
+                                                <d-input-checkbox v-model="allChecked"></d-input-checkbox>
+                                            </div>
                                         </th>
                                         <th v-for="(field, i) in myFields"
                                             :style="{'--freeze': field.freeze ? i : null}"
@@ -166,7 +168,10 @@
                                             @click.stop="delaySingleClick(record)"
                                             @dblclick.stop="doubleClick(record)">
                                             <td class="checkboxes freeze" @click.prevent>
-                                                <d-input-checkbox v-model="ids" :value="record.id"></d-input-checkbox>
+                                                <div>
+                                                    <d-input-checkbox v-model="ids"
+                                                                      :value="record.id"></d-input-checkbox>
+                                                </div>
                                             </td>
                                             <!--<td class="actions freeze">
                                                 <div>Actions</div>
@@ -200,7 +205,7 @@
              :class="ids.length > 0 || paginator.total > paginator.perPage ? 'in' : ''">
             <div class="table-actions" v-if="ids.length > 0">
                 <div class="pull-left" style="margin-right: 4rem;">
-                    {{ ids.length }} records selected
+                    {{ ids.length }} items selected
                     <template v-if="allChecked && paginator.total != ids.length">
                         <br/>
                         <a href="#"> Select all items from all pages</a>
@@ -409,8 +414,8 @@
         methods: {
             recalculateFreeze: function () {
                 console.log('freeze height');
-                this.$nextTick(function(){
-                    $(this.$el).find('td.freeze').each(function(){
+                this.$nextTick(function () {
+                    $(this.$el).find('td.freeze > div').each(function () {
                         $(this).height($(this).closest('tr').outerHeight());
                     });
                 }.bind(this));

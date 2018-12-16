@@ -7,11 +7,11 @@
         </a>
 
         <div class="btn-group btn-group-sm">
-            <a type="button" class="dropdown-toggle btn btn-default" href="#"
+            <button type="button" class="dropdown-toggle btn btn-default"
                title="" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-ellipsis-h"></i>
-            </a>
+            </button>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="#"><i class="fa fa-download"></i> Export</a></li>
                 <li><a href="#"><i class="fa fa-upload"></i> Import</a></li>

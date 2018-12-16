@@ -50,6 +50,11 @@
                     <span v-html="richValue"></span>
                 </template>
             </template>
+            <template v-else-if="type == 'php'">
+                <template v-if="!editable">
+                    <span v-html="value"></span>
+                </template>
+            </template>
             <template v-else>
                 <template v-if="!editable">
                     <template v-if="key == 'id'">

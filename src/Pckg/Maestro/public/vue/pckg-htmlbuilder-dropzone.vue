@@ -1,26 +1,23 @@
 <template>
     <div class="pckg-htmlbuilder-dropzone" :id="id">
-        <div class="row">
-            <div class="preview" :class="[ current ? 'col-md-3' : '' ]">
-                <img :src="cdn(current)" class="img-responsive"/>
-            </div>
-            <div :class="[ current ? 'col-md-9' : 'col-md-12' ]">
-                <p>
-                    <button type="button" class="btn btn-info select-files">Select</button>
-                    or drop file for upload.
-                </p>
-                <p v-if="original && current != original">
-                    <button type="button" class="btn btn-warning">Restore</button>
-                    original file.
-                </p>
-                <p v-if="current">
-                    <button type="button" class="btn btn-danger" @click.prevent="deleteFile">Delete</button>
-                    current file.
-                </p>
-
-                <div class="table table-striped files" id="previews"></div>
-            </div>
+        <div v-if="current" class="display-block">
+            <img :src="cdn(current)" class="img-responsive"/>
+            <br />
         </div>
+        <div class="display-block">
+            <button v-if="current" type="button" class="btn btn-default" @click.prevent="deleteFile">
+                <i class="fa fa-trash"></i> Delete file
+            </button>
+
+            <button type="button" class="btn btn-default select-files">
+                <i class="fa fa-upload"></i> Upload file
+            </button>
+
+            <button v-if="original && current != original" type="button" class="btn btn-default">
+                <i class="fa fa-refresh"></i> Restore original
+            </button>
+        </div>
+        <div class="table table-striped files" id="previews"></div>
     </div>
 </template>
 

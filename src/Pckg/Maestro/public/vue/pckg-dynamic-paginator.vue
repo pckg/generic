@@ -4,7 +4,7 @@
             <div class="btn-group btn-group-md dropup" style="display: table; margin: 0 auto;">
                 <div class="btn btn-default">
                     <a title="view" href="#">
-                        Show: {{ perPage }}
+                        Show: {{ perPage }} items
                     </a>
                 </div>
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"

@@ -395,8 +395,8 @@ ifrm.document.close();
             if ($this->record->{$field->field}) {
                 $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
                 $fullPath = img($this->record->{$field->field}, null, true, $dir);
-                $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
-                    $fullPath . '" /></a>';
+                $value = '<a href="' . cdn($fullPath) . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
+                    cdn($fullPath) . '" /></a>';
             }
         } elseif ($type == 'boolean') {
             $value = $value ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>';
