@@ -1,6 +1,6 @@
 /* HTML ELEMENTS */
 html, body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
   height: 100%;
 }
 
@@ -123,7 +123,7 @@ a {
   }
 }
 
-#vue-app {
+.backend {
   .navbar {
     min-height: 38px;
   }
@@ -132,277 +132,278 @@ a {
     padding-top: 9px;
     padding-bottom: 9px;
   }
+}
 
-  &.content-container {
-    min-height: 100%;
-    position: relative;
+#vue-app {
+  min-height: 100%;
+  position: relative;
 
-    &:after {
-      content: '';
-      display: block;
-      clear: both;
+  &:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+/*.maestro-sidebar-background {
+   background: @darkGray;
+   bottom: 0;
+   top: 0;
+   transition: all 0.333s ease-in-out;
+   width: 20rem;
+   z-index: -1;
+
+   body.collapsed & {
+     transition: all 0.333s ease-in-out;
+     width: 5rem;
+   }
+ }
+
+.maestro-sidebar-submenu-background {
+  background: @midGray;
+  bottom: 0;
+  display: none;
+  left: 6rem;
+  position: absolute;
+  top: 0;
+  width: 20rem;
+  z-index: 98;
+}
+
+.maestro-sidebar-inside {
+  background: #fff;
+}*/
+
+.maestro-sidebar {
+  background: #fff;
+  bottom: 0;
+  top: -2px;
+  position: absolute;
+  float: left;
+  padding-left: 0;
+  padding-right: 0;
+  transition: all 0.333s ease-in-out;
+  width: 20rem;
+  z-index: 97;
+  margin-top: 4rem;
+  border-right: 1px solid @border-grey;
+
+  #main-admin-nav {
+
+    i {
+      color: #666;
     }
-  }
 
-  .maestro-sidebar-background {
-    background: @darkGray;
-    bottom: 0;
-    top: 0;
-    transition: all 0.333s ease-in-out;
-    width: 20rem;
-    z-index: -1;
-
-    body.collapsed & {
-      transition: all 0.333s ease-in-out;
-      width: 5rem;
+    a {
+      color: #333;
     }
-  }
 
-  .maestro-sidebar-submenu-background {
-    background: @midGray;
-    bottom: 0;
-    display: none;
-    left: 6rem;
-    position: absolute;
-    top: 0;
-    width: 20rem;
-    z-index: 98;
-  }
+    ul {
+      list-style: none;
+      padding: 0;
 
-  .maestro-sidebar-inside {
-    background: #fff;
-  }
+      li {
+        clear: both;
 
-  .maestro-sidebar {
-    background: #fff;
-    bottom: 0;
-    top: -2px;
-    position: absolute;
-    float: left;
-    padding-left: 0;
-    padding-right: 0;
-    transition: all 0.333s ease-in-out;
-    width: 20rem;
-    z-index: 97;
-    margin-top: 4rem;
-    border-right: 1px solid @border-grey;
+        ul {
+          li {
+            a {
+              padding: .5rem 1rem .5rem 5rem;
+              font-size: 1.4rem;
+            }
 
-    #main-admin-nav {
-
-      i {
-        color: #666;
-      }
-
-      a {
-        color: #333;
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-
-        li {
-          clear: both;
-
-          ul {
-            li {
+            &:first-child {
               a {
-                padding: .5rem 1rem .5rem 5rem;
-                font-size: 1.3rem;
+                padding-top: 1rem;
               }
+            }
 
-              &:first-child {
-                a {
-                  padding-top: 1rem;
-                }
-              }
-
-              &:last-child {
-                a {
-                  padding-bottom: 1rem;
-                }
+            &:last-child {
+              a {
+                padding-bottom: 1rem;
               }
             }
           }
         }
-
-        a {
-          display: block;
-          padding: 1rem 0;
-          position: relative;
-          font-size: 1.6rem;
-
-          i {
-            float: left;
-            transition: all 0.333s ease-in-out;
-            width: 5rem;
-            line-height: 2rem;
-            font-size: 2rem;
-          }
-
-          span {
-            display: block;
-            overflow: hidden;
-            transition: all 0.333s ease-in-out;
-          }
-
-          &:hover,
-          &:active,
-          &:focus {
-            text-decoration: none;
-          }
-        }
       }
 
-      .active > a,
-      a:hover {
-        &, & > i {
-          color: @clr-secondary;
+      a {
+        display: block;
+        padding: 1rem 0;
+        position: relative;
+        font-size: 1.6rem;
+        line-height: 2rem;
+
+        i {
+          float: left;
+          transition: all 0.333s ease-in-out;
+          width: 5rem;
+          line-height: 2rem;
+          font-size: 2rem;
+        }
+
+        span {
+          display: block;
+          overflow: hidden;
+          transition: all 0.333s ease-in-out;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          text-decoration: none;
+        }
+      }
+    }
+
+    .active > a,
+    a:hover {
+      &, & > i {
+        color: @clr-secondary;
+      }
+    }
+  }
+
+  .collapse-sidebar {
+    a {
+      padding: 1rem 1.7rem;
+      text-align: center;
+
+      &:active,
+      &:focus,
+      &:hover {
+        color: #000;
+        text-decoration: none;
+      }
+
+      i {
+        vertical-align: middle;
+        transition: all 0.333s ease-in-out;
+        width: 16px;
+      }
+
+      span {
+        transition: all 0.333s ease-in-out;
+      }
+    }
+  }
+
+  body.collapsed & {
+    transition: all 0.333s ease-in-out;
+    width: 5rem;
+
+    #main-admin-nav {
+      a.maestro {
+        font-weight: bold;
+      }
+
+      ul.top-level {
+        & > li {
+          &.hoveractive {
+            & > a {
+              &:after {
+                border-bottom: 10px solid transparent;
+                border-right: 10px solid @midGray;
+                border-top: 10px solid transparent;
+                content: "";
+                height: 0;
+                margin-top: -10px;
+                position: absolute;
+                right: 0;
+                top: 50%;
+                width: 0;
+              }
+            }
+          }
+
+          & > a {
+            span {
+              opacity: 0;
+              transition: all 0.333s ease-in-out;
+              visibility: hidden;
+              width: 0;
+            }
+
+            &:hover {
+              &:after {
+                content: "";
+              }
+            }
+          }
+
+          ul {
+            height: auto !important;
+            left: 5rem;
+            margin-top: -40px;
+            padding-left: 0;
+            position: absolute;
+            width: 20rem;
+            z-index: 99;
+            background: #fff;
+            border: 1px solid @border-grey;
+            border-width: 1px 1px 1px 0;
+
+            li {
+              a {
+                padding: 1rem;
+              }
+            }
+          }
         }
       }
     }
 
     .collapse-sidebar {
       a {
-        padding: 1rem 1.6rem;
-        text-align: center;
-
-        &:active,
-        &:focus,
-        &:hover {
-          color: #000;
-          text-decoration: none;
-        }
-
         i {
-          vertical-align: middle;
+          -moz-transform: scaleX(-1);
+          -o-transform: scaleX(-1);
+          -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+          filter: FlipH;
+          -ms-filter: "FlipH";
           transition: all 0.333s ease-in-out;
-          width: 16px;
         }
 
         span {
+          opacity: 0;
           transition: all 0.333s ease-in-out;
-        }
-      }
-    }
-
-    body.collapsed & {
-      transition: all 0.333s ease-in-out;
-      width: 5rem;
-
-      #main-admin-nav {
-        a.maestro {
-          font-weight: bold;
-        }
-
-        ul.top-level {
-          & > li {
-            &.hoveractive {
-              & > a {
-                &:after {
-                  border-bottom: 10px solid transparent;
-                  border-right: 10px solid @midGray;
-                  border-top: 10px solid transparent;
-                  content: "";
-                  height: 0;
-                  margin-top: -10px;
-                  position: absolute;
-                  right: 0;
-                  top: 50%;
-                  width: 0;
-                }
-              }
-            }
-
-            & > a {
-              span {
-                opacity: 0;
-                transition: all 0.333s ease-in-out;
-                visibility: hidden;
-                width: 0;
-              }
-
-              &:hover {
-                &:after {
-                  content: "";
-                }
-              }
-            }
-
-            ul {
-              height: auto;
-              left: 5rem;
-              margin-top: -40px;
-              padding-left: 0;
-              position: absolute;
-              width: 20rem;
-              z-index: 99;
-              background: #fff;
-              border: 1px solid @border-grey;
-              border-width: 1px 1px 1px 0;
-
-              li {
-                a {
-                  padding: 1rem;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .collapse-sidebar {
-        a {
-          i {
-            -moz-transform: scaleX(-1);
-            -o-transform: scaleX(-1);
-            -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-            filter: FlipH;
-            -ms-filter: "FlipH";
-            transition: all 0.333s ease-in-out;
-          }
-
-          span {
-            opacity: 0;
-            transition: all 0.333s ease-in-out;
-            visibility: hidden;
-          }
-        }
-      }
-    }
-
-    .collapse-menu {
-      a {
-        color: #FFF;
-        padding: 10px 20px;
-
-        &:hover {
-          text-decoration: none;
-        }
-
-        i {
-          margin-right: 5px;
-          vertical-align: middle;
+          visibility: hidden;
         }
       }
     }
   }
 
-  .maestro-content {
-    float: right;
-    padding: 2rem 0;
-    margin: 0 2rem;
-    transition: all 0.333s ease-in-out;
-    width: ~"calc(100% - 24rem)";
+  .collapse-menu {
+    a {
+      color: #FFF;
+      padding: 10px 20px;
 
-    &.login {
-      margin-left: 0;
-    }
+      &:hover {
+        text-decoration: none;
+      }
 
-    body.collapsed & {
-      width: ~"calc(100% - 9rem)";
+      i {
+        margin-right: 5px;
+        vertical-align: middle;
+      }
     }
+  }
+}
+
+.maestro-content {
+  float: right;
+  padding: 2rem 0;
+  margin: 0 2rem;
+  transition: all 0.333s ease-in-out;
+  width: ~"calc(100% - 24rem)";
+
+  &.login {
+    margin-left: 0;
+  }
+
+  body.collapsed & {
+    width: ~"calc(100% - 9rem)";
   }
 }
 
@@ -471,10 +472,12 @@ ul.nav-tabs {
     &:hover {
       > a {
         position: relative;
+
         &, &:focus {
           background: transparent;
           border: none;
           color: @clr-secondary;
+
           &:after {
             position: absolute;
             top: 100%;

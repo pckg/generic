@@ -326,6 +326,16 @@ Style tds
     }
   }
 
+  td, th {
+    &.checkboxes {
+      color: #777;
+    }
+  }
+
+  tr.selected td.checkboxes {
+    color: @clr-secondary;
+  }
+
   tbody tr {
     &.selected,
     &:hover {

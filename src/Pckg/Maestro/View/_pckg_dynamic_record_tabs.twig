@@ -1,6 +1,6 @@
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
-        <div>
+        <div class="box-with-padding">
             <h2>
                 {{ formalize.getTitle() | raw }}
 
@@ -40,7 +40,7 @@
             </div>
             {% for tab in tabs %}
                 <div role="tabpanel" class="tab-pane" id="dynamic-tab-{{ tab.id }}">
-                    <i class="fa fa-spinner fa-spin fa-fw text-center"></i>
+                    <i class="fa fa-spinner-third fa-spin fa-fw text-center"></i>
                     <keep-alive>
                         <template v-if="selectedTab == {{ tab.id }}">
                             <dynamic-tab-{{ tab.id }}></dynamic-tab-{{ tab.id }}>
