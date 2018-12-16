@@ -14,6 +14,21 @@ body {
 
 body, body.scope-bg-system {
   background-color: #f7f7f7;
+/*
+  background: linear-gradient(-30deg, #4AD481, #3FB3BA);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  .maestro-top,
+  .maestro-top .container-fluid {
+    background: transparent;
+    border: none;
+  }
+  .maestro-sidebar {
+    margin-top: 0;
+    z-index: 90;
+    padding-top: 4rem;
+  }*/
 }
 
 a {
@@ -27,6 +42,10 @@ a {
 
 .clr-success {
   color: @clr-success;
+}
+
+.clr-info {
+  color: @clr-info;
 }
 
 .clr-grey {
@@ -409,7 +428,7 @@ a {
 
 ol.breadcrumb {
   margin-left: 120px;
-  display: inline-block;
+  display: none;
   padding: 10px 0;
   margin-bottom: 0;
   background: transparent;
@@ -474,7 +493,7 @@ ul.nav-tabs {
         border: none;
         position: relative;
 
-        &, &:focus {
+        &, &:focus, &:hover {
           background: transparent;
           border: none;
           color: @clr-secondary;

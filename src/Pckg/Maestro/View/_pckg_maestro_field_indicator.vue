@@ -1,5 +1,5 @@
 <template>
-    <i class="pckg-maestro-field-indicator" v-if="visible" :class="iconClass"></i>
+    <i class="pckg-maestro-field-indicator" v-if="visible && iconClass" :class="iconClass"></i>
 </template>
 
 <script>
@@ -32,23 +32,27 @@
                 }
 
                 let value = this.value;
-                if (['confirmed', 'payed', 'published', 'taken', 'delivered'].indexOf(value) >= 0) {
+                if (['confirmed', 'payed', 'published', 'taken', 'delivered', 'resolving'].indexOf(value) >= 0) {
                     return 'fas fa-circle clr-success';
                 }
 
-                if (['reserved', 'sent', 'shipped'].indexOf(value) >= 0) {
+                if (['reserved', 'sent', 'shipped', 'closed'].indexOf(value) >= 0) {
                     return 'fal fa-circle clr-success';
                 }
 
-                if (['canceled', 'rejected'].indexOf(value) >= 0) {
+                if (['submitted', 'allocated'].indexOf(value) >= 0) {
+                    return 'fal fa-circle clr-info';
+                }
+
+                if (['canceled', 'rejected', 'expired', 'quo'].indexOf(value) >= 0) {
                     return 'fal fa-circle clr-error';
                 }
 
-                if (['returned'].indexOf(value) >= 0) {
+                if (['returned', 'opened', 'high'].indexOf(value) >= 0) {
                     return 'fas fa-circle clr-error';
                 }
 
-                if (['basket', 'split', 'none'].indexOf(value) >= 0) {
+                if (['basket', 'split', 'none', 'created'].indexOf(value) >= 0) {
                     return 'fal fa-circle';
                 }
 

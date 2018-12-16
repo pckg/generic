@@ -173,6 +173,11 @@ div.row {
   line-height: 3rem;
 }
 
+.logo {
+  margin: .5rem 0;
+  display: inline-block;
+}
+
 /**
 Derive
 */
@@ -222,7 +227,7 @@ Style tds
 
   td {
     white-space: normal;
-    word-break: break-word;
+    word-break: normal;
     min-width: 60px;
     vertical-align: middle;
     border-top: 1px solid #eee;
@@ -267,15 +272,15 @@ Style tds
     &.date,
     &.time {
       word-break: normal;
-      min-width: 80px;
+      min-width: 10rem;
     }
 
     &.pdf {
-      min-width: 60px; // 120px;
+      min-width: 6rem; // 120px;
     }
 
     &.text {
-      min-width: 90px; // 120px;
+      min-width: 12rem; // 120px;
     }
 
     &.php {

@@ -11,8 +11,7 @@
             </div>
 
             <div class="sec quick-search">
-                <input type="text" v-model="search" class="form-control"
-                       :placeholder="'Quick search ' + paginator.total + ' ' + (table.title ? table.title : table.table)"/>
+                <input type="text" v-model="search" class="form-control" placeholder="Quick search & filter"/>
             </div>
 
             <div class="sec customize-view">
@@ -377,8 +376,8 @@
                  */
                 table: {},
                 sort: {
-                    field: '',
-                    dir: 'up'
+                    field: 'id',
+                    dir: 'down'
                 },
                 configureSection: 'closed',
                 quickView: 'closed',
@@ -408,6 +407,14 @@
             };
         },
         methods: {
+            recalculateFreeze: function () {
+                console.log('freeze height');
+                this.$nextTick(function(){
+                    $(this.$el).find('td.freeze').each(function(){
+                        $(this).height($(this).closest('tr').outerHeight());
+                    });
+                }.bind(this));
+            },
             saveView: function () {
                 this.refreshData();
                 this.configureSection = 'closed';
@@ -790,6 +797,7 @@
                         this.setPaginatorFiltered(data.paginator.total);
                     }
                     this.loading = false;
+                    this.recalculateFreeze();
 
                 }.bind(this)).then(function (data) {
                     console.log('got data', data);

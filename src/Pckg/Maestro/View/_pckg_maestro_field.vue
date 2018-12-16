@@ -58,7 +58,7 @@
                     <template v-else-if="key == 'title'">
                         <a :href="record.viewUrl" v-html="value" title="Open record"></a>
                     </template>
-                    <template v-else-if="field.isRaw"><span class="raw">{{ value }}</span></template>
+                    <template v-else-if="true || field.isRaw"><span class="raw">{{ value }}</span></template>
                     <template v-else><span v-html="value" class="else"></span></template>
                 </template>
                 <template v-else>
