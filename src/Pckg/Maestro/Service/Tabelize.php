@@ -114,7 +114,7 @@ class Tabelize
         $total = $this->entity->total();
 
         $this->setRecords($all)
-             ->setPerPage(25)
+             ->setPerPage(50)
              ->setPage(1)
              ->setTotal($total)
              ->setGroups([])
