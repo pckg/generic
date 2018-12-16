@@ -5,6 +5,7 @@
                      :initial-multiple="false" @change="checkFinal" :with-empty="'Select column'"></pckg-select>
         <pckg-maestro-customize-fields-field v-if="!isFinal && isRelation"
                                              :relation="selectedRelation"
+                                             :columns="columns"
                                              @chosen="chosen"
                                              @remove="$emit('remove', $event)"></pckg-maestro-customize-fields-field>
     </div>
@@ -15,7 +16,10 @@
         name: 'pckg-maestro-customize-fields-field',
         props: {
             columns: {
-                type: Object
+                type: Array,
+                default: function(){
+                    return [];
+                }
             },
             relation: {
                 type: Object,

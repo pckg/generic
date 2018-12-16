@@ -44,6 +44,12 @@
                     <textarea v-html="model">{{ model }}</textarea>
                 </template>
             </template>
+            <template v-else-if="type == 'select'">
+                <template v-if="!editable">
+                    <pckg-maestro-field-indicator :field="myField" :record="record" :db-field="dbField"></pckg-maestro-field-indicator>
+                    <span v-html="richValue"></span>
+                </template>
+            </template>
             <template v-else>
                 <template v-if="!editable">
                     <template v-if="key == 'id'">
@@ -203,6 +209,13 @@
             value: function () {
                 if (typeof this.myField.field == 'string') {
                     return this.record[this.key];
+                }
+                // for fields: value
+                // for relations: record[relation.alias]...[field]
+            },
+            richValue: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.record['*' + this.key];
                 }
                 // for fields: value
                 // for relations: record[relation.alias]...[field]

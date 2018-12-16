@@ -327,7 +327,7 @@ class Tabelize
      *
      * @return mixed|null
      */
-    public function getRecordValue($field, $originalRecord)
+    public function getRecordValue($field, $originalRecord, &$enrichedValue)
     {
         try {
             if (is_string($field)) {
@@ -364,7 +364,8 @@ class Tabelize
                         $eval = '#' . $originalRecord->{$field->field};
                     }
 
-                    return $this->dataOnly ? $eval
+                    $enrichedValue = $this->dataOnly
+                        ? $eval
                         : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' .
                             $eval . '</a>');
                 }
@@ -601,7 +602,11 @@ class Tabelize
                 ? $key : (is_string($field)
                     ? $field : (is_object($field) ? $field->field
                         : $field['field']));
-            $transformed[$realKey] = $this->getRecordValue($field, $record);
+            $enriched = null;
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enriched);
+            if ($enriched) {
+                $transformed['*' . $realKey] = $enriched;
+            }
         }
 
         /**
@@ -609,7 +614,11 @@ class Tabelize
          */
         foreach ($this->getFieldTransformations() as $key => $field) {
             $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
-            $transformed[$realKey] = $this->getRecordValue($field, $record);
+            $enriched = null;
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enriched);
+            if ($enriched) {
+                $transformed['*' . $realKey] = $enriched;
+            }
         }
 
         if ($this->dataOnly) {

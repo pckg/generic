@@ -258,7 +258,7 @@ class Dynamic extends Bootstrap
 
         $prevGroup = null;
         $fieldPositions = $fields->groupBy(function(Field $field){
-            return $field->field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
+            return $field->dynamic_field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
         });
 
         foreach ($fieldPositions as $position => $fields) {
