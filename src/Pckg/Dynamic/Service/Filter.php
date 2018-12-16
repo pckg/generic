@@ -105,7 +105,7 @@ class Filter extends AbstractService
         )->keyBy('field');
     }
 
-    public function applyOnEntity(Entity $entity, $filters)
+    public function applyOnEntity(Entity $entity, $filters = [])
     {
         $signMapper = $this->getTypeMethods();
 

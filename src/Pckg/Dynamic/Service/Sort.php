@@ -31,7 +31,7 @@ class Sort extends AbstractService
         })->keyBy('field');
     }
 
-    public function applyOnEntity(Entity $entity, $paginator)
+    public function applyOnEntity(Entity $entity, $paginator = [])
     {
         if (!isset($paginator['sort']) || !isset($paginator['dir'])) {
             return;
