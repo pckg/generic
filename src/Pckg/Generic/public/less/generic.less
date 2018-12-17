@@ -35,7 +35,13 @@
 ul.vertical-mid-menu {
   margin: 0;
   padding: 0;
-  list-style-type: none;
+  ul {
+    margin: .333rem 0 1rem 0;
+    padding: 0 1rem;
+  }
+  &, & ul {
+    list-style-type: none;
+  }
 
   > li {
     > span {

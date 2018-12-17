@@ -209,6 +209,10 @@ Style tds
     border-bottom: none;
   }
 
+  > thead > tr > th {
+    padding: 1rem 2rem 1rem 1rem;
+  }
+
   td,
   th {
     &.boolean,
@@ -231,7 +235,7 @@ Style tds
     min-width: 8rem;
     vertical-align: middle;
     border-top: 1px solid #eee;
-    padding: 1rem 2rem 1rem 0;
+    padding: 1rem 2rem 1rem 1rem;
 
     &.actions,
     &.checkboxes {
@@ -815,6 +819,10 @@ img.editor-img {
   }
 }
 
+table.table {
+  margin-bottom: 0;
+}
+
 div.form-control {
   height: auto;
   border: none;
@@ -822,8 +830,10 @@ div.form-control {
 }
 
 .pckg-maestro-tabelize {
-  table.table > thead > tr > th {
-    padding: 1rem 1rem 1rem 0;
+  &.mode-full {
+    .mode-padding {
+      padding-left: 4rem;
+    }
   }
 
   .sortable-ghost {

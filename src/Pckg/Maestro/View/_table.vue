@@ -1,8 +1,8 @@
 <template>
-    <div class="pckg-maestro-tabelize">
+    <div class="pckg-maestro-tabelize" :class="'mode-' + mode">
 
         <!-- Header template and entity actions -->
-        <div class="header" v-if="table && table.id">
+        <div class="header" v-if="mode != 'clean' && table && table.id">
             <div class="sec">
                 <h2>
                     <template v-if="table">{{ table.title ? table.title : table.table }}</template>
@@ -125,12 +125,12 @@
                         <div class="clearfix"></div>
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
-                        <div style="padding-left: 4rem;">
+                        <div class="mode-padding">
                             <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
                                 <table class="table table-hover table-striped">
                                     <thead>
                                     <tr>
-                                        <th class="freeze checkboxes">
+                                        <th class="freeze checkboxes" v-if="mode != 'clean'">
                                             <div>
                                                 <d-input-checkbox v-model="allChecked"></d-input-checkbox>
                                             </div>
@@ -167,7 +167,7 @@
                                             @contextmenu.prevent="showContextMenu($event, record)"
                                             @click.stop="delaySingleClick(record)"
                                             @dblclick.stop="doubleClick(record)">
-                                            <td class="checkboxes freeze" @click.prevent>
+                                            <td class="checkboxes freeze" @click.prevent v-if="mode != 'clean'">
                                                 <div>
                                                     <d-input-checkbox v-model="ids"
                                                                       :value="record.id"></d-input-checkbox>
@@ -264,6 +264,7 @@
         name: 'pckg-maestro-table',
         mixins: [pckgTimeout],
         props: {
+            mode: {type: String, default: 'full'},
             /**
              * New
              */
@@ -803,6 +804,7 @@
                     }
                     this.loading = false;
                     this.recalculateFreeze();
+                    this.$emit('update:records', this.records);
 
                 }.bind(this)).then(function (data) {
                     console.log('got data', data);

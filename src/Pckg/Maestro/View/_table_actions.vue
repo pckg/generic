@@ -2,11 +2,11 @@
     <div>
 
         <a :href="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
-           class="btn btn-primary btn-sm">
+           class="btn default">
             Add new
         </a>
 
-        <div class="btn-group btn-group-sm">
+        <div class="btn-group">
             <button type="button" class="dropdown-toggle btn btn-default"
                title="" data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
