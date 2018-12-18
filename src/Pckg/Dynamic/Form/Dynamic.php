@@ -348,7 +348,7 @@ class Dynamic extends Bootstrap
     protected function createReadonlyElementByType($type, $name, Field $field)
     {
         $label = $field->label;
-        $value = $this->record->{$field->field};
+        $value = $this->record->data($field->field);
 
         if ($type == 'select' && $this->record) {
             $relation = $field->hasOneSelectRelation;
