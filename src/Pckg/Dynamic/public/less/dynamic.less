@@ -1099,14 +1099,6 @@ table {
 }
 
 .table-floating-bottom-bar {
-  .mode-full & {
-    position: fixed;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    border-top: 1px solid @border-grey;
-  }
   background: #fff;
   //border-left: 1px solid @border-grey;
   transition: all 333ms ease-in-out;
@@ -1114,14 +1106,6 @@ table {
   > div {
     display: block;
     padding: 1rem;
-  }
-
-  body.collapsed & {
-    left: 5rem;
-  }
-
-  &.in {
-    transform: translateY(-100%);
   }
 }
 
