@@ -1177,3 +1177,73 @@ table {
 .btn-default:hover {
   border-color: @border-grey;
 }
+
+.new-filters {
+  h4 {
+    display: inline-block;
+  }
+  &.closed {
+    margin-bottom: 0;
+    border: none;
+  }
+  .form-control {
+    display: inline-block;
+    max-width: 16rem;
+  }
+
+  transition: all 333ms ease-in-out;
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  &.opened {
+    max-height: fit-content;
+    visibility: visible;
+    overflow: visible;
+  }
+}
+
+table.table {
+  tr {
+    position: relative;
+  }
+  > tbody,
+  > thead {
+    tr {
+      > .freeze {
+        &.checkboxes {
+          padding: 0;
+          width: 4rem;
+          text-align: center;
+          > div {
+            position: relative;
+            min-height: 4rem;
+            > span {
+              top: 50%;
+              position: absolute;
+              transform: translate(-50%, -50%);
+            }
+          }
+        }
+        position: absolute;
+        width: 10rem;
+        //min-height: 5rem;
+        //background-color: transparent;
+        left: 0;
+        & + .freeze {
+          left: ~"calc(var(--freeze) * 10rem + 3rem)";
+        }
+      }
+    }
+  }
+}
+
+.showContextMenu.dropdown-menu {
+  display: block;
+}
+
+table {
+  th {
+    font-weight: normal;
+  }
+}
+
