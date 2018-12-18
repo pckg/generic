@@ -14,21 +14,27 @@ body {
 
 body, body.scope-bg-system {
   background-color: #f7f7f7;
-/*
-  background: linear-gradient(-30deg, #4AD481, #3FB3BA);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  .maestro-top,
-  .maestro-top .container-fluid {
-    background: transparent;
-    border: none;
-  }
-  .maestro-sidebar {
-    margin-top: 0;
-    z-index: 90;
-    padding-top: 4rem;
-  }*/
+  /*
+    background: linear-gradient(-30deg, #4AD481, #3FB3BA);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    .maestro-top,
+    .maestro-top .container-fluid {
+      background: transparent;
+      border: none;
+    }
+    .maestro-sidebar {
+      margin-top: 0;
+      z-index: 90;
+      padding-top: 4rem;
+    }*/
+}
+
+.container-narrow {
+  margin: 0 auto;
+  max-width: 768px;
+  width: 100%;
 }
 
 a {
@@ -91,7 +97,7 @@ a {
 
   .navbar-nav {
     > li > a {
-      color: #333;
+      color: inherit;
     }
 
     @media only screen and (max-width: 767px) {
@@ -519,5 +525,90 @@ ul.nav-tabs {
 .derive-platform-settings {
   .header {
     display: none;
+  }
+}
+
+.derive-setup-wizard {
+  label {
+    font-weight: normal;
+  }
+  .welcome-screen {
+    padding: 4.8rem 2.4rem;
+
+    .btn {
+      margin: 2rem auto 1rem auto;
+    }
+  }
+
+  .step,
+  .welcome-screen {
+    .btn {
+      position: relative;
+      color: #3FB3BA;
+      text-transform: uppercase;
+      z-index: 3;
+      /*background: linear-gradient(-30deg, #4AD481, #3FB3BA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;*/
+      border: none;
+      padding: 1.5rem 2rem;
+      transition: all 333ms ease-in-out;
+
+      &:before {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: '';
+        background: linear-gradient(-30deg, #4AD481, #3FB3BA);
+        transition: all 333ms ease-in-out;
+        z-index: -2;
+      }
+
+      &:after {
+        position: absolute;
+        display: block;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        content: '';
+        background: #fff;
+        transition: all 333ms ease-in-out;
+        z-index: -1;
+      }
+
+      &:hover {
+        color: #4AD481;
+
+        &:before {
+          background: linear-gradient(150deg, #4AD481, #3FB3BA);
+        }
+
+        &:after {
+          background: #fcfcfc;
+        }
+      }
+    }
+  }
+
+  .step {
+    margin-bottom: 1.2rem;
+
+    &.finished {
+      background: #fafafa;
+      padding: 1.2rem 2.4rem;
+
+      i {
+        color: @clr-success;
+        margin-right: 1rem;
+      }
+    }
+
+    &.opened {
+
+    }
   }
 }
