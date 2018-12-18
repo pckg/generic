@@ -1,6 +1,6 @@
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
-        <div class="box-with-padding">
+        <div class="display-block">
             <h2>
                 {{ formalize.getTitle() | raw }}
 
@@ -23,6 +23,8 @@
                 {% endfor %}
             </ul>
         </div>
+
+        <div class="clearfix"></div>
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="home">

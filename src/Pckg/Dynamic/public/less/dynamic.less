@@ -1102,8 +1102,56 @@ table {
   display: table-cell;
 }
 
-.table-paginator {
+.table-floating-bottom-bar {
+  .mode-full & {
+    position: fixed;
+    top: 100%;
+    left: 20rem;
+    right: 0;
+    z-index: 1000;
+    border-top: 1px solid @border-grey;
+  }
+  background: #fff;
+  //border-left: 1px solid @border-grey;
+  transition: all 333ms ease-in-out;
+
+  > div {
+    display: block;
+    padding: 1rem;
+  }
+
+  body.collapsed & {
+    left: 5rem;
+  }
+
+  &.in {
+    transform: translateY(-100%);
+  }
+}
+
+.table-floating-right-bar {
+  position: fixed;
+  bottom: 0;
+  left: 100%;
+  top: 0;
+  width: 32rem;
+  background: #fff;
+  border-left: 1px solid #ddd;
+  padding: 2rem;
+  z-index: 1000;
+  transition: all 333ms ease-in-out;
+
+  &.opened {
+    transform: translateX(-100%);
+  }
+}
+
+.mode-full .table-paginator {
   box-shadow: 2px -4px 6px #eee;
+}
+
+.mode-clean .table-paginator {
+  padding: 0 0 2rem 0;
 }
 
 .no-body-padding {

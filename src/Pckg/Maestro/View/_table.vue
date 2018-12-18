@@ -570,7 +570,7 @@
                     this.loading = false;
                     this.myFields = data.view.columns;
 
-                    if (!this.view.live) {
+                    if (!this.view.live && this.records.length == 0) {
                         this.refreshData();
                     }
                 }.bind(this));

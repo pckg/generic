@@ -318,7 +318,10 @@ class Dynamic extends Bootstrap
             $element->setBuilder(new Pckg($element));
 
             if (($label = $field->label)) {
-                $translatable = $field->isTranslatable($this->record->getEntity())
+                if ($field->required) {
+                    $label = '* ' . $label;
+                }
+                $translatable = $field->isTranslatable($this->record->getEntity()) && localeManager()->getFrontendLanguages()->count() > 1
                     ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
                     : '';
                 $element->setLabel($label . $translatable);
