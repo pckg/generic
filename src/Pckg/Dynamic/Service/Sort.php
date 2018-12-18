@@ -33,6 +33,10 @@ class Sort extends AbstractService
 
     public function applyOnEntity(Entity $entity, $paginator = [])
     {
+        if (!$this->table) {
+            return;
+        }
+        
         $field = (new Fields())->withFieldType()
                                ->where('field', $paginator['sort'] ?? 'id')
                                ->where('dynamic_table_id', $this->table->id)

@@ -25,8 +25,6 @@ class Paginate
 
     public function applyOnEntity(Entity $entity, $ormPaginator)
     {
-        $limit = get('perPage', $perPage);
-
         $entity->count();
 
         $limit = $ormPaginator['limit'];
