@@ -241,7 +241,6 @@ class Generic
         }, function($action) {
             return $action->pivot->id;
         })->filter(function(ActionRecord $action) use ($resolved, $route) {
-
             /**
              * Filter out hidden and shown.
              */
