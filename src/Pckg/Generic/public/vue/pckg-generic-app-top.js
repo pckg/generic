@@ -168,9 +168,9 @@ var pckgPayment = {
                 this.state = 'fetched';
             }.bind(this), function (response) {
                 this.state = 'error';
-                this.msg = 'Error initializing payment';
+                this.error = 'Error initializing payment';
                 if (response.responseJSON && response.responseJSON.message) {
-                    this.msg = response.responseJSON.message;
+                    this.error = response.responseJSON.message;
                 }
             }.bind(this));
         },
