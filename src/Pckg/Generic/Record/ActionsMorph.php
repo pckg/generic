@@ -535,21 +535,36 @@ class ActionsMorph extends Record
         });
     }
 
+    public function overloadType()
+    {
+        if ($this->type) {
+            return $this->type;
+        }
+
+        $method = $this->action->method;
+        if (in_array($method, ['wrapper', 'container', 'row', 'column'])) {
+            return $this->action->method;
+        }
+
+        return 'action';
+    }
+
     public function jsonSerialize()
     {
         $slots = config('pckg.generic.actions.' . $this->action->slug . '.slots', []);
+        $content = $this->content ? $this->content->jsonSerialize() : null;
 
         $data = [
             'id'        => $this->id,
             'title'     => $this->action->title,
             'morph'     => $this->morph_id,
-            'type'      => $this->type,
+            'type'      => $this->overloadType(),
             'slug'      => $this->action->slug,
             'parent_id' => $this->parent_id,
             'class'     => $this->action->class,
             'method'    => $this->action->method,
             'settings'  => $this->settingsArray,
-            'content'   => $this->content,
+            'content'   => $content,
             'build'     => $this->getBuildAttribute(),
             'template'  => $this->template,
             'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
