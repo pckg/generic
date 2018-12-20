@@ -190,7 +190,7 @@ var pckgPayment = {
     }
 };
 
-var pckgFormValidator = {
+const pckgFormValidator = {
     methods: {
         validateAndSubmit: function (submit, invalid) {
             console.log('validating');
@@ -557,8 +557,109 @@ var pckgSmartItem = {
     }
 };
 
+const pckgActionAttrs = {
+    computed: {
+        actionClass: function () {
+            if (!this.action) {
+                return;
+            }
+            let typeSuffix = this.$options.name.replace('pckg-', '');
+            if (this.action.type == 'container' && this.action.settings.container != 'container') {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.container;
+            }
+
+            if (this.action.settings.width.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.width.join(' ');
+            }
+
+            if (this.action.settings.offset.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.offset.join(' ');
+            }
+
+            if (this.action.settings.scopes.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.scopes.join(' ');
+            }
+
+            if (this.action.settings.class) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.class;
+            }
+
+            if (this.action.settings.bgVideo) {
+                typeSuffix = typeSuffix + ' has-video-background';
+            }
+
+            let mapper = {
+                'bgSize': 'bg-size',
+                'bgRepeat': 'bg-repeat',
+                'bgPosition': 'bg-position',
+            };
+            let mainClass = typeSuffix;
+            $.each(this.action.settings, function (slug, setting) {
+                if (Object.keys(mapper).indexOf(slug) < 0) {
+                    return;
+                }
+
+                if (!setting) {
+                    return;
+                }
+
+                mainClass = mainClass + ' ' + mapper[slug] + '-' + setting;
+            });
+
+            if (this.genericMode == 'edit') {
+                if (this.action.type == 'action') {
+                    mainClass = mainClass + ' pb-action';
+                }
+                if (this.action.active) {
+                    mainClass = mainClass + ' ' + 'pb-active-action';
+                }
+            }
+
+            return mainClass;
+        },
+        actionStyle: function () {
+            if (!this.action) {
+                return;
+            }
+            let mapper = {
+                'bgColor': 'background-color',
+                'bgAttachment': 'background-attachment',
+                'bgImage': 'background-image',
+                'margin': 'margin', // @deprecated
+                'padding': 'padding', // @deprecated
+                'style': 'style',
+            };
+
+            let styles = [];
+            $.each(mapper, function (slug, attr) {
+                if (Object.keys(mapper).indexOf(slug) < 0) {
+                    return;
+                }
+
+                let setting = this.action.settings[slug];
+
+                if (!setting) {
+                    return;
+                }
+
+                let value;
+                if (slug == 'style') {
+                    value = setting;
+                } else if (slug == 'bgImage') {
+                    value = attr + ': url(\'' + this.cdn(setting) + '\')';
+                } else {
+                    value = attr + ': ' + setting;
+                }
+                styles.push(value);
+            }.bind(this));
+
+            return styles.join('; ');
+        }
+    }
+}
+
 var pckgElement = {
-    mixins: [pckgCdn, pckgTimeout],
+    mixins: [pckgCdn, pckgTimeout, pckgActionAttrs],
     props: {
         actionId: {
             default: null
@@ -676,102 +777,6 @@ var pckgElement = {
         },
         subactions: function () {
             return $store.getters.actionChildren(this.actionId);
-        },
-        actionClass: function () {
-            if (!this.action) {
-                return;
-            }
-            let typeSuffix = this.$options.name.replace('pckg-', '');
-            if (this.action.type == 'container' && this.action.settings.container != 'container') {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.container;
-            }
-
-            if (this.action.settings.width.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.width.join(' ');
-            }
-
-            if (this.action.settings.offset.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.offset.join(' ');
-            }
-
-            if (this.action.settings.scopes.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.scopes.join(' ');
-            }
-
-            if (this.action.settings.class) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.class;
-            }
-
-            if (this.action.settings.bgVideo) {
-                typeSuffix = typeSuffix + ' has-video-background';
-            }
-
-            let mapper = {
-                'bgSize': 'bg-size',
-                'bgRepeat': 'bg-repeat',
-                'bgPosition': 'bg-position',
-            };
-            let mainClass = typeSuffix;
-            $.each(this.action.settings, function (slug, setting) {
-                if (Object.keys(mapper).indexOf(slug) < 0) {
-                    return;
-                }
-
-                if (!setting) {
-                    return;
-                }
-
-                mainClass = mainClass + ' ' + mapper[slug] + '-' + setting;
-            });
-
-            if (this.genericMode == 'edit') {
-                if (this.action.type == 'action') {
-                    mainClass = mainClass + ' pb-action';
-                }
-                if (this.action.active) {
-                    mainClass = mainClass + ' ' + 'pb-active-action';
-                }
-            }
-
-            return mainClass;
-        },
-        actionStyle: function () {
-            if (!this.action) {
-                return;
-            }
-            let mapper = {
-                'bgColor': 'background-color',
-                'bgAttachment': 'background-attachment',
-                'bgImage': 'background-image',
-                'margin': 'margin', // @deprecated
-                'padding': 'padding', // @deprecated
-                'style': 'style',
-            };
-
-            let styles = [];
-            $.each(mapper, function (slug, attr) {
-                if (Object.keys(mapper).indexOf(slug) < 0) {
-                    return;
-                }
-
-                let setting = this.action.settings[slug];
-
-                if (!setting) {
-                    return;
-                }
-
-                let value;
-                if (slug == 'style') {
-                    value = setting;
-                } else if (slug == 'bgImage') {
-                    value = attr + ': url(\'' + this.cdn(setting) + '\')';
-                } else {
-                    value = attr + ': ' + setting;
-                }
-                styles.push(value);
-            }.bind(this));
-
-            return styles.join('; ');
         }
     }
 };

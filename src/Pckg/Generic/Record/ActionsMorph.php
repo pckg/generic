@@ -553,12 +553,13 @@ class ActionsMorph extends Record
     {
         $slots = config('pckg.generic.actions.' . $this->action->slug . '.slots', []);
         $content = $this->content ? $this->content->jsonSerialize() : null;
+        $type = $this->overloadType();
 
         $data = [
             'id'        => $this->id,
             'title'     => $this->action->title,
             'morph'     => $this->morph_id,
-            'type'      => $this->overloadType(),
+            'type'      => $type,
             'slug'      => $this->action->slug,
             'parent_id' => $this->parent_id,
             'class'     => $this->action->class,
@@ -571,6 +572,7 @@ class ActionsMorph extends Record
             'focus'     => false,
             'active'    => false,
             'slots'     => $slots,
+            'component' => 'pckg-' . $type,
         ];
 
         return $data;

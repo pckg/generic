@@ -1,17 +1,17 @@
 <TEMPLATE-IS-IN-SCRIPT>
-    <div :id="id" :class="actionClass" :style="actionStyle">
-        <slot name="body">
-            <pckg-action-bg :action="action"></pckg-action-bg>
-            <frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>
-            <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
-        </slot>
+    <div :id="'action-' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)"
+         @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)"
+         @mouseleave="componentLeave($event)">
+        <pckg-action-bg :action="action"></pckg-action-bg>
+        <frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>
+        <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
     </div>
 </TEMPLATE-IS-IN-SCRIPT>
 
 <script>
     export default {
         name: 'pckg-action',
-        mixins: [pckgElement],
+        mixins: [pckgElement, pckgSmartComponent],
         data: function () {
             let d = pckgElement.data ? pckgElement.data.call(this) : {};
 
@@ -42,20 +42,23 @@
             tpl: {
                 immediate: true,
                 handler: function (newVal, oldVal) {
-                    if (!this.action.build) {
+                    let build = this.action.build || '';
+                    if (!build) {
                         console.log('No action.build.')
                     }
                     let res;
-                    let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)" @mouseleave="componentLeave($event)">'
-                        + '<pckg-action-bg :action="action"></pckg-action-bg>'
-                        + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
-                        + (this.action.build || '')
-                        + '</div>';
+                    if (true || build.indexOf('slot="') == -1) {
+                        build = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)" @mouseleave="componentLeave($event)">'
+                            + '<pckg-action-bg :action="action"></pckg-action-bg>'
+                            + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
+                            + build
+                            + '</div>';
+                    }
                     try {
-                        res = Vue.compile(b);
+                        res = Vue.compile(build);
                     } catch (e) {
-                        console.log(this.action.build);
-                        console.log('error building template', b);
+                        console.log(build);
+                        console.log('error building template', build);
                         res = Vue.compile('<p>Error building template</p>');
                     }
 
