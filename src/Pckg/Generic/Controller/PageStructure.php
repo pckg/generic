@@ -1,10 +1,12 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Pckg\Concept\Context;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Framework\Request;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Contents;
@@ -226,6 +228,7 @@ class PageStructure
 
     public function postAddActionsMorphAction()
     {
+        dd('test?');
         /**
          * Collect data.
          */
@@ -495,15 +498,30 @@ class PageStructure
         $parent = $partial->mostParent;
 
         $flatActions = $parent->flattenForGenericResponse(collect());
+
+        /**
+         * We need to fake request as GET request so forms and stuff doesn't get resolved.
+         */
+        $originalContext = context();
+        $tempContext = clone $originalContext;
+        $request = (new Request())->setConstructs([], [], $_SERVER, [], $_COOKIE, []);
+        $originalRequest = request();
+        $originalContext->bind(Context::class, $tempContext);
+        $originalContext->bind(Request::class, $request);
+        $tempContext->bind(Request::class, $request);
+
         $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
             $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action){
+        })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
+
+        $originalContext->bind(Context::class, $originalContext);
+        $originalContext->bind(Request::class, $originalRequest);
 
         return response()->respondWithSuccess([
                                                   'actionsMorph' => $partial,

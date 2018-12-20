@@ -62,14 +62,15 @@ class Generic
 
     public function postGenericAction(Route $route)
     {
-        $this->genericService->readRoute($route);
-
-        $vars = $this->genericService->getVariables();
-
-        return $vars;
+        return null;
     }
 
     public function headGenericAction()
+    {
+        return null;
+    }
+
+    public function optionsGenericAction()
     {
         return null;
     }

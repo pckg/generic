@@ -33,6 +33,16 @@ class Action extends Record
     {
         $deprecations = config('deprecation.actions', []);
         $deprecationsTemplates = config('deprecation.templates', []);
+        $deprecationsMethods = config('deprecation.methods', []);
+
+        /**
+         * Method / class
+         */
+        if (isset($deprecationsMethods[$this->class . '@' . $this->method])) {
+            list($c, $m) = explode('@', $deprecationsMethods[$this->class . '@' . $this->method]);
+            $this->class = $c;
+            $this->method = $m;
+        }
 
         /**
          * We need to properly change template.
@@ -52,13 +62,12 @@ class Action extends Record
          */
         if (isset($deprecations[$this->slug])) {
             message('Deprecating action ' . $this->slug . ' to ' . $deprecations[$this->slug] . ' ' . json_encode($template));
-            measure('1');
             $newAction = (new Actions())->where('slug', $deprecations[$this->slug])->one();
-            measure('2');
             if (!$newAction) {
                 $this->class = config('pckg.generic.actions.' . $deprecations[$this->slug] . '.class');
                 $this->method = config('pckg.generic.actions.' . $deprecations[$this->slug] . '.method');
-                $this->slug = $deprecations[$action->slug];
+                $this->slug = $deprecations[$this->slug];
+                $this->pivot->action = $this;
                 return $this;
 
             } else {

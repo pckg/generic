@@ -1,10 +1,10 @@
 <template>
-    <div v-if="identifier && source == 'youtube'" class="video-background">
+    <div v-if="display == 'background' && identifier && source == 'youtube'" class="video-background">
         <div class="video-foreground">
             <iframe :src="url" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
-    <a v-else-if="identifier && source == 'youtube'" :href="url" class="popup-iframe"></a>
+    <a v-else-if="display == 'popup' && identifier && source == 'youtube'" :href="url" class="popup-iframe"></a>
 </template>
 
 <script>

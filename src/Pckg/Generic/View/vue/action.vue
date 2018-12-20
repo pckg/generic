@@ -42,11 +42,14 @@
             tpl: {
                 immediate: true,
                 handler: function (newVal, oldVal) {
+                    if (!this.action.build) {
+                        console.log('No action.build.')
+                    }
                     let res;
                     let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)" @mouseleave="componentLeave($event)">'
                         + '<pckg-action-bg :action="action"></pckg-action-bg>'
                         + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
-                        + (this.action.build)
+                        + (this.action.build || '')
                         + '</div>';
                     try {
                         res = Vue.compile(b);

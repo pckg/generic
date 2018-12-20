@@ -49,4 +49,16 @@ class Content extends Record
         return $this;
     }
 
+    public function jsonSerialize()
+    {
+        $data = $this->toArray();
+
+        /**
+         * Allow preparsed content.
+         */
+        $data['content'] = $this->content;
+
+        return $data;
+    }
+
 }

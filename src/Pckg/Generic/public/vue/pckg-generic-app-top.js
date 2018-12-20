@@ -102,6 +102,7 @@ var pckgPayment = {
         return {
             formAction: '',
             state: null,
+            error: null,
             handlerData: {},
             formData: {}
         };
@@ -165,6 +166,12 @@ var pckgPayment = {
 
                 this.afterFetch(data);
                 this.state = 'fetched';
+            }.bind(this), function (response) {
+                this.state = 'error';
+                this.error = 'Error initializing payment';
+                if (response.responseJSON && response.responseJSON.message) {
+                    this.error = response.responseJSON.message;
+                }
             }.bind(this));
         },
         afterFetch: function (data) {
