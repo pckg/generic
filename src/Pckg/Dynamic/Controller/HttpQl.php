@@ -15,7 +15,10 @@ class HttpQl
          * Fetch main table set in request.
          */
         $path = get('path', null);
-        $table = (new TableQl($dynamicService))->resolve(get('path'));
+        if (substr($path, 0, 1) == '/') {
+            $path = substr($path, 1);
+        }
+        $table = (new TableQl($dynamicService))->resolve($path);
 
         /**
          * Read Orm data.

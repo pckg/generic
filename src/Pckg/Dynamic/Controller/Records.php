@@ -24,7 +24,6 @@ use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Helper\Maestro;
 use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
-use Pckg\Payment\Entity\Payments;
 use Throwable;
 
 class Records extends Controller
@@ -190,6 +189,8 @@ class Records extends Controller
                  ->setRecordActions($tableRecord->getRecordActions())
                  ->setViews($tableRecord->actions()->keyBy('slug'));
 
+        $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
+
         return $tabelize->__toStringParsedViews()
                 . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
                 ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
@@ -197,22 +198,8 @@ class Records extends Controller
                 '></pckg-maestro-table>';
     }
 
-    public function getViewTableApiApiAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        $viewType = 'full',
-        $returnTabelize = false,
-        Tab $tab = null,
-        Record $record = null,
-        Relation $relation = null,
-        TableView $tableView = null
-    ) {
-        /**
-         * Set table so sub-services can reuse it later.
-         */
-        $dynamicService->setTable($tableRecord);
-
+    protected function loadTwigDirsForEntity($entity, $dynamicService, $tableRecord)
+    {
         if (!$entity) {
             $entity = $tableRecord->createEntity(null, false);
 
@@ -232,6 +219,27 @@ class Records extends Controller
 
             $dynamicService->selectScope($entity);
         }
+
+        return $entity;
+    }
+
+    public function getViewTableApiApiAction(
+        Table $tableRecord,
+        DynamicService $dynamicService,
+        Entity $entity = null,
+        $viewType = 'full',
+        $returnTabelize = false,
+        Tab $tab = null,
+        Record $record = null,
+        Relation $relation = null,
+        TableView $tableView = null
+    ) {
+        /**
+         * Set table so sub-services can reuse it later.
+         */
+        $dynamicService->setTable($tableRecord);
+
+        $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
 
         /**
          * Get all relations for fields with type (select).
