@@ -233,11 +233,7 @@
                 console.log('selected', value, mode, format, currentValue.length, format.length, value.length);
 
                 if (mode == 'day' && currentValue && value && value.length < format.length) {
-                    console.log('merginh hour');
-                    if (value.length == 5) {
-                        value = value + ':00';
-                    }
-                    value = currentValue.substring(0, currentValue.length - value.length) + value;
+                    value = currentValue.split(' ')[0] + ' ' + value;
                 } else if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
                     value = value + '' + currentValue.substring(value.length);
                     console.log('merged with current value', value);
