@@ -1,7 +1,7 @@
 <template>
     <div class="pckg-datetime-picker">
 
-        <input type="text" class="form-control" v-model="myValue" @focus="focused" :placeholder="placeholder"/>
+        <input type="text" class="form-control" v-model="myValue" @focus="focused" :placeholder="placeholder" @change="$emit('input', myValue)" />
 
         <div class="picker" v-if="visible" :class="'mode-' + myMode">
 
@@ -253,7 +253,7 @@
                         this.options.onSelected(this);
                     }
                     return;
-                } else if (this.options.type == 'time' && this.myMode == 'day') {
+                } else if (['time', 'datetime'].indexOf(this.options.type) >= 0 && this.myMode == 'day') {
                     this.close();
                     if (this.options.onSelected) {
                         this.options.onSelected(this);
