@@ -1,6 +1,6 @@
 <template>
     <div class="pckg-datetime">
-        <pckg-datetime-picker v-model="value"></pckg-datetime-picker>
+        <pckg-datetime-picker v-model="myValue" :options="myOptions"></pckg-datetime-picker>
     </div>
 </template>
 
@@ -26,10 +26,14 @@
             options.format = this.format;
 
             return {
-                myOptions: options
+                myOptions: options,
+                myValue: this.value,
             };
         },
         watch: {
+            value: function (newValue) {
+                this.myValue = newValue;
+            },
             options: function (options) {
                 options.format = this.format;
                 this.myOptions = options;

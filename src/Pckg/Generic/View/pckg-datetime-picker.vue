@@ -226,8 +226,24 @@
                 return date.format(this.options.format);
             },
             select: function (value) {
-                console.log('select');
+                let mode = this.myMode;
+                let format = this.options.format;
+                let currentValue = this.myValue;
+
+                console.log('selected', value, mode, format, currentValue.length, format.length, value.length);
+
+                if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
+                    value = value + '' + currentValue.substring(value.length);
+                    console.log('altered value', value);
+                }
                 this.$emit('input', value);
+
+                /**
+                 * Y-m-d H:i:s     null
+                 * Y-m-d           null
+                 * H:i             null
+                 *
+                 */
 
                 if (this.options.type == 'date' && this.myMode == 'month') {
                     this.close();
@@ -401,37 +417,49 @@
                 return weeks;
             },
             hours: function () {
-                let m = this.moment(this.moment().format('YYYY-MM-DD') + ' ' + this.myValue);
+                let m = this.moment(this.myValue);
                 if (!m.isValid()) {
                     console.log('invalid value to calc hours', this.myValue);
+                    m = this.moment(this.moment().format('YYYY-MM-DD') + ' ' + this.myValue);
+                }
+
+                if (!m.isValid()) {
+                    console.log('invalid computed value to calc hours', this.moment().format('YYYY-MM-DD') + ' ' + this.myValue);
                     return [];
                 }
 
-                let startOfDay = m.clone().startOf('day').hour(8);
-                let endOfDay = m.clone().endOf('day').hour(20);
+                console.log('building hour tree');
+                let c = {min: 0, max: 23};
+                let startOfDay = m.clone().startOf('day').hour(c.min);
+                let endOfDay = m.clone().endOf('day').hour(c.max);
 
                 let hours = [];
                 let hour = [];
                 let minute = this.moment(startOfDay);
                 let available = false;
                 while (minute.isBefore(endOfDay)) {
-
-                    let hourAvailable = this.options.checkEnabled && !this.options.checkEnabled(minute, 'time');
-                    hour.push({
+                    let hourAvailable = !this.options.checkEnabled || this.options.checkEnabled(minute, 'time');
+                    let item = {
                         minute: minute.format('mm'),
                         time: minute.format('HH:mm'),
                         disabled: !hourAvailable,
                         transparent: false,
                         active: minute.format('HH:mm') == m.format('HH:mm'),
-                    });
+                    };
+                    hour.push(item);
+                    console.log('while', hourAvailable, item);
                     if (hourAvailable) {
                         available = true;
                     }
 
                     if (hour.length == 12) {
+                        console.log('collected 12');
                         if (available) {
+                            console.log('pushing');
                             hours.push(hour);
                             available = false;
+                        } else {
+                            console.log('skipping, not available');
                         }
                         hour = [];
                     }
@@ -440,9 +468,12 @@
                 }
 
                 if (available && hour.length > 0) {
+                    console.log('pushing last');
                     hours.push(hour);
                     hour = [];
                 }
+
+                console.log('returning', hours);
 
                 return hours;
             }
