@@ -234,6 +234,9 @@
 
                 if (mode == 'day' && currentValue && value && value.length < format.length) {
                     console.log('merginh hour');
+                    if (value.length == 5) {
+                        value = value + ':00';
+                    }
                     value = currentValue.substring(0, currentValue.length - value.length) + value;
                 } else if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
                     value = value + '' + currentValue.substring(value.length);
