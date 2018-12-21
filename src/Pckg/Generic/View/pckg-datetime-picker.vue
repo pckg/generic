@@ -232,9 +232,12 @@
 
                 console.log('selected', value, mode, format, currentValue.length, format.length, value.length);
 
-                if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
+                if (mode == 'day' && currentValue && value && value.length < format.length) {
+                    console.log('merginh hour');
+                    value = currentValue.substring(0, currentValue.length - value.length) + value;
+                } else if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
                     value = value + '' + currentValue.substring(value.length);
-                    console.log('altered value', value);
+                    console.log('merged with current value', value);
                 }
                 this.$emit('input', value);
 
@@ -447,19 +450,14 @@
                         active: minute.format('HH:mm') == m.format('HH:mm'),
                     };
                     hour.push(item);
-                    console.log('while', hourAvailable, item);
                     if (hourAvailable) {
                         available = true;
                     }
 
                     if (hour.length == 12) {
-                        console.log('collected 12');
                         if (available) {
-                            console.log('pushing');
                             hours.push(hour);
                             available = false;
-                        } else {
-                            console.log('skipping, not available');
                         }
                         hour = [];
                     }
@@ -468,7 +466,6 @@
                 }
 
                 if (available && hour.length > 0) {
-                    console.log('pushing last');
                     hours.push(hour);
                     hour = [];
                 }
