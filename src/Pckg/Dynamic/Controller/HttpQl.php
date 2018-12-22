@@ -43,14 +43,26 @@ class HttpQl
             $entity = $table->createEntity(null, false);
         }
 
+        $relations = (new \Pckg\Dynamic\Entity\Relations())->withShowTable()
+                                                           ->withOnField()
+                                                           ->withForeignField()
+                                                           ->where('on_table_id', $table->id)
+                                                           ->where('dynamic_relation_type_id', 1)
+                                                           ->all();
+
+        foreach ($relations as $r) {
+            $r->loadOnEntity($entity, $dynamicService);
+        }
+
         /**
          * Apply filter, sort, group, limit and fields sub-services.
          */
         $dynamicService->setTable($table);
+
         $dynamicService->getFilterService()->applyOnEntity($entity, $ormFilters);
         $dynamicService->getPaginateService()->applyOnEntity($entity, $ormPaginator);
-        $dynamicService->getFilterService()->filterByGet($entity, null, $ormSearch);
         $dynamicService->getSortService()->applyOnEntity($entity, $ormPaginator);
+        $dynamicService->getFilterService()->filterByGet($entity, $relations, $ormSearch);
 
         /**
          * Apply relation
@@ -71,16 +83,6 @@ class HttpQl
          */
         $listableFields = $table->listableFields;
         $listedFields = $table->getFields($listableFields, $dynamicService->getFilterService());
-        $relations = (new \Pckg\Dynamic\Entity\Relations())->withShowTable()
-                                                           ->withOnField()
-                                                           ->withForeignField()
-                                                           ->where('on_table_id', $table->id)
-                                                           ->where('dynamic_relation_type_id', 1)
-                                                           ->all();
-
-        foreach ($relations as $r) {
-            $r->loadOnEntity($entity, $dynamicService);
-        }
 
         /**
          * Transform custom fields (php, geo).

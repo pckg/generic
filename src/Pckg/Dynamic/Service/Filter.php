@@ -253,52 +253,52 @@ class Filter extends AbstractService
         if (!$search) {
             $search = get('search');
         }
-        if ($search) {
-            /**
-             * We will build new part of sql.
-             */
-            $where = new Parenthesis();
-            $where->setGlue('OR');
-
-            if ($relations) {
-                /**
-                 * Filter relations in separate query.
-                 * Add foreign field to optimize things.
-                 */
-                foreach ($relations as $relation) {
-                    /**
-                     * Perform search on relations.
-                     * When searching on orders_bills.orders_user_id
-                     *  - search on orders_users.* -> orders_users.id => orders_bills.orders_user_id
-                     */
-                    $relationEntity = $relation->showTable->createEntity();
-                    $this->filterByGet($relationEntity, null, $search);
-                    $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->all();
-                    if ($data) {
-                        $where->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .
-                                     str_repeat('?,', count($data) - 1) . '?)',
-                                     $data);
-                    }
-                }
-            }
-
-            if ($relations && $selected = get('selected')) {
-                $exploded = explode(',', $selected);
-                $where->push($entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')', $exploded);
-            }
-
-            /**
-             * Get all tables that are currently linked to query.
-             */
-            $tables = $this->getTablesFromEntity($entity);
-
-            /**
-             * Perform LIKE query on all fields listed in tables
-             *
-             * @T00D00 - filter them by filterable fields only
-             */
-            $this->fullSearchTables($entity, $tables, $where, $search);
+        if (!$search) {
+            return;
         }
+
+        /**
+         * We will build new part of sql.
+         */
+        $where = new Parenthesis();
+        $where->setGlue('OR');
+
+        /**
+         * Filter relations in separate query.
+         * Add foreign field to optimize things.
+         */
+        foreach ($relations ?? [] as $relation) {
+            /**
+             * Perform search on relations.
+             * When searching on orders_bills.orders_user_id
+             *  - search on orders_users.* -> orders_users.id => orders_bills.orders_user_id
+             */
+            $relationEntity = $relation->showTable->createEntity();
+            $this->filterByGet($relationEntity, null, $search);
+            $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->all();
+            if ($data) {
+                $where->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .
+                             str_repeat('?,', count($data) - 1) . '?)', $data);
+            }
+        }
+
+        if ($relations && $selected = get('selected')) {
+            $exploded = explode(',', $selected);
+            $where->push($entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')',
+                         $exploded);
+        }
+
+        /**
+         * Get all tables that are currently linked to query.
+         */
+        $tables = $this->getTablesFromEntity($entity);
+
+        /**
+         * Perform LIKE query on all fields listed in tables
+         *
+         * @T00D00 - filter them by filterable fields only
+         */
+        $this->fullSearchTables($entity, $tables, $where, $search);
     }
 
     public function getTypeMethods()
@@ -352,7 +352,8 @@ class Filter extends AbstractService
                 if (!$searchableFields->hasKey($field) || ($field == 'id' && strpos($table, '_i18n'))) {
                     continue;
                 }
-                $where->push($alias . '.' . $field . ' LIKE ?', '%' . $search . '%');
+                $s = $alias . '.' . $field . ' LIKE ?';
+                $where->push($s, '%' . $search . '%');
             }
         }
         if ($where->hasChildren()) {
