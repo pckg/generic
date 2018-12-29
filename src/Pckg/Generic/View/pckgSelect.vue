@@ -302,7 +302,7 @@
                     $event.stopPropagation();
                 }
 
-                if (Array.isArray(this.selectedModel)) {
+                if (this.initialMultiple && Array.isArray(this.selectedModel)) {
                     let i = this.selectedModel.indexOf(key);
                     if (i >= 0) {
                         this.selectedModel.splice(i, 1);

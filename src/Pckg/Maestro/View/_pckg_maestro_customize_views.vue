@@ -1,6 +1,7 @@
 <template>
     <div>
-        <pckg-select :initial-options="savedViews" :initial-multiple="false" @change="selectView" :flat="true"></pckg-select>
+        <pckg-select :initial-options="savedViews" :initial-multiple="false" @change="selectView"
+                     :flat="true"></pckg-select>
         <!--<h5>
             System views
             <pckg-tooltip icon="question-circle"
@@ -37,22 +38,24 @@
         },
         methods: {
             selectView: function (viewId) {
-
+                this.$emit('set-view', this.views[viewId].settings);
             }
         },
         computed: {
             savedViews: function () {
                 return this.views.filter(function (view) {
+                    return true;
                     return view.type == 'saved';
                 }).map(function (view) {
-                    view.title;
+                    return view.title;
                 });
             },
             systemViews: function () {
                 return this.views.filter(function (view) {
+                    return true;
                     return view.type == 'system';
                 }).map(function (view) {
-                    view.title;
+                    return view.title;
                 });
             }
         }

@@ -88,14 +88,14 @@ class Dynamic extends Provider
                         ],
                         '/api/dynamic/table/[table]'                                                  => [
                             'name'      => 'api.dynamic.record.list',
-                            'view'      => 'viewTableApiApi',
+                            'view'      => 'viewTableApi',
                             'resolvers' => [
                                 'table' => TableResolver::class,
                             ],
                         ],
                         '/api/dynamic/table/[table]/relation/[relation]/record/[record]'                                                  => [
                             'name'      => 'api.dynamic.record.relation.list',
-                            'view'      => 'viewTableApiApi',
+                            'view'      => 'viewTableApi',
                             'resolvers' => [
                                 'table'    => TableResolver::class,
                                 'relation' => Relation::class,

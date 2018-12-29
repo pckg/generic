@@ -865,7 +865,23 @@ class Tabelize
 
     public function getSavedViews()
     {
-        return (new TableViews())->where('dynamic_table_id', $this->getDynamicTable()->id)->all();
+        $savedViews = (new TableViews())->where('dynamic_table_id', $this->getDynamicTable()->id)->all()->map(function(
+            TableView $tableView
+        ) {
+            return [
+                'id' => $id,
+                'type' => 'saved',
+                'title' => $tableView->title,
+                'settings' => json_decode($tableView->settings, true),
+            ];
+        });
+
+        $entity = $this->getEntity();
+        if (method_exists($entity, 'getSavedViews')) {
+            $entity->getSavedViews()->copyTo($savedViews);
+        }
+
+        return $savedViews->all();
     }
 
     public function getDynamicTable()

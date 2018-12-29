@@ -157,7 +157,7 @@ class Records extends Controller
         TableView $tableView = null
     )
     {
-        return $this->getViewTableApiApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab, $dynamicRecord, $dynamicRelation, $tableView);
+        return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab, $dynamicRecord, $dynamicRelation, $tableView);
         return [
             'records' => [],
         ];
@@ -223,7 +223,7 @@ class Records extends Controller
         return $entity;
     }
 
-    public function getViewTableApiApiAction(
+    public function getViewTableApiAction(
         Table $tableRecord,
         DynamicService $dynamicService,
         Entity $entity = null,
@@ -321,198 +321,13 @@ class Records extends Controller
                     'columns' => $columns,
                     'filters' => $filters,
                 ],
+                'views'     => $tabelize->getSavedViews(),
             ];
         };
 
-        $this->response()->sendCacheHeaders(60 * 100);
-        return cache(Records::class . '.getViewTableApiApiAction.' . $tableRecord->id . '.' . $viewType . ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''), $executor,
-                     'app', 60 * 100);
-    }
-
-    /**
-     * List table records.
-     *
-     * @param Table  $tableRecord
-     * @param Entity $entity
-     *
-     * @return $this|Tabelize
-     */
-    public function getViewTableApiAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        Relation $relation = null,
-        $viewType = 'full',
-        $returnTabelize = false,
-        Tab $tab = null,
-        Record $record = null,
-        TableView $tableView = null
-    ) {
-        if (!$entity) {
-            if ($relation) {
-                $tableId = $relation->over_table_id ?? $relation->show_table_id;
-                if ($relation->over_table_id) {
-                    $entity = $relation->overTable->createEntity();
-                } else {
-                    $entity = $relation->showTable->createEntity();
-                }
-
-                // $dynamicService = Reflect::create(DynamicService::class);
-                $relation->applyRecordFilterOnEntity($record, $entity);
-            }
-
-            if (!$entity) {
-                $entity = $tableRecord->createEntity(null, false);
-            }
-
-            $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) .
-                path('ds') . 'View' . path('ds');
-            Twig::addDir($dir);
-            Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
-            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
-        }
-
-        /**
-         * Apply entity extension.
-         */
-        if ($viewType != 'related') {
-            $dynamicService->applyOnEntity($entity);
-        } else {
-            /**
-             * Dont activate filters, group bys etc. in tabs.
-             */
-            $dynamicService->getSortService()->applyOnEntity($entity);
-            $dynamicService->getPaginateService()->applyOnEntity($entity);
-        }
-
-        /**
-         * Join extensions.
-         */
-        $dynamicService->selectScope($entity);
-
-        /**
-         * Get all relations for fields with type (select).
-         */
-        $listableFields = $tableRecord->listableFields;
-        $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
-        $relations = (new Relations())->withShowTable()
-                                      ->withOnField()
-                                      ->withForeignField()
-                                      ->where('on_table_id', $tableRecord->id)
-                                      ->where('dynamic_relation_type_id', 1)
-                                      ->all();
-
-        foreach ($relations as $r) {
-            $r->loadOnEntity($entity, $dynamicService);
-        }
-
-        /**
-         * Get all relations for fields with type has many
-         */
-        /*$listableFields = $tableRecord->listableFields;
-        $relations = (new Relations())->withShowTable()
-                                      ->withOnField()
-                                      ->where('on_table_id', $tableRecord->id)
-                                      ->where('dynamic_relation_type_id', 2)
-                                      ->all();
-
-        foreach ($relations as $relation) {
-            $relation->loadOnEntity($entity, $dynamicService);
-        }*/
-
-        /**
-         * Filter records by $_GET['search']
-         */
-        $dynamicService->getFilterService()->filterByGet($entity, $relations);
-        $fieldTransformations = $dynamicService->getFieldsTransformations($entity, $listableFields);
-
-        /**
-         * Also, try optimizing php fields. ;-)
-         */
-        $dynamicService->optimizeSelectedFields($entity, $listedFields);
-
-        /**
-         * @T00D00
-         *  - find out joins / scopes / with for field type = php and mysql
-         */
-
-        $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        if ($groups) {
-            $entity->addCount();
-            $listedFields->push(['field' => 'count', 'title' => 'Count', 'type' => 'text']);
-
-            if ($tableRecord->id == 26) {
-                $entity->addSelect(['sumPrice' => 'SUM(orders_bills.price)', 'sumPayed' => 'SUM(orders_bills.payed)']);
-                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
-                $listedFields->push(['field' => 'sumPayed', 'title' => 'Sum payed', 'type' => 'decimal']);
-            } elseif ($tableRecord->id == 76) {
-                $entity->addSelect(['sumPrice' => 'SUM(payments.price)']);
-                $listedFields->push(['field' => 'sumPrice', 'title' => 'Sum price', 'type' => 'decimal']);
-            }
-        }
-
-        if (!$entity->getQuery()->getGroupBy()) {
-            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
-        }
-
-        /**
-         * Allow extensions.
-         */
-        $fieldTransformations = collect($fieldTransformations);
-        trigger(get_class($entity) . '.applyOnEntity',
-                [$entity, 'listableFields' => $listableFields, 'fieldTransformations' => $fieldTransformations]);
-        $fieldTransformations = $fieldTransformations->all();
-
-        /**
-         * Temp test.
-         */
-        try {
-            $records = $entity->count()->all();
-            $total = $records->total();
-        } catch (Throwable $e) {
-            throwLogOrContinue($e);
-            $records = new Collection();
-            $total = 0;
-        }
-
-        $tabelize = $this->tabelize()
-                         ->setTable($tableRecord)
-                         ->setTitle($tableRecord->getListTitle())
-                         ->setEntity($entity)
-                         ->setRecords($records)
-                         ->setFields($listedFields)
-                         ->setPerPage(get('perPage', 50))
-                         ->setPage(1)
-                         ->setTotal($total)
-                         ->setEntityActions($tableRecord->getEntityActions())
-                         ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews($tableRecord->actions()->keyBy('slug'))
-                         ->setFieldTransformations($fieldTransformations)
-                         ->setDynamicRecord($record)
-                         ->setDynamicRelation($relation)
-                         ->setViewData([
-                                           'view' => $dynamicService->getView(),
-                                       ])
-                         ->setTableView($tableView);
-
-        $records = $tabelize->transformRecords();
-
-        /**
-         * We have to preselect that field.
-         * That should happen in field service?
-         */
-        foreach ($records as &$r) {
-            $r['relation-162-relation-152-field-455'] = 'yeee';
-        }
-
-        return [
-            'records'   => $records,
-            'groups'    => [],
-            'paginator' => [
-                'total' => $total,
-                'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
-            ],
-        ];
+        $this->response()->sendCacheHeaders(1);
+        return cache(Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType . ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''), $executor,
+                     'app', 1);
     }
 
     public function getAddAction(

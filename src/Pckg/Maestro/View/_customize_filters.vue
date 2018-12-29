@@ -64,6 +64,9 @@
             }
         },
         watch: {
+            filters: function (filters) {
+                this.myFilters = filters;
+            },
             columns: function (columns) {
                 this.myFields = columns;
             },

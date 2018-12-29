@@ -68,7 +68,8 @@
 
                                 <div class="pull-right nobr">
                                     Select view
-                                    <pckg-maestro-customize-views :views="views"></pckg-maestro-customize-views>
+                                    <pckg-maestro-customize-views :views="views"
+                                                                  @set-view="setView"></pckg-maestro-customize-views>
                                 </div>
 
                                 <hr/>
@@ -332,38 +333,7 @@
                     url: null
                 },
                 selectedRecord: null,
-                views: [
-                    {
-                        type: 'saved',
-                        title: 'First custom saved view',
-                        data: {},
-                    },
-                    {
-                        type: 'saved',
-                        title: 'Second custom saved view',
-                        data: {},
-                    },
-                    {
-                        type: 'saved',
-                        title: 'Third custom saved view',
-                        data: {},
-                    },
-                    {
-                        type: 'system',
-                        title: 'First custom saved view',
-                        data: {},
-                    },
-                    {
-                        type: 'system',
-                        title: 'Second custom saved view',
-                        data: {},
-                    },
-                    {
-                        type: 'system',
-                        title: 'Third custom saved view',
-                        data: {},
-                    }
-                ],
+                views: [],
 
 
                 _searchTimeout: null,
@@ -416,6 +386,16 @@
             };
         },
         methods: {
+            setView: function (settings) {
+                this.myFilters = [];
+                this.$nextTick(function () {
+                    this.myFilters = settings.filters.length > 0 ? settings.filters : [];
+                    this.myFields = settings.fields.length > 0 ? settings.fields : this.myFields;
+                    this.paginator = settings.paginator;
+                    this.sort = settings.sort;
+                    this.refreshData();
+                }.bind(this));
+            },
             recalculateFreeze: function () {
                 console.log('freeze height');
                 this.$nextTick(function () {
@@ -567,11 +547,13 @@
                      */
                     this.dbFields = data.fields;
                     this.dbRelations = data.relations;
+                    this.views = data.views;
                     this.table = data.table;
                     this.view = data.view;
                     this.actions = data.actions;
                     this.loading = false;
                     this.myFields = data.view.columns;
+
 
                     if (!this.view.live && this.records.length == 0) {
                         this.refreshData();
