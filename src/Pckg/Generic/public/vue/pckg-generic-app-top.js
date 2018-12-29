@@ -88,7 +88,7 @@ var pckgTranslations = {
     }
 };
 
-var pckgPayment = {
+const pckgPayment = {
     mixins: [pckgTranslations],
     props: {
         instalments: {
@@ -96,18 +96,41 @@ var pckgPayment = {
         },
         handler: {
             type: String
+        },
+        orders: {
+            type: Array
         }
     },
     data: function () {
+        let user = this.orders.length > 0 ? this.orders[0].user : {};
+
         return {
             formAction: '',
             state: null,
             error: null,
             handlerData: {},
-            formData: {}
+            formData: {},
+            myOrders: this.orders,
+            myUser: user,
+            mode: this.getMode(user)
         };
     },
+    watch: {
+        orders: {
+            immediately: true,
+            handler: function (newVal) {
+                this.myOrders = newVal;
+                this.myUser = newVal.length > 0 ? newVal.user : {};
+                this.mode = this.getMode(this.myUser);
+            }
+        }
+    },
     methods: {
+        getMode: function (user) {
+            return !user.name || user.name.length == 0 || !user.surname || user.surname.length == 0
+                ? 'saveInfo'
+                : 'pay';
+        },
         handleSuccessResponse: function (data) {
             var t = this;
             if (data.redirect) {
@@ -186,6 +209,9 @@ var pckgPayment = {
             return this.instalments.reduce(function (sum, instalment) {
                 return sum + instalment.price;
             }, 0.0);
+        },
+        order: function () {
+            return this.myOrders[0] || null;
         }
     }
 };
@@ -339,11 +365,11 @@ const pckgSmartComponent = {
         }
     },
     methods: {
-        getSlotActions: function(slot) {
+        getSlotActions: function (slot) {
             if (!Array.isArray(slot)) {
                 slot = [slot];
             }
-            return this.subactions.filter(function(item, i) {
+            return this.subactions.filter(function (item, i) {
                 if (item.template && item.template.slot) {
                     return slot.indexOf(item.template.slot) >= 0;
                 }

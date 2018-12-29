@@ -11,9 +11,9 @@ class Xlsx extends AbstractStrategy
 
     protected $extension = 'xlsx';
 
-    public function prepare()
+    public function save()
     {
-        $file = path('tmp') . sha1(microtime());
+        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
         $spreadsheet = new Spreadsheet();
         $lines = $this->getData();
 
@@ -38,8 +38,7 @@ class Xlsx extends AbstractStrategy
             $i++;
             $j = 1;
             foreach ($line as $val) {
-                $spreadsheet->setActiveSheetIndex(0)
-                            ->setCellValueByColumnAndRow($j, $i, $val);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValueByColumnAndRow($j, $i, $val);
                 $j++;
             }
         }
@@ -63,6 +62,13 @@ class Xlsx extends AbstractStrategy
          */
         $writer = new XlsxWriter($spreadsheet);
         $writer->save($file);
+
+        return $file;
+    }
+
+    public function prepare()
+    {
+        $file = $this->save();
 
         /**
          * Implement strategy.

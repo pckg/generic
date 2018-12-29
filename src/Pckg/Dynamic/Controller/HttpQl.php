@@ -31,6 +31,7 @@ class HttpQl
 
         /**
          * When relation is set we want to display only values for related product.
+         *
          * @T00D00 - solve this on JS level, apply proper filter.
          */
         $entity = null;
@@ -79,6 +80,7 @@ class HttpQl
 
         /**
          * Get all relations for fields with type (select).
+         *
          * @T00D00 - load only required data.
          */
         $listableFields = $table->listableFields;
@@ -148,6 +150,35 @@ class HttpQl
                 'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
             ],
         ];
+    }
+
+    public function searchExportAction(Dynamic $dynamic)
+    {
+        $data = $this->searchIndexAction($dynamic);
+
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 60);
+        set_time_limit(60);
+
+        $exportService = new \Pckg\Dynamic\Service\Export();
+        $strategy = $exportService->useStrategy('csv');
+
+        $strategy->setData(collect($data['records']));
+
+        $strategy->setFileName($name . '-' . date('Ymd-his'));
+
+        $file = $strategy->save();
+
+        return [
+            'file' => '/api/http-ql/download?file=' . substr($file, strrpos($file, '/') + 1),
+        ];
+    }
+
+    public function getDownloadAction()
+    {
+        $file = get('file', null);
+
+        response()->download(path('tmp') . $file, $file);
     }
 
 }

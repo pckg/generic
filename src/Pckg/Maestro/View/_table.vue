@@ -26,7 +26,10 @@
             <div class="sec table-actions">
                 <pckg-maestro-table-actions :table="table" :actions="actions.entity"
                                             @entity-action="entityAction" :relation-id="relationId"
-                                            :record-id="recordId"></pckg-maestro-table-actions>
+                                            :record-id="recordId"
+                                            :columns="myFields"
+                                            :relations="myRelations"
+                                            @export-view="exportView"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -755,13 +758,14 @@
 
                 entity.where(keys.join('.'), value, this.mapComp(comp));
             },
-            refreshData: function (params) {
-                this.loading = true;
-
-                let repositoryHandler = new HttpQLRepository('/api/http-ql');
+            prepareEntity: function (endpoint) {
+                let repositoryHandler = new HttpQLRepository(endpoint || '/api/http-ql');
                 let repository = new Repository(repositoryHandler);
                 let dynamicEntity = new DynamicEntity(repository);
 
+                return dynamicEntity;
+            },
+            applyCustomizeViewToEntity: function (dynamicEntity) {
                 this.applyFields(dynamicEntity);
                 this.applyFilters(dynamicEntity);
                 let query = dynamicEntity.getQuery();
@@ -774,6 +778,22 @@
 
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);
+            },
+            exportView: function () {
+                let dynamicEntity = this.prepareEntity('/api/http-ql/export');
+                this.applyCustomizeViewToEntity(dynamicEntity);
+
+                dynamicEntity.exp(this.table.id, function (data) {
+                    if (data.file) {
+                        http.redirect(data.file);
+                    }
+                });
+            },
+            refreshData: function (params) {
+                this.loading = true;
+
+                let dynamicEntity = this.prepareEntity();
+                this.applyCustomizeViewToEntity(dynamicEntity);
 
                 /**
                  * Fetch data only when data really changed?

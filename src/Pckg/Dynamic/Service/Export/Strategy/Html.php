@@ -9,17 +9,24 @@ class Html extends AbstractStrategy
 
     protected $extension = 'html';
 
+    public function save()
+    {
+        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
+        $content = view('Pckg/Dynamic:export/html', [
+                                                      'lines'   => $this->getData(),
+                                                      'headers' => $this->headers,
+                                                  ])->autoparse();
+        file_put_contents($file, $content);
+
+        return $file;
+    }
+
     public function prepare()
     {
-        $this->setFileContent(
-            view(
-                'Pckg/Dynamic:export/html',
-                [
-                    'lines'   => $this->getData(),
-                    'headers' => $this->headers,
-                ]
-            )->autoparse()
-        );
+        $file = $this->save();
+
+        $this->setFileContent(file_get_contents($file));
+        unlink($file);
     }
 
 }

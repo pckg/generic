@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
-use Pckg\Dynamic\Service\Export\Strategy;
 
 class Csv extends AbstractStrategy
 {
@@ -10,9 +9,9 @@ class Csv extends AbstractStrategy
 
     protected $extension = 'csv';
 
-    public function prepare()
+    public function save()
     {
-        $file = path('tmp') . sha1(microtime());
+        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
 
         $fp = fopen($file, 'w');
 
@@ -31,6 +30,13 @@ class Csv extends AbstractStrategy
         }
 
         fclose($fp);
+
+        return $file;
+    }
+
+    public function prepare()
+    {
+        $file = $this->save();
         $this->setFileContent(file_get_contents($file));
         unlink($file);
     }
