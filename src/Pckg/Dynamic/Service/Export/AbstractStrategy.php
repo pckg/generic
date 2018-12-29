@@ -22,6 +22,11 @@ abstract class AbstractStrategy implements Strategy
 
     protected $headers = [];
 
+    public function getFilename()
+    {
+        return $this->fileName ?? sha1(microtime()) . '.' . $this->extension;
+    }
+
     public function getExtension()
     {
         return $this->extension;

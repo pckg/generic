@@ -5,6 +5,7 @@
         <pckg-select v-model="selected"
                      :initial-options="options"
                      :initial-multiple="false"
+                     :with-empty="' - - select field or relation - - '"
                      class="field-relation inline-block" key="field-relation"></pckg-select>
 
         <template v-if="selection">

@@ -11,7 +11,7 @@ class Csv extends AbstractStrategy
 
     public function save()
     {
-        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
+        $file = path('tmp') . $this->getFilename();
 
         $fp = fopen($file, 'w');
 
@@ -19,7 +19,7 @@ class Csv extends AbstractStrategy
          * Add header.
          */
         if ($this->getData()) {
-            fputcsv($fp, array_keys($this->getData()[0]));
+            fputcsv($fp, array_keys($this->getData()[2]));
         }
 
         /**

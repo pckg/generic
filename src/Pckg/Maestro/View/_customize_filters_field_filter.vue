@@ -2,7 +2,8 @@
     <div class="pckg-maestro-customize-filters-field-filter">
 
         <pckg-select v-model="myFilter.comp" :initial-options="initialOptions"
-                     :initial-multiple="false" key="search" class="inline-block"></pckg-select>
+                     :initial-multiple="false" key="search" class="inline-block"
+                     :with-empty="' - - select operator  - - '"></pckg-select>
 
         <div class="inline-block">
 
@@ -13,7 +14,8 @@
                 <input type="number" class="form-control" v-model="myFilter.value"/>
             </template>
             <template v-else-if="fieldType == 'date'">
-                <pckg-datetime-picker v-model="myFilter.value" :options="{format: 'YYYY-MM-DD HH:mm'}"></pckg-datetime-picker>
+                <pckg-datetime-picker v-model="myFilter.value"
+                                      :options="{format: 'YYYY-MM-DD HH:mm'}"></pckg-datetime-picker>
             </template>
             <template v-else-if="fieldType == 'datetime'">
                 <pckg-datetime-picker v-model="myFilter.value" :options="{format: 'YYYY-MM-DD'}"></pckg-datetime-picker>
@@ -25,11 +27,13 @@
                 <input type="checkbox" class="form-control" value="1" v-model="myFilter.value"/>
             </template>
             <template v-else-if="fieldType == 'select'">
-                <pckg-select v-model="myFilter.value" key="select-field" :refresh-url="filterUrl" :initial-refresh="true"
+                <pckg-select v-model="myFilter.value" key="select-field" :refresh-url="filterUrl"
+                             :initial-refresh="true"
                              :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
             </template>
             <template v-else-if="fieldType == 'relation'">
-                <pckg-select v-model="myFilter.value" key="select-relation" :refresh-url="filterUrl" :initial-refresh="true"
+                <pckg-select v-model="myFilter.value" key="select-relation" :refresh-url="filterUrl"
+                             :initial-refresh="true"
                              :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
             </template>
             <template v-else>

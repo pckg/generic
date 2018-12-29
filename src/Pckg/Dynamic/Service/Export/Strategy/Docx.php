@@ -13,7 +13,7 @@ class Docx extends AbstractStrategy
 
     public function save()
     {
-        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
+        $file = path('tmp') . $this->getFilename();
         $lines = $this->getData();
 
         $phpWord = new PhpWord();
@@ -22,7 +22,7 @@ class Docx extends AbstractStrategy
         /**
          * Make header
          */
-        $table = $section->addTable(['width' => 100 * 50]);
+        $table = $section->addTable(['width' => 100 * 50]); // width in 1/50 of percent
         $i = 0;
         $j = 0;
         $table->addRow();
@@ -39,6 +39,7 @@ class Docx extends AbstractStrategy
             $j = 0;
             $table->addRow();
             foreach ($line as $val) {
+                $val = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $val);
                 $table->addCell(1750)->addText($val);
                 $j++;
             }

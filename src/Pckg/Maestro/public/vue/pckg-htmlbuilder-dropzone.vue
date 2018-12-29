@@ -2,7 +2,7 @@
     <div class="pckg-htmlbuilder-dropzone" :id="id">
         <div v-if="current" class="display-block">
             <img :src="cdn(current)" class="img-responsive"/>
-            <br />
+            <br/>
         </div>
         <div class="display-block">
             <button v-if="current" type="button" class="btn btn-default" @click.prevent="deleteFile">
@@ -50,6 +50,9 @@
             value: {
                 type: String,
                 default: ''
+            },
+            accept: {
+                default: null
             }
         },
         data: function () {
@@ -105,6 +108,7 @@
                     previewTemplate: this._previewTemplate,
                     clickable: $(this.$el).parent().find('.select-files').get()[0],
                     maxFilesize: 8,
+                    acceptedFiles: this.accept,
                     success: function (file, data) {
                         if (data.success) {
                             this.prev = this.current;
@@ -116,6 +120,16 @@
                         }
 
                         this.$emit('input', data.url);
+                        this.$emit('uploaded', {
+                            url: data.url,
+                            data: data
+                        });
+                    }.bind(this),
+                    error: function (data, response) {
+                        this.$emit('uploaded', {
+                            url: null,
+                            data: data
+                        });
                     }.bind(this)
                 });
             },

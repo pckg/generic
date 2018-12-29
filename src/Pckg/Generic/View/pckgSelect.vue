@@ -150,7 +150,7 @@
                 });
 
                 if (titles.length == 0) {
-                    return ' - - select value - - ';
+                    return this.withEmpty || ' - - select value - - ';
                 }
 
                 let joined = titles.join(', ');

@@ -348,12 +348,22 @@ class Filter extends AbstractService
                 continue;
             }
             $searchableFields = $tableRecord->searchableFields->keyBy('field');
+            $match = [];
             foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
                 if (!$searchableFields->hasKey($field) || ($field == 'id' && strpos($table, '_i18n'))) {
                     continue;
                 }
-                $s = $alias . '.' . $field . ' LIKE ?';
-                $where->push($s, '%' . $search . '%');
+                $searchableField = $searchableFields[$field];
+                if ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
+                    $match[] = $alias . '.' . $field;
+                } else {
+                    $s = $alias . '.' . $field . ' LIKE ?';
+                    $where->push($s, '%' . $search . '%');
+                }
+            }
+            if ($match) {
+                $s = 'MATCH(' . implode(',', $match) . ') AGAINST(?)';
+                $where->push($s, $search);
             }
         }
         if ($where->hasChildren()) {

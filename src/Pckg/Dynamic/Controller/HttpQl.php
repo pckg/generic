@@ -2,6 +2,7 @@
 
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
+use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Resolver\TableQl;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Maestro\Service\Tabelize;
@@ -9,8 +10,10 @@ use Pckg\Maestro\Service\Tabelize;
 class HttpQl
 {
 
-    public function searchIndexAction(Dynamic $dynamicService)
-    {
+    /**
+     * @return Table
+     */
+    protected function fetchTable(Dynamic $dynamicService) {
         /**
          * Fetch main table set in request.
          */
@@ -18,8 +21,15 @@ class HttpQl
         if (substr($path, 0, 1) == '/') {
             $path = substr($path, 1);
         }
-        $table = (new TableQl($dynamicService))->resolve($path);
 
+        return (new TableQl($dynamicService))->resolve($path);
+    }
+
+    public function searchIndexAction(Dynamic $dynamicService, Tabelize $tabelize, Table $table = null)
+    {
+        if (!$table) {
+            $table = $this->fetchTable($dynamicService);
+        }
         /**
          * Read Orm data.
          */
@@ -112,8 +122,6 @@ class HttpQl
         /**
          * Prepare tabelize.
          */
-        $tabelize = new Tabelize();
-
         $tabelize->setTable($table);
 
         /**
@@ -152,20 +160,23 @@ class HttpQl
         ];
     }
 
-    public function searchExportAction(Dynamic $dynamic)
+    public function searchExportAction(Dynamic $dynamic, Tabelize $tabelize)
     {
-        $data = $this->searchIndexAction($dynamic);
+        $table = $this->fetchTable($dynamic);
+        $tabelize->setDataOnly();
+        $data = $this->searchIndexAction($dynamic, $tabelize, $table);
 
         ini_set('memory_limit', '512M');
         ini_set('max_execution_time', 60);
         set_time_limit(60);
 
         $exportService = new \Pckg\Dynamic\Service\Export();
-        $strategy = $exportService->useStrategy('csv');
+        $strategy = $exportService->useStrategy(get('format', 'csv'));
 
         $strategy->setData(collect($data['records']));
 
-        $strategy->setFileName($name . '-' . date('Ymd-his'));
+        $strategy->setFileName(($table->name ?? $table->table) . '-' . date('Ymd-his') . '-' . substr(sha1(microtime()), 0, 8) . '.' .
+                               $strategy->getExtension());
 
         $file = $strategy->save();
 

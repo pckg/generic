@@ -327,7 +327,7 @@ class Tabelize
      *
      * @return mixed|null
      */
-    public function getRecordValue($field, $originalRecord, &$enrichedValue)
+    public function getRecordValue($field, $originalRecord, &$enrichedValue, &$enriched = false)
     {
         try {
             if (is_string($field)) {
@@ -350,6 +350,7 @@ class Tabelize
              * but what we need to print is stored in select_relation_user_group_id
              */
             if ($originalRecord->relationExists('relation_' . $field->field)) {
+                $enriched = true;
                 /**
                  * Select type.
                  */
@@ -368,7 +369,12 @@ class Tabelize
                         ? $eval
                         : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' .
                             $eval . '</a>');
+                } else {
+                    $enrichedValue = null;
                 }
+            } else {
+                $enriched = true;
+                $enrichedValue = $originalRecord->{$field->field};
             }
 
             return $originalRecord->{$field->field};
@@ -603,9 +609,9 @@ class Tabelize
                     ? $field : (is_object($field) ? $field->field
                         : $field['field']));
             $enriched = null;
-            $transformed[$realKey] = $this->getRecordValue($field, $record, $enriched);
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
             if ($enriched) {
-                $transformed['*' . $realKey] = $enriched;
+                $transformed['*' . $realKey] = $enrichedValue;
             }
         }
 
@@ -615,9 +621,9 @@ class Tabelize
         foreach ($this->getFieldTransformations() as $key => $field) {
             $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
             $enriched = null;
-            $transformed[$realKey] = $this->getRecordValue($field, $record, $enriched);
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
             if ($enriched) {
-                $transformed['*' . $realKey] = $enriched;
+                $transformed['*' . $realKey] = $enrichedValue;
             }
         }
 

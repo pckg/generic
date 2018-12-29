@@ -28,7 +28,7 @@
                                             @entity-action="entityAction" :relation-id="relationId"
                                             :record-id="recordId"
                                             :columns="myFields"
-                                            :relations="myRelations"
+                                            :relations="dbRelations"
                                             @export-view="exportView"></pckg-maestro-table-actions>
 
             </div>
@@ -36,7 +36,7 @@
 
         <div class="clearfix"></div>
 
-        <pckg-loader :loading="loading" class="fixed-centered"></pckg-loader>
+        <pckg-loader :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
         <div class="pckg-maestro-table">
@@ -322,7 +322,7 @@
         data: function () {
             return {
                 refreshDataRequestNum: 0,
-                myFilters: [],
+                myFilters: [{}],
                 myFields: [],
                 paginator: {
                     perPage: 50,
@@ -779,14 +779,17 @@
                 dynamicEntity.limit(this.paginator.perPage)
                     .page(this.paginator.page);
             },
-            exportView: function () {
+            exportView: function (data) {
                 let dynamicEntity = this.prepareEntity('/api/http-ql/export');
                 this.applyCustomizeViewToEntity(dynamicEntity);
 
-                dynamicEntity.exp(this.table.id, function (data) {
+                dynamicEntity.exp(this.table.id + '&format=' + data.format, function (data) {
+                    $dispatcher.$emit('dynamic-table:exported');
                     if (data.file) {
                         http.redirect(data.file);
                     }
+                }, function () {
+                    $dispatcher.$emit('notification:error', 'Error making export');
                 });
             },
             refreshData: function (params) {

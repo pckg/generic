@@ -11,10 +11,11 @@ class Html extends AbstractStrategy
 
     public function save()
     {
-        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
+        $file = path('tmp') . $this->getFilename();
+        $data = $this->getData();
         $content = view('Pckg/Dynamic:export/html', [
-                                                      'lines'   => $this->getData(),
-                                                      'headers' => $this->headers,
+                                                      'lines'   => $data,
+                                                      'headers' => array_keys($data),
                                                   ])->autoparse();
         file_put_contents($file, $content);
 

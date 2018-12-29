@@ -234,83 +234,99 @@ class Records extends Controller
         Relation $relation = null,
         TableView $tableView = null
     ) {
-        /**
-         * Set table so sub-services can reuse it later.
-         */
-        $dynamicService->setTable($tableRecord);
+        $executor = function() use (
+            $tableRecord,
+            $dynamicService,
+            $entity,
+            $viewType,
+            $returnTabelize,
+            $tab,
+            $record,
+            $relation,
+            $tableView
+        ) {
+            /**
+             * Set table so sub-services can reuse it later.
+             */
+            $dynamicService->setTable($tableRecord);
 
-        $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
+            $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
 
-        /**
-         * Get all relations for fields with type (select).
-         */
-        $listableFields = $tableRecord->listableFields;
-        $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
+            /**
+             * Get all relations for fields with type (select).
+             */
+            $listableFields = $tableRecord->listableFields;
+            $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
 
-        /**
-         * @T00D00
-         *  - find out joins / scopes / with for field type = php and mysql
-         */
+            /**
+             * @T00D00
+             *  - find out joins / scopes / with for field type = php and mysql
+             */
 
-        $groups = $dynamicService->getGroupService()->getAppliedGroups();
-        $entity->groupBy('`' . $entity->getTable() . '`.`id`');
+            $groups = $dynamicService->getGroupService()->getAppliedGroups();
+            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
 
-        /**
-         * Allow extensions.
-         */
-        trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listedFields, collect()]);
+            /**
+             * Allow extensions.
+             */
+            trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listedFields, collect()]);
 
-        $tabelize = $this->tabelize()
-                         ->setTable($tableRecord)
-                         ->setTitle($tableRecord->getListTitle())
-                         ->setEntity($entity)
-                         ->setRecords(new Collection())
-                         ->setFields($listedFields)
-                         ->setPerPage(get('perPage', 50))
-                         ->setPage(1)
-                         ->setTotal($entity->total())
-                         ->setEntityActions($tableRecord->getEntityActions())
-                         ->setRecordActions($tableRecord->getRecordActions())
-                         ->setViews($tableRecord->actions()->keyBy('slug'))
-                         ->setFieldTransformations([])
-                         ->setDynamicRecord($record)
-                         ->setDynamicRelation($relation)
-                         ->setViewData([
-                                           'view' => $dynamicService->getView(),
-                                       ])
-                         ->setTableView($tableView);
+            $tabelize = $this->tabelize()
+                             ->setTable($tableRecord)
+                             ->setTitle($tableRecord->getListTitle())
+                             ->setEntity($entity)
+                             ->setRecords(new Collection())
+                             ->setFields($listedFields)
+                             ->setPerPage(get('perPage', 50))
+                             ->setPage(1)
+                             ->setTotal($entity->total())
+                             ->setEntityActions($tableRecord->getEntityActions())
+                             ->setRecordActions($tableRecord->getRecordActions())
+                             ->setViews($tableRecord->actions()->keyBy('slug'))
+                             ->setFieldTransformations([])
+                             ->setDynamicRecord($record)
+                             ->setDynamicRelation($relation)
+                             ->setViewData([
+                                               'view' => $dynamicService->getView(),
+                                           ])
+                             ->setTableView($tableView);
 
-        $tabelize->getView()->addData([
-                                          'dynamic'   => $dynamicService,
-                                          'viewType'  => $viewType,
-                                          'searchUrl' => router()->getUri(),
-                                          'tab'       => $tab,
-                                      ]);
+            $tabelize->getView()->addData([
+                                              'dynamic'   => $dynamicService,
+                                              'viewType'  => $viewType,
+                                              'searchUrl' => router()->getUri(),
+                                              'tab'       => $tab,
+                                          ]);
 
-        $columns = $tableRecord->fields->filter(function(Field $field){
-            return $field->visible;
-        })->map(function(Field $field) {
-            $f['field'] = $field->field;
-            $f['freeze'] = false;
-            
-            return $f;
-        })->rekey()->toArray();
+            $columns = $tableRecord->fields->filter(function(Field $field) {
+                return $field->visible;
+            })->map(function(Field $field) {
+                $f['field'] = $field->field;
+                $f['freeze'] = false;
 
-        $filters = [];
+                return $f;
+            })->rekey()->toArray();
 
-        return [
-            'actions'   => [
-                'entity' => $tabelize->getEntityActionsArray(false),
-                'record' => $tabelize->getRecordActionsArray(),
-            ],
-            'table'     => $tableRecord,
-            'fields'    => $tableRecord->fields,
-            'relations' => $tableRecord->relations,
-            'view'      => [
-                'columns' => $columns,
-                'filters' => $filters,
-            ],
-        ];
+            $filters = [];
+
+            return [
+                'actions'   => [
+                    'entity' => $tabelize->getEntityActionsArray(false),
+                    'record' => $tabelize->getRecordActionsArray(),
+                ],
+                'table'     => $tableRecord,
+                'fields'    => $tableRecord->fields,
+                'relations' => $tableRecord->relations,
+                'view'      => [
+                    'columns' => $columns,
+                    'filters' => $filters,
+                ],
+            ];
+        };
+
+        $this->response()->sendCacheHeaders(60 * 100);
+        return cache(Records::class . '.getViewTableApiApiAction.' . $tableRecord->id . '.' . $viewType . ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''), $executor,
+                     'app', 60 * 100);
     }
 
     /**

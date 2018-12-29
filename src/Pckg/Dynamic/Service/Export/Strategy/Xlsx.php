@@ -13,7 +13,7 @@ class Xlsx extends AbstractStrategy
 
     public function save()
     {
-        $file = path('tmp') . sha1(microtime()) . '.' . $this->extension;
+        $file = path('tmp') . $this->getFilename();
         $spreadsheet = new Spreadsheet();
         $lines = $this->getData();
 

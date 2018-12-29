@@ -17,6 +17,7 @@ class Export
         'html' => Html::class,
         'xlsx' => Xlsx::class,
         'docx' => Docx::class,
+        'pdf'  => Strategy\Pdf::class,
     ];
 
     /**

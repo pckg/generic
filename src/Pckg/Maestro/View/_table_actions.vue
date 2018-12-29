@@ -26,7 +26,7 @@
         <pckg-bootstrap-modal :visible="modal == 'export'" @close="modal = null">
             <div slot="body">
                 <p>Select in which format you would like to export current view. Exports with more than 500 will be
-                    processed in background, available for download from notification center and link will be sent to
+                    processed in background, available for download from notification center, and link will be sent to
                     email.</p>
 
                 <div class="form-group">
@@ -37,7 +37,10 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-default" @click.prevent="makeExport">Make export</button>
+                <d-input-button :disabled="exportMode == 'exporting'" :loading="exportMode == 'exporting'"
+                                :text="exportMode == 'exporting' ? 'Exporting' : (exportMode == 'exported' ? 'Exported' : 'Make export')"
+                                :icon="exportMode == 'exported' ? 'fa fa-check clr-success' : (exportMode == 'error' ? 'fa fa-times clr-error' : '')"
+                                @click.native.prevent="makeExport"></d-input-button>
             </div>
         </pckg-bootstrap-modal>
 
@@ -49,10 +52,9 @@
                 <div class="form-group">
                     <label>Available columns</label>
                     <div>
-                        <template v-for="(column, i) in columns">
-                            {{ column.field }}
-                            <template v-if="i + 1 != columns.length">,</template>
-                        </template>
+                        <pckg-tooltip v-for="(column, i) in columns" :key="i + column.field" style="margin-right: 1rem;" tag="span"
+                                      :text="column.field" :visible="true"
+                                      :content="column.title + ' - ' + column.help"></pckg-tooltip>
                     </div>
                 </div>
 
@@ -60,18 +62,40 @@
                     <label>Merge strategy</label>
                     <div>
                         <pckg-select
-                                :initial-options="{skip:'Skip existing records',overwrite:'Overwrite existing records'}"
+                                :initial-options="{import:'Import all (invalid on unique check)',skip:'Skip existing records',overwrite:'Overwrite existing records',existing:'Only overwrite existing'}"
                                 :initial-multiple="false"></pckg-select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>File</label>
-                    <div></div>
+                    <div>
+                        <pckg-htmlbuilder-dropzone :url="'/api/dynamic/import'" :id="'import'"
+                                                   @uploaded="importUploaded" accept="text/csv"></pckg-htmlbuilder-dropzone>
+                    </div>
                     <div class="help">Upload file in .csv or .xlsx format.</div>
                 </div>
 
-                <button type="button" disabled class="btn btn-default" @click.prevent="makeExport">Import file</button>
+                <template v-if="['preparing', 'importing'].indexOf(importMode) >= 0">
+                    <div class="form-group">
+                        <label>Detected columns</label>
+                        <div>id, slug, title, description, price</div>
+                        <div class="help">Columns that were properly detected and will be imported.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Detected rows</label>
+                        <div>1234</div>
+                        <div class="help">Number of all rows in imported document</div>
+                    </div>
+                </template>
+
+                <d-input-button :disabled="['preparing', 'imported', 'error'].indexOf(importMode) < 0"
+                                :loading="importMode == 'importing'"
+                                :text="importMode == 'importing' ? 'Importing' : (importMode == 'imported' ? 'Imported' : 'Make import')"
+                                :icon="importMode == 'imported' ? 'fa fa-check clr-success' : (importMode == 'error' ? 'fa fa-times clr-error' : '')"
+                                @click.native.prevent="makeImport"></d-input-button>
+
             </div>
         </pckg-bootstrap-modal>
 
@@ -110,23 +134,42 @@
                 this.modal = 'export';
             },
             makeExport: function () {
+                this.exportMode = 'exporting';
                 this.$emit('export-view', {
                     format: this.exportFormat
                 });
-            }
+            },
+            importUploaded: function (data) {
+                this.importMode = 'preparing';
+                console.log(data);
+            },
+            makeImport: function () {
+                this.importMode = 'importing';
+                setTimeout(function () {
+                    this.importMode = 'imported';
+                }.bind(this), 1000);
+            },
         },
         data: function () {
             return {
+                exportMode: null,
+                importMode: null,
                 modal: null,
                 exportFormat: 'csv',
                 exportFormats: {
-                    xlsx: '.xlsx - Excel',
                     csv: '.csv - CSV',
-                    pdf: '.pdf - PDF',
+                    xlsx: '.xlsx - Excel',
+                    docx: '.docx - Word',
                     html: '.html - HTML',
+                    pdf: '.pdf - PDF',
                 }
                 //templateRender: null
             };
+        },
+        created: function () {
+            $dispatcher.$on('dynamic-table:exported', function () {
+                this.exportMode = 'exported';
+            }.bind(this));
         },
         entityAction: function (action) {
             this.$emit('entity-action', action);
