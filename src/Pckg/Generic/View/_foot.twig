@@ -22,6 +22,7 @@
 
     Pckg.router = {};
     Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};
+    Pckg.router.vueUrls = {{ _router.getVueRoutes() | json_encode | raw }};
 
     Pckg.translations = {{ _translator.getPublicTranslations() | json_encode | raw }};
 

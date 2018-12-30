@@ -62,7 +62,7 @@ body, body.scope-bg-system {
 
   .container-fluid {
     background: #fff;
-    border-bottom: 1px solid #eee;
+    //border-bottom: 1px solid #eee;
   }
 
   .navbar-nav {
@@ -181,7 +181,7 @@ body, body.scope-bg-system {
   width: 20rem;
   z-index: 97;
   margin-top: 4rem;
-  border-right: 1px solid @border-grey;
+  //border-right: 1px solid @border-grey;
 
   #main-admin-nav {
 
@@ -470,7 +470,10 @@ ul.nav-tabs {
     }
 
     &.active,
-    &:hover {
+    &:hover,
+    & a.active,
+    &:hover a {
+      &,
       > a {
         border: none;
         position: relative;
@@ -580,10 +583,6 @@ ul.nav-tabs {
         color: @clr-success;
         margin-right: 1rem;
       }
-    }
-
-    &.opened {
-
     }
   }
 }

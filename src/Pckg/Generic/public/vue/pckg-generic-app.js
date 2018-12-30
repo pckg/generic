@@ -2,10 +2,6 @@
  * Initialize main VueJS app.
  */
 
-/*var $router = new VueRouter({
- routes: []
- });*/
-
 Pckg.vue.stores.auth = {
     state: {
         user: Pckg.auth.user || {}
@@ -88,6 +84,11 @@ Pckg.vue.stores.template = {
     }
 };
 
+const router = new VueRouter({
+    mode: 'history',
+    routes: Pckg.router.vueUrls || []
+});
+
 const $store = new Vuex.Store({
     state: {
         router: {
@@ -102,6 +103,7 @@ if ($('nav.header').length > 0) {
     new Vue({
         el: 'nav.header',
         $store,
+        router,
         computed: {
             basket: function () {
                 return $store.state.basket;
@@ -113,7 +115,7 @@ if ($('nav.header').length > 0) {
 const $vue = new Vue({
     el: '#vue-app',
     $store,
-    // router: $router,
+    router,
     data: function () {
         return {
             alerts: [],

@@ -6,7 +6,7 @@
             <div class="sec">
                 <h2>
                     <template v-if="table">{{ table.title ? table.title : table.table }}</template>
-                    <span v-if="paginator" class="clr-grey">{{ paginator.filtered }}/{{ paginator.total }}</span>
+                    <span v-if="paginator" class="clr-grey">{{ paginator.total < paginator.perPage ? paginator.total : paginator.perPage }}/{{ paginator.total }}</span>
                 </h2>
             </div>
 

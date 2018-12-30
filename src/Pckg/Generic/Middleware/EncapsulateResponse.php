@@ -31,6 +31,9 @@ class EncapsulateResponse
                 $template = config('pckg.generic.layouts.default', 'Pckg/Generic:frontend');
                 $disable = false;
                 foreach ($tags as $tag) {
+                    if (!is_string($tag)) {
+                        continue;
+                    }
                     if ($tag == EncapsulateResponse::class . '.disable') {
                         $disable = true;
                         break;
