@@ -32,61 +32,6 @@
   padding: 2rem;
 }
 
-ul.vertical-mid-menu {
-  margin: 0 -2.4rem;
-  padding: 0;
-  ul {
-    margin: .333rem 0 1rem 0;
-    padding: 0 1rem;
-  }
-  &, & ul {
-    list-style-type: none;
-  }
-
-  > li {
-    > span {
-      display: block;
-      padding: 0.8rem 2.4rem;
-      margin: 0;
-      //text-transform: uppercase;
-      //font-size: 1.2rem;
-      //color: #777;
-      cursor: pointer;
-      //font-weight: bold;
-    }
-
-    > ul {
-      margin: 0 0 0 .666rem;
-      padding: 0;
-      list-style-type: none;
-
-      li {
-        margin: 0;
-        padding: .2rem 0;
-      }
-      transition: all 333ms ease-in-out;
-      max-height: 0;
-      overflow: hidden;
-    }
-    &.opened {
-      //background: #fafafa;
-      color: @clr-secondary;
-      /*> ul {
-        max-height: fit-content;
-      }
-      > span {
-        border-bottom: 2px solid #ddd;
-        padding: 0 0 .666rem 0;
-        margin: 0 0 .333rem 0;
-      }*/
-    }
-
-    /*& + li {
-      margin-top: 2rem;
-    }*/
-  }
-}
-
 .box {
   padding: 2rem;
   border: 1px solid #ddd;
