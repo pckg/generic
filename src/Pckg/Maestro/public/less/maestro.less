@@ -41,6 +41,59 @@ body, body.scope-bg-system {
   clear: both;
 }
 
+.maestro-sidebar-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 1.2rem;
+  > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    > li {
+      display: block;
+      clear: both;
+      padding: 1rem 0;
+      float: left;
+      width: 100%;
+      > a {
+        line-height: 1.6rem;
+        color: @darkGrayActive;
+        >
+        i {
+          width: 5rem;
+          text-align: center;
+          display: block;
+          float: left;
+        }
+      }
+    }
+  }
+}
+
+.maestro-top,
+.maestro-sidebar {
+  a.logo {
+    display: inline-block;
+    body.collapsed & {
+      display: none;
+    }
+  }
+  a.logo,
+  a.logo-collapsed {
+    margin: 2rem 0 2rem 1.5rem;
+    img {
+      max-height: 2rem;
+    }
+  }
+  a.logo-collapsed {
+    display: none;
+    body.collapsed & {
+      display: inline-block;
+    }
+  }
+}
+
 .maestro-top {
   border: none;
   font-size: 12px;
@@ -49,11 +102,6 @@ body, body.scope-bg-system {
   z-index: 96;
 
   a {
-    &.logo {
-      img {
-        max-height: 24px;
-      }
-    }
 
     &.active {
       font-weight: bold;
@@ -172,7 +220,7 @@ body, body.scope-bg-system {
 .maestro-sidebar {
   background: #fff;
   bottom: 0;
-  top: -2px;
+  top: 0;
   position: absolute;
   float: left;
   padding-left: 0;
@@ -180,8 +228,8 @@ body, body.scope-bg-system {
   transition: all 0.333s ease-in-out;
   width: 20rem;
   z-index: 97;
-  margin-top: 4rem;
-  //border-right: 1px solid @border-grey;
+  //margin-top: 4rem;
+  border-right: 1px solid @border-grey;
 
   #main-admin-nav {
 
