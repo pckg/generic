@@ -184,43 +184,13 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
-        $tabelize = new Tabelize();
-        $tabelize->setEntityActions($tableRecord->getEntityActions())
-                 ->setRecordActions($tableRecord->getRecordActions())
-                 ->setViews($tableRecord->actions()->keyBy('slug'));
+        $stringVues = $tableRecord->getStringVues($entity, $dynamicService);
 
-        $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
-
-        return $tabelize->__toStringParsedViews()
+        return $stringVues
                 . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
                 ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
                 ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
                 '></pckg-maestro-table>';
-    }
-
-    protected function loadTwigDirsForEntity($entity, $dynamicService, $tableRecord)
-    {
-        if (!$entity) {
-            $entity = $tableRecord->createEntity(null, false);
-
-            $partial = implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) . path('ds') .
-                'View' . path('ds');
-            $dir = path('app_src') . $partial;
-            Twig::addDir($dir);
-            if (config('app') != config('app_parent')) {
-                $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
-                Twig::addDir($dir);
-            }
-            /**
-             * This is needed for table actions.
-             */
-            Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
-            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
-
-            $dynamicService->selectScope($entity);
-        }
-
-        return $entity;
     }
 
     public function getViewTableApiAction(
@@ -250,7 +220,7 @@ class Records extends Controller
              */
             $dynamicService->setTable($tableRecord);
 
-            $entity = $this->loadTwigDirsForEntity($entity, $dynamicService, $tableRecord);
+            $entity = $tableRecord->loadTwigDirsForEntity($entity, $dynamicService);
 
             /**
              * Get all relations for fields with type (select).

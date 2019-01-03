@@ -8,6 +8,8 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Filter;
+use Pckg\Framework\View\Twig;
+use Pckg\Maestro\Service\Tabelize;
 
 class Table extends Record
 {
@@ -173,6 +175,43 @@ class Table extends Record
             },
             'en_GB'
         );
+    }
+
+    public function getStringVues($entity, $dynamicService)
+    {
+        $tabelize = new Tabelize();
+        $tabelize->setEntityActions($this->getEntityActions())
+                 ->setRecordActions($this->getRecordActions())
+                 ->setViews($this->actions()->keyBy('slug'));
+
+        $entity = $this->loadTwigDirsForEntity($entity, $dynamicService);
+
+        return $tabelize->__toStringParsedViews();
+    }
+
+    public function loadTwigDirsForEntity($entity, $dynamicService)
+    {
+        if (!$entity) {
+            $entity = $this->createEntity(null, false);
+
+            $partial = implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) . path('ds') .
+                'View' . path('ds');
+            $dir = path('app_src') . $partial;
+            Twig::addDir($dir);
+            if (config('app') != config('app_parent')) {
+                $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
+                Twig::addDir($dir);
+            }
+            /**
+             * This is needed for table actions.
+             */
+            Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
+            Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
+
+            $dynamicService->selectScope($entity);
+        }
+
+        return $entity;
     }
 
 }
