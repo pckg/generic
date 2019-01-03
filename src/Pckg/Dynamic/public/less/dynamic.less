@@ -13,9 +13,13 @@
   bottom: 0;
   background: #fff;
   display: block;
-  left: 5rem;
+  left: 20rem;
   right: 0;
   padding: .5rem;
+  transition: all 333ms ease-in-out;
+  body.collapsed & {
+    left: 5rem;
+  }
 }
 
 a {
@@ -882,7 +886,7 @@ div.form-control {
   }
 
   .header {
-    transition: all .4s ease-in-out;
+    transition: all 333ms ease-in-out;
     white-space: nowrap;
     width: 100%;
     height: auto;

@@ -40,7 +40,7 @@
                     return 'fal fa-circle clr-success';
                 }
 
-                if (['submitted', 'allocated'].indexOf(value) >= 0) {
+                if (['submitted', 'allocated', 'data'].indexOf(value) >= 0) {
                     return 'fal fa-circle clr-info';
                 }
 
