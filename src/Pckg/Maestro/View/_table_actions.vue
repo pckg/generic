@@ -59,15 +59,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Merge strategy</label>
-                    <div>
-                        <pckg-select
-                                :initial-options="{import:'Import all (invalid on unique check)',skip:'Skip existing records',overwrite:'Overwrite existing records',existing:'Only overwrite existing'}"
-                                :initial-multiple="false"></pckg-select>
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <label>File</label>
                     <div>
                         <pckg-htmlbuilder-dropzone :url="'/api/dynamic/import'" :id="'import'"
@@ -77,6 +68,15 @@
                 </div>
 
                 <template v-if="['preparing', 'importing'].indexOf(importMode) >= 0">
+                    <div class="form-group">
+                        <label>Merge strategy</label>
+                        <div>
+                            <pckg-select
+                                    :initial-options="{import:'Import all (invalid on unique check)',skip:'Skip existing records',overwrite:'Overwrite existing records',existing:'Only overwrite existing'}"
+                                    :initial-multiple="false"></pckg-select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Detected columns</label>
                         <div>id, slug, title, description, price</div>
@@ -160,6 +160,7 @@
                 modal: null,
                 exportFormat: 'csv',
                 exportFormats: {
+                    txt: '.txt - TXT',
                     csv: '.csv - CSV',
                     xlsx: '.xlsx - Excel',
                     docx: '.docx - Word',
