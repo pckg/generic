@@ -1,7 +1,7 @@
 <template>
-    <div v-if="myLoading" class="pckg-loader display-block text-center">
+    <span v-if="myLoading" class="pckg-loader text-center" :class="mode">
         <i class="fa fa-spinner-third fa-spin fa-2x"></i>
-    </div>
+    </span>
 </template>
 
 <script>
@@ -9,8 +9,11 @@
         name: 'pckg-loader',
         props: {
             loading: {
-                default: false
+                default: true
             },
+            mode: {
+                default: 'display-block'
+            }
         },
         watch: {
             loading: function (loading) {

@@ -1,8 +1,9 @@
-<script type="text/x-template" id="pckg-generic-routes-importexport">
-</script>
+<template>
+    <div></div>
+</template>
 
 <script type="text/javascript">
-    Vue.component('pckg-generic-routes-importexport', {
+    export default {
         mixins: [pckgDelimiters],
         name: 'pckg-generic-routes-importexport',
         template: '#pckg-generic-routes-importexport',
@@ -14,13 +15,13 @@
         },
         methods: {
             exportRoute: function () {
-                http.getJSON(utils.url('{{ url('pckg.generic.pageStructure.routeExport') }}', {route: this.record.id}), function (data) {
+                http.getJSON(utils.url('@pckg.generic.pageStructure.routeExport', {route: this.record.id}), function (data) {
                     this.structure = JSON.stringify(data.export);
                     $dispatcher.$emit('notification:success', 'Route exported');
                 }.bind(this));
             },
             importRoute: function () {
-                http.post(utils.url('{{ url('pckg.generic.pageStructure.routeImport') }}', {route: this.record.id}), {'export': this.structure}, function (data) {
+                http.post(utils.url('@pckg.generic.pageStructure.routeImport', {route: this.record.id}), {'export': this.structure}, function (data) {
                     $dispatcher.$emit('notification:success', 'Route imported');
                 }.bind(this));
             },
@@ -36,7 +37,7 @@
         beforeDestroy: function () {
             $dispatcher.$off('record:importExport', this.importExport);
         }
-    });
+    };
 </script>
 
 <pckg-generic-routes-importexport></pckg-generic-routes-importexport>

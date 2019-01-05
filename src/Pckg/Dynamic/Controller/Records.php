@@ -184,7 +184,7 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
-        $stringVues = $tableRecord->getStringVues($entity, $dynamicService);
+        $stringVues = '';//$tableRecord->getStringVues($entity, $dynamicService);
 
         return $stringVues
                 . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
@@ -756,17 +756,18 @@ class Records extends Controller
         }
     }
 
-    public function getDeleteAction(
+    public function deleteDeleteAction(
         Record $record,
         Table $table
     ) {
+        dd('test');
         $entity = $table->createEntity();
         $record->delete($entity);
 
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getDeleteTranslationAction(
+    public function deleteDeleteTranslationAction(
         Record $record,
         Table $table,
         Language $language
@@ -777,7 +778,7 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getForceDeleteAction(
+    public function deleteForceDeleteAction(
         Record $record
     ) {
         $table = $this->router()->resolved('table');

@@ -510,7 +510,13 @@ class Tabelize
                                 $cloner = new Cloner();
                                 $string .= $cloner->getListAction($this);
                             } else {
-                                $string .= view('tabelize/listActions/' . $view)->autoparse();
+                                /**
+                                 * View is not needed anymore, it's preloaded with webpack.
+                                 * We just need to add line that calls vue action in HTML.
+                                 */
+                                $component = $listAction->vueComponent;
+                                $string .= '<' . $component . '></' . $component . '>';
+                                // $string .= view('tabelize/listActions/' . $view)->autoparse();
                             }
                         }
                     } else {
@@ -719,28 +725,31 @@ class Tabelize
         $actions = [];
         foreach ($this->getEntityActions() as $action) {
             try {
-            $template = null;
-            if (isset($action->slug) && isset($action->entityTemplate)) {
-                $template = 'tabelize/entityActions/' . $action->entityTemplate;
-            } else {
-                $template = 'tabelize/entityActions/' . $action;
-            }
-
-            if (($normal && in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) ||
-                (!$normal && !in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete']))) {
-                $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
-                $parsed = trim(view($template, $data)->autoparse());
-
-                if (strpos($parsed, '{') !== 0) {
-                    dd($template, $parsed);
-                    $actions[] = [
-                        'title' => $template,
-                    ];
-                    continue;
+                $template = null;
+                if (isset($action->slug) && isset($action->entityTemplate)) {
+                    $template = 'tabelize/entityActions/' . $action->entityTemplate;
+                } else {
+                    $template = 'tabelize/entityActions/' . $action;
                 }
 
-                $actions[] = json_decode($parsed);
-            }
+                if (($normal && in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) ||
+                    (!$normal && !in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete']))) {
+                    $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
+                    $parsed = trim(view($template, $data)->autoparse());
+
+                    if (strpos($parsed, '{') !== 0) {
+                        dd($template, $parsed);
+                        $actions[] = [
+                            'title' => $template,
+                        ];
+                        continue;
+                    }
+
+                    $a = json_decode($parsed, true);
+                    $a['component'] = $action->vueComponent;
+
+                    $actions[] = $a;
+                }
             } catch (Throwable $e) {
                 if (!prod()) {
                     throw $e;
@@ -767,24 +776,22 @@ class Tabelize
         $actions = [];
         foreach ($this->getRecordActions() as $action) {
             try {
-            $template = 'tabelize/recordActions/' .
-                (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
+                $template = 'tabelize/recordActions/' .
+                    (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
 
-            $parsed = trim(view($template, $data)->autoparse());
+                $parsed = trim(view($template, $data)->autoparse());
 
-            if (strpos($parsed, '{') !== 0) {
-                dd($template, $parsed, $action);
-                $actions[] = [
-                    'title' => $template,
-                ];
-                continue;
-            }
+                if (strpos($parsed, '{') !== 0) {
+                    dd("unknown tabelize template", $template, $parsed, $action);
+                    continue;
+                }
 
-            $action = json_decode($parsed);
-            if (!$action) {
-                dd($parsed);
-            }
-            $actions[] = $action;
+                $a = json_decode($parsed, true);
+                if (!$a) {
+                    dd("no tabelize action", $parsed, $a);
+                }
+                $a['component'] = is_object($action) ? $action->vueComponent : null;
+                $actions[] = $a;
             } catch (Throwable $e) {
                 if (!prod()) {
                     throw $e;
@@ -869,9 +876,9 @@ class Tabelize
             TableView $tableView
         ) {
             return [
-                'id' => $id,
-                'type' => 'saved',
-                'title' => $tableView->title,
+                'id'       => $id,
+                'type'     => 'saved',
+                'title'    => $tableView->title,
                 'settings' => json_decode($tableView->settings, true),
             ];
         });

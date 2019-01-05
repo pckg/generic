@@ -149,6 +149,9 @@
                     this.importMode = 'imported';
                 }.bind(this), 1000);
             },
+            entityAction: function (action) {
+                this.$emit('entity-action', action);
+            },
         },
         data: function () {
             return {
@@ -170,9 +173,6 @@
             $dispatcher.$on('dynamic-table:exported', function () {
                 this.exportMode = 'exported';
             }.bind(this));
-        },
-        entityAction: function (action) {
-            this.$emit('entity-action', action);
         },
         computed: {
             columnsToImport: function () {

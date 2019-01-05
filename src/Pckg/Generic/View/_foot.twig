@@ -12,6 +12,8 @@
         currency: '{{ config('pckg.payment.currency', 'EUR') }}',
         currencySign: '{{ config('pckg.payment.currencySign', '€') }}'
     };
+    Pckg.locale = {};
+    Pckg.locale.languages = {{ _localeManager.getLanguages().keyBy('slug').map('title') | json_encode | raw }};
     Pckg.config.editor = {};
     Pckg.config.editor.variables = {{ config('pckg.dynamic.editor.variables') | json_encode | raw }};
 
@@ -19,6 +21,10 @@
 
     Pckg.config.apis = {};
     Pckg.config.apis.googleConsole = {{ config('external.googleMaps.apiKey', '') | json_encode | raw }};
+
+    Pckg.site = {};
+    Pckg.site.domain = {{ config('domain') | json_encode | raw }};
+    Pckg.site.url = 'https://' + Pckg.site.domain;
 
     Pckg.router = {};
     Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};

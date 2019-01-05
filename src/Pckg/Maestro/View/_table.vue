@@ -25,7 +25,8 @@
 
             <div class="sec table-actions">
                 <pckg-maestro-table-actions :table="table" :actions="actions.entity"
-                                            @entity-action="entityAction" :relation-id="relationId"
+                                            @entity-action="entityAction"
+                                            :relation-id="relationId"
                                             :record-id="recordId"
                                             :columns="myFields"
                                             :relations="dbRelations"
@@ -238,6 +239,9 @@
                 ></pckg-dynamic-paginator>
             </div>
         </div>
+
+        <!-- additional components -->
+        <component :is="component" v-for="component in uniqueActions" :key="component"></component>
 
     </div>
 </template>
@@ -863,6 +867,22 @@
             }
         },
         computed: {
+            uniqueActions: function () {
+                let components = {};
+                $.each(this.actions.entity, function (i, action) {
+                    if (!action.component) {
+                        return;
+                    }
+                    components[action.component] = action.component;
+                });
+                $.each(this.actions.record, function (i, action) {
+                    if (!action.component) {
+                        return;
+                    }
+                    components[action.component] = action.component;
+                });
+                return components;
+            }
             /*tableColumns: function () {
                 let columns = [];
 
