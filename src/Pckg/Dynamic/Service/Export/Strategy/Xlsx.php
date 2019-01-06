@@ -15,6 +15,18 @@ class Xlsx extends AbstractStrategy
     {
         $file = path('tmp') . $this->getFilename();
         $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('Comms')
+                    ->setLastModifiedBy('Comms System')
+                    ->setTitle('Comms Export')
+                    ->setSubject('Comms Export')
+                    ->setDescription('Comms Export')
+                    ->setKeywords('comms export')
+                    ->setCategory('Comms Export');
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
         $lines = $this->getData();
 
         /**

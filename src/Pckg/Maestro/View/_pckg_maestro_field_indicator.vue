@@ -32,7 +32,7 @@
                 }
 
                 let value = this.value;
-                if (['confirmed', 'payed', 'published', 'taken', 'delivered', 'resolving'].indexOf(value) >= 0) {
+                if (['confirmed', 'payed', 'published', 'taken', 'delivered', 'resolving', 'ordered'].indexOf(value) >= 0) {
                     return 'fas fa-circle clr-success';
                 }
 
@@ -44,15 +44,15 @@
                     return 'fal fa-circle clr-info';
                 }
 
-                if (['canceled', 'rejected', 'expired', 'quo'].indexOf(value) >= 0) {
+                if (['canceled', 'rejected', 'quo'].indexOf(value) >= 0) {
                     return 'fal fa-circle clr-error';
                 }
 
-                if (['returned', 'opened', 'high'].indexOf(value) >= 0) {
+                if (['returned', 'opened', 'expired', 'high'].indexOf(value) >= 0) {
                     return 'fas fa-circle clr-error';
                 }
 
-                if (['basket', 'split', 'none', 'created'].indexOf(value) >= 0) {
+                if (['basket', 'split', 'none', 'created', 'archived'].indexOf(value) >= 0) {
                     return 'fal fa-circle';
                 }
 
@@ -61,11 +61,3 @@
         }
     }
 </script>
-<i class="fal fa-circle clr-success"></i> Waiting<br/>
-<i class="fas fa-circle clr-error"></i> Overdue<br/>
-<i class="fal fa-circle"></i> None<br/>
-<i class="fas fa-circle clr-success"></i> Confirmed<br/>
-<i class="fal fa-circle clr-success"></i> Submitted<br/>
-<i class="fal fa-circle"></i> Basket<br/>
-<i class="fal fa-circle clr-error"></i> Canceled<br/>
-<i class="fal fa-circle clr-error"></i> Rejected<br/>

@@ -1,11 +1,11 @@
 <template>
     <div class="pckg-htmlbuilder-dropzone" :id="id">
-        <div v-if="current" class="display-block">
-            <img :src="cdn(current)" class="img-responsive"/>
+        <div v-if="myCurrent" class="display-block">
+            <img :src="cdn(myCurrent)" class="img-responsive"/>
             <br/>
         </div>
         <div class="display-block">
-            <button v-if="current" type="button" class="btn btn-default" @click.prevent="deleteFile">
+            <button v-if="myCurrent" type="button" class="btn btn-default" @click.prevent="deleteFile">
                 <i class="fa fa-trash"></i> Delete file
             </button>
 
@@ -13,7 +13,7 @@
                 <i class="fa fa-upload"></i> Upload file
             </button>
 
-            <button v-if="original && current != original" type="button" class="btn btn-default">
+            <button v-if="original && myCurrent != original" type="button" class="btn btn-default">
                 <i class="fa fa-refresh"></i> Restore original
             </button>
         </div>
@@ -59,10 +59,14 @@
             return {
                 original: null,
                 _dropzone: null,
-                _previewTemplate: null
+                _previewTemplate: null,
+                myCurrent: this.current
             };
         },
         watch: {
+            current: function (current) {
+                this.myCurrent = current;
+            },
             url: function (n, o) {
                 this.initDropzone();
             },
@@ -100,7 +104,7 @@
                 }
 
 
-                this.original = this.current;
+                this.original = this.myCurrent;
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
                     params: this.params,
@@ -111,8 +115,8 @@
                     acceptedFiles: this.accept,
                     success: function (file, data) {
                         if (data.success) {
-                            this.prev = this.current;
-                            this.current = data.url;
+                            this.prev = this.myCurrent;
+                            this.myCurrent = data.url;
                         }
 
                         if (data.message) {
@@ -135,7 +139,7 @@
             },
             deleteFile: function () {
                 http.deleteJSON(this.url, function () {
-                    this.current = '';
+                    this.myCurrent = '';
                 }.bind(this));
             }
         },

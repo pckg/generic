@@ -47,12 +47,14 @@
         <pckg-bootstrap-modal :visible="modal == 'import'" @close="modal = null">
             <div slot="body">
                 <p>Prepare columns in same format as they are available in export. Extra fields will not be
-                    imported. See Comms Knowledge Base for <a href="#">more info about imports</a>.</p>
+                    imported. Pipe (|), comma (,) and semicolon (;) are supported as column delimiters.
+                    See Comms Knowledge Base for <a href="#">more info about imports</a>.</p>
 
                 <div class="form-group">
                     <label>Available columns</label>
                     <div>
-                        <pckg-tooltip v-for="(column, i) in columns" :key="i + column.field" style="margin-right: 1rem;" tag="span"
+                        <pckg-tooltip v-for="(column, i) in columns" :key="i + column.field" style="margin-right: 1rem;"
+                                      tag="span"
                                       :text="column.field" :visible="true"
                                       :content="column.title + ' - ' + column.help"></pckg-tooltip>
                     </div>
@@ -61,10 +63,11 @@
                 <div class="form-group">
                     <label>File</label>
                     <div>
-                        <pckg-htmlbuilder-dropzone :url="'/api/dynamic/import'" :id="'import'"
-                                                   @uploaded="importUploaded" accept="text/csv"></pckg-htmlbuilder-dropzone>
+                        <pckg-htmlbuilder-dropzone :url="uploadFileUrl" id="import"
+                                                   @uploaded="importUploaded"
+                                                   accept="text/csv"></pckg-htmlbuilder-dropzone>
                     </div>
-                    <div class="help">Upload file in .csv or .xlsx format.</div>
+                    <div class="help">Upload file in .csv format.</div>
                 </div>
 
                 <template v-if="['preparing', 'importing'].indexOf(importMode) >= 0">
@@ -78,14 +81,26 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Column delimiter</label>
+                        <div>{{ meta.delimiter }}</div>
+                        <div class="help">Automatically detected column delimiter.</div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Detected columns</label>
-                        <div>id, slug, title, description, price</div>
+                        <div>{{ meta.columns.join(', ') }}</div>
                         <div class="help">Columns that were properly detected and will be imported.</div>
                     </div>
 
                     <div class="form-group">
+                        <label>Row delimiter</label>
+                        <div v-html="meta.newline"></div>
+                        <div class="help">Automatically detected newline delimiter.</div>
+                    </div>
+
+                    <div class="form-group">
                         <label>Detected rows</label>
-                        <div>1234</div>
+                        <div>{{ meta.rows }}</div>
                         <div class="help">Number of all rows in imported document</div>
                     </div>
                 </template>
@@ -141,13 +156,21 @@
             },
             importUploaded: function (data) {
                 this.importMode = 'preparing';
+                this.meta = data.data.meta;
                 console.log(data);
             },
             makeImport: function () {
                 this.importMode = 'importing';
-                setTimeout(function () {
-                    this.importMode = 'imported';
-                }.bind(this), 1000);
+                http.post(utils.url('@api.dynamic.table.importFile', {table: this.table.id}), {
+                    meta: this.meta
+                }, function (data) {
+                    if (data.success) {
+                        this.importMode = 'imported';
+                        return;
+                    }
+
+                    this.importMode = 'error';
+                }.bind(this));
             },
             entityAction: function (action) {
                 this.$emit('entity-action', action);
@@ -166,6 +189,10 @@
                     docx: '.docx - Word',
                     html: '.html - HTML',
                     pdf: '.pdf - PDF',
+                },
+                meta: {
+                    rows: 0,
+                    columns: []
                 }
                 //templateRender: null
             };
@@ -180,6 +207,9 @@
                 return this.columns.filter(function (column) {
                     return ['php', 'mysql'].indexOf(column.type) === -1;
                 });
+            },
+            uploadFileUrl: function () {
+                return utils.url('@api.dynamic.table.uploadFile', {table: this.table.id});
             }
         },
         /*watch: {

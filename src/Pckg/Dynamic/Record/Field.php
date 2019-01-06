@@ -344,4 +344,9 @@ class Field extends DatabaseRecord
         }
     }
 
+    public function isImportable()
+    {
+        return !in_array($this->fieldType->slug, ['mysql', 'php']);
+    }
+
 }

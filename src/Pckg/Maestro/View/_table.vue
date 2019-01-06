@@ -806,10 +806,7 @@
                     } else {
                         this.records = data.records;
                         this.groups = data.groups;
-                        if (this.paginator.total < 1) {
-                            this.setPaginatorTotal(data.paginator.total);
-                        }
-                        this.setPaginatorFiltered(data.paginator.total);
+                        this.setPaginatorTotal(data.paginator.total);
                     }
                     this.loading = false;
                     this.recalculateFreeze();

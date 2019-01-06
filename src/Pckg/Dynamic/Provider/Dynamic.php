@@ -384,6 +384,20 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
+                        '/dynamic/tables/import/[table]/upload-file' => [
+                            'name'      => 'api.dynamic.table.uploadFile',
+                            'view'      => 'uploadFile',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/import/[table]/import-file' => [
+                            'name'      => 'api.dynamic.table.importFile',
+                            'view'      => 'importFile',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
                     ]
                 ) + array_merge_array([
                     'controller' => Relations::class,
