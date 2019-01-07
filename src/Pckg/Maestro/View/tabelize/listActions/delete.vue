@@ -3,21 +3,21 @@
 
         <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal == 'visible' ? modal = null : null"
                               class="danger">
-            <div class="header">
+            <div slot="header">
                 Delete record
             </div>
-            <div class="body">
+            <div slot="body">
                 <p>Do you really want to delete #{{ recordIds }}?</p>
                 <p><a @click.prevent="deleteRecord" href="#" class="btn btn-danger">Yes, delete record</a></p>
             </div>
         </pckg-bootstrap-modal>
 
-        <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal == 'visible' ? modal = null : null"
+        <pckg-bootstrap-modal :visible="modal == 'deleteTranslation'" @close="modal == 'visible' ? modal = null : null"
                               class="danger">
-            <div class="header">
+            <div slot="header">
                 Delete translation
             </div>
-            <div class="body">
+            <div slot="body">
                 <p>Do you really want to translation #{{ recordIds }}?</p>
                 <p><a @click.prevent="deleteRecordTranslation" href="#" class="btn btn-danger">Yes, delete
                     translation</a></p>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-    var pckgDynamicDelete = Vue.component('pckg-dynamic-delete', {
+    export default {
         mixins: [pckgDelimiters],
         name: 'pckg-dynamic-delete',
         template: '#pckg-dynamic-delete',
@@ -94,7 +94,5 @@
             $dispatcher.$off('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
             $dispatcher.$off('entity:checkDeleteRecords', this.checkDeleteRecords);
         }
-    });
+    }
 </script>
-
-<pckg-dynamic-delete></pckg-dynamic-delete>

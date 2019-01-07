@@ -504,11 +504,15 @@ class Tabelize
                         if ($listAction) {
                             $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
                             if ($view === 'delete') {
-                                $delete = new Delete();
-                                $string .= $delete->getListAction($this);
+                                /*$delete = new Delete();
+                                $string .= $delete->getListAction($this);*/
+                                $string .= '<maestro-tabelize-delete></maestro-tabelize-delete>';
                             } elseif ($view === 'clone') {
-                                $cloner = new Cloner();
-                                $string .= $cloner->getListAction($this);
+                                /*$cloner = new Cloner();
+                                $string .= $cloner->getListAction($this);*/
+                            } elseif (!is_object($listAction)) {
+                                // dd($listAction);
+                                $string = '';
                             } else {
                                 /**
                                  * View is not needed anymore, it's preloaded with webpack.
