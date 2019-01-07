@@ -95,7 +95,7 @@ class HttpQl
          * @T00D00 - load only required data.
          */
         $listableFields = $table->listableFields;
-        $listedFields = $table->getFields($listableFields, $dynamicService->getFilterService());
+        $listedFields = $table->getFields($listableFields, $dynamicService->getFilterService(), $ormFields);
 
         /**
          * Transform custom fields (php, geo).

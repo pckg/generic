@@ -159,21 +159,14 @@ class Table extends Record
         return $entity->where('id', $record->id)->oneOrFail();
     }
 
-    public function getFields($listableFields, Filter $filterService)
+    public function getFields($listableFields, Filter $filterService, $fields = [])
     {
         $tableRecord = $this;
 
-        return runInLocale(
-            function() use ($tableRecord, $listableFields, $filterService) {
-                return $listableFields->reduce(
-                    function(Field $field) use ($tableRecord, $filterService) {
-                        $fields = $filterService->getSession()['fields']['visible'] ?? [];
-
-                        return (!$fields && $field->visible) || in_array($field->id, $fields);
-                    }
-                );
-            },
-            'en_GB'
+        return $listableFields->reduce(
+            function(Field $field) use ($tableRecord, $filterService, $fields) {
+                return in_array($field->field, $fields);
+            }
         );
     }
 
