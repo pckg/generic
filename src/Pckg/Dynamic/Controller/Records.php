@@ -760,7 +760,6 @@ class Records extends Controller
         Record $record,
         Table $table
     ) {
-        dd('test');
         $entity = $table->createEntity();
         $record->delete($entity);
 
