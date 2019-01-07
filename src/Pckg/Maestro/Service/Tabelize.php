@@ -510,6 +510,7 @@ class Tabelize
                             } elseif ($view === 'clone') {
                                 /*$cloner = new Cloner();
                                 $string .= $cloner->getListAction($this);*/
+                                $string .= '<maestro-tabelize-clone></maestro-tabelize-clone>';
                             } elseif (!is_object($listAction)) {
                                 // dd($listAction);
                                 $string = '';
