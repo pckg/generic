@@ -184,10 +184,7 @@ class Records extends Controller
         $dynamicRelation = null,
         TableView $tableView = null
     ) {
-        $stringVues = '';//$tableRecord->getStringVues($entity, $dynamicService);
-
-        return $stringVues
-                . '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
+        return '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
                 ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
                 ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
                 '></pckg-maestro-table>';
@@ -527,7 +524,6 @@ class Records extends Controller
 
         $listableFields = $table->listableFields;
         $fieldTransformations = $dynamicService->getFieldsTransformations($tableEntity, $listableFields);
-
         $tabelize = $this->tabelize()
                          ->setTable($table)
                          ->setEntity($tableEntity)

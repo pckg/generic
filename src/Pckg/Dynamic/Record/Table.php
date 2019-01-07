@@ -170,7 +170,7 @@ class Table extends Record
         );
     }
 
-    public function getStringVues($entity, $dynamicService)
+    /*public function getStringVues($entity, $dynamicService)
     {
         $tabelize = new Tabelize();
         $tabelize->setEntityActions($this->getEntityActions())
@@ -180,7 +180,7 @@ class Table extends Record
         $entity = $this->loadTwigDirsForEntity($entity, $dynamicService);
 
         return $tabelize->__toStringParsedViews();
-    }
+    }*/
 
     public function loadTwigDirsForEntity($entity, $dynamicService)
     {

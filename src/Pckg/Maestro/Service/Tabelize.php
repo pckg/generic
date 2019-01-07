@@ -10,8 +10,6 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
-use Pckg\Maestro\Service\Tabelize\Cloner;
-use Pckg\Maestro\Service\Tabelize\Delete;
 use Throwable;
 
 class Tabelize
@@ -467,69 +465,53 @@ class Tabelize
             foreach ($data as $key => $view) {
                 try {
                     /**
-                     * @T00D00 - this should be automatic ...
+                     * Hardcoded string actions.
                      */
                     if (is_string($key) && in_array($key, ['delete', 'clone'])) {
-                        $view = $key;
+                        $string .= '<maestro-tabelize-' . $key . '></maestro-tabelize-' . $key . '>';
+                        continue;
                     }
 
-                    $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
+                    $originalView = $view;
 
-                    $wasObject = false;
-                    $listAction = true;
+                    $custom = false;
                     if (is_object($view)) {
                         if ($view instanceof View\Twig) {
                             $view = $view->autoparse();
-                            $wasObject = true;
+                            $custom = true;
                         } else {
-                            /*if ($view->type == 'record') {
-                                $listAction = false;
-                            }*/
                             $view = $view->template;
                         }
                     }
 
                     if (!is_string($view)) {
-                        $string .= "\n" . '<!-- entity view (string) -->';
                         $string .= $view;
-                    } elseif (!$wasObject && strpos($view, '@')) {
-                        list($class, $method) = explode('@', $view);
-                        if (strpos($method, ':')) {
-                            list($method, $view) = explode(':', $method);
-                        }
-
-                        $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
-                        $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
-                    } elseif (!$wasObject && $view) {
-                        if ($listAction) {
-                            $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                            if ($view === 'delete') {
-                                /*$delete = new Delete();
-                                $string .= $delete->getListAction($this);*/
-                                $string .= '<maestro-tabelize-delete></maestro-tabelize-delete>';
-                            } elseif ($view === 'clone') {
-                                /*$cloner = new Cloner();
-                                $string .= $cloner->getListAction($this);*/
-                                $string .= '<maestro-tabelize-clone></maestro-tabelize-clone>';
-                            } elseif (!is_object($listAction)) {
-                                // dd($listAction);
-                                $string = '';
-                            } else {
-                                /**
-                                 * View is not needed anymore, it's preloaded with webpack.
-                                 * We just need to add line that calls vue action in HTML.
-                                 */
-                                $component = $listAction->vueComponent;
-                                $string .= '<' . $component . '></' . $component . '>';
-                                // $string .= view('tabelize/listActions/' . $view)->autoparse();
-                            }
-                        }
-                    } else {
-                        $string .= "\n" . '<!-- entity view (else) -->';
-                        $string .= $view;
+                        continue;
                     }
 
-                    $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
+                    if (!$custom) {
+                        if (strpos($view, '@')) {
+                            list($class, $method) = explode('@', $view);
+                            if (strpos($method, ':')) {
+                                list($method, $view) = explode(':', $method);
+                            }
+
+                            $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
+                            $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
+                            continue;
+                        }
+
+                        /**
+                         * View is not needed anymore, it's preloaded with webpack.
+                         * We just need to add line that calls vue action in HTML.
+                         */
+                        $component = $originalView->vueComponent;
+                        $string .= '<' . $component . '></' . $component . '>';
+                        continue;
+                    }
+
+                    $string .= $view;
+
                 } catch (Throwable $e) {
                     if (!prod()) {
                         throw $e;
@@ -795,7 +777,9 @@ class Tabelize
                 if (!$a) {
                     dd("no tabelize action", $parsed, $a);
                 }
-                $a['component'] = is_object($action) ? $action->vueComponent : null;
+                if (is_object($action) && !isset($a['component']))  {
+                    $a['component'] = $action->vueComponent;
+                }
                 $actions[] = $a;
             } catch (Throwable $e) {
                 if (!prod()) {

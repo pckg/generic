@@ -1,6 +1,7 @@
 {% set json = {
     event: 'checkDeleteRecord',
     icon: 'trash clr-error',
-    title: 'Delete'
+    title: 'Delete',
+    component: 'maestro-tabelize-delete'
 } %}
 {{ json | json_encode | raw }}

@@ -1,7 +1,7 @@
 <template>
     <div class="pckg-dynamic-delete">
 
-        <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal == 'visible' ? modal = null : null"
+        <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal == 'delete' ? modal = null : null"
                               class="danger">
             <div slot="header">
                 Delete record
@@ -12,7 +12,7 @@
             </div>
         </pckg-bootstrap-modal>
 
-        <pckg-bootstrap-modal :visible="modal == 'deleteTranslation'" @close="modal == 'visible' ? modal = null : null"
+        <pckg-bootstrap-modal :visible="modal == 'deleteTranslation'" @close="modal == 'deleteTranslation' ? modal = null : null"
                               class="danger">
             <div slot="header">
                 Delete translation
