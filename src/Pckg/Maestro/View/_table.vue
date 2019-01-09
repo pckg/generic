@@ -111,6 +111,7 @@
                 <div class="panel panel-default" v-if="records.length > 0">
                     <div style="position: relative;" class="closest">
 
+                        <!-- context menu -->
                         <div class="showContextMenu dropdown-menu" v-if="selectedRecord">
                             <li v-for="action in actions.record"
                                 v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
@@ -230,7 +231,7 @@
             <div class="table-paginator">
                 <pckg-dynamic-paginator :ref="'maestro-paginator'"
                                         :initial-per-page="paginator.perPage"
-                                        :initial-page="computed(paginator.page)"
+                                        :initial-page="paginator.page"
                                         :total="paginator.total"
                                         :url="paginator.url"
                                         :resetpaginatorurl="resetPaginatorUrl"
@@ -338,8 +339,6 @@
                 },
                 selectedRecord: null,
                 views: [],
-
-
                 _searchTimeout: null,
                 _sortTimeout: null,
                 records: this.initialRecords,
@@ -386,7 +385,8 @@
                 scroll: {
                     left: false,
                     right: false
-                }
+                },
+                localBus: new Vue()
             };
         },
         methods: {
@@ -558,21 +558,17 @@
                     this.loading = false;
                     this.myFields = data.view.columns;
 
-
                     if (!this.view.live && this.records.length == 0) {
                         this.refreshData();
                     }
                 }.bind(this));
             },
             recordAction: function (record, action) {
+                this.localBus.$emit('record:' + action, record, record.id, this);
+            },
+            /*recordactionhandler: function (record, action) {
                 $dispatcher.$emit('record:' + action, record, record.id, this);
-            },
-            computed: function (val) {
-                return val;
-            },
-            recordactionhandler: function (record, action) {
-                $dispatcher.$emit('record:' + action, record, record.id, this);
-            },
+            },*/
             entityAction: function (action) {
                 $dispatcher.$emit('entity:' + action, this.getSelectedRecords(), this);
             },

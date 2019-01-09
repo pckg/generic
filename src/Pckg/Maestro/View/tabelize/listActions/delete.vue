@@ -1,7 +1,7 @@
 <template>
     <div class="pckg-dynamic-delete">
 
-        <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal == 'delete' ? modal = null : null"
+        <pckg-bootstrap-modal :visible="modal == 'delete'" @close="modal = modal == 'delete' ? null : modal"
                               class="danger">
             <div slot="header">
                 Delete record
@@ -12,7 +12,8 @@
             </div>
         </pckg-bootstrap-modal>
 
-        <pckg-bootstrap-modal :visible="modal == 'deleteTranslation'" @close="modal == 'deleteTranslation' ? modal = null : null"
+        <pckg-bootstrap-modal :visible="modal == 'deleteTranslation'"
+                              @close="modal == 'deleteTranslation' ? modal = null : null"
                               class="danger">
             <div slot="header">
                 Delete translation
@@ -28,14 +29,17 @@
 
 <script>
     export default {
-        mixins: [pckgDelimiters],
         name: 'pckg-dynamic-delete',
-        template: '#pckg-dynamic-delete',
+        mixins: [dynamicEvents],
         data: function () {
             return {
                 records: [],
                 identifier: null,
-                modal: null
+                modal: null,
+                triggers: {
+                    checkDeleteRecords: ['record:checkDeleteRecord', 'entity:checkDeleteRecords'],
+                    checkDeleteRecordTranslation: 'record:checkDeleteRecordTranslation'
+                }
             };
         },
         methods: {
@@ -83,16 +87,6 @@
                     return item.id;
                 }).join(', ');
             }
-        },
-        created: function () {
-            $dispatcher.$on('record:checkDeleteRecord', this.checkDeleteRecords);
-            $dispatcher.$on('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
-            $dispatcher.$on('entity:checkDeleteRecords', this.checkDeleteRecords);
-        },
-        beforeDestroy: function () {
-            $dispatcher.$off('record:checkDeleteRecord', this.checkDeleteRecords);
-            $dispatcher.$off('record:checkDeleteRecordTranslation', this.checkDeleteRecordTranslation);
-            $dispatcher.$off('entity:checkDeleteRecords', this.checkDeleteRecords);
         }
     }
 </script>

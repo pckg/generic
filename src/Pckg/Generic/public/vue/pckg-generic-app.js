@@ -120,7 +120,8 @@ const $vue = new Vue({
         return {
             alerts: [],
             //$authStore: $authStore,
-            //$basketStore: $basketStore
+            //$basketStore: $basketStore,
+            localBus: new Vue()
         };
     },
     mixins: [pckgDelimiters],

@@ -31,13 +31,17 @@
 <script>
     export default {
         name: 'pckg-dynamic-clone',
+        mixins: [dynamicEvents],
         data: function () {
             return {
                 record: {},
                 clonedUrl: null,
                 relations: [],
                 clones: 1,
-                modal: null
+                modal: null,
+                triggers: {
+                    checkCloneRecord: 'record:checkCloneRecord',
+                }
             };
         },
         methods: {
@@ -53,12 +57,6 @@
                     this.modal = 'cloned';
                 }.bind(this));
             }
-        },
-        created: function () {
-            $dispatcher.$on('record:checkCloneRecord', this.checkCloneRecord);
-        },
-        beforeDestroy: function () {
-            $dispatcher.$off('record:checkCloneRecord', this.checkCloneRecord);
         }
     }
 </script>

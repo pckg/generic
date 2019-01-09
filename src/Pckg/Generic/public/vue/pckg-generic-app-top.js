@@ -12,6 +12,25 @@ var pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
+const dynamicEvents = {
+    created: function () {
+        $.each(this.triggers, function (method, events) {
+            $.each(Array.isArray(events) ? events : [events], function (i, event) {
+                console.log('listening to ' + event + ' with ' + method);
+                this.$parent._data.localBus.$on(event, this[method]);
+            }.bind(this));
+        }.bind(this));
+    },
+    beforeDestroy: function () {
+        $.each(this.triggers, function (method, events) {
+            $.each(Array.isArray(events) ? events : [events], function (i, event) {
+                console.log('un-listening to ' + event + ' with ' + method);
+                this.$parent._data.localBus.$off(event, this[method]);
+            }.bind(this));
+        }.bind(this));
+    },
+};
+
 const pckgPlatformSettings = {
     data: function () {
         return {

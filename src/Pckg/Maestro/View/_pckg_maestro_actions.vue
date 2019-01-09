@@ -45,7 +45,7 @@
         },
         methods: {
             recordAction: function (record, action) {
-                $dispatcher.$emit('record:' + action, record, record.id, this.identifier);
+                this.$parent.localBus.$emit('record:' + action, record, record.id, this.identifier);
             }
         },
         created: function () {
