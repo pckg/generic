@@ -230,8 +230,6 @@
                 let format = this.options.format;
                 let currentValue = this.myValue;
 
-                console.log('selected', value, mode, format, currentValue.length, format.length, value.length);
-
                 if (mode == 'day' && currentValue && value && value.length < format.length) {
                     value = currentValue.split(' ')[0] + ' ' + value;
                 } else if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
