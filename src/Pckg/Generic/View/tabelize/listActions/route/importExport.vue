@@ -4,13 +4,15 @@
 
 <script type="text/javascript">
     export default {
-        mixins: [pckgDelimiters],
+        mixins: [pckgDelimiters, dynamicEvents],
         name: 'pckg-generic-routes-importexport',
-        template: '#pckg-generic-routes-importexport',
         data: function () {
             return {
                 record: {},
-                structure: ''
+                structure: '',
+                triggers: {
+                    importExport: 'record:importExport'
+                }
             };
         },
         methods: {
@@ -30,14 +32,6 @@
 
                 $('#importExportModal').modal('show');
             }
-        },
-        created: function () {
-            $dispatcher.$on('record:importExport', this.importExport);
-        },
-        beforeDestroy: function () {
-            $dispatcher.$off('record:importExport', this.importExport);
         }
-    };
+    }
 </script>
-
-<pckg-generic-routes-importexport></pckg-generic-routes-importexport>
