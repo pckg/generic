@@ -19,6 +19,7 @@
     export default {
         mixins: [pckgTranslations],
         props: {
+            value: null,
             url: null,
             viewUrl: null,
             refreshUrl: null,
@@ -54,20 +55,12 @@
                     });
                     $select.selectpicker('refresh');
                     $select.val(value).change();
-                    this.v = value;
                 }.bind(this));
             }
         },
-        mounted: function () {
-            var $t = this;
-            $(this.$el).parent().find('select').on('change', function () {
-                $t.v = $(this).val();
-            });
-            this.v = $(this.$el).parent().find('select').val() || null;
-        },
         computed: {
             realViewUrl: function () {
-                return utils.url(this.viewUrl, {record: this.v});
+                return utils.url(this.viewUrl, {record: this.value});
             }
         }
     }

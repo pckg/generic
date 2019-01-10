@@ -16,8 +16,6 @@ use Pckg\Htmlbuilder\Builder\Pckg;
 use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
-use Pckg\Htmlbuilder\Handler\Method\Query;
-use Pckg\Locale\Entity\Languages;
 use Pckg\Locale\Record\Language;
 
 class Dynamic extends Bootstrap
@@ -640,39 +638,22 @@ ifrm.document.close();
                 $element->setAttribute('data-options', json_encode($options));
                 $element->setAttribute(':initial-multiple', 'false');
 
-                /*$element->setAttribute(
-                    'data-url',
-                    url(
-                        'dynamic.record.list',
-                        [
-                            'table' => $this->table,
-                        ]
-                    )
-                );*/
+                $element->setAttributes([
+                                            'data-url'         => url('dynamic.record.list', [
+                                                                                               'table' => $field->hasOneSelectRelation->showTable,
+                                                                                           ]),
+                                            'data-refresh-url' => url('dynamic.records.field.selectList' .
+                                                                      ($this->record->id ? '' : '.none'), [
+                                                                          'table'  => $this->table,
+                                                                          'field'  => $field,
+                                                                          'record' => $this->record,
+                                                                      ]),
+                                            'data-view-url'    => url('dynamic.record.view', [
+                                                                                               'table' => $field->hasOneSelectRelation->showTable,
+                                                                                           ]),
+                                        ]);
 
-                $element->setAttribute(
-                    'refresh-url',
-                    url(
-                        'dynamic.records.field.selectList' . ($this->record->id ? '' : '.none'),
-                        [
-                            'table'  => $this->table,
-                            'field'  => $field,
-                            'record' => $this->record,
-                        ]
-                    )
-                );
-
-                /*$element->setAttribute(
-                    'data-view-url',
-                    url(
-                        'dynamic.record.view',
-                        [
-                            'table' => $field->hasOneSelectRelation->showTable,
-                        ]
-                    )
-                );
-
-                $element->addClass('ajax');*/
+                // $element->addClass('ajax');
 
                 return $element;
             } else {
