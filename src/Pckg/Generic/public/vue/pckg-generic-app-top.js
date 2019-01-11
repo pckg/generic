@@ -107,6 +107,64 @@ var pckgTranslations = {
     }
 };
 
+const pckgPaymentConfig = {
+    props: {
+        paymentMethod: {
+            type: Object,
+            required: true
+        },
+        company: {
+            type: Object,
+            required: true
+        }
+    },
+    data: function () {
+        return {
+            myPaymentMethod: this.paymentMethod,
+            myCompany: this.company,
+        };
+    },
+    methods: {
+        saveSettings: function () {
+            http.post('/api/payment-methods/' + this.myPaymentMethod.key + '/companies/' + this.myCompany.id + '/settings', this.collectSettings(), function () {
+                $dispatcher.$emit('notification:success', 'Settings saved');
+            }.bind(this), function (response) {
+                let errors = response.responseJSON.descriptions || [];
+
+                $dispatcher.$emit('notification:error', 'Error saving settings');
+                
+                if (errors.length == 0) {
+                    return;
+                }
+
+                $.each(errors, function (name, message) {
+                    this.errors.remove(name);
+                    this.errors.add({field: name, msg: message});
+                }.bind(this));
+            }.bind(this));
+        },
+        initialFetch: function () {
+            http.getJSON('/api/payment-methods/' + this.myPaymentMethod.key + '/companies/' + this.myCompany.id + '/settings', function (data) {
+                this.myPaymentMethod = data.paymentMethod;
+            }.bind(this));
+        }
+    },
+    watch: {
+        paymentMethod: function (paymentMethod) {
+            this.myPaymentMethod = paymentMethod;
+        },
+        company: function (company) {
+            this.myCompany = company;
+        },
+        myCompany: function () {
+            this.initialFetch();
+        }
+    },
+    created: function () {
+        this.initialFetch();
+    }
+};
+
 const pckgPayment = {
     mixins: [pckgTranslations],
     props: {
