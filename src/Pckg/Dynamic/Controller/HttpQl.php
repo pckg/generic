@@ -25,7 +25,7 @@ class HttpQl
         return (new TableQl($dynamicService))->resolve($path);
     }
 
-    public function searchIndexAction(Dynamic $dynamicService, Tabelize $tabelize, Table $table = null)
+    public function searchIndexAction(Dynamic $dynamicService, Tabelize $tabelize, Table $table = null, $noLimit = false)
     {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
@@ -115,6 +115,13 @@ class HttpQl
         }
 
         /**
+         * No limit for export
+         */
+        if ($noLimit) {
+            $entity->limit(null);
+        }
+
+        /**
          * Fetch page records and total.
          */
         $records = $entity->count()->all();
@@ -165,7 +172,7 @@ class HttpQl
     {
         $table = $this->fetchTable($dynamic);
         $tabelize->setDataOnly();
-        $data = $this->searchIndexAction($dynamic, $tabelize, $table);
+        $data = $this->searchIndexAction($dynamic, $tabelize, $table, true);
 
         ini_set('memory_limit', '512M');
         ini_set('max_execution_time', 60);
