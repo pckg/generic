@@ -355,7 +355,12 @@ class Filter extends AbstractService
                     continue;
                 }
                 if ($searchableField->fieldType->slug == 'datetime') {
-                    $s = 'DATE_FORMAT(' . $alias . '.' . $field . ', \'%Y-%m-%d %H:%i:%s\') LIKE ?';
+                    /**
+                     * Binary option will compare fields byte by byte.
+                     * Should be faster than convering all dates to speciffic format.
+                     */
+                    // $s = 'DATE_FORMAT(' . $alias . '.' . $field . ', \'%Y-%m-%d %H:%i:%s\') LIKE ?';
+                    $s = $alias . '.' . $field . ' LIKE BINARY ?';
                     $where->push($s, '%' . $search . '%');
                 } else if ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
                     $match[] = $alias . '.' . $field;
