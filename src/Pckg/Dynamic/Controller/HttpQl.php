@@ -80,7 +80,7 @@ class HttpQl
          */
         if ($ormMeta && isset($ormMeta['relation'])) {
             $relation = Relation::gets($ormMeta['relation']);
-            $entity->where($relation->onField->field, $ormMeta['record']);
+            $relation->applyRawFilterOnEntity($ormMeta['record'], $entity);
             $relation->applyFilterOnEntity($entity);
         }
 

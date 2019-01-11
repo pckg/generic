@@ -350,11 +350,14 @@ class Filter extends AbstractService
             $searchableFields = $tableRecord->searchableFields->keyBy('field');
             $match = [];
             foreach ($entity->getRepository()->getCache()->getTableFields($table) as $field) {
-                if (!$searchableFields->hasKey($field) || ($field == 'id' && strpos($table, '_i18n'))) {
+                $searchableField = $searchableFields[$field];
+                if (!$searchableField || ($field == 'id' && strpos($table, '_i18n'))) {
                     continue;
                 }
-                $searchableField = $searchableFields[$field];
-                if ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
+                if ($searchableField->fieldType->slug == 'datetime') {
+                    $s = 'DATE_FORMAT(' . $alias . '.' . $field . ', \'%Y-%m-%d %H:%i:%s\') LIKE ?';
+                    $where->push($s, '%' . $search . '%');
+                } else if ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
                     $match[] = $alias . '.' . $field;
                 } else {
                     $s = $alias . '.' . $field . ' LIKE ?';
