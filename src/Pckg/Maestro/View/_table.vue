@@ -808,6 +808,9 @@
                     this.recalculateFreeze();
                     this.$emit('update:records', this.records);
 
+                }.bind(this)).catch(function () {
+                    $dispatcher.$emit('notification:error', 'Error fetching data');
+                    this.loading = false;
                 }.bind(this)).then(function (data) {
                     console.log('got data', data);
 
