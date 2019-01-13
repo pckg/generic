@@ -55,7 +55,9 @@ const pckgPlatformSettings = {
         }
     },
     created: function () {
-        this.initialFetch();
+        if (this.initialFetch) {
+            this.initialFetch();
+        }
     }
 };
 
@@ -91,7 +93,11 @@ var pckgTranslations = {
             var translation = $store.state.translations[key] || null;
 
             if (!translation) {
-                return key;
+                if (Vue.config.debug) {
+                    return key;
+                }
+
+                return key.split('.').reverse()[0];
             }
 
             if (!data) {
@@ -132,7 +138,7 @@ const pckgPaymentConfig = {
                 let errors = response.responseJSON.descriptions || [];
 
                 $dispatcher.$emit('notification:error', 'Error saving settings');
-                
+
                 if (errors.length == 0) {
                     return;
                 }
@@ -405,6 +411,14 @@ var pckgCleanRequest = {
     }
 };
 
+const pckgStaticComponent = {
+    computed: {
+        templateClass: function () {
+            return this.$options.name;
+        }
+    }
+};
+
 const pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout],
     props: {
@@ -437,9 +451,6 @@ const pckgSmartComponent = {
         itemComponent: function () {
             return (this.action ? this.action.template.item : null) || 'derive-item';
         },
-        templateClass: function () {
-            return this.$options.name;
-        }
     },
     methods: {
         getSlotActions: function (slot) {
@@ -880,6 +891,38 @@ var pckgElement = {
         },
         subactions: function () {
             return $store.getters.actionChildren(this.actionId);
+        }
+    }
+};
+
+const pckgCookie = {
+    mixins: [pckgTranslations],
+    data: function () {
+        return {
+            visible: false,
+            templateClass: this.$options.name
+        };
+    },
+    created: function () {
+        if (getCookie('zekom')) {
+            return;
+        }
+
+        this.visible = true;
+    },
+    methods: {
+        accept: function () {
+            this.visible = false;
+            setCookie('zekom', 1);
+            if (this.accepted) {
+                this.accepted();
+            }
+        },
+        cancel: function () {
+            this.visible = false;
+            if (this.canceled) {
+                this.canceled();
+            }
         }
     }
 };

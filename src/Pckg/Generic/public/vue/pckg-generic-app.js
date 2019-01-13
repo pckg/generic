@@ -118,9 +118,6 @@ const $vue = new Vue({
     router,
     data: function () {
         return {
-            alerts: [],
-            //$authStore: $authStore,
-            //$basketStore: $basketStore,
             localBus: new Vue()
         };
     },

@@ -587,8 +587,14 @@ ul.vertical-mid-menu {
         padding: .2rem 0;
       }
       transition: all 333ms ease-in-out;
-      max-height: 0;
+      // max-height: 0;
       overflow: hidden;
+    }
+    &.fixed {
+      > ul {
+        margin-left: 4.5rem;
+        margin-top: .666rem;
+      }
     }
     &.opened {
       //background: #fafafa;
