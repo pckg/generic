@@ -319,6 +319,13 @@ const pckgFormValidator = {
                     invalid();
                 }
             }.bind(this));
+        },
+        hydrateErrorResponse: function(response) {
+            this.errors.clear();
+            $.each(response.responseJSON.descriptions || [], function (name, message) {
+                this.errors.remove(name);
+                this.errors.add({field: name, msg: message});
+            }.bind(this));
         }
     }
 };
