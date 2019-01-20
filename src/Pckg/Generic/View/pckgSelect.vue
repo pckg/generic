@@ -24,7 +24,7 @@
                 </template>
                 {{ selectedTitle }} <span class="caret text-right"></span>
             </a>
-            <ul class="dropdown-menu" :style="maxHeightStyle">
+            <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
                 </li>
@@ -110,6 +110,10 @@
             name: {
                 type: String,
                 default: ''
+            },
+            isDisabled: {
+                type: Boolean,
+                default: false
             }
         },
         computed: {

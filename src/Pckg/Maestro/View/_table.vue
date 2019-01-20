@@ -570,7 +570,8 @@
                 $dispatcher.$emit('record:' + action, record, record.id, this);
             },*/
             entityAction: function (action) {
-                $dispatcher.$emit('entity:' + action, this.getSelectedRecords(), this);
+                this.localBus.$emit('entity:' + action, this.getSelectedRecords(), this);
+                // $dispatcher.$emit('entity:' + action, this.getSelectedRecords(), this);
             },
             getSelectedRecords: function () {
                 var selected = [];
