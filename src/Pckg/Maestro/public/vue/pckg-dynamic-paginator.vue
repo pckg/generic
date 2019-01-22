@@ -1,6 +1,6 @@
 <template>
     <div class="pckg-dynamic-paginator">
-        <div class="pull-left">
+        <div class="pull-left" v-if="total > perPage && perPage > limits[0]">
             <div class="btn-group btn-group-md dropup" style="display: table; margin: 0 auto;">
                 <div class="btn btn-default">
                     <a title="view" href="#">

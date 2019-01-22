@@ -520,7 +520,9 @@ ul.nav-tabs {
     &.active,
     &:hover,
     & a.active,
-    &:hover a {
+    &:hover a,
+    &.active-router-link,
+    & a.active-router-link {
       &,
       > a {
         border: none;
@@ -566,7 +568,8 @@ ul.vertical-mid-menu {
   }
 
   > li {
-    > span {
+    > span,
+    > a {
       display: block;
       padding: 0.8rem 2.4rem;
       margin: 0;
@@ -574,7 +577,11 @@ ul.vertical-mid-menu {
       //font-size: 1.2rem;
       //color: #777;
       cursor: pointer;
+      color: inherit;
       //font-weight: bold;
+      &.router-link-active {
+        color: @clr-secondary;
+      }
     }
 
     > ul {

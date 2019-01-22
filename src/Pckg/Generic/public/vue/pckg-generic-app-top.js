@@ -320,8 +320,13 @@ const pckgFormValidator = {
                 }
             }.bind(this));
         },
-        hydrateErrorResponse: function(response) {
+        hydrateErrorResponse: function (response) {
             this.errors.clear();
+
+            if (!response.responseJSON) {
+                return;
+            }
+
             $.each(response.responseJSON.descriptions || [], function (name, message) {
                 this.errors.remove(name);
                 this.errors.add({field: name, msg: message});
@@ -931,5 +936,72 @@ const pckgCookie = {
                 this.canceled();
             }
         }
+    }
+};
+
+const pckgPartialPlatformSettings = {
+    mixins: [pckgTranslations, pckgCdn, pckgFormValidator],
+    data: function () {
+        return {
+            mode: 'view',
+            settings: {},
+            modules: {},
+            companies: [],
+            themes: {},
+            stats: {},
+            paymentMethods: {},
+            timezones: {},
+            loaded: false,
+            saving: false
+        };
+    },
+    methods: {
+        edit: function () {
+            this.mode = 'edit';
+        },
+        save: function () {
+            let data = this.collectData() || {};
+            this.saving = true;
+
+            http.post('/api/comms/platform-settings', data, function (data) {
+                if (!data.success) {
+                    $dispatcher.$emit('notification:error', data.message || 'Something went wrong.');
+                    return;
+                }
+                this.mode = 'view';
+                this.saving = false;
+                $dispatcher.$emit('notification:success', 'Settings saved');
+            }.bind(this), function (response) {
+                this.saving = false;
+                http.postError(response);
+
+                this.hydrateErrorResponse(response);
+
+                if (response.responseJSON) {
+                    return;
+                }
+
+                $dispatcher.$emit('notification:error', 'Something went wrong.');
+            }.bind(this));
+        },
+        cancel: function () {
+            this.mode = 'view';
+            this.initialFetch();
+        },
+        initialFetch: function () {
+            http.get('/api/comms/platform-settings', function (data) {
+                this.settings = data.settings;
+                this.modules = data.modules;
+                this.companies = data.companies;
+                this.themes = data.themes;
+                this.stats = data.stats;
+                this.paymentMethods = data.paymentMethods;
+                this.timezones = data.timezones;
+                this.loaded = true;
+            }.bind(this));
+        },
+    },
+    created: function () {
+        this.initialFetch();
     }
 };

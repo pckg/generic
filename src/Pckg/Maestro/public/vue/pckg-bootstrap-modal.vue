@@ -35,7 +35,6 @@
             },
             id: null,
             visible: {
-                type: Boolean,
                 default: false
             },
             size: null
