@@ -961,7 +961,8 @@ const pckgPartialPlatformSettings = {
             paymentMethods: {},
             timezones: {},
             loaded: false,
-            saving: false
+            saving: false,
+            modal: null
         };
     },
     methods: {
