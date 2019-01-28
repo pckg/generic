@@ -31,16 +31,22 @@
                 <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty }}</a></li>
                 <li v-for="(option, key) in finalOptions">
                     <a href="#" @click.prevent="toggleOption($event, key)">
-                        <span class="text-left">{{ option}}</span>
-                        <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
+                        <span class="text-left">
+                            <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
+                            <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
+                            {{ option}}
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fa fa-fw fa-check"></i>
+                        </span>
                     </a>
                 </li>
                 <template v-for="(optgroup, label) in finalOptionGroups">
                     <li><b>{{ label }}</b></li>
                     <li v-for="(option, key) in optgroup">
                         <a href="#" @click.prevent="toggleOption($event, key)">
-                            <span class="text-left">{{ option}}</span>
-                            <i class="fa fa-check pull-right" v-if="isValueSelected(key)"></i>
+                            <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
+                            <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
+                            {{ option}}
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fa fa-fw fa-check"></i>
                         </a>
                     </li>
                 </template>
@@ -159,8 +165,8 @@
 
                 let joined = titles.join(', ');
 
-                if (joined.length > 30) {
-                    return joined.substring(0, 30) + ' ...';
+                if (joined.length > 42) {
+                    return joined.substring(0, 42) + ' ...';
                 }
 
                 return joined;

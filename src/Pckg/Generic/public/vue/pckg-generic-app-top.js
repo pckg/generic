@@ -321,12 +321,21 @@ const pckgFormValidator = {
             }.bind(this));
         },
         hydrateErrorResponse: function (response) {
+            /**
+             * Clear existing errors.
+             */
             this.errors.clear();
 
+            /**
+             * Skip if no JSON response.
+             */
             if (!response.responseJSON) {
                 return;
             }
 
+            /**
+             * Populate errors.
+             */
             $.each(response.responseJSON.descriptions || [], function (name, message) {
                 this.errors.remove(name);
                 this.errors.add({field: name, msg: message});
