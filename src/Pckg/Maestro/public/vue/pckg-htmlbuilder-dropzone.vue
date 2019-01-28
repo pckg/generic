@@ -17,7 +17,7 @@
                 <i class="fa fa-refresh"></i> Restore original
             </button>
         </div>
-        <div class="table table-striped files" id="previews"></div>
+        <div class="table table-striped files" :id="id + '-previews'"></div>
     </div>
 </template>
 
@@ -108,7 +108,7 @@
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
                     params: this.params,
-                    previewsContainer: '#previews',
+                    previewsContainer: '#' + this.id + '-previews',
                     previewTemplate: this._previewTemplate,
                     clickable: $(this.$el).parent().find('.select-files').get()[0],
                     maxFilesize: 8,
