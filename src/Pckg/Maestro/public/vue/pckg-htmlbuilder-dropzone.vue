@@ -143,7 +143,7 @@
                 }.bind(this));
             }
         },
-        created: function () {
+        mounted: function () {
             this.$nextTick(function () {
                 this.initDropzone();
             }.bind(this));
