@@ -506,7 +506,7 @@
 
                 <div class="panel-body">
                     <label>Color</label>
-                    <input class="form-control" v-model="form.settings.bgColor"/>
+                    <input class="form-control" type="text" v-model="form.settings.bgColor"/>
 
                     <label>Image</label>
                     <pckg-htmlbuilder-dropzone
@@ -584,10 +584,10 @@
 
                 <div class="panel-body">
                     <label>Class</label>
-                    <input class="form-control" v-model="form.settings.class"/>
+                    <input class="form-control" type="text" v-model="form.settings.class"/>
 
                     <label>Style</label>
-                    <input class="form-control" v-model="form.settings.style"/>
+                    <input class="form-control" type="text" v-model="form.settings.style"/>
                 </div>
             </div>
 
@@ -955,6 +955,7 @@
                 this.form.settings.scopes.push(scope);
             },
             removeFullClass: function (scope) {
+                console.log('removeFullClass', scope);
                 utils.splice(this.form.settings.scopes, scope);
             },
             openDeleteActionModal: function () {
@@ -1147,7 +1148,7 @@
                     $('#editBlockModal').modal('hide');
                 }.bind(this));
             },
-            pushNormalizecClass: function (classes, val, type, prefix) {
+            pushNormalizedClass: function (classes, val, type, prefix) {
                 if (typeof prefix == 'undefined') {
                     prefix = '';
                 }
@@ -1207,7 +1208,7 @@
                     } else if (scope.indexOf(type + '-right' + m) >= 0) {
                         this[type].right = val || scope.substring((type + '-right' + m).length);
 
-                    } else if (scope.indexOf(type + '-') >= 0) {
+                    } else if (scope.indexOf(type + '-') >= 0 && scope != type + '-0-auto') {
                         val = val || scope.substring((type + '-').length);
                         this[type].top = val;
                         this[type].right = val;
@@ -1227,20 +1228,20 @@
                 var isAll = isVertical && isHorizontal && newVal.top == newVal.left;
 
                 if (isAll) {
-                    this.pushNormalizecClass(classes, newVal.top, type);
+                    this.pushNormalizedClass(classes, newVal.top, type);
                 } else {
                     if (isVertical) {
-                        this.pushNormalizecClass(classes, newVal.top, type, '-vertical');
+                        this.pushNormalizedClass(classes, newVal.top, type, '-vertical');
                     } else {
-                        this.pushNormalizecClass(classes, newVal.top, type, '-top');
-                        this.pushNormalizecClass(classes, newVal.bottom, type, '-bottom');
+                        this.pushNormalizedClass(classes, newVal.top, type, '-top');
+                        this.pushNormalizedClass(classes, newVal.bottom, type, '-bottom');
                     }
 
                     if (isHorizontal) {
-                        this.pushNormalizecClass(classes, newVal.right, type, '-horizontal');
+                        this.pushNormalizedClass(classes, newVal.right, type, '-horizontal');
                     } else {
-                        this.pushNormalizecClass(classes, newVal.left, type, '-left');
-                        this.pushNormalizecClass(classes, newVal.right, type, '-right');
+                        this.pushNormalizedClass(classes, newVal.left, type, '-left');
+                        this.pushNormalizedClass(classes, newVal.right, type, '-right');
                     }
                 }
 
@@ -1254,6 +1255,9 @@
                 var toRemove = [];
                 $.each(this.form.settings.scopes, function (i, scope) {
                     if (scope.indexOf(type + '-') < 0) {
+                        return;
+                    }
+                    if (scope == type + '-0-auto') {
                         return;
                     }
                     if (scope.indexOf(type) < 0 || classes.indexOf(scope) < 0) {

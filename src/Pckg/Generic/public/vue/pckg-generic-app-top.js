@@ -955,11 +955,14 @@ const pckgPartialPlatformSettings = {
             mode: 'view',
             settings: {},
             modules: {},
+            storeTime: null,
             companies: [],
             themes: {},
             stats: {},
             paymentMethods: {},
             timezones: {},
+            fonts: {},
+            storeDatetime: null,
             loaded: false,
             saving: false,
             modal: null
@@ -1007,6 +1010,8 @@ const pckgPartialPlatformSettings = {
                 this.stats = data.stats;
                 this.paymentMethods = data.paymentMethods;
                 this.timezones = data.timezones;
+                this.storeDatetime = data.datetime;
+                this.fonts = data.fonts;
                 this.loaded = true;
             }.bind(this));
         },
