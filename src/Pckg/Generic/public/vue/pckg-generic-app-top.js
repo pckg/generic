@@ -441,7 +441,7 @@ const pckgStaticComponent = {
 };
 
 const pckgSmartComponent = {
-    mixins: [pckgTranslations, pckgCdn, pckgTimeout],
+    mixins: [pckgTranslations, pckgCdn, pckgTimeout, pckgStaticComponent],
     props: {
         actionId: {
             required: true
@@ -972,8 +972,8 @@ const pckgPartialPlatformSettings = {
         edit: function () {
             this.mode = 'edit';
         },
-        save: function () {
-            let data = this.collectData() || {};
+        save: function (section) {
+            let data = this.collectData(section) || {};
             this.saving = true;
 
             http.post('/api/comms/platform-settings', data, function (data) {
@@ -984,6 +984,7 @@ const pckgPartialPlatformSettings = {
                 this.mode = 'view';
                 this.saving = false;
                 $dispatcher.$emit('notification:success', 'Settings saved');
+                this.errors.clear();
             }.bind(this), function (response) {
                 this.saving = false;
                 http.postError(response);
