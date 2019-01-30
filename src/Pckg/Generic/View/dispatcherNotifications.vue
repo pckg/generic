@@ -60,7 +60,7 @@
                 this.notifications.push(notification);
                 this.timeout('autoclose', function () {
                     this.removeNotification(notification);
-                }.bind(this), 15000, notification);
+                }.bind(this), 10000, notification);
             }.bind(this));
 
             $dispatcher.$on('notification:info', function (msg) {

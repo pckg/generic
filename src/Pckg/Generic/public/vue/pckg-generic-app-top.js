@@ -992,6 +992,7 @@ const pckgPartialPlatformSettings = {
                 this.hydrateErrorResponse(response);
 
                 if (response.responseJSON) {
+                    $dispatcher.$emit('notification:error', 'Correct errors and re-submit form');
                     return;
                 }
 
