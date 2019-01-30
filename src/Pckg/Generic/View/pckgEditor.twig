@@ -1,20 +1,6 @@
 <script type="text/x-template" id="pckg-editor">
     <div class="pckg-editor">
 
-        <!--<div class="clearfix"></div>
-
-        <div class="btn btn-group pull-right">
-            <a type="button" href="#" title="Close tree" class="btn btn-default btn-sm"
-               @click.prevent="toggleVisibility">
-                <i aria-hidden="true" class="fa fa-times"></i>
-            </a>
-
-            <a type="button" href="#" title="Move to other side" class="btn btn-default btn-sm"
-               @click.prevent="toggleAlignment">
-                <i aria-hidden="true" class="fa fa-arrows"></i>
-            </a>
-        </div>-->
-
         <div class="pckg-editor-settings mode-add" v-if="myMode == 'add'">
 
             <p class="text-center padding-xs margin-none">
@@ -220,7 +206,7 @@
                         </div>
 
                         <a type="button" href="#" title="Close settings" class="btn btn-default btn-sm"
-                           @click.prevent="setAction(null)">
+                           @click.prevent="closeSettings">
                             <i aria-hidden="true" class="fa fa-times"></i>
                         </a>
 

@@ -5,12 +5,12 @@
             <br/>
         </div>
         <div class="display-block">
-            <button v-if="myCurrent" type="button" class="btn btn-default" @click.prevent="deleteFile">
-                <i class="fa fa-trash"></i> Delete file
-            </button>
-
             <button type="button" class="btn btn-default select-files">
                 <i class="fa fa-upload"></i> Upload file
+            </button>
+
+            <button v-if="myCurrent" type="button" class="btn btn-default" @click.prevent="deleteFile">
+                <i class="fa fa-trash"></i> Delete file
             </button>
 
             <button v-if="original && myCurrent != original" type="button" class="btn btn-default">
