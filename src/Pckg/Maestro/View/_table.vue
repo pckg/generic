@@ -117,12 +117,12 @@
                                 v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
                                 <a v-if="action.recordHref && selectedRecord[action.recordHref]"
                                    :href="selectedRecord[action.recordHref]">
-                                    <i class="fa" :class="'fa-' + action.icon"></i>
+                                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
                                 <a v-else-if="action.event" href="#"
                                    @click.prevent="recordAction(selectedRecord, action.event)">
-                                    <i class="fa" :class="'fa-' + action.icon"></i>
+                                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
                             </li>
