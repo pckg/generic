@@ -41,6 +41,9 @@
                 options.format = this.format;
                 this.myOptions = options;
             }
+        },
+        created: function () {
+            console.warn('pckg-datetime is deprecated?');
         }
     }
 </script>
