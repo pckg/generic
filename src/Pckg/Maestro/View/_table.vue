@@ -133,7 +133,7 @@
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
                         <div class="mode-padding">
                             <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
-                                <table class="table table-hover table-striped">
+                                <table class="table table-hover table-striped table-items">
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes" v-if="mode != 'clean'">
