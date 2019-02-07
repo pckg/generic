@@ -112,14 +112,14 @@
                                 <td>
                                     <button type="button" class="btn btn-default btn-sm" title="Go to parent"
                                             :disabled="!actionParent"
-                                            @click.prevent="setAction(actionParent)">
+                                            @click.prevent="openParent">
                                         <i class="fa fa-chevron-left"></i></button>
                                 </td>
                                 <td></td>
                                 <td>
                                     <button v-if="actionChildren.length <= 1" type="button"
                                             class="btn btn-default btn-sm"
-                                            title="Go to child" @click.prevent="setAction(actionChildren[0])"
+                                            title="Go to child" @click.prevent="openChild(0)"
                                             :disabled="actionChildren.length == 0">
                                         <i class="fa fa-chevron-right"></i></button>
 
@@ -131,8 +131,8 @@
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-menu-left">
-                                            <li v-for="childAction in actionChildren">
-                                                <a href="#" @click.prevent="setAction(childAction)">${ childAction.title
+                                            <li v-for="(childAction, i) in actionChildren">
+                                                <a href="#" @click.prevent="openChild(i)">${ childAction.title
                                                     }
                                                     #${
                                                     childAction.id }</a>
@@ -1277,12 +1277,32 @@
                     12: '12/12'
                 };
             },
+            openChild: function (i) {
+                this.setAction(this.actionChildren[i]);
+                this.scrollToAction();
+            },
+            openParent: function () {
+                this.setAction(this.actionParent);
+                this.scrollToAction();
+            },
             openPrevious: function () {
                 this.setAction(this.previousAction);
+                this.scrollToAction();
             },
             openNext: function () {
                 this.setAction(this.nextAction);
+                this.scrollToAction();
             },
+            scrollToAction: function() {
+                if (!this.action) {
+                    console.log('no action');
+                    return;
+                }
+
+                console.log('scrolling to', '#' + this.action.type + '-' + this.action.id);
+
+                globalScrollTo($('#' + this.action.type + '-' + this.action.id));
+            }
         },
         computed: {
             rootElements: function () {
