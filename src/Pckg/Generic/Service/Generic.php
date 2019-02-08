@@ -454,7 +454,7 @@ class Generic
         $defaultLanguage = $localeManager->getDefaultFrontendLanguage();
         $multilingual = $localeManager->isMultilingual();
 
-        if ($multilingual) {
+        if (false && $multilingual) {
             /**
              * Copy existing routes to all languages with prefix so translated api things works.
              */

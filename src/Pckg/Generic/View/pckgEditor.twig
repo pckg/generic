@@ -971,11 +971,11 @@
                             $store.commit('addGenericActions', data.actions);
                         }
                     } else {
-                        $dispatcher.$emit('notification:success', 'Error adding action');
+                        $dispatcher.$emit('notification:error', 'Error adding action');
                     }
                 }, function () {
                     $dispatcher.$emit('frontpage-deck:loading:decrease');
-                    $dispatcher.$emit('notification:success', 'Error adding action');
+                    $dispatcher.$emit('notification:error', 'Error adding action');
                 });
             },
             setAction: function (action) {
@@ -1295,11 +1295,8 @@
             },
             scrollToAction: function() {
                 if (!this.action) {
-                    console.log('no action');
                     return;
                 }
-
-                console.log('scrolling to', '#' + this.action.type + '-' + this.action.id);
 
                 globalScrollTo($('#' + this.action.type + '-' + this.action.id));
             }
