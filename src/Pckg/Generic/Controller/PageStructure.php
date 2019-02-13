@@ -103,7 +103,13 @@ class PageStructure
         }
 
         return [
-            'contents' => $contents->all(),
+            'records' => $contents->all()->keyBy('id')->map(function(Content $content) {
+                return collect([
+                                   '#' . $content->id,
+                                   $content->title,
+                                   strip_tags($content->content),
+                               ])->removeEmpty()->implode(' - ');
+            }),
         ];
     }
 

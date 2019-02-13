@@ -665,9 +665,8 @@
                 Switch content
             {% endblock %}
             {% block body %}
-                <pckg-select v-model="changeContentId" :initial-multiple="false"
-                             refresh-url="{{ url('pckg.generic.pageStructure.getContents') }}" :flat="true"
-                             title="title"></pckg-select>
+                <pckg-select v-model="changeContentId" :initial-multiple="false" :initial-refresh="true"
+                             refresh-url="{{ url('pckg.generic.pageStructure.getContents') }}"></pckg-select>
 
                 <button class="btn btn-success" @click.prevent="saveChangedContent">Change content</button>
             {% endblock %}
