@@ -304,7 +304,7 @@ class Filter extends AbstractService
     public function getTypeMethods()
     {
         $data = [
-            'equals'          => '=',
+            'is'          => '=',
             'greater'         => '>',
             'greaterOrEquals' => '>=',
             'lower'           => '<',
@@ -324,7 +324,7 @@ class Filter extends AbstractService
     public function getRelationMethods()
     {
         return [
-            'equals' => [
+            'is' => [
                 'label' => '=',
             ],
             'not'    => [

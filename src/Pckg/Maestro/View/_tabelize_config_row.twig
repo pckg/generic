@@ -20,7 +20,7 @@
             </div>
             <div class="col-sm-8 filter-value type-field" v-if="field.filterMethod">
                 <template
-                        v-if="field.type == 'select' && ['equals', 'not'].indexOf(field.filterMethod) > -1">
+                        v-if="field.type == 'select' && ['is', 'not'].indexOf(field.filterMethod) > -1">
                     <pckg-select v-model="field.filterValue" :refresh-url="field.filterUrl"
                                  :initial-multiple="true"
                                  :initialOptions="field.options"></pckg-select>

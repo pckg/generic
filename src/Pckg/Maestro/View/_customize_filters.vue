@@ -91,7 +91,7 @@
                 utils.splice(this.myFilters, filter);
             },
             addCondition: function () {
-                this.myFilters.push({field: null, value: null, comp: 'equals'});
+                this.myFilters.push({field: null, value: null, comp: 'in'});
             },
             chosen: function () {
 

@@ -124,7 +124,7 @@
                     }
 
                     if (field.filterMethod) {
-                        if (field.type == 'select' && field.filterMethod == 'equals') {
+                        if (field.type == 'select' && field.filterMethod == 'is') {
                             data.fields.filters.push({
                                 field: field.id,
                                 method: field.filterMethod,
@@ -193,7 +193,7 @@
                     field: filter.field,
                     value: null,
                     options: {
-                        method: 'equals'
+                        method: 'is'
                     }
                 });
             },
@@ -202,7 +202,7 @@
                     id: relationFilter.id,
                     value: null,
                     options: {
-                        method: 'equals'
+                        method: 'is'
                     },
                     relationFilter: relationFilter
                 });

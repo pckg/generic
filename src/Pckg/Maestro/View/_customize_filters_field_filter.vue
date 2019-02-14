@@ -89,8 +89,8 @@
                 operators: {
                     like: 'like',
                     notLike: 'not like',
-                    equals: 'is',
-                    notEquals: 'is not',
+                    is: 'is',
+                    not: 'is not',
                     in: 'in',
                     notIn: 'not in',
                     more: '>',
@@ -174,15 +174,15 @@
             initialOptions: function () {
                 let fieldType = this.fieldType;
                 if (fieldType == 'number') {
-                    return this.removeOperators(['notIn', 'in', 'like', 'notLike']);
+                    return this.removeOperators(['like', 'notLike']);
                 }
 
                 if (fieldType == 'text') {
-                    return this.onlyOperators(['equals', 'notEquals', 'like', 'notLike']);
+                    return this.onlyOperators(['is', 'not', 'like', 'notLike']);
                 }
 
                 if (fieldType == 'select') {
-                    return this.onlyOperators(['in', 'notIn', 'equals', 'notEquals']);
+                    return this.onlyOperators(['in', 'notIn', 'is', 'not']);
                 }
 
                 return this.operators;

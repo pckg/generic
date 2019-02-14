@@ -264,7 +264,7 @@
         },
         created: function(){
             if (!this.filter) {
-                this.setFilter({field: null, value: null, comp: 'equals'});
+                this.setFilter({field: null, value: null, comp: 'is'});
             }
         }
     };

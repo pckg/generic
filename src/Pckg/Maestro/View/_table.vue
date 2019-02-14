@@ -328,7 +328,11 @@
         data: function () {
             return {
                 refreshDataRequestNum: 0,
-                myFilters: [{}],
+                myFilters: [{
+                    field: null,
+                    value: null,
+                    comp: 'is'
+                }],
                 myFields: [],
                 paginator: {
                     perPage: 50,
@@ -696,8 +700,8 @@
             },
             mapComp: function (comp) {
                 let data = {
-                    'equals': '=',
-                    'notEquals': '!=',
+                    'is': '=',
+                    'not': '!=',
                     'in': 'IN',
                     'notIn': 'NOT IN',
                     'more': '>',
