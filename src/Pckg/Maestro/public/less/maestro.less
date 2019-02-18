@@ -47,6 +47,17 @@ body, body.scope-bg-system {
   left: 0;
   margin-bottom: 1.2rem;
   font-size: 1.8rem;
+  float: left;
+  width: 6rem;
+
+  body.sidebar-static & {
+    position: static;
+    margin-top: 3.6rem;
+    > ul {
+      float: left;
+      width: 100%;
+    }
+  }
   > ul {
     list-style-type: none;
     margin: 0;
@@ -223,7 +234,6 @@ body, body.scope-bg-system {
   bottom: 0;
   top: 0;
   left: 0;
-  position: absolute;
   position: fixed;
   float: left;
   padding-left: 0;
@@ -233,6 +243,10 @@ body, body.scope-bg-system {
   z-index: 97;
   //margin-top: 4rem;
   border-right: 1px solid @border-grey;
+
+  body.sidebar-static & {
+    position: static;
+  }
 
   #main-admin-nav {
 

@@ -35,7 +35,25 @@ var initUninitialiedSelectpicker = function () {
     });
 };
 
+let checkSidebarPosition = function () {
+    let sidebarInside = parseFloat($('.maestro-sidebar-inside').outerHeight());
+    let bottomBar = parseFloat($('.maestro-sidebar-bottom').outerHeight());
+    let viewportHeight = parseFloat($(window).height());
+    let offset = 50;
+
+    if (viewportHeight >= sidebarInside + bottomBar + offset) {
+        $('body').removeClass('sidebar-static');
+        return;
+    } else if ($('body').hasClass('sidebar-static')) {
+        return;
+    }
+
+    $('body').addClass('sidebar-static');
+};
+
 $(document).ready(function () {
+    checkSidebarPosition();
+    $(window).on('resize', checkSidebarPosition);
     var $body = $('body');
 
     /**
@@ -138,7 +156,8 @@ $(document).ready(function () {
             collapsed = $body.hasClass('collapsed');
 
             var $this = $(this),
-                href, target = $this.attr('data-target') || e.preventDefault() || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
+                href,
+                target = $this.attr('data-target') || e.preventDefault() || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
 
             if (collapsed) {
                 //show submenu
