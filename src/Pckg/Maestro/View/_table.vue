@@ -171,8 +171,8 @@
                                         <!-- main record row -->
                                         <tr :class="[ids.indexOf(record.id) >= 0 ? 'selected' : '']"
                                             @contextmenu.prevent="showContextMenu($event, record)"
-                                            @click.stop="delaySingleClick(record)"
-                                            @dblclick.stop="doubleClick(record)">
+                                            @click.stop="delaySingleClick(record, $event)"
+                                            @dblclick2.stop="doubleClick(record)">
                                             <td class="checkboxes freeze" @click.prevent v-if="mode != 'clean'">
                                                 <div>
                                                     <d-input-checkbox v-model="ids"
@@ -405,7 +405,6 @@
                 }.bind(this));
             },
             recalculateFreeze: function () {
-                console.log('freeze height');
                 this.$nextTick(function () {
                     $(this.$el).find('td.freeze > div').each(function () {
                         $(this).height($(this).closest('tr').outerHeight());
@@ -446,7 +445,6 @@
                     });
 
                     if (!f) {
-                        console.log('fetch relation!');
                         return column.field;
                     }
 
@@ -502,11 +500,20 @@
             chosen: function (selection) {
                 this.view.columns.push(selection);
             },
-            delaySingleClick: function () {
+            delaySingleClick: function (record, $event) {
+                /**
+                 * When delay exists we double clicked.
+                 */
                 if (this._quickViewDelay) {
                     clearTimeout(this._quickViewDelay);
                     this._quickViewDelay = null;
-                    this.doubleClick();
+
+                    let tag = $($event.target).prop('tagName');
+                    if (tag == 'SPAN') {
+                        return;
+                    }
+
+                    this.doubleClick(record);
                     return;
                 }
 
@@ -514,6 +521,7 @@
                     clearTimeout(this._quickViewDelay);
                     this._quickViewDelay = null;
                     this.quickView = 'opened';
+                    this.selectedRecord = null;
                     var t = this;
                     $('body').on('click', function () {
                         if ($(this).closest('.table-floating-right-bar').length == 0) {
@@ -527,7 +535,6 @@
                 http.redirect('/dynamic/records/view/' + this.table.id + '/' + record.id);
             },
             showContextMenu: function ($event, record) {
-                console.log($event, record);
                 this.selectedRecord = record;
                 this.contextMenuShown = true;
                 var t = this;
@@ -725,7 +732,6 @@
                 let comp = null;
                 let tempKey;
                 do {
-                    console.log('filter', filter);
                     if (!filter.field) {
                         break;
                     }
@@ -817,7 +823,6 @@
                     $dispatcher.$emit('notification:error', 'Error fetching data');
                     this.loading = false;
                 }.bind(this)).then(function (data) {
-                    console.log('got data', data);
 
                 }.bind(this));
             },
