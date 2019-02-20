@@ -46,7 +46,6 @@
         },
         watch: {
             visible: function (newVal) {
-                console.log('visible changed', $(this.$el));
                 this.$nextTick(function () {
                     this.handleModal();
                 }.bind(this));
@@ -54,28 +53,31 @@
         },
         methods: {
             handleModal: function () {
-                console.log("handleModal", this.visible, $(this.$el));
                 this.$nextTick(function () {
-                    console.log("handleModal next tick", this.visible, $(this.$el));
                     $(this.$el).modal(this.visible ? 'show' : 'hide');
                     $(window).resize();
                 }.bind(this));
             },
             closeModal: function () {
-                console.log('closing modal, emiting');
                 this.$emit('close');
             },
+            closedModal: function () {
+                this.$emit('closed');
+            },
             modalOpened: function () {
-                console.log('modal opened, resizing window');
                 $(window).resize();
             },
             modalOpening: function () {
-                console.log('modal opening, resizing window');
                 $(window).resize();
             }
         },
         mounted: function () {
-            $(this.$el).on('hidden.bs.modal', this.closeModal);
+            $(this.$el).on('hide.bs.modal', function () {
+                this.closeModal();
+            }.bind(this));
+            $(this.$el).on('hidden.bs.modal', function () {
+                this.closedModal();
+            }.bind(this));
             $(this.$el).on('shown.bs.modal', this.modalOpened);
             $(this.$el).on('show.bs.modal', this.modalOpening);
             if (this.visible) {

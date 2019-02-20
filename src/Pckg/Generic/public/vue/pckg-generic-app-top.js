@@ -66,6 +66,10 @@ var pckgCdn = {
                 return file;
             }
 
+            if (file.indexOf('http://') === 0 || file.indexOf('https://') === 0 || file.indexOf('//') === 0) {
+                return file;
+            }
+
             if (!Pckg || !Pckg.config || !Pckg.config.cdn || !Pckg.config.cdn.host) {
                 return file;
             }
@@ -193,7 +197,8 @@ const pckgPayment = {
             formData: {},
             myOrders: this.orders,
             myUser: user,
-            mode: this.getMode(user)
+            mode: this.getMode(user),
+            substep: null
         };
     },
     watch: {
@@ -434,6 +439,35 @@ const pckgStaticComponent = {
     computed: {
         templateClass: function () {
             return this.$options.name;
+        }
+    }
+};
+
+const pckgFakeImage = {
+    methods: {
+        fetchMyImage: function (value) {
+            if (!value) {
+                this.myImage = null;
+                return;
+            }
+
+            if (typeof value === 'string' && value.indexOf('<') < 0) {
+                this.myImage = value;
+                return;
+            }
+
+            if (value instanceof HTMLImageElement) {
+                this.myImage = value.src;
+                return;
+            }
+
+            let fake = $(value);
+            if (fake.find('span').length > 0) {
+                this.myImage = fake.find('span')[0].innerHTML;
+                return;
+            }
+
+            this.myImage = value;
         }
     }
 };

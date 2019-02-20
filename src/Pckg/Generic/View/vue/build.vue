@@ -79,10 +79,10 @@
             }
         },
         mounted: function () {
-            this.$emit('update', $(this.$el).html());
+            this.$emit('update', this.$el);
         },
         updated: function () {
-            this.$emit('update', $(this.$el).html());
+            this.$emit('update', this.$el);
         }
     }
 </script>
