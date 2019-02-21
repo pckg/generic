@@ -18,7 +18,7 @@
         </div>
 
         <div class="btn-group">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" @click="focusSearch">
                 <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
                 <template v-if="myMultiple && Array.isArray(selected) && selected.length > 1">({{ selected.length }})
                 </template>
@@ -26,9 +26,10 @@
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
-                    <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..."/>
+                    <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..." @keydown.enter="selectFirst" />
                 </li>
-                <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty }}</a></li>
+                <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty
+                    }}</a></li>
                 <li v-for="(option, key) in finalOptions">
                     <a href="#" @click.prevent="toggleOption($event, key)">
                         <span class="text-left">
@@ -153,7 +154,6 @@
                 $.each(groups, function (i, optionGroup) {
                     $.each(optionGroup, function (j, option) {
                         if (selected.indexOf(j) >= 0 || selected.indexOf(parseInt(j)) >= 0 || selected.indexOf(j.toString()) >= 0) {
-                            console.log('pushing', option);
                             titles.push(option);
                         }
                     });
@@ -194,6 +194,11 @@
             }
         },
         methods: {
+            focusSearch: function () {
+                setTimeout(function () {
+                    $(this.$el).find('ul.dropdown-menu > li:first-child input').first().focus();
+                }.bind(this), 100);
+            },
             isOptionFiltered: function (key, item) {
                 if (!this.search || this.search.length == 0) {
                     return false;
