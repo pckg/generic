@@ -138,7 +138,13 @@
                 });
             },
             deleteFile: function () {
-                http.deleteJSON(this.url, function () {
+                let params = this.params;
+                let esc = encodeURIComponent;
+                let query = Object.keys(params)
+                    .map(k => esc(k) + '=' + esc(params[k]))
+                    .join('&');
+
+                http.deleteJSON(this.url + (Object.keys(params).length > 0 ? '?' + query : ''), function () {
                     this.myCurrent = '';
                 }.bind(this));
             }

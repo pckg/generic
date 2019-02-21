@@ -143,6 +143,17 @@ let tinyMceConfig = {
                 {title: 'Secondary', format: 'colorsecondary'}
             ]
         },
+        {
+            title: 'Font families',
+            items: [
+                {
+                    title: 'Primary', format: 'font-family-primary',
+                    title: 'Secondary', format: 'font-family-secondary',
+                    title: 'Primary (system)', format: 'font-family-primary-system',
+                    title: 'Secondary (system)', format: 'font-family-secondary-system',
+                }
+            ]
+        }
     ],
     formats: {
         font_size_xxs: {
