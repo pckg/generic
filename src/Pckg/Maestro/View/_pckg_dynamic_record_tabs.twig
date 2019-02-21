@@ -52,7 +52,7 @@
         </div>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component"></component>
+        <component :is="component" v-for="component in uniqueActions" :key="component" @tab:refresh="selectTab"></component>
     </div>
 </script>
 

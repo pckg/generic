@@ -58,16 +58,12 @@
                 var deleteTimeout = null;
                 $.each(this.records, function (i, record) {
                     http.deleteJSON(record.deleteUrl, function () {
-                        clearTimeout(deleteTimeout);
-                        deleteTimeout = setTimeout(function () {
-                            console.log('emiting', 'pckg-maestro-table-' + this.identifier + ':refresh', 'dynamic-tab-' + this.identifier + ':refresh');
-                            $dispatcher.$emit('pckg-maestro-table-' + this.identifier + ':refresh');
-                            $dispatcher.$emit('dynamic-tab-' + this.identifier + ':refresh');
-                        }.bind(this), 333);
                     }.bind(this), function () {
                         $dispatcher.$emit('notification:error', 'Error deleting record');
                     });
                 }.bind(this));
+
+                this.$emit('table:refresh');
             },
             deleteRecordTranslation: function () {
                 this.modal = null;

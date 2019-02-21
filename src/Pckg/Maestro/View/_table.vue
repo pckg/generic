@@ -242,7 +242,7 @@
         </div>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component"></component>
+        <component :is="component" v-for="component in uniqueActions" :key="component" @table:refresh="timeoutRefreshData(100)"></component>
 
     </div>
 </template>
