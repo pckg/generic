@@ -242,7 +242,8 @@
         </div>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component" @table:refresh="timeoutRefreshData(100)"></component>
+        <component :is="component" v-for="component in uniqueActions" :key="component"
+                   @table:refresh="timeoutRefreshData(100)"></component>
 
     </div>
 </template>
@@ -333,6 +334,49 @@
                     value: null,
                     comp: 'is'
                 }],
+                myFilters: [
+                    {
+                        field: 'status_id',
+                        comp: 'is',
+                        value: 'confirmed',
+                    },
+                    {
+                        field: 'payment_status_id',
+                        comp: 'in',
+                        value: ['payed', 'partial'],
+                    },
+                    {
+                        field: {
+                            user: {
+                                field: 'id',
+                                comp: 'in',
+                                value: [1, 2, 3],
+                            },
+                        }
+                    },
+                    {
+                        field: {
+                            user: {
+                                field: 'email',
+                                comp: 'like',
+                                value: '%@schtr4jh.net',
+                            }
+                        }
+                    },
+                    {
+                        field: {
+                            user: {
+                                field: {
+                                    userGroup: {
+                                        field: 'slug',
+                                        comp: 'notIn',
+                                        value: ['admin']
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ],
                 myFields: [],
                 paginator: {
                     perPage: 50,

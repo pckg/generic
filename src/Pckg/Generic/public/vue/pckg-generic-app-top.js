@@ -4,6 +4,17 @@
  */
 var $dispatcher = new Vue();
 
+var $scroller = new Vue({
+    methods: {
+        onScroll: function (e) {
+            $scroller.$emit('scroll', e);
+        }
+    },
+    created: function () {
+        $(window).on('scroll', this.onScroll);
+    }
+});
+
 var data = data || {};
 
 var props = props || {};
@@ -299,6 +310,59 @@ const pckgPayment = {
         order: function () {
             return this.myOrders[0] || null;
         }
+    }
+};
+
+const pckgActionAnimation = {
+    methods: {
+        onScroll: function () {
+            if (this.shared.animationStarted) {
+                return;
+            }
+
+            let topScroll = parseInt($(window).scrollTop());
+            let topOffset = parseInt($(this.$el).offset().top);
+            let clientHeight = document.documentElement.clientHeight;
+            let perc = 0.81;
+
+            if (topOffset > topScroll + (clientHeight * perc)) {
+                return;
+            }
+
+            if (this.shared.animationStarted) {
+                return;
+            }
+
+            this.$set(this.shared, 'animationStarted', true);
+            let random = Math.random();
+            let effect = random < 0.2 ? 'bounceInUp' : (random < 0.4 ? 'bounceInRight' : (random < 0.6 ? 'bounceInLeft' : (random < 0.8 ? 'fadeIn' : 'slideInLeft')));
+            this.$el.classList.add('animated', effect);
+            this.$el.classList.remove('animated-out');
+        }
+    },
+    mounted: function () {
+        return;
+        
+        if (this.action.type != 'action') {
+            return;
+        }
+
+        let settings = {
+            event: 'entrance',
+            effect: 'bounce',
+            delay: null,
+            infinite: true
+        };
+
+        if (!settings.event) {
+            // animation is disabled
+            return;
+        }
+
+        this.$el.classList.add('animated-out');
+
+        $scroller.$on('scroll', this.onScroll);
+        this.onScroll();
     }
 };
 
@@ -826,7 +890,7 @@ const pckgActionAttrs = {
 }
 
 var pckgElement = {
-    mixins: [pckgCdn, pckgTimeout, pckgActionAttrs],
+    mixins: [pckgCdn, pckgTimeout, pckgActionAttrs, pckgActionAnimation],
     props: {
         actionId: {
             default: null
@@ -834,6 +898,11 @@ var pckgElement = {
         hardAction: {
             default: null
         },
+    },
+    data: function () {
+        return {
+            shared: {}
+        };
     },
     methods: {
         componentClicked: function ($event) {

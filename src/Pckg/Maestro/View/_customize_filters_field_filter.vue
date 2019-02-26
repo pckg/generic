@@ -27,17 +27,14 @@
                 <input type="checkbox" class="form-control" value="1" v-model="myFilter.value"/>
             </template>
             <template v-else-if="fieldType == 'select'">
-                <pckg-select v-model="myFilter.value" key="select-field" :refresh-url="filterUrl"
+                <pckg-select v-model="myFilter.value" key="select-field" ref="filterValue" :refresh-url="filterUrl"
                              :initial-refresh="true"
                              :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
             </template>
-            <template v-else-if="fieldType == 'relation'">
-                <pckg-select v-model="myFilter.value" key="select-relation" :refresh-url="filterUrl"
+            <template v-else-if="fieldType == 'relation' || !fieldType">
+                <pckg-select v-model="myFilter.value" key="select-relation" ref="filterValue" :refresh-url="filterUrl"
                              :initial-refresh="true"
                              :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
-            </template>
-            <template v-else>
-                <pckg-tooltip :content="'Field not supported yet'" icon="question-circle"></pckg-tooltip>
             </template>
         </div>
     </div>
@@ -76,6 +73,10 @@
                 } else if (Array.isArray(this.myFilter.value)) {
                     this.$emit('filter-value', this.myFilter.value[0] || null);
                 }
+            },
+            'filter.field': function (newVal) {
+                this.myFilter.field = newVal;
+                this.$refs.filterValue.refreshList();
             }
         },
         data: function () {
@@ -140,8 +141,17 @@
 
                     return this.fetchFieldType;
                 }
+
+                return 'relation';
             },
             filterUrl: function () {
+                if (this.fieldType == 'relation') {
+                    return utils.url('@dynamic.records.field.selectList.none', {
+                        table: this.mySelection.on_table_id,
+                        field: this.mySelection.on_field_id
+                    });
+                }
+
                 if (this.fieldType != 'select') {
                     return;
                 }

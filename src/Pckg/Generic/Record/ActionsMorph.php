@@ -551,7 +551,8 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-        $slots = config('pckg.generic.actions.' . $this->action->slug . '.slots', []);
+        $config = config('pckg.generic.actions.' . $this->action->slug, []);
+        $slots = $config['slots'] ?? [];
         $content = $this->content ? $this->content->jsonSerialize() : null;
         $type = $this->overloadType();
 
@@ -573,6 +574,7 @@ class ActionsMorph extends Record
             'active'    => false,
             'slots'     => $slots,
             'component' => 'pckg-' . $type,
+            'config'    => $config['config'] ?? null,
         ];
 
         return $data;

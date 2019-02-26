@@ -2,41 +2,55 @@
     <div class="pckg-maestro-customize-filters-field">
 
         <!-- field or relation is selected -->
+        <!-- on table orders, 1st level: ordered packets -->
         <pckg-select v-model="selected"
                      :initial-options="options"
                      :initial-multiple="false"
                      :with-empty="' - - select field or relation - - '"
                      class="field-relation inline-block" key="field-relation"></pckg-select>
 
+        <!-- when something is selected we can display some more fields -->
         <template v-if="selection">
-            <template v-if="isField">
 
-                <!-- when field is selected we display field comparators and input for value -->
-                <pckg-maestro-customize-filters-field-filter v-if="selected"
+            <!-- when field is selected we display field comparators and input for value -->
+            <template v-if="isField">
+                <pckg-maestro-customize-filters-field-filter v-if="isField && selected"
                                                              type="field"
                                                              :selection="selection"
                                                              :filter="myFilter"
                                                              @filter-value="setFilterValue($event)"
-                                                             key="field-filter" class="inline-block"></pckg-maestro-customize-filters-field-filter>
+                                                             key="field-filter"
+                                                             class="inline-block"></pckg-maestro-customize-filters-field-filter>
 
             </template>
-            <template v-else-if="isRelation">
-                <i v-if="customizeRelation" class="fa fa-cog" @click.prevent="customizeRelation = false"></i>
-                <i v-else class="fa fa-cogs" @click.prevent="customizeRelation = true"></i>
 
+            <!-- when relation is selected -->
+            <template v-else-if="isRelation">
+                <template v-if="customizeRelation">
+                    <i class="fa fa-cog" @click.prevent="decustomizeRelation" title="Decustomize relation"></i>
+                </template>
+                <template v-else>
+                    <i class="fa fa-cogs" @click.prevent="customizeRelation = true" title="Customize relation"></i>
+                </template>
+
+                <!-- another level when customized -->
                 <pckg-maestro-customize-filters-field v-if="customizeRelation"
                                                       :relation="selection"
                                                       v-model="subModel"
                                                       @set-filter="setSubFilter($event)"
                                                       @chosen="chosen"
-                                                      key="customize-relation" class="inline-block"></pckg-maestro-customize-filters-field>
+                                                      key="customize-relation"
+                                                      class="inline-block"></pckg-maestro-customize-filters-field>
 
+                <!-- record selection -->
                 <pckg-maestro-customize-filters-field-filter v-else
                                                              type="relation"
                                                              :selection="selection"
                                                              :filter="myFilter"
                                                              key="relation-filter"
-                                                             @filter-value="setFilterValue($event)" class="inline-block"></pckg-maestro-customize-filters-field-filter>
+                                                             @filter-value="setFilterValue($event)"
+                                                             class="inline-block"></pckg-maestro-customize-filters-field-filter>
+
             </template>
         </template>
 
@@ -80,7 +94,7 @@
                 : null;
 
             let customizeRelation = selected && selected.indexOf('relation-') === 0;
-            customizeRelation = true;
+            customizeRelation = false;
 
             return {
                 myFilter: this.filter,
@@ -121,7 +135,7 @@
 
                 if (newValue.indexOf('relation-') === 0) {
                     console.log('relation selected, setting value ' + newValue.substr(6));
-                    let filter = {field:{}};
+                    let filter = {field: {}};
                     filter.field[newValue.substr(9)] = {field: null, value: null, comp: 'is'};
                     //this.setFilter(filter);
                     this.setFilter(filter);
@@ -133,6 +147,11 @@
             },
         },
         methods: {
+            decustomizeRelation: function () {
+                console.log('decustomizeRelation');
+                this.customizeRelation = false;
+                this.myFilter.comp = 'in';
+            },
             makeSelectedFieldVisible: function () {
                 this.$emit('chosen', this.selected);
             },
@@ -150,6 +169,7 @@
                 this.$emit('set-filter', this.myFilter);
             },
             setFilterField: function (field) {
+                console.log('setFilterField');
                 this.myFilter.field = field;
                 if (typeof this.myFilter.field == 'object') {
                     delete this.myFilter.comp;
@@ -262,7 +282,7 @@
                 // return this.selected && this.selected.indexOf('field-') === 0;
             }
         },
-        created: function(){
+        created: function () {
             if (!this.filter) {
                 this.setFilter({field: null, value: null, comp: 'is'});
             }
