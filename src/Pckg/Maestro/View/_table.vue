@@ -335,7 +335,7 @@
                     comp: 'is'
                 }],
                 myFilters: [
-                    {
+                    /*{
                         field: 'status_id',
                         comp: 'is',
                         value: 'confirmed',
@@ -346,13 +346,9 @@
                         value: ['payed', 'partial'],
                     },
                     {
-                        field: {
-                            user: {
-                                field: 'id',
-                                comp: 'in',
-                                value: [1, 2, 3],
-                            },
-                        }
+                        field: 'user_id',
+                        comp: 'notIn',
+                        value: [1, 2, 3],
                     },
                     {
                         field: {
@@ -366,16 +362,34 @@
                     {
                         field: {
                             user: {
+                                field: 'user_group_id',
+                                comp: 'notIn',
+                                value: [1]
+                            }
+                        }
+                    },*/
+                    /*{
+                        field: {
+                            ordersUsers: {
                                 field: {
-                                    userGroup: {
-                                        field: 'slug',
-                                        comp: 'notIn',
-                                        value: ['admin']
+                                    packet: {
+                                        field: 'offer_id',
+                                        comp: 'in',
+                                        value: [59]
                                     }
                                 }
                             }
                         }
-                    }
+                    },
+                    {
+                        field: {
+                            ordersUsers: {
+                                field: 'quantity',
+                                comp: 'more',
+                                value: 2
+                            }
+                        }
+                    }*/
                 ],
                 myFields: [],
                 paginator: {

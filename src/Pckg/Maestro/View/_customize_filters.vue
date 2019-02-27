@@ -6,17 +6,15 @@
                           :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
         </h5>
 
-        <div v-for="(filter, i) in Object.keys(myFilters)" class="single-filter">
+        <div v-for="(filter, i) in myFilters" class="single-filter">
             <a href="#" title="Remove condition" style="vertical-align: middle;"
-               @click.prevent="removeFilter(myFilters[filter])">
+               @click.prevent="removeFilter(filter)">
                 <i class="fal fa-minus-circle"></i>
             </a>
 
             <pckg-maestro-customize-filters-field v-model="myFilters[i]"
                                                   :filter-fields="myFields"
-                                                  :relations="myRelations"
-                                                  @set-filter="myFilters[i] = $event"
-                                                  @chosen="chosen"></pckg-maestro-customize-filters-field>
+                                                  :relations="myRelations"></pckg-maestro-customize-filters-field>
 
         </div>
 
@@ -92,9 +90,6 @@
             },
             addCondition: function () {
                 this.myFilters.push({field: null, value: null, comp: 'in'});
-            },
-            chosen: function () {
-
             }
         },
         computed: {

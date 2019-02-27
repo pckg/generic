@@ -6,7 +6,6 @@
                      :with-empty="' - - select operator  - - '"></pckg-select>
 
         <div class="inline-block">
-
             <template v-if="fieldType == 'text'">
                 <input type="text" class="form-control" v-model="myFilter.value"/>
             </template>
@@ -65,19 +64,26 @@
                         return;
                     }
                     if (!this.myFilter.value) {
-                        this.$emit('filter-value', []);
-                        return;
+                        this.myFilter.value = [];
                     }
-                    this.$emit('filter-value', [this.myFilter.value]);
+
+                    this.$emit('input', this.myFilter);
                     return;
                 } else if (Array.isArray(this.myFilter.value)) {
-                    this.$emit('filter-value', this.myFilter.value[0] || null);
+                    this.myFilter.value = this.myFilter.value[0] || null;
+                    this.$emit('input', this.myFilter);
                 }
             },
             'filter.field': function (newVal) {
                 this.myFilter.field = newVal;
+                if (!this.$refs.filterValue) {
+                    return;
+                }
                 this.$refs.filterValue.refreshList();
             }
+        },
+        model: {
+            prop: 'filter'
         },
         data: function () {
             return {

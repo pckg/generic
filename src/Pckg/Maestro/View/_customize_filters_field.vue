@@ -30,25 +30,20 @@
                     <i class="fa fa-cog" @click.prevent="decustomizeRelation" title="Decustomize relation"></i>
                 </template>
                 <template v-else>
-                    <i class="fa fa-cogs" @click.prevent="customizeRelation = true" title="Customize relation"></i>
+                    <i class="fa fa-cogs" @click.prevent="customizeRelationBtn" title="Customize relation"></i>
                 </template>
 
                 <!-- another level when customized -->
                 <pckg-maestro-customize-filters-field v-if="customizeRelation"
                                                       :relation="selection"
                                                       v-model="subModel"
-                                                      @set-filter="setSubFilter($event)"
-                                                      @chosen="chosen"
-                                                      key="customize-relation"
                                                       class="inline-block"></pckg-maestro-customize-filters-field>
 
                 <!-- record selection -->
                 <pckg-maestro-customize-filters-field-filter v-else
                                                              type="relation"
                                                              :selection="selection"
-                                                             :filter="myFilter"
-                                                             key="relation-filter"
-                                                             @filter-value="setFilterValue($event)"
+                                                             v-model="myFilter"
                                                              class="inline-block"></pckg-maestro-customize-filters-field-filter>
 
             </template>
@@ -83,18 +78,11 @@
             prop: 'filter'
         },
         data: function () {
-            let selected = this.filter && this.filter.field
-                ? (typeof this.filter.field == 'string'
-                        ? 'field-' + this.filter.field
-                        : ('relation-' + Object.keys(this.filter.field)[0])
-                ) : '';
+            let selected = this.getSelected();
 
-            let field = this.filter && this.filter.field && typeof this.filter.field == 'object'
-                ? this.filter.field[Object.keys(this.filter.field)[0]]
-                : null;
+            let field = this.getSubmodel();
 
             let customizeRelation = selected && selected.indexOf('relation-') === 0;
-            customizeRelation = false;
 
             return {
                 myFilter: this.filter,
@@ -119,26 +107,33 @@
             },
             filter: function (filter) {
                 this.myFilter = filter;
+                this.selected = this.getSelected();
+                this.subModel = this.getSubmodel();
+                this.$emit('input', filter);
+            },
+            subModel: function (subModel) {
+                let k = Object.keys(this.myFilter.field)[0];
+                let filter = this.myFilter;
+                filter.field[k] = subModel;
+                this.setFilter(filter);
             },
             selected: function (newValue) {
                 if (!newValue || newValue.length == 0) {
-                    console.log('no selected value, setting filter as null');
                     this.setFilterField(null);
                     return;
                 }
 
                 if (newValue.indexOf('field-') === 0) {
-                    console.log('field selected, setting value ' + newValue.substr(6))
                     this.setFilterField(newValue.substr(6));
                     return;
                 }
 
                 if (newValue.indexOf('relation-') === 0) {
-                    console.log('relation selected, setting value ' + newValue.substr(6));
-                    let filter = {field: {}};
-                    filter.field[newValue.substr(9)] = {field: null, value: null, comp: 'is'};
-                    //this.setFilter(filter);
-                    this.setFilter(filter);
+                    this.customizeRelation = true;
+                    var f = {field: {}};
+                    let k = newValue.substr(9);
+                    f.field[k] = {field: null, value: null, comp: 'is'};
+                    this.setFilter(f);
                     return;
                 }
 
@@ -147,8 +142,22 @@
             },
         },
         methods: {
+            getSelected: function () {
+                return this.filter && this.filter.field
+                    ? (typeof this.filter.field == 'string'
+                            ? 'field-' + this.filter.field
+                            : ('relation-' + Object.keys(this.filter.field)[0])
+                    ) : '';
+            },
+            getSubmodel: function () {
+                return this.filter && this.filter.field && typeof this.filter.field == 'object'
+                    ? this.filter.field[Object.keys(this.filter.field)[0]]
+                    : null;
+            },
+            customizeRelationBtn: function () {
+                this.customizeRelation = true;
+            },
             decustomizeRelation: function () {
-                console.log('decustomizeRelation');
                 this.customizeRelation = false;
                 this.myFilter.comp = 'in';
             },
@@ -158,24 +167,22 @@
             setSubFilter: function ($event) {
                 this.subModel = $event;
                 this.myFilter.field = this.subModel;
-                this.$emit('set-filter', this.myFilter);
+                this.$emit('input', this.myFilter);
             },
             setFilter: function (filter) {
-                this.myFilter = filter;
-                this.$emit('set-filter', this.myFilter);
+                this.$emit('input', filter);
             },
             setFilterValue: function (value) {
                 this.myFilter.value = value;
-                this.$emit('set-filter', this.myFilter);
+                this.$emit('input', this.myFilter);
             },
             setFilterField: function (field) {
-                console.log('setFilterField');
                 this.myFilter.field = field;
                 if (typeof this.myFilter.field == 'object') {
                     delete this.myFilter.comp;
                     delete this.myFilter.value;
                 }
-                this.$emit('set-filter', this.myFilter);
+                this.$emit('input', this.myFilter);
             },
             chosen: function (chosen) {
                 let data = {};

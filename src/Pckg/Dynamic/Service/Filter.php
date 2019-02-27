@@ -27,12 +27,9 @@ class Filter extends AbstractService
 
     public function getSaveFilterUrl()
     {
-        return url(
-            'dynamic.record.filter.save',
-            [
-                'table' => $this->table,
-            ]
-        );
+        return url('dynamic.record.filter.save', [
+            'table' => $this->table,
+        ]);
     }
 
     public function getAppliedFilters()
@@ -47,62 +44,199 @@ class Filter extends AbstractService
 
     public function getAvailableFilters()
     {
-        return $this->makeFields(
-            $this->table->listableFields(
-                function(HasMany $fields) {
-                    $fields->where('dynamic_field_type_id', 19, '!=');
-                }
-            )
-        );
+        return $this->makeFields($this->table->listableFields(function(HasMany $fields) {
+            $fields->where('dynamic_field_type_id', 19, '!=');
+        }));
     }
 
     public function getAvailableRelationFilters()
     {
-        return $this->table->relations->map(
-            function(Relation $relation) {
-                /**
-                 * @T00D00 - load via ajax if possible?
-                 *         - optimize related selects like ($relation->value = '$record->order->user->city->title' ;-))
-                 */
-                $options = $relation->getOptions();
+        return $this->table->relations->map(function(Relation $relation) {
+            /**
+             * @T00D00 - load via ajax if possible?
+             *         - optimize related selects like ($relation->value = '$record->order->user->city->title' ;-))
+             */
+            $options = $relation->getOptions();
 
-                return [
-                    'id'            => $relation->id,
-                    'field'         => $relation->id,
-                    'table'         => $relation->showTable->table,
-                    'fields'        => $this->makeFields($relation->showTable->fields),
-                    'type'          => $relation->dynamic_relation_type_id,
-                    'options'       => [
-                        'options' => $options,
-                    ],
-                    'filterOptions' => $options,
-                ];
-            }
-        );
+            return [
+                'id'            => $relation->id,
+                'field'         => $relation->id,
+                'table'         => $relation->showTable->table,
+                'fields'        => $this->makeFields($relation->showTable->fields),
+                'type'          => $relation->dynamic_relation_type_id,
+                'options'       => [
+                    'options' => $options,
+                ],
+                'filterOptions' => $options,
+            ];
+        });
     }
 
     protected function makeFields(CollectionInterface $collection)
     {
-        return $collection->each(
-            function(Field $field) {
-                $type = $field->fieldType->slug;
+        return $collection->each(function(Field $field) {
+            $type = $field->fieldType->slug;
 
-                $options = [];
-                if ($type == 'select') {
-                    $relation = $field->hasOneSelectRelation;
-                    if ($relation) {
-                        $options = $relation->getOptions();
-                    }
+            $options = [];
+            if ($type == 'select') {
+                $relation = $field->hasOneSelectRelation;
+                if ($relation) {
+                    $options = $relation->getOptions();
+                }
+            }
+
+            return [
+                'field'   => $field->field,
+                'label'   => $field->title ?? $field->field,
+                'type'    => $type,
+                'options' => $options,
+            ];
+        })->keyBy('field');
+    }
+
+    public function applyFilterOnRelation(Entity $entity, $filter)
+    {
+        $parts = explode('.', $filter['k']);
+        $relation = (new Relations())->where('alias', $parts[0])->where('on_table_id', $this->table->id)->one();
+
+        if (!$relation) {
+            if (dev()) {
+                ddd('no relation', $filter);
+            }
+
+            return;
+        }
+        $signMapper = $this->getTypeMethods();
+
+        /**
+         * We're on table orders:
+         *  - belongs to user: Users
+         *  - has many ordered packets: OrdersUsers
+         */
+        $subEntity = $relation->showTable->createEntity(null, false);
+
+        if ($relation->dynamic_relation_type_id == 1) { // belongs to
+            $subField = (new Fields())->where('field', $parts[1])
+                                      ->where('dynamic_table_id', $relation->show_table_id)
+                                      ->one();
+            if (!$subField) {
+                if (dev()) {
+                    ddd('no subfield', $parts);
                 }
 
-                return [
-                    'field'   => $field->field,
-                    'label'   => $field->title ?? $field->field,
-                    'type'    => $type,
-                    'options' => $options,
-                ];
+                return;
             }
-        )->keyBy('field');
+
+            $subEntity->select($subEntity->getTable() . '.id')->where($subField->field, $filter['v'], $filter['c']);
+            $entity->where($relation->onField->field, $subEntity);
+        } elseif ($relation->dynamic_relation_type_id == 2) { // has many
+            $subEntity->select($relation->onField->field);
+
+            if (count($parts) <= 1) {
+                if (dev()) {
+                    ddd('more parts are required?', $parts, $filter);
+                }
+
+                return;
+            }
+
+            if (count($parts) > 2) {
+                if (count($parts) > 3) {
+                    if (dev()) {
+                        ddd('more than 3 levels', $filter, $parts);
+                    }
+
+                    return;
+                }
+                $relation2 = (new Relations())->where('alias', $parts[1])
+                                              ->where('on_table_id', $relation->show_table_id)
+                                              ->one();
+                if ($relation2->dynamic_relation_type_id == 1) { // packet belongs to offer
+                    $subField2 = (new Fields())->where('field', $parts[2])
+                                               ->where('dynamic_table_id', $relation2->show_table_id)
+                                               ->one();
+                    if (!$subField2) {
+                        if (dev()) {
+                            ddd('no subfield 2 2', $parts);
+                        }
+
+                        return;
+                    }
+                    $subEntity2 = $relation2->showTable->createEntity(null, false);
+
+                    $subEntity2->select($subEntity2->getTable() . '.id')
+                               ->where($subField2->field, $filter['v'], $filter['c']);
+                    $subEntity->where($relation2->onField->field, $subEntity2);
+                    $subEntity->select($relation->onField->field);
+
+                    $entity->where('id', $subEntity);
+                } else {
+                    if (dev()) {
+                        ddd('has any?');
+                    }
+
+                    return;
+                }
+            } else {
+                $subField = (new Fields())->where('field', $parts[1])
+                                          ->where('dynamic_table_id', $relation->show_table_id)
+                                          ->one();
+                if (!$subField) {
+                    if (dev()) {
+                        ddd('no subfield 4', $parts);
+                    }
+
+                    return;
+                }
+
+                $subEntity->select($relation->onField->field)->where($subField->field, $filter['v'], $filter['c']);
+                $entity->where('id', $subEntity);
+
+                return;
+            }
+        } else {
+            if (dev()) {
+                ddd('unknown relation type', $relation->data());
+            }
+
+            return;
+        }
+
+        if (count($parts) > 2) {
+            if (count($parts) > 3) {
+                ddd('new level ...', $filter);
+
+                return;
+            }
+
+            $relation2 = (new Relations())->where('alias', $parts[1])
+                                          ->where('on_table_id', $relation->show_table_id)
+                                          ->one();
+            if ($relation2->dynamic_relation_type_id == 1) { // belongs to
+                $subField2 = (new Fields())->where('field', $parts[2])
+                                           ->where('dynamic_table_id', $relation2->show_table_id)
+                                           ->one();
+                if (!$subField2) {
+                    if (dev()) {
+                    ddd('no subfield2', $parts);
+                    }
+                    return;
+                }
+
+                $subEntity2 = $relation2->showTable->createEntity();
+
+                $subEntity2->select($subEntity2->getTable() . '.id')
+                           ->where($subField2->field, $filter['v'], $signMapper[$filter['c']]);
+                $subEntity->where($relation->onField->field, $subEntity2);
+            } else {
+                if (dev()) {
+                ddd('not belongs to 2', $parts, $filter);
+                }
+                return;
+            }
+
+            return;
+        }
     }
 
     public function applyOnEntity(Entity $entity, $filters = [])
@@ -112,12 +246,17 @@ class Filter extends AbstractService
         /**
          * Field filters.
          */
-        foreach ($filters as $filter) {
+        foreach ($filters as $i => $filter) {
             if (!is_string($filter['k'])) {
                 continue;
             }
 
             if (!in_array($filter['c'], $signMapper)) {
+                continue;
+            }
+
+            if (strpos($filter['k'], '.')) {
+                $this->applyFilterOnRelation($entity, $filter);
                 continue;
             }
 
@@ -146,11 +285,7 @@ class Filter extends AbstractService
                 continue;
             }
 
-            $entity->where(
-                $field->field,
-                $filter['v'],
-                $filter['c']
-            );
+            $entity->where($field->field, $filter['v'], $filter['c']);
         }
 
         /**
@@ -221,21 +356,16 @@ class Filter extends AbstractService
                 }
 
                 if (!$relationFilter['field'] && !$relationFilter['subfield']) {
-                    $entity->where(
-                        $relation->onField->field,
-                        $relationFilter['value'],
-                        $signMapper[$relationFilter['method']]
-                    );
+                    $entity->where($relation->onField->field, $relationFilter['value'],
+                                   $signMapper[$relationFilter['method']]);
                 }
-            } else if ($relation->dynamic_relation_type_id == 2) {
+            } elseif ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
                 $joined = true;
-                $entity->join(
-                    'INNER JOIN ' . $relation->showTable->table,
-                    $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
-                    $relation->onField->field
-                );
+                $entity->join('INNER JOIN ' . $relation->showTable->table,
+                              $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
+                              $relation->onField->field);
 
                 $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'],
                                $signMapper[$relationFilter['method']]);
@@ -304,7 +434,7 @@ class Filter extends AbstractService
     public function getTypeMethods()
     {
         $data = [
-            'is'          => '=',
+            'is'              => '=',
             'greater'         => '>',
             'greaterOrEquals' => '>=',
             'lower'           => '<',
@@ -324,10 +454,10 @@ class Filter extends AbstractService
     public function getRelationMethods()
     {
         return [
-            'is' => [
+            'is'  => [
                 'label' => '=',
             ],
-            'not'    => [
+            'not' => [
                 'label' => 'NOT',
             ],
         ];
@@ -342,8 +472,7 @@ class Filter extends AbstractService
     private function fullSearchTables(Entity $entity, array $tables, Parenthesis $where, $search)
     {
         foreach ($tables as $alias => $table) {
-            $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))
-                                         ->one();
+            $tableRecord = (new Tables())->where('table', str_replace('_i18n', '', $table))->one();
             if (!$tableRecord) {
                 continue;
             }
@@ -362,7 +491,7 @@ class Filter extends AbstractService
                     // $s = 'DATE_FORMAT(' . $alias . '.' . $field . ', \'%Y-%m-%d %H:%i:%s\') LIKE ?';
                     $s = $alias . '.' . $field . ' LIKE BINARY ?';
                     $where->push($s, '%' . $search . '%');
-                } else if ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
+                } elseif ($table == 'mails_sents' && in_array($searchableField->field, ['content'])) {
                     $match[] = $alias . '.' . $field;
                 } else {
                     $s = $alias . '.' . $field . ' LIKE ?';
@@ -406,8 +535,7 @@ class Filter extends AbstractService
                 $tables[$table] = $table;
             } else {
                 $start = strpos($join, '` AS `') + 6;
-                $tables[substr($join, $start,
-                               strpos($join, '`', strpos($join, '` AS `') + 6) - $start)] = $table;
+                $tables[substr($join, $start, strpos($join, '`', strpos($join, '` AS `') + 6) - $start)] = $table;
             }
         }
 
