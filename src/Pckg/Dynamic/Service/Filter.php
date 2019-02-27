@@ -218,8 +218,9 @@ class Filter extends AbstractService
                                            ->one();
                 if (!$subField2) {
                     if (dev()) {
-                    ddd('no subfield2', $parts);
+                        ddd('no subfield2', $parts);
                     }
+
                     return;
                 }
 
@@ -230,13 +231,53 @@ class Filter extends AbstractService
                 $subEntity->where($relation->onField->field, $subEntity2);
             } else {
                 if (dev()) {
-                ddd('not belongs to 2', $parts, $filter);
+                    ddd('not belongs to 2', $parts, $filter);
                 }
+
                 return;
             }
 
             return;
         }
+    }
+
+    public function applyFilterOnEntity(Field $field, Entity $entity, $filter)
+    {
+        $signMapper = $this->getTypeMethods();
+
+        if (!$field) {
+            return;
+        }
+
+        if ($field->fieldType->slug == 'boolean') {
+            $entity->where($field->field, $filter['v'] ? 1 : null, $signMapper[$filter['c']]);
+
+            return;
+        }
+
+        if (in_array($field->fieldType->slug, ['mysql'])) {
+            if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
+                $entity->having('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
+            }
+
+            return;
+        }
+
+        if (in_array($field->fieldType->slug, ['php'])) {
+            if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
+                $entity->where('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
+            }
+
+            return;
+        }
+
+        if (in_array($filter['c'], ['!=', 'notIn'])) {
+            $entity->where($field->field . ' IS NULL OR ' . $field->field, $filter['v'], $filter['c']);
+
+            return;
+        }
+
+        $entity->where($field->field, $filter['v'], $filter['c']);
     }
 
     public function applyOnEntity(Entity $entity, $filters = [])
@@ -262,30 +303,7 @@ class Filter extends AbstractService
 
             $field = (new Fields())->where('field', $filter['k'])->where('dynamic_table_id', $this->table->id)->one();
 
-            if (!$field) {
-                continue;
-            }
-
-            if ($field->fieldType->slug == 'boolean') {
-                $entity->where($field->field, $filter['v'] ? 1 : null, $signMapper[$filter['c']]);
-                continue;
-            }
-
-            if (in_array($field->fieldType->slug, ['mysql'])) {
-                if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
-                    $entity->having('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
-                }
-                continue;
-            }
-
-            if (in_array($field->fieldType->slug, ['php'])) {
-                if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
-                    $entity->where('`' . $field->field . '`', $filter['v'], $signMapper[$filter['c']]);
-                }
-                continue;
-            }
-
-            $entity->where($field->field, $filter['v'], $filter['c']);
+            $this->applyFilterOnEntity($field, $entity, $filter);
         }
 
         /**

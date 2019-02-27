@@ -130,7 +130,6 @@
                 let bodyBottom = parseInt($('body').outerHeight());
                 let h = bodyBottom - myBottom;
 
-                console.log(h);
                 return {'max-height': h + 'px'};
             },
             finalOptions: function () {
@@ -186,6 +185,7 @@
                 }
             },
             selected: function (newVal, oldVal) {
+                this.myMultiple = Array.isArray(newVal);
                 this.selectedModel = this.makeModel(newVal);
             },
             initialMultiple: function (newVal, oldVal) {
@@ -363,7 +363,6 @@
                 let allOptions = this.extractFlatOptions(this.options);
                 $.each(selected, function (i, val) {
                     if (!newOptions[val] && allOptions[val]) {
-                        console.log('non existent', val, selected);
                         newOptions[val] = allOptions[val];
                     }
                 });

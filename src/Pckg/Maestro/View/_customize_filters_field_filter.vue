@@ -65,6 +65,8 @@
                     }
                     if (!this.myFilter.value) {
                         this.myFilter.value = [];
+                    } else {
+                        this.myFilter.value = [this.myFilter.value];
                     }
 
                     this.$emit('input', this.myFilter);
@@ -74,13 +76,13 @@
                     this.$emit('input', this.myFilter);
                 }
             },
-            'filter.field': function (newVal) {
+            /*'myFilter.field': function (newVal) {
                 this.myFilter.field = newVal;
                 if (!this.$refs.filterValue) {
                     return;
                 }
                 this.$refs.filterValue.refreshList();
-            }
+            }*/
         },
         model: {
             prop: 'filter'

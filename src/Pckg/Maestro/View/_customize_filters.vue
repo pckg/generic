@@ -6,7 +6,7 @@
                           :content="'You can create custom filters for quicker access in future'"></pckg-tooltip>
         </h5>
 
-        <div v-for="(filter, i) in myFilters" class="single-filter">
+        <div v-for="(filter, i) in myFilters" class="single-filter" :key="filter.id">
             <a href="#" title="Remove condition" style="vertical-align: middle;"
                @click.prevent="removeFilter(filter)">
                 <i class="fal fa-minus-circle"></i>
@@ -89,7 +89,7 @@
                 utils.splice(this.myFilters, filter);
             },
             addCondition: function () {
-                this.myFilters.push({field: null, value: null, comp: 'in'});
+                this.myFilters.push({field: null, value: [], comp: 'in', id: Math.random()});
             }
         },
         computed: {
