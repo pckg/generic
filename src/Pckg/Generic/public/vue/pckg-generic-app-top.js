@@ -323,9 +323,9 @@ const pckgActionAnimation = {
             let topScroll = parseInt($(window).scrollTop());
             let topOffset = parseInt($(this.$el).offset().top);
             let clientHeight = document.documentElement.clientHeight;
-            let perc = 0.81;
+            let perc = this.animationSettings.threshold || 80;
 
-            if (topOffset > topScroll + (clientHeight * perc)) {
+            if (topOffset > topScroll + (clientHeight * perc / 100)) {
                 return;
             }
 
@@ -334,28 +334,39 @@ const pckgActionAnimation = {
             }
 
             this.$set(this.shared, 'animationStarted', true);
-            let random = Math.random();
-            let effect = random < 0.2 ? 'bounceInUp' : (random < 0.4 ? 'bounceInRight' : (random < 0.6 ? 'bounceInLeft' : (random < 0.8 ? 'fadeIn' : 'slideInLeft')));
-            this.$el.classList.add('animated', effect);
+            this.$el.classList.add('animated', this.animationSettings.effect);
             this.$el.classList.remove('animated-out');
+        },
+        prepareAnimationSettings: function (defaults) {
+            if (!defaults) {
+                defaults = {};
+            }
+            let defs = {
+                event: null,
+                effect: null,
+                delay: null,
+                infinite: false,
+                threshold: 80
+            };
+            $.each(defs, function (k, v) {
+                if (Object.keys(defaults).indexOf(k) >= 0) {
+                    return;
+                }
+
+                defaults[k] = v;
+            });
+            return defaults;
         }
     },
+    computed: {
+        animationSettings: function () {
+            return this.prepareAnimationSettings(this.action ? (this.action.settings.animation || {}) : {});
+        },
+    },
     mounted: function () {
-        return;
-        
-        if (this.action.type != 'action') {
-            return;
-        }
+        let settings = this.animationSettings;
 
-        let settings = {
-            event: 'entrance',
-            effect: 'bounce',
-            delay: null,
-            infinite: true
-        };
-
-        if (!settings.event) {
-            // animation is disabled
+        if (!settings || !settings.event || !settings.effect) {
             return;
         }
 
@@ -562,11 +573,17 @@ const pckgSmartComponent = {
         content: function () {
             return this.action.content;
         },
-        listComponent: function () {
-            return (this.action ? this.action.template.list : null) || 'derive-list';
+        listComponent: {
+            get: function () {
+                return (this.action ? this.action.template.list : null) || 'derive-list';
+            }, set: function () {
+            }
         },
-        itemComponent: function () {
-            return (this.action ? this.action.template.item : null) || 'derive-item';
+        itemComponent: {
+            get: function () {
+                return (this.action ? this.action.template.item : null) || 'derive-item';
+            }, set: function () {
+            }
         },
     },
     methods: {

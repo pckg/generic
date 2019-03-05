@@ -411,6 +411,7 @@ class PageStructure
             'wrapperLockHide',
             'wrapperLockShow',
             'wrapperLockSystem',
+            'animation',
         ];
         $separateTypes = [];
 
@@ -444,9 +445,14 @@ class PageStructure
         if ($actionsMorph->morph_id == Layouts::class) {
             $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
             collect($values)->each(function($value, $key) use ($actionsMorph) {
-                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
+                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
             });
         }
+
+        $values = only(post('settings'), ['animation']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
+        });
 
         /**
          * Set template.

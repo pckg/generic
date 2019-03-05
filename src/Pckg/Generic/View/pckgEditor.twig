@@ -132,10 +132,8 @@
 
                                         <ul class="dropdown-menu dropdown-menu-left">
                                             <li v-for="(childAction, i) in actionChildren">
-                                                <a href="#" @click.prevent="openChild(i)">${ childAction.title
-                                                    }
-                                                    #${
-                                                    childAction.id }</a>
+                                                <a href="#" @click.prevent="openChild(i)">${ childAction.title }
+                                                    #${ childAction.id }</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -246,7 +244,7 @@
                             </select>
                         </div>
 
-                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].item">
+                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && Object.keys(actionTemplates[action.template.template].item).length > 1">
                             <label>Item template</label>
                             <select class="form-control" v-model="action.template.item">
                                 <option v-for="(title,tpl) in actionTemplates[action.template.template].item"
@@ -255,7 +253,7 @@
                             </select>
                         </div>
 
-                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && actionTemplates[action.template.template].list">
+                        <div v-if="actionTemplates && actionTemplates[action.template.template] && typeof actionTemplates[action.template.template] != 'string' && Object.keys(actionTemplates[action.template.template].list).length > 1">
                             <label>List template</label>
                             <select class="form-control" v-model="action.template.list">
                                 <option v-for="(title,tpl) in actionTemplates[action.template.template].list"
@@ -272,7 +270,7 @@
                 <div class="panel panel-default" v-if="action.slug == '{{ slug }}'">
 
                     <div class="panel-heading">
-                        <i class="fa fa-cogs"></i> Settings <!-- {{ slug }} -->
+                        <i class="fa fa-cogs"></i> ${ action.title } settings <!-- {{ slug }} -->
                     </div>
 
                     <div class="panel-body">
@@ -281,17 +279,18 @@
 
                 </div>
             {% endfor %}
+
             <div class="panel panel-default" v-if="action.config">
-                <div class="panel-heading">{{ action.title }}</div>
+                <div class="panel-heading">{{ action.title }} settings</div>
                 <div class="panel-body">
-                    <component :is="action.config"></component>
+                    <component :is="action.config" :action="action"></component>
                 </div>
             </div>
 
             <div class="panel panel-default" v-if="action.type == 'wrapper'">
 
                 <div class="panel-heading">
-                    <i class="fa fa-cogs"></i> Wrapper
+                    <i class="fa fa-cogs"></i> Wrapper settings
                 </div>
 
                 <div class="panel-body">
@@ -352,7 +351,7 @@
             <div class="panel panel-default">
 
                 <div class="panel-heading">
-                    <i class="fal fa-square"></i> Box
+                    <i class="fal fa-square"></i> Box settings
                 </div>
 
                 <div class="panel-body">
@@ -465,7 +464,7 @@
             <div class="panel panel-default">
 
                 <div class="panel-heading">
-                    <i class="fa fa-magic"></i> Style
+                    <i class="fa fa-magic"></i> Style helpers
                 </div>
 
                 <div class="panel-body">
@@ -568,9 +567,53 @@
             </div>
 
 
+            <div class="panel panel-default" v-if="form.settings.animation">
+                <div class="panel-heading">
+                    <i class="fa fa-cog"></i> Animations
+                </div>
+
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Event</label>
+                        <pckg-select :initial-options="animationEvents" v-model="form.settings.animation.event"
+                                     :initial-multiple="false"></pckg-select>
+                    </div>
+
+                    <template v-if="form.settings.animation.event && form.settings.animation.event.length > 0">
+                        <div class="form-group">
+                            <label>Effect</label>
+                            <pckg-select :initial-options="animationEffects" v-model="form.settings.animation.effect"
+                                         :initial-multiple="false"></pckg-select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Threshold</label>
+                            <input type="number" class="form-control" v-model="form.settings.animation.threshold"
+                                   min="0" max="100"
+                                   step="1"/>
+                        </div>
+
+                        <template v-if="form.settings.animation.effect && form.settings.animation.effect.length > 0">
+                            <div class="form-control">
+                                <label>Delay</label>
+                                <pckg-select :initial-options="animationDelays" v-model="form.settings.animation.delay"
+                                             :initial-multiple="false"></pckg-select>
+                            </div>
+
+                            <div class="form-control">
+                                <label>Infinite animation</label>
+                                <d-input-checkbox v-model="form.settings.animation.infinite"
+                                                  :initial-multiple="false"></d-input-checkbox>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </div>
+
+
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-cog"></i> Custom
+                    <i class="fa fa-cog"></i> Custom style
                 </div>
 
                 <div class="panel-body">
@@ -579,43 +622,6 @@
 
                     <label>Style</label>
                     <input class="form-control" type="text" v-model="form.settings.style"/>
-                </div>
-            </div>
-
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-cog"></i> Animation
-                </div>
-
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label>Event</label>
-                        <pckg-select :initial-options="animationEvents" v-model="animation.event"
-                                     :initial-multiple="false"></pckg-select>
-                    </div>
-
-                    <template v-if="animation.event && animation.event.length > 0">
-                        <div class="form-group">
-                            <label>Effect</label>
-                            <pckg-select :initial-options="animationEffects" v-model="animation.effect"
-                                         :initial-multiple="false"></pckg-select>
-                        </div>
-
-                        <template v-if="animation.effect && animation.effect.length > 0">
-                            <div class="form-control">
-                                <label>Delay</label>
-                                <pckg-select :initial-options="animationDelays" v-model="animation.delay"
-                                             :initial-multiple="false"></pckg-select>
-                            </div>
-
-                            <div class="form-control">
-                                <label>Infinite animation</label>
-                                <d-input-checkbox v-model="animation.infinite"
-                                                  :initial-multiple="false"></d-input-checkbox>
-                            </div>
-                        </template>
-                    </template>
                 </div>
             </div>
 
@@ -758,7 +764,14 @@
                         wrapperLockHide: [],
                         wrapperLockShow: [],
                         wrapperLockSystem: [],
-                        container: ''
+                        container: '',
+                        animation: {
+                            event: null, // entrance, exit
+                            effect: null, // one of effects
+                            delay: null, // 0, 2s, ...
+                            infinite: false, //
+                            threshold: 80
+                        }
                     }
                 },
                 availableScopes: {},
@@ -817,20 +830,84 @@
                     'delay-3s': '3 seconds',
                     'delay-4s': '4 seconds',
                 },
-                animationEffects: [
-                    'bounce', 'flash', 'pulse', 'rubberBand', 'shake', 'headShake', 'swing', 'tada', 'wobble', 'jello', 'bounceIn', 'bounceInDown', 'bounceInLeft', 'bounceInRight',
-                    'bounceInUp', 'bounceOut', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight', 'bounceOutUp', 'fadeIn', 'fadeInDown', 'fadeInDownBig', 'fadeInLeft',
-                    'fadeInLeftBig', 'fadeInRight', 'fadeInRightBig', 'fadeInUp', 'fadeInUpBig', 'fadeOut', 'fadeOutDown', 'fadeOutDownBig', 'fadeOutLeft', 'fadeOutLeftBig', 'fadeOutRight', 'fadeOutRightBig',
-                    'fadeOutUp', 'fadeOutUpBig', 'flipInX', 'flipInY', 'flipOutX', 'flipOutY', 'lightSpeedIn', 'lightSpeedOut', 'rotateIn', 'rotateInDownLeft', 'rotateInDownRight', 'rotateInUpLeft',
-                    'rotateInUpRight', 'rotateOut', 'rotateOutDownLeft', 'rotateOutDownRight', 'rotateOutUpLeft', 'rotateOutUpRight', 'hinge', 'jackInTheBox', 'rollIn', 'rollOut',
-                    'zoomIn', 'zoomInDown', 'zoomInLeft', 'zoomInRight', 'zoomInUp', 'zoomOut', 'zoomOutDown', 'zoomOutLeft', 'zoomOutRight', 'zoomOutUp', 'slideInDown', 'slideInLeft',
-                    'slideInRight', 'slideInUp', 'slideOutDown', 'slideOutLeft', 'slideOutRight', 'slideOutUp', 'heartBeat'
-                ],
-                animation: {
-                    event: null, // entrance, exit
-                    effect: null, // one of effects
-                    delay: null, // 0, 2s, ...
-                    infinite: false //
+                animationEffects: {
+                    bounce: 'bounce',
+                    flash: 'flash',
+                    pulse: 'pulse',
+                    rubberBand: 'rubberBand',
+                    shake: 'shake',
+                    headShake: 'headShake',
+                    swing: 'swing',
+                    tada: 'tada',
+                    wobble: 'wobble',
+                    jello: 'jello',
+                    bounceIn: 'bounceIn',
+                    bounceInDown: 'bounceInDown',
+                    bounceInLeft: 'bounceInLeft',
+                    bounceInRight: 'bounceInRight',
+                    bounceInUp: 'bounceInUp',
+                    bounceOut: 'bounceOut',
+                    bounceOutDown: 'bounceOutDown',
+                    bounceOutLeft: 'bounceOutLeft',
+                    bounceOutRight: 'bounceOutRight',
+                    bounceOutUp: 'bounceOutUp',
+                    fadeIn: 'fadeIn',
+                    fadeInDown: 'fadeInDown',
+                    fadeInDownBig: 'fadeInDownBig',
+                    fadeInLeft: 'fadeInLeft',
+                    fadeInLeftBig: 'fadeInLeftBig',
+                    fadeInRight: 'fadeInRight',
+                    fadeInRightBig: 'fadeInRightBig',
+                    fadeInUp: 'fadeInUp',
+                    fadeInUpBig: 'fadeInUpBig',
+                    fadeOut: 'fadeOut',
+                    fadeOutDown: 'fadeOutDown',
+                    fadeOutDownBig: 'fadeOutDownBig',
+                    fadeOutLeft: 'fadeOutLeft',
+                    fadeOutLeftBig: 'fadeOutLeftBig',
+                    fadeOutRight: 'fadeOutRight',
+                    fadeOutRightBig: 'fadeOutRightBig',
+                    fadeOutUp: 'fadeOutUp',
+                    fadeOutUpBig: 'fadeOutUpBig',
+                    flipInX: 'flipInX',
+                    flipInY: 'flipInY',
+                    flipOutX: 'flipOutX',
+                    flipOutY: 'flipOutY',
+                    lightSpeedIn: 'lightSpeedIn',
+                    lightSpeedOut: 'lightSpeedOut',
+                    rotateIn: 'rotateIn',
+                    rotateInDownLeft: 'rotateInDownLeft',
+                    rotateInDownRight: 'rotateInDownRight',
+                    rotateInUpLeft: 'rotateInUpLeft',
+                    rotateInUpRight: 'rotateInUpRight',
+                    rotateOut: 'rotateOut',
+                    rotateOutDownLeft: 'rotateOutDownLeft',
+                    rotateOutDownRight: 'rotateOutDownRight',
+                    rotateOutUpLeft: 'rotateOutUpLeft',
+                    rotateOutUpRight: 'rotateOutUpRight',
+                    hinge: 'hinge',
+                    jackInTheBox: 'jackInTheBox',
+                    rollIn: 'rollIn',
+                    rollOut: 'rollOut',
+                    zoomIn: 'zoomIn',
+                    zoomInDown: 'zoomInDown',
+                    zoomInLeft: 'zoomInLeft',
+                    zoomInRight: 'zoomInRight',
+                    zoomInUp: 'zoomInUp',
+                    zoomOut: 'zoomOut',
+                    zoomOutDown: 'zoomOutDown',
+                    zoomOutLeft: 'zoomOutLeft',
+                    zoomOutRight: 'zoomOutRight',
+                    zoomOutUp: 'zoomOutUp',
+                    slideInDown: 'slideInDown',
+                    slideInLeft: 'slideInLeft',
+                    slideInRight: 'slideInRight',
+                    slideInUp: 'slideInUp',
+                    slideOutDown: 'slideOutDown',
+                    slideOutLeft: 'slideOutLeft',
+                    slideOutRight: 'slideOutRight',
+                    slideOutUp: 'slideOutUp',
+                    heartBeat: 'heartBeat'
                 }
             };
         },
@@ -1168,10 +1245,7 @@
                     return;
                 }
 
-                http.post(utils.url('@pckg.generic.pageStructure.actionsMorphSettings', {actionsMorph: this.action.id}), {
-                    settings: this.form.settings,
-                    template: this.action.template
-                }, function (data) {
+                http.post(utils.url('@pckg.generic.pageStructure.actionsMorphSettings', {actionsMorph: this.action.id}), this.getSettingsForSave(), function (data) {
                     if (data.success) {
                         $('#editBlockModal').modal('hide');
                         return;
@@ -1179,6 +1253,14 @@
 
                     $dispatcher.$emit('notification:error', 'Error saving data');
                 });
+            },
+            getSettingsForSave: function () {
+                let data = {
+                    settings: this.form.settings,
+                    template: this.action.template
+                };
+
+                return data;
             },
             duplicateContent: function (content) {
                 if (!this.action) {
@@ -1448,8 +1530,14 @@
                 /**
                  * Is not title, so it's object, and it has either list or item templates.
                  */
-                return (template.list && Object.keys(template.list).length > 1)
-                    || (template.item && Object.keys(template.item) > 1);
+                if (template.list && Object.keys(template.list).length > 1) {
+                    return true;
+                }
+                if (template.item && Object.keys(template.item).length > 1) {
+                    return true;
+                }
+
+                return false;
             },
             availableWidths: function () {
                 var sizes = {'xs': {}, 'sm': {}, 'md': {}, 'lg': {}, 'xl': {}};

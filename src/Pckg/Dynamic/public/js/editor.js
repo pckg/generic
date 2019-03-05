@@ -63,6 +63,7 @@ tinymce.PluginManager.add('comms', function (editor, url) {
 });
 
 let tinyMceConfig = {
+    entity_encoding: 'raw',
     link_class_list: [
         {title: 'Link', value: ''},
         {title: 'Button', value: 'button'},

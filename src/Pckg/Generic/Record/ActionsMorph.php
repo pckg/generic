@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Record;
 
 use Complex\Exception;
+use Derive\Newsletter\Controller\Newsletter;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
@@ -399,6 +400,10 @@ class ActionsMorph extends Record
             }
         }*/
 
+        if ($this->action->slug == 'pckg-mail-mailchimp-enews') {
+            $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'], 'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
+        }
+
         return $settings;
     }
 
@@ -432,6 +437,13 @@ class ActionsMorph extends Record
             'wrapperLockShow'   => [],
             'wrapperLockHide'   => [],
             'wrapperLockSystem' => [],
+            'animation'         => [
+                'event'     => null,
+                'effect'    => null,
+                'infinite'  => false,
+                'delay'     => null,
+                'threshold' => 80,
+            ],
         ];
     }
 

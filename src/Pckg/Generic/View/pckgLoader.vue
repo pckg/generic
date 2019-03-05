@@ -1,6 +1,6 @@
 <template>
     <span v-if="myLoading" class="pckg-loader text-center" :class="mode">
-        <i class="fa fa-spinner-third fa-spin fa-2x"></i>
+        <i class="fa fa-spinner-third fa-spin fa-2x fa-fw"></i>
     </span>
 </template>
 

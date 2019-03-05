@@ -12,7 +12,7 @@
 
     <p>Go to <a href="#back">previous page</a> or <a href="/">home</a></p>
 
-    {% if implicitDev() %}
+    {% if _env.implicitDev() %}
         <p>{{ exception.getMessage() }}</p>
         <p>{{ exception.getTraceAsString() | nl2br }}</p>
     {% endif %}
