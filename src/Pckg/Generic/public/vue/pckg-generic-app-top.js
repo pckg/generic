@@ -51,7 +51,7 @@ const pckgPlatformSettings = {
         submitForm: function () {
             this.validateAndSubmit(function () {
                 http.post($(this.$el).find('form').attr('action'), this.form, function (data) {
-                    $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message || (data.success ? 'Settings saved' : 'General error'));
+                    $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message || (data.success ? 'Settings saved, some changes require page refresh' : 'General error'));
                 }, function (response) {
                     http.postError(response);
 
