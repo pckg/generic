@@ -106,8 +106,8 @@ var pckgTranslations = {
             var translation = $store.state.translations[key] || null;
 
             if (!translation) {
-                if (Vue.config.debug) {
-                    return key;
+                if ($store && $store.getters.isAdmin) {
+                    return '__' + key;
                 }
 
                 return key.split('.').reverse()[0];

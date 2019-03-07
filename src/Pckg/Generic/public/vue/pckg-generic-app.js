@@ -12,6 +12,9 @@ Pckg.vue.stores.auth = {
         },
         isLoggedIn: function (state) {
             return state.user.id > 0 ? true : false;
+        },
+        isAdmin: function (state) {
+            return state.user.user_group_id == 1;
         }
     },
     mutations: {
