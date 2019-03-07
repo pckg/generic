@@ -21,6 +21,9 @@
                 default: false
             }
         },
+        model: {
+            prop: 'value'
+        },
         watch: {
             value: function (n, o) {
                 if (n != o) {

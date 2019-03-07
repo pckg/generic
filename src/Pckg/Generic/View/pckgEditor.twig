@@ -641,85 +641,6 @@
                 </div>
             </div>-->
         </div>
-
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'class': 'modal-lg', id: 'editBlockModal', vueLoading: '!action'} %}
-            {% block header %}
-                Edit content
-            {% endblock %}
-            {% block body %}
-                <div>
-                    <template v-if="content && content.id">
-                        <h4>
-                            <button class="btn btn-warning" @click.prevent="duplicateContent(content)" v-if="content">
-                                Copy
-                                #${
-                                content.id }
-                            </button>
-
-                            <a class="btn btn-danger popup-iframe" :href="'/dynamic/records/edit/73/' + content.id"
-                               v-if="content">Full
-                                edit</a>
-
-                            #${ content.id } - ${ content.title }
-                        </h4>
-
-                        <pckg-htmleditor v-model="content.content" :key="content.id"></pckg-htmleditor>
-                        <br/>
-
-                        <template v-if="content.contents && content.contents.length > 0">
-                            <button @click.prevent="toggleShowSubcontents" class="btn btn-primary">Show / Hide
-                                subcontents
-                            </button>
-                            <br/>
-                            <template v-if="showSubcontents">
-                                <div v-for="subcontent in content.contents" :key="subcontent.id">
-                                    <h5>
-                                        <button class="btn btn-warning" @click.prevent="duplicateContent(subcontent)">
-                                            Copy
-                                            #${
-                                            subcontent.id }
-                                        </button>
-
-                                        <a class="btn btn-danger popup-iframe"
-                                           :href="'/dynamic/records/edit/73/' + subcontent.id">Full
-                                            edit</a>
-
-                                        #${ subcontent.id } - ${ subcontent.title }
-                                    </h5>
-
-                                    <pckg-htmleditor v-model="subcontent.content"></pckg-htmleditor>
-                                </div>
-                            </template>
-                            <br/>
-                        </template>
-                    </template>
-                    <button class="btn btn-primary" @click.prevent="createContent">Create empty</button>
-                    <button class="btn btn-primary" @click.prevent="switchContent">Switch content</button>
-                </div>
-            {% endblock %}
-            {% block footer %}
-                <div role="group" class="btn-group pull-left" style="text-align: right;">
-                    <a href="#" title="Toggle transparency" class="btn btn-default"
-                       @click.prevent="toggleTransparency">
-                        <i aria-hidden="true" class="fa fa-plus"></i> Toggle transparency
-                    </a>
-                </div>
-
-                <input type="button" class="btn btn-success" @click.prevent="saveContent" value="Save content"/>
-            {% endblock %}
-        {% endembed %}
-
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, id: 'switchContentModal', minHeight: '50vh'} %}
-            {% block header %}
-                Switch content
-            {% endblock %}
-            {% block body %}
-                <pckg-select v-model="changeContentId" :initial-multiple="false" :initial-refresh="true"
-                             refresh-url="{{ url('pckg.generic.pageStructure.getContents') }}"></pckg-select>
-
-                <button class="btn btn-success" @click.prevent="saveChangedContent">Change content</button>
-            {% endblock %}
-        {% endembed %}
     </div>
 </script>
 
@@ -790,7 +711,6 @@
                     content: '',
                     contents: []
                 },
-                changeContentId: '',
                 partials: {},
                 structures: {},
                 pages: {},
@@ -815,9 +735,9 @@
                         title: 'Start payment',
                     }
                 ],
-                showSubcontents: false,
                 tempSubcontents: {},
                 myMode: this.mode,
+                contentModal: false,
                 animationEvents: {
                     'entrance': 'On entrance',
                     'exit': 'On exit',
@@ -968,26 +888,6 @@
                     }
                     $dispatcher.$emit('pckg-action:' + this.action.id + ':perRow-changed', newVal);
                 }
-            },
-            'content.contents': {
-                handler: function (newVal, oldVal) {
-                    var temp = this.tempSubcontents;
-                    this.tempSubcontents = {};
-                    $.each(newVal, function (i, subcontent) {
-                        if (typeof temp[i] == undefined) {
-                        } else if (subcontent.content != temp[i]) {
-                            this.changeContent(subcontent);
-                        }
-                        this.tempSubcontents[i] = subcontent.content;
-                    }.bind(this));
-                },
-                deep: true
-            },
-            'content.content': {
-                handler: function (newVal, oldVal) {
-                    this.changeContent(this.content);
-                },
-                deep: true
             }
         },
         methods: {
@@ -1000,9 +900,6 @@
                     hash |= 0; // Convert to 32bit integer
                 }
                 return hash;
-            },
-            toggleShowSubcontents: function () {
-                this.showSubcontents = !this.showSubcontents;
             },
             initialFetch: function () {
                 if (this.footers.length > 0) {
@@ -1025,55 +922,8 @@
                     this.routes = data.routes;
                 }.bind(this));
             },
-            saveChangedContent: function () {
-                if (!this.action) {
-                    return;
-                }
-
-                http.post(
-                    utils.url('{{ url('pckg.generic.pageStructure.actionsMorph') }}', {actionsMorph: this.action.id}),
-                    {
-                        content_id: this.changeContentId
-                    },
-                    function (data) {
-                        if (data.success) {
-                            $dispatcher.$emit('notification:success', 'Content changed, refreshing');
-                            this.refreshWholeContent();
-                            $('#switchContentModal').modal('hide');
-                        } else {
-                            $dispatcher.$emit('notification:error', 'Error changing content');
-                        }
-                    }.bind(this));
-            },
-            switchContent: function () {
-                $('#switchContentModal').modal('show');
-            },
-            toggleTransparency: function () {
-                $(this.$el).find('.modal-dialog').toggleClass('modal-transparent');
-            },
             scopeSelected: function (scope) {
                 return this.form.settings.scopes.indexOf(scope) >= 0;
-            },
-            changeContent: function (content) {
-                if (!content || !this.action || this.action.type != 'action') {
-                    return;
-                }
-
-                /*var $action = $('#' + this.action.type + '-' + this.action.id);
-
-                var $content = $action.find('.bind-content-' + content.id);
-
-                if ($content.length > 0) {
-                    $content.html(content.content);
-                } else {
-                    $content = $action.find('.bind-content');
-
-                    if ($content.length > 0) {
-                        $content.html(content.content);
-                    }
-                }*/
-
-                $store.commit('setActionContent', {action: this.action, content: content});
             },
             toggleScope: function (scope, group) {
                 if (this.scopeSelected(scope)) {
@@ -1187,8 +1037,9 @@
                 });
             },
             openEditContentModal: function () {
-                $('#editBlockModal').modal('show');
-                this.refreshWholeContent();
+                $dispatcher.$emit('frontpage-plugin-content:editContent', {
+                    action: this.action
+                });
             },
             refreshSettings: function () {
                 this.form.settings = this.action.settings;
@@ -1197,14 +1048,6 @@
                     this.form.settings = data.settings;
                     this.parseSettings();
                 }.bind(this));*/
-            },
-            refreshWholeContent: function () {
-                if (!this.action) {
-                    return;
-                }
-                http.getJSON(utils.url('@pckg.generic.pageStructure.actionsMorphContent', {actionsMorph: this.action.id}), function (data) {
-                    this.content = data.content;
-                }.bind(this));
             },
             parseSettings: function () {
                 /**
@@ -1247,12 +1090,11 @@
 
                 http.post(utils.url('@pckg.generic.pageStructure.actionsMorphSettings', {actionsMorph: this.action.id}), this.getSettingsForSave(), function (data) {
                     if (data.success) {
-                        $('#editBlockModal').modal('hide');
                         return;
                     }
 
                     $dispatcher.$emit('notification:error', 'Error saving data');
-                });
+                }.bind(this));
             },
             getSettingsForSave: function () {
                 let data = {
@@ -1261,28 +1103,6 @@
                 };
 
                 return data;
-            },
-            duplicateContent: function (content) {
-                if (!this.action) {
-                    return;
-                }
-                http.post(utils.url('@pckg.generic.pageStructure.duplicateActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
-                    this.content = data.content;
-                }.bind(this));
-            },
-            createContent: function () {
-                if (!this.action) {
-                    return;
-                }
-                http.post(utils.url('@pckg.generic.pageStructure.createActionsMorphContent', {actionsMorph: this.action.id}), {}, function (data) {
-                    this.content = data.content;
-                }.bind(this));
-            },
-            saveContent: function () {
-                http.post(utils.url('@pckg.generic.pageStructure.content', {content: this.content.id}), {content: this.content}, function (data) {
-                    this.content = data.content;
-                    $('#editBlockModal').modal('hide');
-                }.bind(this));
             },
             pushNormalizedClass: function (classes, val, type, prefix) {
                 if (typeof prefix == 'undefined') {
