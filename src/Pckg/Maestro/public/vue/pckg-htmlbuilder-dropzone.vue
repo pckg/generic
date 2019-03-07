@@ -14,7 +14,7 @@
             </button>
 
             <button v-if="original && myCurrent != original" type="button" class="btn btn-default">
-                <i class="fa fa-refresh"></i> Restore original
+                <i class="fa fa-redo"></i> Restore original
             </button>
         </div>
         <div class="table table-striped files" :id="id + '-previews'"></div>
@@ -98,7 +98,7 @@
                         '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0"' +
                         ' aria-valuemax="100" aria-valuenow="0">' +
                         '<div class="progress-bar progress-bar-success" style="width:0%;"' +
-                        ' data-dz-uploadprogress></div>' +
+                        ' data-dz-uploadprogress><span class="progress-text"></span></div>' +
                         '</div>' +
                         '</div>';
                 }
@@ -113,6 +113,17 @@
                     clickable: $(this.$el).parent().find('.select-files').get()[0],
                     maxFilesize: 8,
                     acceptedFiles: this.accept,
+                    uploadprogress: function(file, progress, bytesSent) {
+                        if (file.previewElement) {
+                            var progressElement = file.previewElement.querySelector("[data-dz-uploadprogress]");
+                            progressElement.style.width = progress + "%";
+                            progressElement.querySelector(".progress-text").textContent = progress + "%";
+                            if (progress == 100) {
+                                let animated = file.previewElement.querySelector("[aria-valuemax]");
+                                $(animated).removeClass('active');
+                            }
+                        }
+                    },
                     success: function (file, data) {
                         if (data.success) {
                             this.prev = this.myCurrent;

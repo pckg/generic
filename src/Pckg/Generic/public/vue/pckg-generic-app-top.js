@@ -1103,6 +1103,9 @@ const pckgPartialPlatformSettings = {
                 this.saving = false;
                 $dispatcher.$emit('notification:success', 'Settings saved');
                 this.errors.clear();
+                if (this.saved) {
+                    this.saved();
+                }
             }.bind(this), function (response) {
                 this.saving = false;
                 http.postError(response);
