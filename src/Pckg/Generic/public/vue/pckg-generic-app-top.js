@@ -1086,6 +1086,11 @@ const pckgPartialPlatformSettings = {
             modal: null
         };
     },
+    computed: {
+        stateSettings: function () {
+            return $store.state.settings.settings;
+        }
+    },
     methods: {
         edit: function () {
             this.mode = 'edit';
