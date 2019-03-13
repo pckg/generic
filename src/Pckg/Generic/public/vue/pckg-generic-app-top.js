@@ -974,7 +974,7 @@ var pckgElement = {
                 toolbar: (function () {
                     let toolbar = tinyMceConfig.toolbar.slice(0);
                     if (toolbar[0].indexOf('save') !== 0) {
-                        toolbar[0] = 'save cancel close | ' + toolbar[0];
+                        toolbar[0] = 'save commsCancel close | ' + toolbar[0];
                     }
                     return toolbar;
                 })(),

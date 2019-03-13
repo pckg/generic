@@ -86,10 +86,13 @@ class Dynamic
         }
     }
 
-    public function joinPermissionsIfPermissionable($entity)
+    public function joinPermissionsIfPermissionable($entity, $action = 'read')
     {
-        if ($entity->isPermissionable()) {
+        if (!$entity->isPermissionable()) {
+            return;
         }
+        
+        $entity->joinPermissionTo($action);
     }
 
     public function getContentLanguage()

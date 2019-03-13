@@ -18,7 +18,11 @@ tinymce.PluginManager.add('comms', function (editor, url) {
         text: 'Close',
         icon: false,
         onclick: function () {
-            console.log('reverting changes and closing editor');
+            if (!confirm('Do you want to lose any unsaved changes?')) {
+                return;
+            }
+            console.log('destroying editor');
+            editor.destroy();
             // Open window
             /*editor.windowManager.open({
                 title: 'Example plugin',
@@ -30,6 +34,17 @@ tinymce.PluginManager.add('comms', function (editor, url) {
                     editor.insertContent('Title: ' + e.data.title);
                 }
             });*/
+        }
+    });
+    editor.addButton('commsCancel', {
+        text: 'Cancel',
+        icon: false,
+        onclick: function () {
+            if (!confirm('Do you want to cancel any unsaved changes?')) {
+                return;
+            }
+            console.log('canceling changes');
+            editor.buttons.cancel.onclick(editor, url);
         }
     });
 
@@ -454,7 +469,7 @@ $(document).ready(function () {
      *
      * @type {string}
      */
-    tinymce.baseURL = '/node_modules/tinymce/';
+    tinymce.baseURL = '/node_modules/tinymce';
 
     $('textarea.editor').each(function () {
         var selector = null;
