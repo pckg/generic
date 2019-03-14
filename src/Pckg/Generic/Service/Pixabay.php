@@ -7,12 +7,6 @@ class Pixabay
 
     public function getPictures($search)
     {
-        $pictures = context()->getOrDefault(Pixabay::class . ':' . $search, []);
-
-        if ($pictures) {
-            return $pictures;
-        }
-
         $this->fetchPictures($search);
 
         return $pictures;
@@ -45,6 +39,12 @@ class Pixabay
 
     public function fetchPictures($search)
     {
+        $pictures = context()->getOrDefault(Pixabay::class . ':' . $search, []);
+
+        if ($pictures) {
+            return $pictures;
+        }
+
         $client = new Client();
         $key = config('pckg.generic.external.pixabax.key', '');
         $url = 'https://pixabay.com/api/?key=' . $key . '&q=' . urlencode($search) . '&min_width=1600' .
