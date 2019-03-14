@@ -575,7 +575,7 @@ class Generic
                 $domain = $routesLanguage->domain ?? $defaultLanguage->domain;
                 $url = $routesLanguage->domain
                     ? $routeTranslation->route
-                    : rtrim('/' . $routeTranslation->language_id . $routeTranslation->route, '/');
+                    : rtrim((!$routesLanguage->default ? '/' . $routeTranslation->language_id : '') . $routeTranslation->route, '/');
 
                 $router->add(
                     $url,
