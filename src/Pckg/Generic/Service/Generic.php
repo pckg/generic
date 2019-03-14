@@ -573,9 +573,10 @@ class Generic
 
                 $newRoute['language'] = $routeTranslation->language_id;
                 $domain = $routesLanguage->domain ?? $defaultLanguage->domain;
+                $langPrefix = !$routesLanguage->default ? '/' . $routeTranslation->language_id : '';
                 $url = $routesLanguage->domain
                     ? $routeTranslation->route
-                    : rtrim((!$routesLanguage->default ? '/' . $routeTranslation->language_id : '') . $routeTranslation->route, '/');
+                    : ($langPrefix . $routeTranslation->route);
 
                 $router->add(
                     $url,
