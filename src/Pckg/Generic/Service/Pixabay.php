@@ -1,5 +1,7 @@
 <?php namespace Pckg\Generic\Service;
 
+use GuzzleHttp\Client;
+
 class Pixabay
 {
 
