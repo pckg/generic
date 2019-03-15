@@ -39,35 +39,26 @@ class Pixabay
 
     public function fetchPictures($search)
     {
-        $pictures = context()->getOrDefault(Pixabay::class . ':' . $search, []);
+        return cache(Pixabay::class . ':' . $search, function() use ($search) {
+            $client = new Client();
+            $key = config('pckg.generic.external.pixabax.key', '');
+            $url = 'https://pixabay.com/api/?key=' . $key . '&q=' . urlencode($search) . '&min_width=1600' .
+                '&min_height=900' . '&safe_search=true' . '&editors_choice=true' . '&orientation=horizontal' .
+                '&image_type=photo&per_page=' . rand(10, 100);
+            $pictures = json_decode($client->get($url)->getBody()->getContents())->hits ?? [];
+            $pictures = collect($pictures)->map(function($picture) {
+                $path = sha1($picture->id) . '.' .
+                    substr($picture->largeImageURL, 1 + strrpos($picture->largeImageURL, '.'));
+                $fullPath = path('uploads') . $path;
+                if (!file_exists($fullPath)) {
+                    file_put_contents($fullPath, file_get_contents($picture->largeImageURL));
+                }
 
-        if ($pictures) {
+                return $path;
+            })->all();
+
             return $pictures;
-        }
-
-        $client = new Client();
-        $key = config('pckg.generic.external.pixabax.key', '');
-        $url = 'https://pixabay.com/api/?key=' . $key . '&q=' . urlencode($search) . '&min_width=1600' .
-            '&min_height=900' . '&safe_search=true' . '&editors_choice=true' . '&orientation=horizontal' .
-            '&image_type=photo';
-        $pictures = json_decode($client->get($url)->getBody()->getContents())->hits ?? [];
-        $pictures = collect($pictures)->map(function($picture) {
-            $path = sha1($picture->id) . '.' .
-                substr($picture->largeImageURL, 1 + strrpos($picture->largeImageURL, '.'));
-            $fullPath = path('uploads') . $path;
-            if (!file_exists($fullPath)) {
-                file_put_contents($fullPath, file_get_contents($picture->largeImageURL));
-            }
-
-            return $path;
-        })->all();
-
-        /**
-         * Save pictures to Context for reuse?
-         */
-        context()->bind(Pixabay::class . ':' . $search, $pictures);
-
-        return $pictures;
+        }, 'app', 10 * 60);
     }
 
 }
