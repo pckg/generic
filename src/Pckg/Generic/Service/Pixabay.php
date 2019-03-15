@@ -46,16 +46,16 @@ class Pixabay
                 '&min_height=900' . '&safe_search=true' . '&editors_choice=true' . '&orientation=horizontal' .
                 '&image_type=photo&per_page=' . rand(10, 100);
             $pictures = json_decode($client->get($url)->getBody()->getContents())->hits ?? [];
-            $pictures = collect($pictures)->map(function($picture) {
-                $path = sha1($picture->id) . '.' .
-                    substr($picture->largeImageURL, 1 + strrpos($picture->largeImageURL, '.'));
-                $fullPath = path('uploads') . $path;
-                if (!file_exists($fullPath)) {
-                    file_put_contents($fullPath, file_get_contents($picture->largeImageURL));
-                }
+            $pictures = collect($pictures)->slice(15)->map(function($picture) {
+                    $path = sha1($picture->id) . '.' .
+                        substr($picture->largeImageURL, 1 + strrpos($picture->largeImageURL, '.'));
+                    $fullPath = path('uploads') . $path;
+                    if (!file_exists($fullPath)) {
+                        file_put_contents($fullPath, file_get_contents($picture->largeImageURL));
+                    }
 
-                return $path;
-            })->all();
+                    return $path;
+                })->all();
 
             return $pictures;
         }, 'app', 10 * 60);
