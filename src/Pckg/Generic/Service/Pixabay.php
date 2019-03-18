@@ -15,6 +15,9 @@ class Pixabay
     public function getPicture($folder, $search)
     {
         $pictures = $this->fetchPictures($search);
+        if (!$pictures) {
+            return null;
+        }
         $picture = $pictures[array_rand($pictures)];
 
         if ($folder) {
