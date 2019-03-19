@@ -1,8 +1,14 @@
 <template>
     <div class="pckg-dispatcher-notifications-wrapper">
-        <div class="alert alert-dismissible alert-fixxed" role="alert"
-             :class="'alert-' + notification.type"
-             v-for="notification in notifications">
+        <div 
+            class="alert alert-dismissible alert-fixxed animated" role="alert"
+            :class="[ 
+                'alert-' + notification.type, 
+                notification.type === 'danger' 
+                    ? 'shake' 
+                    : 'fadeInUp'
+            ]"
+            v-for="notification in notifications">
 
             <div class="col">
                 <i class="fas fa-fw" :class="iconClass(notification)"></i>
