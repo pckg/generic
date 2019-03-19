@@ -1,8 +1,9 @@
 <template>
     <div class="pckg-dispatcher-notifications-wrapper">
-        <div class="alert alert-dismissible alert-fixxed" role="alert"
-             :class="'alert-' + notification.type"
-             v-for="notification in notifications">
+        <div 
+            class="alert alert-dismissible animated" role="alert"
+            :class="alertClass(notification)"
+            v-for="notification in notifications">
 
             <div class="col">
                 <i class="fas fa-fw" :class="iconClass(notification)"></i>
@@ -30,6 +31,11 @@
         methods: {
             removeNotification: function (notification) {
                 utils.splice(this.notifications, notification);
+            },
+            alertClass: function(notification) {
+                let alertType = 'alert-' + notification.type;
+                let animationType = notification.type === 'danger' ? 'shake' : 'fadeInUp';
+                return `${alertType} ${animationType}`;
             },
             iconClass: function (notification) {
                 return notification.type == 'danger'
