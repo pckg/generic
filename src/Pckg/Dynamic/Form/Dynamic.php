@@ -337,7 +337,7 @@ class Dynamic extends Bootstrap
 
         if ($this->isEditable()) {
             $this->addSubmit('submit')->setValue('Save');
-            $this->addSubmit('as_new')->setValue('Save as')->setClass('btn-link');
+            // $this->addSubmit('as_new')->setValue('Save as')->setClass('btn-link');
         }
 
         return $this;

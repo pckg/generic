@@ -964,12 +964,16 @@
                     if (data.success) {
                         $dispatcher.$emit('notification:success', 'Action added');
                         if (data.actions) {
+                            let action = this.action;
                             $store.commit('addGenericActions', data.actions);
+                            if (action) {
+                                $store.commit('setActiveAction', action.id);
+                            }
                         }
                     } else {
                         $dispatcher.$emit('notification:error', 'Error adding action');
                     }
-                }, function () {
+                }.bind(this), function () {
                     $dispatcher.$emit('frontpage-deck:loading:decrease');
                     $dispatcher.$emit('notification:error', 'Error adding action');
                 });
