@@ -25,7 +25,7 @@
                 {{ selectedTitle }} <span class="caret text-right"></span>
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
-                <li v-if="(refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10)">
+                <li v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">
                     <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..." @keydown.enter="selectFirst" />
                 </li>
                 <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty
@@ -74,6 +74,9 @@
             };
         },
         props: {
+            hasSearch: {
+                default: true
+            },
             title: {
                 default: ''
             },

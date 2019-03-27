@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header" v-if="$slots.header || $slots.headerOut">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
-                        <span aria-hidden="true">&times;</span>
+                        <i class="fa fa-times" aria-hidden="true"></i>
                     </button>
                     <h4 class="modal-title" v-if="$slots.header">
                         <slot name="header"></slot>
