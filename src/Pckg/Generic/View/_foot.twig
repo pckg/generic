@@ -1,21 +1,8 @@
 <script>
     var Pckg = Pckg || {};
-    Pckg.data = {{ (data ? data : {}) | json_encode(JSON_NUMERIC_CHECK) | raw }};
-    Pckg.config = {};
-    Pckg.config.locale = {
-        current: '{{ _localeManager.getCurrent() }}',
-        decimals: {{ config('pckg.locale.decimals', 2) }},
-        format: {
-            dateMoment: 'll',
-            timeMoment: 'LT'
-        },
-        currency: '{{ config('pckg.payment.currency', 'EUR') }}',
-        currencySign: '{{ config('pckg.payment.currencySign', '€') }}'
-    };
+    Pckg.data = {{ (data ? data : {}) | json_encode | raw }};
     Pckg.locale = {};
     Pckg.locale.languages = {{ _localeManager.getLanguages().keyBy('slug').map('title') | json_encode | raw }};
-    Pckg.config.editor = {};
-    Pckg.config.editor.variables = {{ config('pckg.dynamic.editor.variables') | json_encode | raw }};
 
     {# encode value so it's not readable by default #}
     Pckg.config = JSON.parse(utils.base64decode({{ _config.getPublicConfig() | json_encode | raw }}));
