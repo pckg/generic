@@ -1,5 +1,5 @@
 <template>
-    <div class="pckg-datetime-picker pckg-calendar">
+    <div class="pckg-calendar">
 
         <div class="picker" :class="'mode-' + myMode">
 
@@ -38,80 +38,56 @@
                     </button>
                 </template>
 
-                <template v-else-if="myMode == 'month'">
-                    <table class="table table-condensed mode-month">
+                <div v-else-if="myMode == 'month'" style="position: relative; overflow: auto;">
+                    <!-- calendar view -->
+                    <table class="table mode-month table-fixed">
                         <thead>
                         <tr>
-                            <th v-for="weekDay in longWeekDays">{{ weekDay }}</th>
+                            <th v-for="weekDay in longWeekDays">{{ weekDay.name }}</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="week in weeks">
-                            <td v-for="day in week">
-                                <div class="scroll-wrap">
-                                    <button class="btn btn-sm btn-default" type="button"
+                            <td v-for="day in week" class="__day_width">
+                                <div class="height-wrapper" @click.self="select(day.date)">
+                                    <span class="__day"
                                             @click.prevent="select(day.date)"
                                             :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
                                             :disabled="day.disabled">{{ day.day }}
-                                    </button>
-                                    <div v-for="event in getDayEvents(day.date)" class="padding-vertical-xxs">
+                                    </span>
+                                    <div v-for="event in getDayEvents(day.date).slice(0, 3)" class="__event">
                                         <i :style="{color: event.color}" class="fas fa-circle "></i>
-                                        <a href="#" @click.prevent><b>{{ event.start.format('HH:mm') }}</b> {{
+                                        <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
+                                    <span class="__more" v-if="getDayEvents(day.date).length > 3">{{ getDayEvents(day.date).length - 3 }} more</span>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                </template>
+                </div>
 
-                <template v-else-if="myMode == 'week'">
-                    <table class="table table-condensed mode-week">
+                <div v-else-if="myMode == 'week'" style="position: relative; overflow: auto;" class="height-wrapper">
+                    <!-- weekly view -->
+                    <table class="table mode-week table-fixed">
                         <thead>
                         <tr>
-                            <th v-for="weekDay in longWeekDays">{{ weekDay }}</th>
+                            <th v-for="weekDay in longWeekDays">{{ weekDay.name }}<br />{{ weekDay.m | date }}</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td v-for="day in week">
-                                <div class="scroll-wrap">
-                                    <button class="btn btn-sm btn-default" type="button"
+                            <td v-for="day in week" class="__day_width">
+                                <div @click.self="select(day.date)">
+                                    <span class="__day"
                                             @click.prevent="select(day.date)"
                                             :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
                                             :disabled="day.disabled">{{ day.day }}
-                                    </button>
-                                    <div v-for="event in getDayEvents(day.date)" class="padding-vertical-xxs">
+                                    </span>
+                                    <div v-for="event in getDayEvents(day.date)" class="__event">
                                         <i :style="{color: event.color}" class="fas fa-circle "></i>
-                                        <a href="#" @click.prevent><b>{{ event.start.format('HH:mm') }}</b> {{
-                                            event.title }}</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </template>
-
-                <div v-else-if="myMode == 'day'" style="position: relative;">
-                    <table class="table table-condensed">
-                        <thead>
-                        <tr>
-                            <th v-for="group in groupedDayEvents(value)">
-                                <i :style="{color: group[0].color}" class="fas fa-circle "></i>
-                                {{ group[0].color }}
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td v-for="group in groupedDayEvents(value)">
-                                <div class="scroll-wrap">
-                                    <div v-for="event in group" class="padding-vertical-xxs" style="position: absolute;"
-                                         :style="getEventStyle(event)">
-                                        <i :style="{color: event.color}" class="fas fa-circle "></i>
-                                        <a href="#" @click.prevent><b>{{ event.start.format('HH:mm') }}</b> {{
+                                        <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
                                 </div>
@@ -121,36 +97,36 @@
                     </table>
                 </div>
 
-                <template v-else-if="myMode == 'day'">
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
-                            @click.prevent="prevHour">
-                        <i class="fa fa-chevron-up"></i>
-                    </button>
-
-                    <hr v-if="false"/>
-
-                    <table class="table table-condensed mode-day table-fixed">
+                <div v-else-if="myMode == 'day'" style="position: relative; overflow: auto;">
+                    <!-- daily view -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="no-border"></th>
+                            <th v-for="group in groupedDayEvents(myValue)">
+                                <i :style="{color: group[0].color}" class="fas fa-circle "></i>
+                                {{ group[0].color }}
+                            </th>
+                        </tr>
+                        </thead>
                         <tbody>
-                        <tr v-for="hour in hours">
-                            <td v-for="minute in hour">
-                                <button class="btn btn-sm btn-default" type="button"
-                                        @click.prevent="select(minute.time)"
-                                        :class="[minute.transparent ? 'trans-fade' : '', minute.active ? 'active' : '']"
-                                        :disabled="minute.disabled">
-                                    {{ minute.time }}
-                                </button>
+                        <tr v-for="(minutes, hour) in hours">
+                            <td class="no-border __hour_cell"><span class="__hour">{{ hour }}:00</span></td>
+                            <td v-for="group in groupedDayEvents(myValue, hour)" class="__day_width">
+                                <div class="height-wrapper">
+                                    <div v-for="event in group" class="__event"
+                                         style2="position: absolute;"
+                                         :style2="getEventStyle(event)">
+                                        <i :style="{color: event.color}" class="fas fa-circle "></i>
+                                        <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
+                                            event.title }}</a>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-
-                    <hr v-if="false"/>
-
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
-                            @click.prevent="nextHour">
-                        <i class="fa fa-chevron-down"></i>
-                    </button>
-                </template>
+                </div>
 
             </div>
 
@@ -205,8 +181,8 @@
                         return;
                     }
 
-                    console.log('changed from', this.myValue, 'to', value);
-                    this._momentModel = this.moment(value);
+                    console.log('pckg-calendar value changed from', this.myValue, 'to', value);
+                    this.$data._momentModel = this.moment(value);
                     this.myValue = value;
                 }
             }
@@ -229,6 +205,10 @@
 
                 return m;
             },
+            setAndEmitValue(value) {
+                this.myValue = value;
+                this.$emit('input', value);
+            },
             prev: function () {
                 let mode = this.myMode;
                 let multiplier = 1;
@@ -241,8 +221,8 @@
                     mode = 'years';
                 }
 
-                this._momentModel.subtract(multiplier, mode);
-                this.$emit('input', this._momentModel.format(this.options.format));
+                this.$data._momentModel.subtract(multiplier, mode);
+                this.setAndEmitValue(this.$data._momentModel.format(this.options.format));
             },
             next: function () {
                 let mode = this.myMode;
@@ -256,8 +236,8 @@
                     mode = 'years';
                 }
 
-                this._momentModel.add(multiplier, mode);
-                this.$emit('input', this._momentModel.format(this.options.format));
+                this.$data._momentModel.add(multiplier, mode);
+                this.setAndEmitValue(this.$data._momentModel.format(this.options.format));
             },
             zoomOut: function () {
                 if (this.options.type == 'time' && this.myMode == 'day') {
@@ -289,6 +269,7 @@
                     value = value + '' + currentValue.substring(value.length);
                     console.log('merged with current value', value);
                 }
+                this.myValue = value;
                 this.$emit('input', value);
 
                 /**
@@ -322,7 +303,7 @@
                     }
                 }.bind(this));
             },
-            groupedDayEvents: function (date) {
+            groupedDayEvents: function (date, hour) {
                 let events = this.getDayEvents(date);
                 let grouped = {};
                 $.each(events, function (i, event) {
@@ -333,9 +314,23 @@
                     grouped[event.color].push(event);
                 });
 
+                if (typeof hour != 'undefined') {
+                    $.each(grouped, function (color, events) {
+                        grouped[color] = events.filter(function (event) {
+                            if (event.start.format('H') != hour) {
+                                return false;
+                            }
+                            if (event.start.format('H') != hour) {
+                                return false;
+                            }
+                            return true;
+                        });
+                    });
+                }
+
                 return grouped;
             },
-            getDayEvents: function (date) {
+            getDayEvents: function (date, hour) {
                 let dateMoment = moment(date);
                 return this.events.filter(function (event) {
                     if (event.start.isAfter(dateMoment, 'day')) {
@@ -361,20 +356,55 @@
         },
         computed: {
             events: function () {
+                function shuffle(array) {
+                    var currentIndex = array.length, temporaryValue, randomIndex;
+
+                    // While there remain elements to shuffle...
+                    while (0 !== currentIndex) {
+
+                        // Pick a remaining element...
+                        randomIndex = Math.floor(Math.random() * currentIndex);
+                        currentIndex -= 1;
+
+                        // And swap it with the current element.
+                        temporaryValue = array[currentIndex];
+                        array[currentIndex] = array[randomIndex];
+                        array[randomIndex] = temporaryValue;
+                    }
+
+                    return array;
+                }
+
                 let events = [];
-                let date = moment().add(-1, 'days');
+                let date = moment().add(-8, 'days');
                 let i;
-                let colors = ['red', 'green', 'blue', 'orange', 'yellow', 'purple', 'black', 'white'];
+                let colors = ['red', 'green', 'blue', 'orange', 'yellow', 'purple', 'black', 'white', 'grey', 'brown'];
+                let j;
                 for (i = 0; i < 1000; i++) {
-                    date = moment(date.add(45, 'minutes').format());
-                    let event = {
-                        start: date,
-                        end: date,
-                        title: 'Some title #' + Math.floor(Math.random() * 1000),
-                        color: colors[Math.floor(Math.random() * colors.length)],
-                        link: '/maestro',
-                    };
-                    events.push(event);
+                    colors = shuffle(colors);
+                    for (j = 0; j < colors.length; j++) {
+                        date = moment(date.add(Math.round(Math.random() * 5), 'minutes').format());
+                        if (date.format('HH') < 7 || date.format('HH') > 20) {
+                            continue;
+                        }
+                        if (['red', 'yellow', 'purple', 'white'].indexOf(colors[j]) >= 0) {
+                            if (date.format('HH') > 16) {
+                                continue;
+                            }
+                        } else {
+                            if (date.format('HH') < 12) {
+                                continue;
+                            }
+                        }
+                        let event = {
+                            start: date,
+                            end: date,
+                            title: 'Some title #' + Math.floor(Math.random() * 1000),
+                            color: colors[j],
+                            link: '/maestro',
+                        };
+                        events.push(event);
+                    }
                 }
 
                 return events;
@@ -467,7 +497,7 @@
                 let m = this.moment().startOf('isoWeek');
                 let days = [];
                 do {
-                    days.push(m.format('dddd'));
+                    days.push({name: m.format('dddd'), m: m});
                     m.add(1, 'day');
                 } while (days.length < 7);
 
@@ -561,6 +591,8 @@
                 while (minute.isBefore(endOfDay)) {
                     let hourAvailable = !this.options.checkEnabled || this.options.checkEnabled(minute, 'time');
                     let item = {
+                        hour: minute.format('H'),
+                        Hour: minute.format('HH'),
                         minute: minute.format('mm'),
                         time: minute.format('HH:mm'),
                         disabled: !hourAvailable,

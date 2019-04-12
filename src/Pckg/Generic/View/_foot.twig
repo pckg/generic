@@ -17,10 +17,8 @@
     Pckg.config.editor = {};
     Pckg.config.editor.variables = {{ config('pckg.dynamic.editor.variables') | json_encode | raw }};
 
-    Pckg.config.cdn = {{ config('storage.cdn') | json_encode | raw }};
-
-    Pckg.config.apis = {};
-    Pckg.config.apis.googleConsole = {{ config('external.googleMaps.apiKey', '') | json_encode | raw }};
+    {# encode value so it's not readable by default #}
+    Pckg.config = JSON.parse(utils.base64decode({{ _config.getPublicConfig() | json_encode | raw }}));
 
     Pckg.site = {};
     Pckg.site.domain = {{ config('domain') | json_encode | raw }};

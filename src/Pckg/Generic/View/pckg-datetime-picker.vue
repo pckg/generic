@@ -143,7 +143,7 @@
                     }
 
                     console.log('changed from', this.myValue, 'to', value);
-                    this._momentModel = this.moment(value);
+                    this.$data._momentModel = this.moment(value);
                     this.myValue = value;
                 }
             }
@@ -168,13 +168,17 @@
                 this.visible = true;
                 if (!this.myValue || this.myValue.length == 0) {
                     if (this.options.getDefault) {
-                        this.myValue = this.options.getDefault();
+                        console.log('setting default');
+                        this.setAndEmitValue(this.options.getDefault());
                     } else {
-                        this.myValue = this.moment().format(this.options.format)
+                        console.log('setting current');
+                        this.setAndEmitValue(this.moment().format(this.options.format));
                     }
-
-                    this.$emit('input', this.myValue);
                 }
+            },
+            setAndEmitValue(value) {
+                this.myValue = value;
+                this.$emit('input', value);
             },
             prev: function () {
                 let mode = this.myMode;
@@ -188,8 +192,8 @@
                     mode = 'years';
                 }
 
-                this._momentModel.subtract(multiplier, mode);
-                this.$emit('input', this._momentModel.format(this.options.format));
+                this.$data._momentModel.subtract(multiplier, mode);
+                this.setAndEmitValue(this.$data._momentModel.format(this.options.format));
             },
             next: function () {
                 let mode = this.myMode;
@@ -203,8 +207,8 @@
                     mode = 'years';
                 }
 
-                this._momentModel.add(multiplier, mode);
-                this.$emit('input', this._momentModel.format(this.options.format));
+                this.$data._momentModel.add(multiplier, mode);
+                this.setAndEmitValue(this.$data._momentModel.format(this.options.format));
             },
             zoomOut: function () {
                 if (this.options.type == 'time' && this.myMode == 'day') {

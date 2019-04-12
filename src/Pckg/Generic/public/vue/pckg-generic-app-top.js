@@ -19,7 +19,7 @@ var data = data || {};
 
 var props = props || {};
 
-var pckgDelimiters = {
+const pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
@@ -70,7 +70,7 @@ const pckgPlatformSettings = {
     }
 };
 
-var pckgCdn = {
+const pckgCdn = {
     methods: {
         cdn: function (file) {
             if (!file) {
@@ -100,7 +100,7 @@ var pckgCdn = {
     }
 };
 
-var pckgTranslations = {
+const pckgTranslations = {
     methods: {
         __: function (key, data) {
             var translation = $store.state.translations[key] || null;
@@ -422,7 +422,7 @@ const pckgFormValidator = {
     }
 };
 
-var pckgSync = {
+const pckgSync = {
     methods: {
         single: function (name, request) {
             if (typeof object == 'undefined') {
@@ -438,7 +438,7 @@ var pckgSync = {
     }
 };
 
-var pckgLocale = {
+const pckgLocale = {
     methods: {
         locale: function () {
             return locale;
@@ -446,7 +446,7 @@ var pckgLocale = {
     }
 };
 
-var pckgTimeout = {
+const pckgTimeout = {
     methods: {
         timeout: function (name, callback, timeout, object) {
             if (typeof object == 'undefined') {
@@ -476,7 +476,7 @@ var pckgTimeout = {
     }
 };
 
-var pckgInterval = {
+const pckgInterval = {
     methods: {
         interval: function (name, callback, interval, object) {
             if (typeof object == 'undefined') {
@@ -498,7 +498,7 @@ var pckgInterval = {
     }
 };
 
-var pckgCleanRequest = {
+const pckgCleanRequest = {
     methods: {
         cleanRequest: function (callback, name) {
             if (this['_pckgCleanRequest' + name]) {
@@ -677,7 +677,7 @@ const pckgSmartComponent = {
     },
 };
 
-var pckgSmartList = {
+const pckgSmartList = {
     mixins: [pckgTranslations, pckgCdn],
     props: {
         contents: {
@@ -718,7 +718,7 @@ var pckgSmartList = {
     }
 };
 
-var pckgSmartItem = {
+const pckgSmartItem = {
     mixins: [pckgTranslations, pckgCdn],
     props: {
         content: {
@@ -906,7 +906,7 @@ const pckgActionAttrs = {
     }
 }
 
-var pckgElement = {
+const pckgElement = {
     mixins: [pckgCdn, pckgTimeout, pckgActionAttrs, pckgActionAnimation],
     props: {
         actionId: {
@@ -1148,3 +1148,28 @@ const pckgPartialPlatformSettings = {
         this.initialFetch();
     }
 };
+/*
+export default {
+    pckgSmartComponent,
+    pckgTimeout,
+    pckgActionAnimation,
+    pckgActionAttrs,
+    pckgCdn,
+    pckgCleanRequest,
+    pckgCookie,
+    pckgDelimiters,
+    pckgElement,
+    pckgFakeImage,
+    pckgFormValidator,
+    pckgInterval,
+    pckgLocale,
+    pckgPartialPlatformSettings,
+    pckgPayment,
+    pckgPaymentConfig,
+    pckgPlatformSettings,
+    pckgSmartItem,
+    pckgSmartList,
+    pckgStaticComponent,
+    pckgSync,
+    pckgTranslations
+};*/
