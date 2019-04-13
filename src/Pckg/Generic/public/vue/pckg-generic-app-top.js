@@ -422,6 +422,35 @@ const pckgFormValidator = {
     }
 };
 
+const pckgGoogleRecaptcha = {
+    methods: {
+        mergeGoogleRecaptcha: function (data) {
+            let $element = $(this.$el).find('.g-recaptcha-response');
+            data = data || this.form;
+
+            if ($element.length == 1) {
+                data['g-recaptcha-response'] = $element.val();
+            }
+
+            return data;
+        },
+        recaptchaLoaded: function () {
+            $(this.$el).find('[type=submit]').addClass('hidden');
+        },
+        recaptchaSolved: function () {
+            $(this.$el).find('[type=submit]').removeClass('hidden');
+        }
+    },
+    created: function () {
+        $dispatcher.$on('form:google-recaptcha:loaded', this.recaptchaLoaded);
+        $dispatcher.$on('form:google-recaptcha:solved', this.recaptchaSolved);
+    },
+    beforeDestroy: function () {
+        $dispatcher.$off('form:google-recaptcha:loaded', this.recaptchaLoaded);
+        $dispatcher.$off('form:google-recaptcha:solved', this.recaptchaSolved);
+    }
+};
+
 const pckgSync = {
     methods: {
         single: function (name, request) {
