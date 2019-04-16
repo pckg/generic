@@ -108,7 +108,8 @@
                 default: function () {
                     return {
                         format: 'YYYY-MM-DD',
-                        type: 'date'
+                        type: 'date',
+                        checkEnabled: null
                     };
                 }
             },

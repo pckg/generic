@@ -40,7 +40,7 @@
         <pckg-loader :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
-        <div class="pckg-maestro-table">
+        <div class="pckg-maestro-table" v-if="mode != 'filter'">
             <template v-if="depth > 0">
                 <table class="table table-striped table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">
@@ -207,7 +207,7 @@
 
         </div>
 
-        <div class="table-floating-bottom-bar"
+        <div v-if="mode != 'filter'" class="table-floating-bottom-bar"
              :class="ids.length > 0 || paginator.total > paginator.perPage ? 'in' : ''">
             <div class="table-actions" v-if="ids.length > 0">
                 <div class="pull-left" style="margin-right: 4rem;">
@@ -274,6 +274,7 @@
         name: 'pckg-maestro-table',
         mixins: [pckgTimeout],
         props: {
+            // full, clean, filter
             mode: {type: String, default: 'full'},
             /**
              * New

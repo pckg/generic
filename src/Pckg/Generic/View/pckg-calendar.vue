@@ -51,12 +51,12 @@
                             <td v-for="day in week" class="__day_width">
                                 <div class="height-wrapper" @click.self="select(day.date)">
                                     <span class="__day"
-                                            @click.prevent="select(day.date)"
-                                            :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
-                                            :disabled="day.disabled">{{ day.day }}
+                                          @click.prevent="select(day.date)"
+                                          :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
+                                          :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date).slice(0, 3)" class="__event">
-                                        <i :style="{color: event.color}" class="fas fa-circle "></i>
+                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -73,7 +73,7 @@
                     <table class="table mode-week table-fixed">
                         <thead>
                         <tr>
-                            <th v-for="weekDay in longWeekDays">{{ weekDay.name }}<br />{{ weekDay.m | date }}</th>
+                            <th v-for="weekDay in longWeekDays">{{ weekDay.name }}<br/>{{ weekDay.m | date }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -81,12 +81,12 @@
                             <td v-for="day in week" class="__day_width">
                                 <div @click.self="select(day.date)">
                                     <span class="__day"
-                                            @click.prevent="select(day.date)"
-                                            :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
-                                            :disabled="day.disabled">{{ day.day }}
+                                          @click.prevent="select(day.date)"
+                                          :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
+                                          :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date)" class="__event">
-                                        <i :style="{color: event.color}" class="fas fa-circle "></i>
+                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -103,8 +103,8 @@
                         <thead>
                         <tr>
                             <th class="no-border"></th>
-                            <th v-for="group in groupedDayEvents(myValue)">
-                                <i :style="{color: group[0].color}" class="fas fa-circle "></i>
+                            <th v-for="group in groupedDayEvents()">
+                                <i :style="{color: group[0].color}" class="fas fa-circle"></i>
                                 {{ group[0].color }}
                             </th>
                         </tr>
@@ -112,12 +112,12 @@
                         <tbody>
                         <tr v-for="(minutes, hour) in hours">
                             <td class="no-border __hour_cell"><span class="__hour">{{ hour }}:00</span></td>
-                            <td v-for="group in groupedDayEvents(myValue, hour)" class="__day_width">
-                                <div class="height-wrapper">
+                            <td v-for="group in groupedDayEvents(hour)" class="__day_width" :class="getCellClass(hour)">
+                                <div class="height-wrapper" @dblclick.prevent="emitFinalClick($event, hour)">
                                     <div v-for="event in group" class="__event"
                                          style2="position: absolute;"
                                          :style2="getEventStyle(event)">
-                                        <i :style="{color: event.color}" class="fas fa-circle "></i>
+                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -156,6 +156,18 @@
             },
             value: {
                 required: true
+            },
+            events: {
+                type: Array,
+                default: function () {
+                    return [];
+                }
+            },
+            groups: {
+                type: Array,
+                default: function () {
+                    return [];
+                }
             }
         },
         data: function () {
@@ -188,6 +200,16 @@
             }
         },
         methods: {
+            getCellClass: function(hour) {
+                if (parseInt(hour) > 7) {
+                    return 'bg-success';
+                }
+
+                return null;
+            },
+            emitFinalClick: function ($event, hour) {
+                this.$emit('final-click', this.$data._momentModel.format('YYYY-MM-DD') + ' ' + hour + ':00');
+            },
             getEventStyle: function (event) {
                 let hour = event.start.format('HH');
                 let minute = event.start.format('mm');
@@ -206,6 +228,7 @@
                 return m;
             },
             setAndEmitValue(value) {
+                this.$data._momentModel = moment(value);
                 this.myValue = value;
                 this.$emit('input', value);
             },
@@ -269,8 +292,7 @@
                     value = value + '' + currentValue.substring(value.length);
                     console.log('merged with current value', value);
                 }
-                this.myValue = value;
-                this.$emit('input', value);
+                this.setAndEmitValue(value);
 
                 /**
                  * Y-m-d H:i:s     null
@@ -303,20 +325,20 @@
                     }
                 }.bind(this));
             },
-            groupedDayEvents: function (date, hour) {
-                let events = this.getDayEvents(date);
+            groupedDayEvents: function (hour) {
+                let events = this.getDayEvents(this.$data._momentModel);
                 let grouped = {};
                 $.each(events, function (i, event) {
-                    if (!grouped[event.color]) {
-                        grouped[event.color] = [];
+                    if (!grouped[event.group]) {
+                        grouped[event.group] = [];
                     }
 
-                    grouped[event.color].push(event);
+                    grouped[event.group].push(event);
                 });
 
                 if (typeof hour != 'undefined') {
-                    $.each(grouped, function (color, events) {
-                        grouped[color] = events.filter(function (event) {
+                    $.each(grouped, function (group, events) {
+                        grouped[group] = events.filter(function (event) {
                             if (event.start.format('H') != hour) {
                                 return false;
                             }
@@ -331,18 +353,17 @@
                 return grouped;
             },
             getDayEvents: function (date, hour) {
-                let dateMoment = moment(date);
                 return this.events.filter(function (event) {
-                    if (event.start.isAfter(dateMoment, 'day')) {
+                    if (event.start.isAfter(date, 'day')) {
                         return false;
                     }
-                    if (event.end.isBefore(dateMoment, 'day')) {
+                    if (event.end.isBefore(date, 'day')) {
                         return false;
                     }
-                    if (event.start.isSameOrBefore(dateMoment, 'day') && event.end.isSameOrAfter(dateMoment, 'day')) {
+                    if (event.start.isSameOrBefore(date, 'day') && event.end.isSameOrAfter(date, 'day')) {
                         return true;
                     }
-                    if (event.start.isSame(dateMoment, 'day') || event.end.isSame(dateMoment, 'day')) {
+                    if (event.start.isSame(date, 'day') || event.end.isSame(date, 'day')) {
                         return true;
                     }
                     return false;
@@ -355,60 +376,6 @@
             }
         },
         computed: {
-            events: function () {
-                function shuffle(array) {
-                    var currentIndex = array.length, temporaryValue, randomIndex;
-
-                    // While there remain elements to shuffle...
-                    while (0 !== currentIndex) {
-
-                        // Pick a remaining element...
-                        randomIndex = Math.floor(Math.random() * currentIndex);
-                        currentIndex -= 1;
-
-                        // And swap it with the current element.
-                        temporaryValue = array[currentIndex];
-                        array[currentIndex] = array[randomIndex];
-                        array[randomIndex] = temporaryValue;
-                    }
-
-                    return array;
-                }
-
-                let events = [];
-                let date = moment().add(-8, 'days');
-                let i;
-                let colors = ['red', 'green', 'blue', 'orange', 'yellow', 'purple', 'black', 'white', 'grey', 'brown'];
-                let j;
-                for (i = 0; i < 1000; i++) {
-                    colors = shuffle(colors);
-                    for (j = 0; j < colors.length; j++) {
-                        date = moment(date.add(Math.round(Math.random() * 5), 'minutes').format());
-                        if (date.format('HH') < 7 || date.format('HH') > 20) {
-                            continue;
-                        }
-                        if (['red', 'yellow', 'purple', 'white'].indexOf(colors[j]) >= 0) {
-                            if (date.format('HH') > 16) {
-                                continue;
-                            }
-                        } else {
-                            if (date.format('HH') < 12) {
-                                continue;
-                            }
-                        }
-                        let event = {
-                            start: date,
-                            end: date,
-                            title: 'Some title #' + Math.floor(Math.random() * 1000),
-                            color: colors[j],
-                            link: '/maestro',
-                        };
-                        events.push(event);
-                    }
-                }
-
-                return events;
-            },
             viewTitle: function () {
                 let m = this.moment(this.myValue);
                 if (!m.isValid()) {
