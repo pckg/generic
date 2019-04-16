@@ -49,7 +49,9 @@ class Action implements \JsonSerializable
      */
     public function toVue(string $component, $props = [])
     {
-        return '<' . $component . ' :action-id="' . $this->getAction()->pivot->id . '"></' . $component . '>';
+        return '<' . $component .
+            ($this->getAction()->pivot ? ' :action-id="' . $this->getAction()->pivot->id . '"' : '')
+            . '></' . $component . '>';
     }
 
     /**

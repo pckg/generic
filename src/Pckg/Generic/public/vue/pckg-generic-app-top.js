@@ -424,7 +424,7 @@ const pckgFormValidator = {
 
 const pckgGoogleRecaptcha = {
     methods: {
-        mergeGoogleRecaptcha: function (data) {
+        collectGoogleRecaptcha: function (data) {
             let $element = $(this.$el).find('.g-recaptcha-response');
             data = data || this.form;
 
