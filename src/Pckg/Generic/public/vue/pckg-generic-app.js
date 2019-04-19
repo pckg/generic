@@ -92,6 +92,15 @@ const router = new VueRouter({
     routes: Pckg.router.vueUrls || []
 });
 
+router.afterEach(function (to, from) {
+    if (!ga) {
+        return;
+    }
+
+    ga('set', 'page', to.path);
+    ga('send', 'pageview');
+});
+
 const $store = new Vuex.Store({
     state: {
         router: {
