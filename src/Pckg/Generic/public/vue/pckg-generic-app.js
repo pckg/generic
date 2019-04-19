@@ -93,10 +93,14 @@ const router = new VueRouter({
 });
 
 router.afterEach(function (to, from) {
-    if (!ga) {
+    if (typeof ga === 'undefined') {
         return;
     }
 
+    if (from && to.path == from.path) {
+        return;
+    }
+    
     ga('set', 'page', to.path);
     ga('send', 'pageview');
 });
