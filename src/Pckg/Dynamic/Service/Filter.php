@@ -303,6 +303,10 @@ class Filter extends AbstractService
 
             $field = (new Fields())->where('field', $filter['k'])->where('dynamic_table_id', $this->table->id)->one();
 
+            if (!$field) {
+                continue;
+            }
+
             $this->applyFilterOnEntity($field, $entity, $filter);
         }
 

@@ -136,19 +136,39 @@ class HttpQl
          * Set proper fields.
          */
         $fields = [];
+        $fieldTransformations = [];
         foreach ($ormFields as $field) {
-            if (strpos($field, '.') !== false) {
+            if (strpos($field, '.') === false) {
+
+                $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);
+                if (!$fieldRecord) {
+                    continue;
+                }
+
+                $fields[] = $fieldRecord;
                 continue;
             }
 
-            $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);
+            /**
+             * Select relation field?
+             */
+            $split = explode('.', $field);
+            $relation = Relation::gets(['on_table_id' => $table->id, 'alias' => $split[0]]);
+            if (!$relation) {
+                continue;
+            }
+
+            $fieldRecord = Field::gets(['field' => $split[1], 'dynamic_table_id' => $relation->show_table_id]);
             if (!$fieldRecord) {
                 continue;
             }
 
-            $fields[] = $fieldRecord;
+            $fieldTransformations[$field] = function($record) use ($relation, $fieldRecord) {
+                return $record->{$relation->alias}->{$fieldRecord->field};
+            };
         }
         $tabelize->setFields($fields);
+        $tabelize->setFieldTransformations($fieldTransformations);
 
         /**
          * Transform records for frontend.

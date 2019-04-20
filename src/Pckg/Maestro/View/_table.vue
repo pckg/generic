@@ -40,7 +40,7 @@
         <pckg-loader :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
-        <div class="pckg-maestro-table" v-if="mode != 'filter'">
+        <div class="pckg-maestro-table">
             <template v-if="depth > 0">
                 <table class="table table-striped table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">
@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="panel panel-default" v-if="records.length > 0">
+                <div class="panel panel-default" v-if="mode != 'filter' && records.length> 0">
                     <div style="position: relative;" class="closest">
 
                         <!-- context menu -->
@@ -325,74 +325,27 @@
             identifier: {
                 default: '',
                 type: String
+            },
+            filters: {
+                default: function () {
+                    return [{
+                        field: null,
+                        value: null,
+                        comp: 'is'
+                    }];
+                }
+            },
+            defaultFields: {
+                default: function () {
+                    return [];
+                }
             }
         },
         data: function () {
             return {
                 refreshDataRequestNum: 0,
-                myFilters: [{
-                    field: null,
-                    value: null,
-                    comp: 'is'
-                }],
-                myFilters: [
-                    /*{
-                        field: 'status_id',
-                        comp: 'is',
-                        value: 'confirmed',
-                    },
-                    {
-                        field: 'payment_status_id',
-                        comp: 'in',
-                        value: ['payed', 'partial'],
-                    },
-                    {
-                        field: 'user_id',
-                        comp: 'notIn',
-                        value: [1, 2, 3],
-                    },
-                    {
-                        field: {
-                            user: {
-                                field: 'email',
-                                comp: 'like',
-                                value: '%@schtr4jh.net',
-                            }
-                        }
-                    },
-                    {
-                        field: {
-                            user: {
-                                field: 'user_group_id',
-                                comp: 'notIn',
-                                value: [1]
-                            }
-                        }
-                    },*/
-                    /*{
-                        field: {
-                            ordersUsers: {
-                                field: {
-                                    packet: {
-                                        field: 'offer_id',
-                                        comp: 'in',
-                                        value: [59]
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        field: {
-                            ordersUsers: {
-                                field: 'quantity',
-                                comp: 'more',
-                                value: 2
-                            }
-                        }
-                    }*/
-                ],
-                myFields: [],
+                myFilters: this.filters,
+                myFields: this.defaultFields,
                 paginator: {
                     perPage: 50,
                     page: 1,
@@ -626,7 +579,9 @@
                     this.view = data.view;
                     this.actions = data.actions;
                     this.loading = false;
-                    this.myFields = data.view.columns;
+                    if (this.myFields.length == 0) {
+                        this.myFields = data.view.columns;
+                    }
 
                     if (!this.view.live && this.records.length == 0) {
                         this.refreshData();

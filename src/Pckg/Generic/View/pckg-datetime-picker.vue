@@ -114,7 +114,7 @@
                 }
             },
             value: {
-                required: true
+                default: ''
             }
         },
         model: {

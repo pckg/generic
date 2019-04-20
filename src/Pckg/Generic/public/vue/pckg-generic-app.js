@@ -100,7 +100,7 @@ router.afterEach(function (to, from) {
     if (from && to.path == from.path) {
         return;
     }
-    
+
     ga('set', 'page', to.path);
     ga('send', 'pageview');
 });

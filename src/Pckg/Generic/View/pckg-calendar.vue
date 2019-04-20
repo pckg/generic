@@ -56,7 +56,7 @@
                                           :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date).slice(0, 3)" class="__event">
-                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -86,7 +86,7 @@
                                           :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date)" class="__event">
-                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -103,9 +103,9 @@
                         <thead>
                         <tr>
                             <th class="no-border"></th>
-                            <th v-for="group in groupedDayEvents()">
-                                <i :style="{color: group[0].color}" class="fas fa-circle"></i>
-                                {{ group[0].color }}
+                            <th v-for="events in groupedDayEvents()">
+                                <i :style="{color: keyedGroups[events[0].group].color}" class="fas fa-circle"></i>
+                                {{ keyedGroups[events[0].group].title }}
                             </th>
                         </tr>
                         </thead>
@@ -117,7 +117,7 @@
                                     <div v-for="event in group" class="__event"
                                          style2="position: absolute;"
                                          :style2="getEventStyle(event)">
-                                        <i :style="{color: event.color}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -200,7 +200,15 @@
             }
         },
         methods: {
-            getCellClass: function(hour) {
+            getEventColor: function (event) {
+                let group = this.keyedGroups[event.group] || null;
+                if (!group) {
+                    return 'transparent';
+                }
+
+                return group.color;
+            },
+            getCellClass: function (hour) {
                 if (parseInt(hour) > 7) {
                     return 'bg-success';
                 }
@@ -357,13 +365,13 @@
                     if (event.start.isAfter(date, 'day')) {
                         return false;
                     }
-                    if (event.end.isBefore(date, 'day')) {
+                    if (event.end && event.end.isBefore(date, 'day')) {
                         return false;
                     }
-                    if (event.start.isSameOrBefore(date, 'day') && event.end.isSameOrAfter(date, 'day')) {
+                    if (false && event.start.isSameOrBefore(date, 'day') && event.end && event.end.isSameOrAfter(date, 'day')) {
                         return true;
                     }
-                    if (event.start.isSame(date, 'day') || event.end.isSame(date, 'day')) {
+                    if (event.start.isSame(date, 'day') || (false && event.end && event.end.isSame(date, 'day'))) {
                         return true;
                     }
                     return false;
@@ -376,6 +384,13 @@
             }
         },
         computed: {
+            keyedGroups: function () {
+                let groups = {};
+                $.each(this.groups, function (i, group) {
+                    groups[group.id] = group;
+                });
+                return groups;
+            },
             viewTitle: function () {
                 let m = this.moment(this.myValue);
                 if (!m.isValid()) {
@@ -465,7 +480,7 @@
                 let days = [];
                 do {
                     days.push({name: m.format('dddd'), m: m});
-                    m.add(1, 'day');
+                    m = m.clone().add(1, 'day');
                 } while (days.length < 7);
 
                 return days;

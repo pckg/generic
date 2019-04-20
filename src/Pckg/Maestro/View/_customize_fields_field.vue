@@ -102,10 +102,17 @@
                 field.frozen = false;
                 field.type = 'field';
 
-                this.$emit('chosen', field);
+                this.$emit('chosen', {field: field.field});
             },
             chosen: function (chosen) {
-                this.$emit('chosen', chosen);
+                let onRelation = this.selected.indexOf('relation-') === 0;
+                if (onRelation) {
+                    let e = {};
+                    e[this.selectedRelation.alias] = {field: chosen};
+                    this.$emit('chosen', e);
+                    return;
+                }
+                this.$emit('chosen', {field: chosen});
             },
             fetchRelation: function () {
                 http.getJSON('/api/dynamic/relation/' + this.relation.id + '?with[]=fields&with[]=relations', function (data) {

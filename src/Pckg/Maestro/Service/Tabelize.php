@@ -261,6 +261,10 @@ class Tabelize
         }
 
         return $this->fields->map(function($item) {
+            if (is_only_callable($item)) {
+                return $item;
+            }
+
             if (is_object($item)) {
                 return $item;
             }
