@@ -77,7 +77,6 @@ class ImportGenericBackend extends Command
 
     public function importLayouts()
     {
-
         (new Collection(config('pckg.generic.layouts', [])))->each(function($template, $slug) {
             $layout = Layout::getOrNew(['slug' => $slug]);
 

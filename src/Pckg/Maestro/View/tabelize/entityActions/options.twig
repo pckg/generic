@@ -1,29 +1,6 @@
-<div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getEntityUrl('filter') }}" class="btn btn-info popup-iframe" title="{{ __('Filter table') }}">
-        <i class="fa fa-filter" aria-hidden="true"></i> {{ __('Filter') }}
-    </a>
-
-    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false" title="Table view options">
-        <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-    </button>
-
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('group') }}">
-                <i class="fa fa-object-group" aria-hidden="true"></i> {{ __('group_by') }}
-            </a>
-        </li>
-        <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('sort') }}">
-                <i class="fa fa-sort" aria-hidden="true"></i> {{ __('sort_by') }}
-            </a>
-        </li>
-        <li>
-            <a class="popup-iframe" href="{{ tabelize.getEntityUrl('actions') }}">
-                <i class="fa fa-sort" aria-hidden="true"></i> {{ __('selec_actions') }}
-            </a>
-        </li>
-    </ul>
-</div>
+{% set json = {
+    event: 'options',
+    icon: 'cogs',
+    title: 'Options'
+} %}
+{{ json | json_encode | raw }}

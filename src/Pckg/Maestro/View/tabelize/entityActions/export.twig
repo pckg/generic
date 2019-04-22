@@ -1,34 +1,6 @@
-<div class="btn-group btn-group-sm">
-    <a href="#" class="btn btn-warning" data-toggle="dropdown" title="Export">
-        <i class="fa fa-download" aria-hidden="true"></i> Export
-    </a>
-
-    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false" title="Export options">
-        <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-    </button>
-
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <a :href="'{{ tabelize.getEntityUrl('export', 'html') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
-                <i class="fa fa-table" aria-hidden="true"></i> .html
-            </a>
-        </li>
-        <li>
-            <a :href="'{{ tabelize.getEntityUrl('export', 'xlsx') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
-                <i class="fa fa-table" aria-hidden="true"></i> .xlsx
-            </a>
-        </li>
-        <li>
-            <a :href="'{{ tabelize.getEntityUrl('export', 'csv') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
-                <i class="fa fa-table" aria-hidden="true"></i> .csv
-            </a>
-        </li>
-        <li>
-            <a :href="'{{ tabelize.getEntityUrl('export', 'docx') }}{{ view ? '/' ~ view.id : '' }}?search=' + search">
-                <i class="fa fa-file" aria-hidden="true"></i> .docx
-            </a>
-        </li>
-    </ul>
-</div>
+{% set json = {
+    event: 'export',
+    icon: 'download',
+    title: 'Export'
+} %}
+{{ json | json_encode | raw }}

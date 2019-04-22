@@ -75,23 +75,28 @@
                 this.submitting = true;
 
                 this.$validator.validateAll().then(function (ok) {
-                    if (ok) {
-                        var data = this.prepareData('submit');
-                        http.post('{{ form.getAction() }}', data, function (data) {
-                            this.submitting = false;
-                            if (data.success) {
-                                $dispatcher.$emit('notification:success', data.message);
-                            } else {
-                                $dispatcher.$emit('notification:error', data.message || 'Something went wrong');
-                            }
-
-                            if (data.redirect) {
-                                http.redirect(data.redirect);
-                            }
-                        }.bind(this));
-                    } else {
+                    if (!ok) {
+                        $dispatcher.$emit('notification:error', 'Something went wrong, please check data');
                         this.submitting = false;
+                        return;
                     }
+
+                    let data = this.prepareData('submit');
+                    http.post('{{ form.getAction() }}', data, function (data) {
+                        this.submitting = false;
+                        if (data.success) {
+                            $dispatcher.$emit('notification:success', data.message);
+                        } else {
+                            $dispatcher.$emit('notification:error', data.message || 'Something went wrong');
+                        }
+
+                        if (data.redirect) {
+                            http.redirect(data.redirect);
+                        }
+                    }.bind(this), function(data) {
+                        $dispatcher.$emit('notification:error', 'Error saving data');
+                        this.submitting = false;
+                    }.bind(this));
                 }.bind(this));
             },
             switchLanguage: function () {

@@ -23,15 +23,15 @@ class Paginate
         return $this;
     }
 
-    public function applyOnEntity(Entity $entity, $perPage = 25)
+    public function applyOnEntity(Entity $entity, $ormPaginator)
     {
-        $limit = get('perPage', $perPage);
-
         $entity->count();
 
+        $limit = $ormPaginator['limit'];
         $entity->limit($limit == 'all' ? null : $limit);
 
-        $entity->page($this->get->get('page') ?? 1);
+        $page = $ormPaginator['page'];
+        $entity->page($page);
 
         return $this;
     }

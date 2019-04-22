@@ -16,7 +16,7 @@ class Relations extends DatabaseEntity
     public function type()
     {
         return $this->belongsTo(RelationTypes::class)
-                    ->foreignKey('relation_type_id');
+                    ->foreignKey('dynamic_relation_type_id');
     }
 
     public function onTable()

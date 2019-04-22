@@ -1,6 +1,6 @@
 <template>
     <div class="pckg-datetime">
-        <input type="text" v-model="value" class="form-control"/>
+        <pckg-datetime-picker v-model="value" :options="myOptions"></pckg-datetime-picker>
     </div>
 </template>
 
@@ -14,22 +14,36 @@
             },
             format: {
                 default: 'YYYY-MM-DD HH:mm'
+            },
+            options: {
+                default: function () {
+                    return {};
+                }
             }
         },
-        methods: {
-            initPicker: function () {
-                var $this = this;
-                $(this.$el).find('input').datetimepicker({
-                    format: this.format
-                }).on('dp.change', function (ev) {
-                    $this.$emit('input', $(this).val());
-                });
+        data: function () {
+            let options = this.options;
+            options.format = this.format;
+
+            return {
+                myOptions: options,
+                myValue: this.value,
+            };
+        },
+        watch: {
+            myValue: function (newValue) {
+                this.$emit('input', myValue);
+            },
+            value: function (newValue) {
+                this.myValue = newValue;
+            },
+            options: function (options) {
+                options.format = this.format;
+                this.myOptions = options;
             }
         },
         created: function () {
-            this.$nextTick(function () {
-                this.initPicker();
-            }.bind(this));
+            console.warn('pckg-datetime is deprecated?');
         }
     }
 </script>

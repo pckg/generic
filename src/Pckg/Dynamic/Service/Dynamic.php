@@ -86,10 +86,13 @@ class Dynamic
         }
     }
 
-    public function joinPermissionsIfPermissionable($entity)
+    public function joinPermissionsIfPermissionable($entity, $action = 'read')
     {
-        if ($entity->isPermissionable()) {
+        if (!$entity->isPermissionable()) {
+            return;
         }
+        
+        $entity->joinPermissionTo($action);
     }
 
     public function getContentLanguage()
@@ -126,13 +129,13 @@ class Dynamic
         return $this->view;
     }
 
-    public function applyOnEntity($entity, $limit = 25)
+    public function applyOnEntity($entity, $limit = 50, $page = 1)
     {
         $this->filterService->applyOnEntity($entity);
         $this->sortService->applyOnEntity($entity);
         $this->groupService->applyOnEntity($entity);
         if ($limit) {
-            $this->paginateService->applyOnEntity($entity, $limit);
+            $this->paginateService->applyOnEntity($entity, $limit, $page);
         }
         $this->fieldsService->applyOnEntity($entity);
     }

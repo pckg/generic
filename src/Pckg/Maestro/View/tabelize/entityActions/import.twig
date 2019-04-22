@@ -1,34 +1,6 @@
-<div class="btn-group btn-group-sm">
-    <a href="{{ tabelize.getImportUrl() }}" class="btn btn-info popup-iframe" title="{{ __('Import CSV') }}">
-        <i class="fa fa-upload" aria-hidden="true"></i> .csv
-    </a>
-
-    <!--<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false" title="Export options">
-        <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-    </button>
-
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li>
-            <a href="{{ tabelize.getExportUrl('xlsx') }}">
-                <i class="fa fa-table" aria-hidden="true"></i> .xlsx
-            </a>
-        </li>
-        <li>
-            <a href="{{ tabelize.getExportUrl('csv') }}">
-                <i class="fa fa-table" aria-hidden="true"></i> .csv
-            </a>
-        </li>
-        <li>
-            <a href="{{ tabelize.getExportUrl('docx') }}">
-                <i class="fa fa-file-text-o" aria-hidden="true"></i> .docx
-            </a>
-        </li>
-        <li>
-            <a href="{{ tabelize.getImportUrl() }}">
-                Import
-            </a>
-        </li>
-    </ul>-->
-</div>
+{% set json = {
+    event: 'import',
+    icon: 'upload',
+    title: 'Import'
+} %}
+{{ json | json_encode | raw }}

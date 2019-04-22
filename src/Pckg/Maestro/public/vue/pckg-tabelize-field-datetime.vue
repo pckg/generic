@@ -1,8 +1,9 @@
 <template>
-    <a class="btn btn-xs" :class="btnClass" @click.prevent="toggle">
-        <template v-if="value"><span v-html="brValue"></span></template>
-        <template v-else><i class="fa fa-times"></i></template>
-    </a>
+    <div>
+        <a href="#" @click.prevent="toggle" class="text-center" :title="formattedValue">
+            <i :class="'fa-' + iconClass"></i>
+        </a>
+    </div>
 </template>
 
 <script>
@@ -22,7 +23,7 @@
         methods: {
             toggle: function () {
                 var state = null
-                if (this.min == '2999-01-01 00:00:00') {
+                if (this.min == '2100-01-01 00:00:00') {
                     if (this.value <= this.max) {
                         this.value = this.min;
                         state = 0;
@@ -58,19 +59,19 @@
             }
         },
         computed: {
-            btnClass: function () {
-                if (this.min == '2999-01-01 00:00:00') {
+            iconClass: function () {
+                if (this.min == '2100-01-01 00:00:00') {
                     return this.value > this.max
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'circle far clr-error'
+                        : 'circle fas clr-success';
                 } else if (this.min == null) {
                     return this.value > this.max || this.value == this.min
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'circle far clr-error'
+                        : 'circle fas clr-success';
                 } else {
                     return this.value <= this.min
-                        ? 'btn-danger'
-                        : 'btn-success';
+                        ? 'circle far clr-error'
+                        : 'circle fas clr-success';
                 }
             },
             brValue: function () {
@@ -80,6 +81,9 @@
                 return this.value;
                 return locale.datetime(this.value);
             },
+            formattedValue: function () {
+                return locale.datetime(this.value);
+            }
         }
     }
 </script>

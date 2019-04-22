@@ -1,6 +1,8 @@
 <?php namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
+use Pckg\Framework\Request;
+use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Entity\Actions;
 
 /**
@@ -18,80 +20,66 @@ class Action extends Record
 
     protected $toArray = ['pivot'];
 
-    public function getHtmlClassAttribute()
+    public function build($args = [])
     {
-        $typeSuffix = $this->pivot->type;
-        $keyedBySlug = $this->pivot->settings->keyBy('slug');
-        if ($this->pivot->type == 'container') {
-            $typeSuffix = $keyedBySlug->getKey('pckg.generic.pageStructure.container')->pivot->value ?? $this->pivot->type;
-        }
+        return measure('Making plugin ' . $this->class . ' @ ' . $this->method, function() use ($args) {
+            $pluginService = new Plugin();
 
-        if ($keyedBySlug->hasKey('pckg.generic.pageStructure.class')) {
-            $typeSuffix .= ' ' . $keyedBySlug['pckg.generic.pageStructure.class']->pivot->value;
-        }
-
-        if ($keyedBySlug->getKey('pckg.generic.pageStructure.bgVideo')->pivot->value ?? null) {
-            $typeSuffix .= ' has-video-background';
-        }
-
-        $mainClass = $typeSuffix;
-
-        $mapper = [
-            'pckg.generic.pageStructure.bgSize'     => 'bg-size',
-            'pckg.generic.pageStructure.bgRepeat'   => 'bg-repeat',
-            'pckg.generic.pageStructure.bgPosition' => 'bg-position',
-        ];
-
-        $settings = $this->pivot->settings;
-        foreach ($settings as $setting) {
-            if (!array_key_exists($setting->slug, $mapper)) {
-                continue;
-            }
-
-            $mainClass .= ' ' . $mapper[$setting->slug] . '-' . $setting->pivot->value;
-        }
-
-        return $mainClass;
+            return $pluginService->make($this->class, $this->method, $args, Request::GET, false);
+        });
     }
 
-    public function getHtmlStyleAttribute()
+    public function checkDeprecation()
     {
-        $mapper = [
-            'pckg.generic.pageStructure.bgColor'      => 'background-color',
-            'pckg.generic.pageStructure.bgAttachment' => 'background-attachment',
-            'pckg.generic.pageStructure.bgImage'      => 'background-image',
-            'pckg.generic.pageStructure.margin'       => 'margin', // @deprecated
-            'pckg.generic.pageStructure.padding'      => 'padding', // @deprecated
-            'pckg.generic.pageStructure.style'        => 'style',
-        ];
+        $deprecations = config('deprecation.actions', []);
+        $deprecationsTemplates = config('deprecation.templates', []);
+        $deprecationsMethods = config('deprecation.methods', []);
 
-        $settings = $this->pivot->settings->keyBy('slug');
-        $styles = [];
-        foreach ($mapper as $slug => $attribute) {
-            if (!$settings->hasKey($slug)) {
-                continue;
-            }
-
-            $setting = $settings->getKey($slug);
-
-            /**
-             * Skip all empty values.
-             */
-            if (!$setting->pivot->value) {
-                continue;
-            }
-
-            if ($setting->slug == 'pckg.generic.pageStructure.style') {
-                $value = $setting->pivot->value;
-            } else if ($setting->slug == 'pckg.generic.pageStructure.bgImage') {
-                $value = $attribute . ': url(\'' . cdn('/storage/uploads/' . $setting->pivot->value) . '\')';
-            } else {
-                $value = $attribute . ': ' . $setting->pivot->value;
-            }
-            $styles[] = $value;
+        /**
+         * Method / class
+         */
+        if (isset($deprecationsMethods[$this->class . '@' . $this->method])) {
+            list($c, $m) = explode('@', $deprecationsMethods[$this->class . '@' . $this->method]);
+            $this->class = $c;
+            $this->method = $m;
         }
 
-        return implode('; ', $styles);
+        /**
+         * We need to properly change template.
+         */
+        $template = $this->pivot->template;
+        if (isset($template['template']) && !isset($template['item']) && isset($deprecationsTemplates[$template['template']])) {
+            $deprecation = $deprecationsTemplates[$template['template']];
+            $t = $deprecationsTemplates[$template['template']];
+            $t2 = array_key_exists('template', $t) ? $t['template'] : $template['template'];
+
+            message('Deprecating template ' . $template['template'] . ' to ' . json_encode($t));
+            $this->pivot->template = json_encode($deprecationsTemplates[$template['template']]);
+        }
+
+        /**
+         * And action.
+         */
+        if (isset($deprecations[$this->slug])) {
+            message('Deprecating action ' . $this->slug . ' to ' . $deprecations[$this->slug] . ' ' . json_encode($template));
+            $newAction = (new Actions())->where('slug', $deprecations[$this->slug])->one();
+            if (!$newAction) {
+                $this->class = config('pckg.generic.actions.' . $deprecations[$this->slug] . '.class');
+                $this->method = config('pckg.generic.actions.' . $deprecations[$this->slug] . '.method');
+                $this->slug = $deprecations[$this->slug];
+                $this->pivot->action = $this;
+                return $this;
+
+            } else {
+                $newAction->pivot = $this->pivot;
+                $newAction->pivot->action_id = $newAction->id;
+                $newAction->pivot->action = $newAction;
+            }
+
+            return $newAction;
+        }
+
+        return $this;
     }
 
 }

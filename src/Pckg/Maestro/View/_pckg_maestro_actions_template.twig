@@ -10,15 +10,19 @@
         </div>
         {% if recordActions|length > 1 %}
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                    aria-haspopup="true"
                     aria-expanded="false">
                 <span class="caret"></span>
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
-                {% for action in recordActions %}
-                    <li>{% include 'tabelize/recordActions/' ~ (action.template ? action.template : (action.slug ? action.slug : action)) ~ '.twig' %}</li>
-                {% endfor %}
+                <li v-for="action in actions">
+                    <a v-if="action.event" href="#" @click.prevent="recordAction(action.event)">
+                        <i class="fa" :class="'fa-' + action.icon"></i> ${ action.title }
+                    </a>
+                    <a v-else :href="record[action.recordHref]">
+                        <i class="fa" :class="'fa-' + action.icon"></i> ${ action.title }
+                    </a>
+                </li>
             </ul>
         {% endif %}
     </div>

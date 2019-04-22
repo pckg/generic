@@ -16,8 +16,6 @@ use Pckg\Htmlbuilder\Builder\Pckg;
 use Pckg\Htmlbuilder\Decorator\Method\VueJS;
 use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
-use Pckg\Htmlbuilder\Handler\Method\Query;
-use Pckg\Locale\Entity\Languages;
 use Pckg\Locale\Record\Language;
 
 class Dynamic extends Bootstrap
@@ -258,7 +256,7 @@ class Dynamic extends Bootstrap
 
         $prevGroup = null;
         $fieldPositions = $fields->groupBy(function(Field $field){
-            return $field->field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
+            return $field->dynamic_field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
         });
 
         foreach ($fieldPositions as $position => $fields) {
@@ -275,6 +273,7 @@ class Dynamic extends Bootstrap
 
             $type = $field->fieldType->slug;
             $name = $field->field;
+            $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
 
             if ($type == 'php') {
                 /**
@@ -288,13 +287,13 @@ class Dynamic extends Bootstrap
                 $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label>' .
                     $field->title . '</label>
-<div>' . $this->record->{$field->field} . '</div></div>'
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
                 );
                 continue;
             } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
                 $element = $fieldset->addDiv()->addChild(
                     '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label></label>
-<div>' . $this->record->{$field->field} . '</div></div>'
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
                 );
 
                 continue;
@@ -317,7 +316,10 @@ class Dynamic extends Bootstrap
             $element->setBuilder(new Pckg($element));
 
             if (($label = $field->label)) {
-                $translatable = $field->isTranslatable($this->record->getEntity())
+                if ($field->required) {
+                    $label = '* ' . $label;
+                }
+                $translatable = $field->isTranslatable($this->record->getEntity()) && localeManager()->getFrontendLanguages()->count() > 1
                     ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
                     : '';
                 $element->setLabel($label . $translatable);
@@ -335,7 +337,7 @@ class Dynamic extends Bootstrap
 
         if ($this->isEditable()) {
             $this->addSubmit('submit')->setValue('Save');
-            $this->addSubmit('as_new')->setValue('Save as')->setClass('btn-link');
+            // $this->addSubmit('as_new')->setValue('Save as')->setClass('btn-link');
         }
 
         return $this;
@@ -344,7 +346,7 @@ class Dynamic extends Bootstrap
     protected function createReadonlyElementByType($type, $name, Field $field)
     {
         $label = $field->label;
-        $value = $this->record->{$field->field};
+        $value = $this->record->data($field->field);
 
         if ($type == 'select' && $this->record) {
             $relation = $field->hasOneSelectRelation;
@@ -394,17 +396,19 @@ ifrm.document.close();
             if ($this->record->{$field->field}) {
                 $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
                 $fullPath = img($this->record->{$field->field}, null, true, $dir);
-                $value = '<a href="' . $fullPath . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
-                    $fullPath . '" /></a>';
+                $value = '<a href="' . cdn($fullPath) . '"><img style="max-width: 240px;" class="img-thumbnail" src="' .
+                    cdn($fullPath) . '" /></a>';
             }
         } elseif ($type == 'boolean') {
             $value = $value ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>';
         }
 
+        $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
+
         $element = $this->lastFieldset->addDiv()->addChild(
             '<div class="form-group grouped" data-field-id="' . $field->id . '"><label>' . $label . '
 </label>
-<div>' . $value . '</div></div>'
+<div>' . $value . '</div>' . $helpHtml . '</div>'
         );
     }
 
@@ -449,7 +453,7 @@ ifrm.document.close();
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                         $element->addChild(
-                            '<a class="btn btn-info btn-md" title="Generate" href="' .
+                            '<a class="btn btn-default btn-md" title="Generate" href="' .
                             $field->getGenerateFileUrlAttribute(
                                 $this->record
                             ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type .
@@ -458,7 +462,7 @@ ifrm.document.close();
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild(
-                            '<a class="btn btn-success btn-md" title="Download" href="' .
+                            '<a class="btn btn-default btn-md" title="Download" href="' .
                             $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
                             $this->record->{$field->field} . '</a>&nbsp;&nbsp;'
                         );
@@ -634,39 +638,22 @@ ifrm.document.close();
                 $element->setAttribute('data-options', json_encode($options));
                 $element->setAttribute(':initial-multiple', 'false');
 
-                /*$element->setAttribute(
-                    'data-url',
-                    url(
-                        'dynamic.record.list',
-                        [
-                            'table' => $this->table,
-                        ]
-                    )
-                );*/
+                $element->setAttributes([
+                                            'data-url'         => url('dynamic.record.list', [
+                                                                                               'table' => $field->hasOneSelectRelation->showTable,
+                                                                                           ]),
+                                            'data-refresh-url' => url('dynamic.records.field.selectList' .
+                                                                      ($this->record->id ? '' : '.none'), [
+                                                                          'table'  => $this->table,
+                                                                          'field'  => $field,
+                                                                          'record' => $this->record,
+                                                                      ]),
+                                            'data-view-url'    => url('dynamic.record.view', [
+                                                                                               'table' => $field->hasOneSelectRelation->showTable,
+                                                                                           ]),
+                                        ]);
 
-                $element->setAttribute(
-                    'refresh-url',
-                    url(
-                        'dynamic.records.field.selectList' . ($this->record->id ? '' : '.none'),
-                        [
-                            'table'  => $this->table,
-                            'field'  => $field,
-                            'record' => $this->record,
-                        ]
-                    )
-                );
-
-                /*$element->setAttribute(
-                    'data-view-url',
-                    url(
-                        'dynamic.record.view',
-                        [
-                            'table' => $field->hasOneSelectRelation->showTable,
-                        ]
-                    )
-                );
-
-                $element->addClass('ajax');*/
+                // $element->addClass('ajax');
 
                 return $element;
             } else {

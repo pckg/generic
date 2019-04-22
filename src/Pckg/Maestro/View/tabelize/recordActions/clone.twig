@@ -1,2 +1,7 @@
-<a href="#" @click.prevent="recordAction(record, 'checkCloneRecord')" title="Clone">
-    <i class="fa fa-clone" aria-hidden="true"></i> Clone</a>
+{% set json = {
+    event: 'checkCloneRecord',
+    icon: 'clone',
+    title: 'Clone',
+    component: 'maestro-tabelize-clone'
+} %}
+{{ json | json_encode | raw }}

@@ -20,7 +20,7 @@ class Content extends Record
 
     protected $preparsedData = [];
 
-    protected $toArray = ['+contents'];
+    protected $toArray = ['+contents', 'image'];
 
     public function getImageAttribute()
     {
@@ -47,6 +47,18 @@ class Content extends Record
         $this->preparsedData = $data;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $data = $this->toArray();
+
+        /**
+         * Allow preparsed content.
+         */
+        $data['content'] = $this->content;
+
+        return $data;
     }
 
 }

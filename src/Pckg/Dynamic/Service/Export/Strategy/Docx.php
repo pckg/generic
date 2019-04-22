@@ -1,7 +1,6 @@
 <?php namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
-use Pckg\Dynamic\Service\Export\Strategy;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 
@@ -12,9 +11,9 @@ class Docx extends AbstractStrategy
 
     protected $extension = 'docx';
 
-    public function prepare()
+    public function save()
     {
-        $file = path('tmp') . sha1(microtime());
+        $file = path('tmp') . $this->getFilename();
         $lines = $this->getData();
 
         $phpWord = new PhpWord();
@@ -23,7 +22,7 @@ class Docx extends AbstractStrategy
         /**
          * Make header
          */
-        $table = $section->addTable(['width' => 100 * 50]);
+        $table = $section->addTable(['width' => 100 * 50]); // width in 1/50 of percent
         $i = 0;
         $j = 0;
         $table->addRow();
@@ -40,6 +39,7 @@ class Docx extends AbstractStrategy
             $j = 0;
             $table->addRow();
             foreach ($line as $val) {
+                $val = preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $val);
                 $table->addCell(1750)->addText($val);
                 $j++;
             }
@@ -50,6 +50,13 @@ class Docx extends AbstractStrategy
          */
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($file);
+
+        return $file;
+    }
+
+    public function prepare()
+    {
+        $file = $this->save();
 
         /**
          * Implement strategy.

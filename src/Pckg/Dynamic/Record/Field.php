@@ -188,10 +188,10 @@ class Field extends DatabaseRecord
             return eval(' return ' . $eval . '; ');
         } catch (Throwable $e) {
             if (prod()) {
-                return null;
+                return '#' . $record->id;
             }
 
-            return exception($e);
+            return '#' . $record->id . ' - ' . exception($e);
         }
     }
 
@@ -342,6 +342,11 @@ class Field extends DatabaseRecord
         } else if ($this->fieldType->slug == 'mysql' && method_exists($tablesEntity, 'select' . ucfirst($this->field) . 'Field')) {
             $tablesEntity->{'select' . ucfirst($this->field) . 'Field'}();
         }
+    }
+
+    public function isImportable()
+    {
+        return !in_array($this->fieldType->slug, ['mysql', 'php']);
     }
 
 }

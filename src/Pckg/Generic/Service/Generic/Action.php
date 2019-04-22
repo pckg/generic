@@ -18,7 +18,7 @@ use Throwable;
  *
  * @package Pckg\Generic\Service\Generic
  */
-class Action
+class Action implements \JsonSerializable
 {
 
     /**
@@ -32,6 +32,29 @@ class Action
     protected $action;
 
     /**
+     * @param string $template
+     *
+     * @return View\Twig
+     */
+    public function toView(string $template, $data = [])
+    {
+        return view($template, array_merge(['action' => $this], $data));
+    }
+
+    /**
+     * @param string $component
+     * @param array  $props
+     *
+     * @return string
+     */
+    public function toVue(string $component, $props = [])
+    {
+        return '<' . $component .
+            ($this->getAction()->pivot ? ' :action-id="' . $this->getAction()->pivot->id . '"' : '')
+            . '></' . $component . '>';
+    }
+
+    /**
      * @param      $class
      * @param      $method
      * @param null $order
@@ -39,8 +62,7 @@ class Action
     public function __construct(ActionRecord $action, Route $route = null, $resolved = [])
     {
         $this->args = [
-            'content'  => $action->pivot->content,
-            'settings' => $action->pivot->settings,
+            'settings' => $action->pivot->settings ?? [],
             'route'    => $route,
             'resolved' => $resolved,
         ];
@@ -64,7 +86,7 @@ class Action
 
     public function getType()
     {
-        return $this->action->pivot->type;
+        return $this->action->pivot->type ?? 'action';
     }
 
     /**
@@ -72,28 +94,24 @@ class Action
      */
     public function getContent()
     {
-        return $this->args['content'] ?? null;
+        return $this->action->pivot->content;
     }
 
-    public function getTree()
+    public function getFlat()
     {
         if (!$this->action) {
             return;
         }
 
-        $tree = [
-            'id'       => $this->action->pivot->id,
-            'title'    => $this->action->title,
-            'morph'    => $this->action->pivot->morph,
-            'type'     => $this->getType(),
-            'class'    => $this->getClass(),
-            'method'   => $this->getMethod(),
-            'actions'  => [],
-            'slug'     => $this->action->slug,
-            'template' => $this->action->pivot->template,
-        ];
+        return $this->jsonSerialize();
+    }
 
-        foreach ($this->action->getChildren as $action) {
+    public function getTree()
+    {
+        $tree = $this->getFlat();
+        $tree['actions'] = [];
+
+        foreach ($this->action->getChildren ?? [] as $action) {
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);
             $tree['actions'][] = $genericAction->getTree();
         }
@@ -101,10 +119,39 @@ class Action
         return $tree;
     }
 
-    public function getSubHtml()
+    public function hasChildren(...$index) {
+        if (!$this->action) {
+            return false;
+        }
+
+        $children = $this->action->getChildren;
+        if (!$children) {
+            return false;
+        }
+
+        if (!$index) {
+            return true;
+        }
+
+        foreach ($index as $i) {
+            if (isset($children[$i])) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getSubHtml(...$index)
     {
         $html = [];
-        foreach ($this->action->getChildren as $action) {
+        foreach ($this->action->getChildren as $i => $action) {
+            if ($index && !in_array($i, $index)) {
+                continue;
+            }
+
             $genericAction = new Action($action, $this->args['route'], $this->args['resolved']);
 
             $html[] = $genericAction->getHtml();
@@ -113,116 +160,78 @@ class Action
         return implode($html);
     }
 
+    public function getChild($index)
+    {
+        $action = $this->action->getChildren[$index] ?? null;
+        if (!$action) {
+            return null;
+        }
+
+        return new Action($action, $this->args['route'], $this->args['resolved']);
+    }
+
     /**
      * @return string
      * @throws Exception
      */
-    public function getHtml()
+    public function getHtml($innerOnly = false)
     {
-        return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' .
-                       $this->getClass() . ' @ ' . $this->getMethod(), function() {
+        return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
+            function() use ($innerOnly) {
+                $type = $this->getType();
 
-            $return = measure('Building pre-wrap', function() {
-                return '<div class="' . $this->action->htmlClass . '" style="' . $this->action->htmlStyle .
-                       '" data-action-id="' . $this->action->pivot->id . '"'
-                       . ' id="' . $this->action->pivot->type . '-' . $this->action->pivot->id . '">';
-            });
-            $return .= $this->getBackgroundVideoHtml();
-            if (in_array($this->getType(), ['wrapper', 'container', 'row', 'column'])) {
-                $return .= $this->getSubHtml() . '</div>';
+                if (in_array($type, ['wrapper', 'container', 'row', 'column'])) {
+                    $content = '<pckg-' . $type
+                        . ' :action-id="' . $this->action->pivot->id . '">';
+                    $content .= '<template slot="body">';
+                    $content .= $this->getBackgroundVideoHtml();
+                    $content .= $this->getSubHtml();
+                    $content .= '</template>';
+                    $content .= '</pckg-' . $type . '>';
+                    return $content;
+                }
+
+                $return = measure('Building pre-wrap',
+                    function() {
+                        return '<pckg-action :action-id="' . $this->action->pivot->id . '"><template slot="body">';
+                    });
+                $return .= $this->getBackgroundVideoHtml();
+
+                if ($this->getClass() && $this->getMethod()) {
+                    /**
+                     * Get subhtml for multi-leveled actions.
+                     */
+                    $this->getSubHtml();
+
+                    $result = $this->build();
+
+                    /**
+                     * Return built output.
+                     */
+                    $return .= $result;
+                }
+                $return .= '</template></pckg-action>';
 
                 return $return;
-            }
+            });
+    }
 
-            if ($this->getClass() && $this->getMethod()) {
-                $args = array_merge(router()->get('data'), router()->getResolves());
-                $args = array_merge($args, ['action' => $this]);
-                $args = array_merge($args, $this->args);
+    public function buildAndJsonSerialize()
+    {
+        $this->build();
 
-                measure('Resolving', function() use (&$args) {
-                    if (isset($args['settings'])) {
-                        $args['settings']->each(
-                            function(Setting $setting) use (&$args) {
-                                $setting->pivot->resolve($args);
-                            }
-                        );
-                    }
+        return $this->jsonSerialize();
+    }
 
-                    foreach ($args['resolved'] as $key => $val) {
-                        $args[$key] = $val;
-                    }
+    public function build($args = [])
+    {
+        $args = array_merge($args, ['action' => $this]);
 
-                    /**
-                     * Proper resolve by setting implementation, remove others.
-                     */
-                    $actionsMorphResolver = $this->action->pivot->settings->keyBy('slug')
-                                                                          ->getKey('pckg.generic.actionsMorph.resolver');
-                    if ($actionsMorphResolver) {
-                        foreach ($actionsMorphResolver->pivot->getJsonValueAttribute() as $key => $conf) {
-                            if (isset($conf['resolver'])) {
-                                /**
-                                 * @deprecated
-                                 */
-                                $args[$key] = Reflect::create($conf['resolver'])->resolve($conf['value']);
-                            } elseif (is_array($conf)) {
-                                $resolver = array_keys($conf)[0];
-                                $args[$key] = Reflect::create($resolver)->resolve($conf[$resolver]);
-                            }
-                        }
-                    }
-                });
+        $this->getAction()->pivot->resolveSettings($args);
 
-                /**
-                 * Get plugin output.
-                 */
-                $pluginService = new Plugin();
-                $result = null;
-                try {
-                    $result = measure('Making plugin ' . $this->getClass() . ' @ ' . $this->getMethod(),
-                        function() use ($pluginService, $args) {
-                            return $pluginService->make($this->getClass(), $this->getMethod(), $args, true, false);
-                        });
-                } catch (Throwable $e) {
-                    if (!prod()) {
-                        throw new Exception(exception($e) . ':' . $this->getClass() . ' ' . $this->getMethod());
-                    }
-                }
+        $build = $this->getAction()->pivot->buildHtml($args);
 
-                /**
-                 * Array should be returned directly.
-                 */
-                if (is_array($result)) {
-                    return $result;
-                }
-
-                /**
-                 * Allow custom template.
-                 */
-                if ($result instanceof View\Twig && $this->action->pivot->template) {
-                    /**
-                     * Awh, and check for allowed templates. :)
-                     */
-                    if (strpos($this->action->pivot->template, '{') === false) {
-                        $result->setFile(str_replace(':', '/View/', $this->action->pivot->template));
-                    }
-                }
-
-                /**
-                 * Parse view to string in all cases.
-                 */
-                $result = measure('Parsing to string', function() use ($result) {
-                    return (string)$result;
-                });
-
-                /**
-                 * Return built output.
-                 */
-                $return .= $result;
-            }
-            $return .= '</div>';
-
-            return $return;
-        });
+        $this->getAction()->pivot->build = $build;
     }
 
     public function getBackgroundVideoHtml()
@@ -243,25 +252,14 @@ class Action
 
         if ($source == 'youtube') {
             if ($display == 'background') {
-                $youtubeUrl = 'https://www.youtube.com/embed/'
-                              . $url . '?controls='
-                              . ($controls == 'yes' ? 1 : 0)
-                              . '&autoplay='
-                              . ($autoplay == 'yes' ? 1 : 0) . '&loop='
-                              . ($loop == 'yes' ? 1 : 0)
-                              . ($mute ? '&mute=1' : '')
-                              . '&modestbranding=1'
-                              . '&playsinline=1'
-                              . '&rel=0'
-                              . '&showinfo=0'
-                              . '&playlist=' . $url;
+                $youtubeUrl = 'https://www.youtube.com/embed/' . $url . '?controls=' . ($controls == 'yes' ? 1 : 0) . '&autoplay=' . ($autoplay == 'yes' ? 1 : 0) . '&loop=' . ($loop == 'yes' ? 1 : 0) . ($mute ? '&mute=1' : '') . '&modestbranding=1' . '&playsinline=1' . '&rel=0' . '&showinfo=0' . '&playlist=' . $url;
 
                 return '<div class="video-background">
     <div class="video-foreground">
       <iframe src="' . $youtubeUrl . '" frameborder="0" allowfullscreen></iframe>
     </div>
   </div>';
-            } else if ($display == 'popup') {
+            } elseif ($display == 'popup') {
                 /**
                  * We should add some trigger or link or something? :)
                  */
@@ -285,9 +283,7 @@ class Action
             $value = $setting->pivot->value;
 
             if ($setting->type == 'array') {
-                return $value
-                    ? json_decode($value, true)
-                    : [];
+                return $value ? json_decode($value, true) : [];
             }
 
             return $value;
@@ -296,9 +292,22 @@ class Action
         return $default;
     }
 
+    /**
+     * @return ActionRecord
+     */
     public function getAction()
     {
         return $this->action;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->getAction()->pivot->jsonSerialize();
+    }
+
+    public function toJSON()
+    {
+        return json_encode($this->jsonSerialize());
     }
 
 }

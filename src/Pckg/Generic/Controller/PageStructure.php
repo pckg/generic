@@ -1,18 +1,24 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Pckg\Concept\Context;
+use Pckg\Concept\Reflect;
+use Pckg\Database\Record;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\MorphedBy;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Framework\Request;
 use Pckg\Generic\Entity\Actions;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
+use Pckg\Generic\Form\NewRoute;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
+use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
-use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Record\SettingsMorph;
 use Pckg\Generic\Service\Generic;
 use Pckg\Manager\Upload;
@@ -43,12 +49,24 @@ class PageStructure
         foreach (['partials'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partials) {
 
-                return collect($partials)->map(
-                    function($partial) {
-                        return (new $partial)->forJson();
-                    }
-                );
+                return collect($partials)->map(function($partial) {
+                    return (new $partial)->forJson();
+                });
             });
+        }
+
+        $listTemplates = config('pckg.generic.templateEngine.list', []);
+        foreach ($data['templates'] as $controller => $config) {
+            foreach ($config as $action => $views) {
+                foreach ($views as $view => $config) {
+                    if (!is_array($config)) {
+                        continue;
+                    }
+
+                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ??
+                        ($config['list'] ?? $listTemplates);
+                }
+            }
         }
 
         $data['routes'] = (new Routes())->joinTranslations()->nonDeleted()->all();
@@ -59,9 +77,7 @@ class PageStructure
     public function getRoutesAction()
     {
         return [
-            'routes' => (new Routes())
-                ->all()
-                ->transform(['id', 'route', 'title', 'slug', 'layout_id']),
+            'routes' => (new Routes())->all()->transform(['id', 'route', 'title', 'slug', 'layout_id']),
         ];
     }
 
@@ -87,7 +103,13 @@ class PageStructure
         }
 
         return [
-            'contents' => $contents->all(),
+            'records' => $contents->all()->keyBy('id')->map(function(Content $content) {
+                return collect([
+                                   '#' . $content->id,
+                                   $content->title,
+                                   strip_tags($content->content),
+                               ])->removeEmpty()->implode(' - ');
+            }),
         ];
     }
 
@@ -106,14 +128,13 @@ class PageStructure
                 $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
-            })
-                                     ->map(function(Action $action) {
-                                         $array = $action->toArray();
-                                         $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                                         $array['pivot']['content'] = $action->pivot->content;
+            })->map(function(Action $action) {
+                    $array = $action->toArray();
+                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                    $array['pivot']['content'] = $action->pivot->content;
 
-                                         return $array;
-                                     }),
+                    return $array;
+                }),
         ];
     }
 
@@ -145,17 +166,15 @@ class PageStructure
             'routeActions' => $route->actions(function(MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
                 $actions->getMiddleEntity()->withContent();
-            })
-                                    ->sortBy(function(Action $action) {
-                                        return $action->pivot->order;
-                                    })
-                                    ->map(function(Action $action) {
-                                        $array = $action->toArray();
-                                        $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                                        $array['pivot']['content'] = $action->pivot->content;
+            })->sortBy(function(Action $action) {
+                    return $action->pivot->order;
+                })->map(function(Action $action) {
+                    $array = $action->toArray();
+                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                    $array['pivot']['content'] = $action->pivot->content;
 
-                                        return $array;
-                                    }),
+                    return $array;
+                }),
         ];
     }
 
@@ -317,55 +336,6 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
-    protected function getDefaultSettings()
-    {
-        /**
-         * Add defaults.
-         *
-         * @T00D00
-         * This should be refactored to plugins. ;-)
-         */
-        return [
-            'class'             => '',
-            'container'         => '',
-            'style'             => '',
-            'width'             => [], // column
-            'offset'            => [], // column
-            'bgColor'           => '',
-            'bgImage'           => '',
-            'bgSize'            => '',
-            'bgAttachment'      => '',
-            'bgRepeat'          => '',
-            'bgPosition'        => '',
-            'bgVideo'           => '',
-            'bgVideoSource'     => '',
-            'bgVideoDisplay'    => '',
-            'bgVideoAutoplay'   => '',
-            'bgVideoControls'   => '',
-            'bgVideoLoop'       => '',
-            'bgVideoMute'       => '',
-            'wrapperLockShow'   => [],
-            'wrapperLockHide'   => [],
-            'wrapperLockSystem' => [],
-        ];
-    }
-
-    protected function getPluginSettings()
-    {
-        $separate = [];
-        foreach (config('pckg.generic.actions') as $actionKey => $actionSettings) {
-            foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
-                $separate[$settingKey] = $settingType == 'array' ? [] : '';
-            }
-        }
-
-        return [
-            'sourceOffers'    => [],
-            'sourcePackets'   => [],
-            'sourceGalleries' => [],
-        ];
-    }
-
     public function getActionsMorphContentAction(ActionsMorph $actionsMorph)
     {
         $content = $actionsMorph->content;
@@ -402,105 +372,7 @@ class PageStructure
 
     public function getActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
-        $settings = $actionsMorph->settings
-            ->map(function(
-                Setting $setting
-            ) {
-                return [
-                    'slug'  => str_replace('pckg.generic.pageStructure.', '',
-                                           $setting->slug),
-                    'value' => $setting->type == 'array'
-                        ? ($setting->pivot->value
-                            ? (json_decode($setting->pivot->value, true) ?? [])
-                            : [])
-                        : $setting->pivot->value,
-                ];
-            })->keyBy('slug')->map('value');
-
-        $defaults = $this->getDefaultSettings();
-        foreach ($defaults as $key => $val) {
-            if ($settings->hasKey($key)) {
-                continue;
-            }
-
-            $settings->push($val, $key);
-        }
-
-        $pluginDefaults = $this->getPluginSettings();
-        foreach ($pluginDefaults as $key => $val) {
-            if ($settings->hasKey($key)) {
-                continue;
-            }
-
-            $settings->push($val, $key);
-        }
-
-        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
-                                                                 ->unique()
-                                                                 ->removeEmpty()
-                                                                 ->all();
-        $scopeClasses = [];
-        $otherClasses = [];
-        $widthClasses = [];
-        $offsetClasses = [];
-        $containerClass = '';
-        foreach ($allClasses as $class) {
-            $found = false;
-            foreach (config('pckg.generic.scopes') as $title => $scopes) {
-                if (in_array($title, ['Padding', 'Margin'])) {
-                    foreach ($scopes as $scps) {
-                        if (array_key_exists($class, $scps)) {
-                            $scopeClasses[] = $class;
-                            $found = true;
-                            break 2;
-                        }
-                    }
-                } else {
-                    if (array_key_exists($class, $scopes)) {
-                        $scopeClasses[] = $class;
-                        $found = true;
-                        break;
-                    }
-                }
-            }
-            if (!$found) {
-                if (strpos($class, 'col-') === 0 && !strpos($class, '-pull-') && !strpos($class, '-push-')) {
-                    if (strpos($class, '-offset-')) {
-                        $offsetClasses[] = $class;
-                    } else {
-                        $widthClasses[] = $class;
-                    }
-                } elseif (strpos($class, 'container') === 0) {
-                    $containerClass = $class;
-                } else {
-                    $otherClasses[] = $class;
-                }
-            }
-        }
-
-        $settings->push($scopeClasses, 'scopes');
-        $settings->push($offsetClasses, 'offset');
-        $settings->push($widthClasses, 'width');
-        $settings->push($containerClass, 'container');
-        $settings->push(implode(' ', $otherClasses), 'class');
-
-        /**
-         * Add path before image.
-         */
-        $settings->push(media($settings->getKey('bgImage'), null, true, path('app_uploads')) ?? '', 'bgImage');
-
-        /**
-         * We also need to fetch some settings which are saved on layout.
-         */
-        /*if ($actionsMorph->morph_id == Layouts::class) {
-            $layout = Layout::gets(['id' => $actionsMorph->poly_id]);
-            if ($layout) {
-                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockHide'),
-                                'wrapperLockHide');
-                $settings->push($layout->getSettingValue('pckg.generic.pageStructure.wrapperLockShow'),
-                                'wrapperLockShow');
-            }
-        }*/
+        $settings = $actionsMorph->settingsArray;
 
         return response()->respondWithSuccess([
                                                   'settings' => $settings,
@@ -515,17 +387,16 @@ class PageStructure
          * @T00D00
          * This should be refactored to plugins. ;-)
          */
-        $values = array_merge($this->getDefaultSettings(), post('settings'));
-        $values = only($values, array_keys($this->getDefaultSettings()));
+        $values = array_merge($actionsMorph->getDefaultSettings(), post('settings'));
+        $values = only($values, array_keys($actionsMorph->getDefaultSettings()));
         unset($values['bgImage']);
 
         /**
          * Add scopes.
          */
-        $values['class'] .= ' ' . implode(' ', post('settings.scopes', []))
-                            . ' ' . implode(' ', post('settings.width', []))
-                            . ' ' . implode(' ', post('settings.offset', []))
-                            . ' ' . post('settings.container', '');
+        $values['class'] .= ' ' . implode(' ', post('settings.scopes', [])) . ' ' .
+            implode(' ', post('settings.width', [])) . ' ' . implode(' ', post('settings.offset', [])) . ' ' .
+            post('settings.container', '');
         $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
                                                             ->unique()
                                                             ->removeEmpty()
@@ -540,6 +411,7 @@ class PageStructure
             'wrapperLockHide',
             'wrapperLockShow',
             'wrapperLockSystem',
+            'animation',
         ];
         $separateTypes = [];
 
@@ -573,9 +445,14 @@ class PageStructure
         if ($actionsMorph->morph_id == Layouts::class) {
             $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
             collect($values)->each(function($value, $key) use ($actionsMorph) {
-                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value), 'array');
+                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
             });
         }
+
+        $values = only(post('settings'), ['animation']);
+        collect($values)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
+        });
 
         /**
          * Set template.
@@ -629,14 +506,80 @@ class PageStructure
     {
         $partial = $actionsMorph->addPartial(post('partial', null));
 
-        return response()->respondWithSuccess(['actionsMorph' => $partial]);
+        $parent = $partial->mostParent;
+
+        $flatActions = $parent->flattenForGenericResponse(collect());
+
+        /**
+         * We need to fake request as GET request so forms and stuff doesn't get resolved.
+         */
+        $originalContext = context();
+        $tempContext = clone $originalContext;
+        $request = (new Request())->setConstructs([], [], $_SERVER, [], $_COOKIE, []);
+        $originalRequest = request();
+        $originalContext->bind(Context::class, $tempContext);
+        $originalContext->bind(Request::class, $request);
+        $tempContext->bind(Request::class, $request);
+
+        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action) {
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+        })->all();
+
+        $originalContext->bind(Context::class, $originalContext);
+        $originalContext->bind(Request::class, $originalRequest);
+
+        return response()->respondWithSuccess([
+                                                  'actionsMorph' => $partial,
+                                                  'actions'      => $fetchedActions,
+                                              ]);
     }
 
     public function postActionsMorphAddRoutePartialAction(Route $route)
     {
-        $route->addPartial(post('partial', null));
+        $partial = $route->addPartial(post('partial', null));
 
-        return response()->respondWithSuccess();
+        $parent = $partial->mostParent;
+
+        $flatActions = $parent->flattenForGenericResponse(collect());
+        $fetchedActions = $route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action){
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+        })->all();
+
+        return response()->respondWithSuccess([
+                                                  'actions' => $fetchedActions,
+                                              ]);
+    }
+
+    public function postActionsMorphCloneAction(ActionsMorph $actionsMorph)
+    {
+        $newActionsMorph = $actionsMorph->cloneRecursively();
+
+        $flatActions = $newActionsMorph->flattenForGenericResponse(collect());
+        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+                $content->withContents();
+            })->withSettings(function(MorphedBy $settings) {
+                $settings->getMiddleEntity()->withSetting();
+            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+        })->map(function(Action $action){
+            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+        })->all();
+
+        return response()->respondWithSuccess([
+                                                  'actions' => $fetchedActions,
+                                              ]);
     }
 
     public function getRouteTreeAction(Route $route, Generic $genericService)
@@ -658,6 +601,18 @@ class PageStructure
         return response()->respondWithSuccess();
     }
 
+    public function postNewRouteAction(NewRoute $newRoute)
+    {
+        $data = $newRoute->getData();
+        $data['layout_id'] = Layout::getOrFail(['slug' => 'frontend'])->id;
+        $route = Route::create($data);
+
+        return [
+            'route'   => $route,
+            'success' => true,
+        ];
+    }
+
     public function postCloneRouteAction(Route $route)
     {
         $errors = [];
@@ -674,6 +629,44 @@ class PageStructure
             'success'  => false,
             'messages' => $errors,
         ];
+    }
+
+    public function getRouteResolversAction(Route $route)
+    {
+        $resolvers = $route->resolvers;
+
+        if (!$resolvers) {
+            return [
+                'resolvers' => [],
+            ];
+        }
+        $resolvers = collect(json_decode($resolvers, true))->map(function($resolver, $key) use ($route) {
+            $resolverObject = Reflect::create($resolver);
+
+            if (!method_exists($resolverObject, 'prepareEntity')) {
+                dd($resolverObject);
+            }
+
+            $entity = $resolverObject->prepareEntity();
+            $items = $entity->limit(100)->all()->keyBy($resolverObject->getBy());
+
+            return [
+                'key'   => $key,
+                'items' => $items->map(function(Record $record) use ($key, $resolverObject, $route) {
+                    return [
+                        'id'    => $record->id,
+                        'title' => $record->title,
+                        'url'   => url($route->slug, [
+                            $key         => $record->{$resolverObject->getBy()},
+                            $key . 'Url' => $record->title,
+                        ]),
+                        'value' => null,
+                    ];
+                }),
+            ];
+        });
+
+        return ['resolvers' => $resolvers];
     }
 
 }

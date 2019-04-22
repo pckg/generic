@@ -13,10 +13,12 @@ class Export
     protected $strategy;
 
     protected $strategies = [
+        'txt'  => Strategy\Txt::class,
         'csv'  => Csv::class,
         'html' => Html::class,
         'xlsx' => Xlsx::class,
         'docx' => Docx::class,
+        'pdf'  => Strategy\Pdf::class,
     ];
 
     /**

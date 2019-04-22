@@ -11,10 +11,22 @@ class Xlsx extends AbstractStrategy
 
     protected $extension = 'xlsx';
 
-    public function prepare()
+    public function save()
     {
-        $file = path('tmp') . sha1(microtime());
+        $file = path('tmp') . $this->getFilename();
         $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getProperties()->setCreator('Comms')
+                    ->setLastModifiedBy('Comms System')
+                    ->setTitle('Comms Export')
+                    ->setSubject('Comms Export')
+                    ->setDescription('Comms Export')
+                    ->setKeywords('comms export')
+                    ->setCategory('Comms Export');
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
         $lines = $this->getData();
 
         /**
@@ -38,8 +50,7 @@ class Xlsx extends AbstractStrategy
             $i++;
             $j = 1;
             foreach ($line as $val) {
-                $spreadsheet->setActiveSheetIndex(0)
-                            ->setCellValueByColumnAndRow($j, $i, $val);
+                $spreadsheet->setActiveSheetIndex(0)->setCellValueByColumnAndRow($j, $i, $val);
                 $j++;
             }
         }
@@ -63,6 +74,13 @@ class Xlsx extends AbstractStrategy
          */
         $writer = new XlsxWriter($spreadsheet);
         $writer->save($file);
+
+        return $file;
+    }
+
+    public function prepare()
+    {
+        $file = $this->save();
 
         /**
          * Implement strategy.

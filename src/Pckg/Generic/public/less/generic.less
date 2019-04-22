@@ -4,6 +4,7 @@
     display: block;
     clear: both;
   }
+
   > div:only-child {
     padding-left: 0;
     padding-right: 0;
@@ -12,45 +13,23 @@
 
 .bootstrap-select {
   max-width: 720px;
+
   .modal & {
     max-width: 360px;
     min-width: 80px;
   }
+
   .dropdown-menu.open {
     max-width: 720px;
+
     .modal & {
       max-width: 360px;
     }
   }
 }
 
-ul.vertical-mid-menu {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  > li {
-    > span {
-      border-bottom: 2px solid #eee;
-      display: block;
-      padding: 0 0 .333rem 0;
-      margin: 0 0 .333rem 0;
-      text-transform: uppercase;
-      font-size: 1.2rem;
-      color: #777;
-    }
-    ul {
-      margin: 0 0 0 .666rem;
-      padding: 0;
-      list-style-type: none;
-      li {
-        margin: 0;
-        padding: .2rem 0;
-      }
-    }
-    & + li {
-      margin-top: 2rem;
-    }
-  }
+.panel-body {
+  padding: 2rem;
 }
 
 .box {
@@ -58,4 +37,45 @@ ul.vertical-mid-menu {
   border: 1px solid #ddd;
   box-shadow: 0 0 10px #ddd;
   border-radius: 4px;
+}
+
+.pckg-maestro-customize-filters {
+  .single-filter {
+    display: block;
+    width: 100%;
+    padding: 1rem 0;
+
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #e7e7e7
+    }
+  }
+}
+
+.pckg-maestro-customize-filters-field-filter,
+.pckg-maestro-customize-filters-field {
+  .pckg-select {
+    min-width: 2.5rem;
+    margin: 0 1rem;
+  }
+}
+
+.pckg-maestro-customize-filters-field {
+  display: inline-block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.pckg-maestro-customize-filters-field-filter {
+  > .form-control {
+    padding: 0;
+    margin: 0 1rem;
+  }
 }

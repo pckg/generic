@@ -14,12 +14,6 @@ class DynamicAssets extends Provider
                 'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-geo',
             ]
         );
-
-        assetManager()->addAssets(
-            [
-                'vendor/pckg/generic/src/Pckg/Maestro/public/js/pckg-maestro-table.js',
-            ]
-        );
     }
 
     /**
@@ -36,8 +30,8 @@ class DynamicAssets extends Provider
             /**
              * Help popover
              */
-            'js/bootstrap.js',
-            'less/bootstrap.less',
+            'js/dynamic.js',
+            'less/dynamic.less',
         ];
     }
 

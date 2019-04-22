@@ -1,32 +1,10 @@
 <template>
     <div class="pckg-dynamic-paginator">
-        <div>
-            <nav style="display: table; margin: 0 auto;" v-if="perPage != 'all' && total > perPage">
-                <ul class="pagination">
-                    <li>
-                        <a :class="{ disabled: page == 1 }" href="#" aria-label="Previous"
-                           @click.prevent="prev">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <li v-for="(p,i) in pages" :key="i" :class="{ active: p == page }">
-                        <a :class="{ disabled: page == '...' }" href="#" @click.prevent="navigate(p)">{{ p
-                            }}</a>
-                    </li>
-                    <li>
-                        <a :class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next"
-                           @click.prevent="next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div>
+        <div class="pull-left" v-if="total > perPage && perPage > limits[0]">
             <div class="btn-group btn-group-md dropup" style="display: table; margin: 0 auto;">
                 <div class="btn btn-default">
                     <a title="view" href="#">
-                        Show: {{ perPage }}
+                        Show: {{ perPage }} items
                     </a>
                 </div>
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
@@ -42,6 +20,30 @@
                 </ul>
             </div>
         </div>
+
+        <div>
+            <nav class="text-center" v-if="perPage != 'all' && total > perPage">
+                <ul class="pagination pagination-sm">
+                    <li>
+                        <a :class="{ disabled: page == 1 }" href="#" aria-label="Previous"
+                           @click.prevent="prev">
+                            <i class="fa fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li v-for="(p,i) in pages" :key="i" :class="{ active: p == page }">
+                        <a :class="{ disabled: page == '...' }" href="#" @click.prevent="navigate(p)">{{ p
+                            }}</a>
+                    </li>
+                    <li>
+                        <a :class="{ disabled: page == Math.ceil(total / perPage) }" href="#" aria-label="Next"
+                           @click.prevent="next">
+                            <i class="fa fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="clearfix"></div>
     </div>
 </template>
 

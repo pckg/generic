@@ -92,7 +92,7 @@ class Route extends Record
     public function addPartial($partial)
     {
         $partial = $this->preparePartial($partial);
-        $partial->addToRoute($this);
+        return $partial->addToRoute($this);
     }
 
     /**
@@ -109,10 +109,16 @@ class Route extends Record
     {
         $data = $this->toArray();
 
-        $data['settings'] = $this->settings->keyBy('slug')
-                                           ->map(function(Setting $setting) {
-                                               return $setting->pivot->value;
-                                           });
+        $data['settings'] = $this->settings->keyBy('slug')->map(function(Setting $setting) {
+                return $setting->pivot->value;
+            });
+        $data['resolvers'] = json_decode($data['resolvers'], true);
+        $resolved = router()->getResolves();
+
+        if (array_key_exists('route', $resolved)) {
+            unset($resolved['route']);
+        }
+        $data['resolved'] = $resolved;
 
         return $data;
     }

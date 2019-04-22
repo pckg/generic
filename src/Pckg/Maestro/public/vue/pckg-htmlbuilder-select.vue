@@ -1,14 +1,14 @@
 <template>
     <div class="pckg-htmlbuilder-select btn-group">
-        <a href="button" :href="realViewUrl" target="_blank" class="btn btn-warning btn-md"
+        <a href="button" :href="realViewUrl" target="_blank" class="btn btn-default btn-md"
            title="View">
             <i class="fa fa-search" aria-hidden="true"></i>
         </a>
-        <a href="button" :href="url" target="_blank" class="btn btn-info btn-md"
+        <a href="button" :href="url" target="_blank" class="btn btn-default btn-md"
            title="To list">
             <i class="fa fa-list-ul" aria-hidden="true"></i>
         </a>
-        <button type="button" @click.prevent="refreshList" class="btn btn-success btn-md"
+        <button type="button" @click.prevent="refreshList" class="btn btn-default btn-md"
                 title="Refresh">
             <i class="fa fa-sync-alt" aria-hidden="true"></i>
         </button>
@@ -19,6 +19,7 @@
     export default {
         mixins: [pckgTranslations],
         props: {
+            value: null,
             url: null,
             viewUrl: null,
             refreshUrl: null,
@@ -54,20 +55,12 @@
                     });
                     $select.selectpicker('refresh');
                     $select.val(value).change();
-                    this.v = value;
                 }.bind(this));
             }
         },
-        mounted: function () {
-            var $t = this;
-            $(this.$el).parent().find('select').on('change', function () {
-                $t.v = $(this).val();
-            });
-            this.v = $(this.$el).parent().find('select').val() || null;
-        },
         computed: {
             realViewUrl: function () {
-                return utils.url(this.viewUrl, {record: this.v});
+                return utils.url(this.viewUrl, {record: this.value});
             }
         }
     }

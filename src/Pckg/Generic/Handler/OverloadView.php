@@ -34,6 +34,7 @@ class OverloadView
                     /**
                      * Exact match was found, view is allowed.
                      */
+                    message('Exact match found ' . $view);
                     break 2;
                 }
 
@@ -79,7 +80,7 @@ class OverloadView
                  */
                 if (!$similar) {
                     message('No similar view found for ' . $view);
-                    $similar = end($templates);
+                    $similar = $templates[array_keys($templates)[0]];
                 } else {
                 }
                 message('Overloading ' . $view . ' to ' . $similar);

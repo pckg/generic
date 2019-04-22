@@ -1,11 +1,44 @@
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['footerFirst']) | raw }}
+<script>
+    var Pckg = Pckg || {};
+    Pckg.data = {{ (data ? data : {}) | json_encode | raw }};
+    Pckg.locale = {};
+    Pckg.locale.languages = {{ _localeManager.getLanguages().keyBy('slug').map('title') | json_encode | raw }};
 
-<!-- external assets-->
-{{ _assetManager.getExternals() | raw }}
+    {# encode value so it's not readable by default #}
+    Pckg.config = JSON.parse(utils.base64decode({{ _config.getPublicConfig() | json_encode | raw }}));
+
+    Pckg.site = {};
+    Pckg.site.domain = {{ config('domain') | json_encode | raw }};
+    Pckg.site.url = 'https://' + Pckg.site.domain;
+
+    Pckg.router = {};
+    Pckg.router.urls = {{ _router.getPublicRoutes() | json_encode | raw }};
+    Pckg.router.vueUrls = {{ _router.getVueRoutes() | json_encode | raw }};
+
+    Pckg.translations = {{ _translator.getPublicTranslations() | json_encode | raw }};
+
+    Pckg.vue = {};
+    Pckg.vue.stores = {};
+    Pckg.vue.templates = {};
+
+    Pckg.auth = {};
+    Pckg.auth.user = {{ _auth.getUser() | json_encode | raw }};
+
+    {% if _env.isDev() %}
+    Vue.config.debug = true;
+    Vue.config.silent = false;
+    Vue.config.devtools = true;
+    Vue.config.performance = true;
+    {% endif %}
+
+    moment.locale(Pckg.config.locale.current);
+
+</script>
 
 <!-- vue components -->
 <!--  vue css, less and js -->
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['vue']) | raw }}
+
+{{ _assetManager.getMeta(['css', 'less', 'js'], ['footerFirst', 'vue']) | raw }}
 {{ _vueManager.getComponents() | raw }}
 
 <!-- vue filters -->
@@ -15,6 +48,9 @@
 {{ _vueManager.getViews() | raw }}
 
 {{ _assetManager.getMeta(['css', 'less', 'js'], ['footer']) | raw }}
+
+<!-- external assets-->
+{{ _assetManager.getExternals() | raw }}
 
 {{ _metaManager.getMeta('footer') | raw }}
 

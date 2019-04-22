@@ -3,6 +3,7 @@
 use Pckg\Dynamic\Controller\Export;
 use Pckg\Dynamic\Controller\Import;
 use Pckg\Dynamic\Controller\Records;
+use Pckg\Dynamic\Controller\Relations;
 use Pckg\Dynamic\Controller\View;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
 use Pckg\Dynamic\Middleware\SetContentLanguage;
@@ -11,6 +12,7 @@ use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
 use Pckg\Dynamic\Resolver\ForeignRecord;
 use Pckg\Dynamic\Resolver\Language;
+use Pckg\Dynamic\Resolver\Record;
 use Pckg\Dynamic\Resolver\Record as RecordResolver;
 use Pckg\Dynamic\Resolver\Relation;
 use Pckg\Dynamic\Resolver\Tab as TabResolver;
@@ -27,6 +29,7 @@ class Dynamic extends Provider
     {
         return [
             FrontendProvider::class,
+            HttpQl::class,
         ];
     }
 
@@ -58,13 +61,20 @@ class Dynamic extends Provider
         return [
             'url' => array_merge_array(
                 [
-                    'tags' => ['group:admin'],
+                    'tags' => ['group:admin', 'layout:backend'],
                 ],
                 array_merge_array(
                     [
                         'controller' => Records::class,
                     ],
                     [
+                        '/api/vue/dynamic/table/[table]/actions' => [
+                            'name' => 'api.vue.dynamic.table.actions',
+                            'view' => 'tableActions',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ]
+                        ],
                         '/api/dynamic/switch-language'                                                  => [
                             'name' => 'api.dynamic.switchLanguage',
                             'view' => 'switchLanguage',
@@ -74,6 +84,22 @@ class Dynamic extends Provider
                             'view'      => 'viewTable',
                             'resolvers' => [
                                 'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/api/dynamic/table/[table]'                                                  => [
+                            'name'      => 'api.dynamic.record.list',
+                            'view'      => 'viewTableApi',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/api/dynamic/table/[table]/relation/[relation]/record/[record]'                                                  => [
+                            'name'      => 'api.dynamic.record.relation.list',
+                            'view'      => 'viewTableApi',
+                            'resolvers' => [
+                                'table'    => TableResolver::class,
+                                'relation' => Relation::class,
+                                'record'   => ForeignRecord::class,
                             ],
                         ],
                         '/dynamic/tables/list/[table]/configure'                                        => [
@@ -358,8 +384,32 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
+                        '/dynamic/tables/import/[table]/upload-file' => [
+                            'name'      => 'api.dynamic.table.uploadFile',
+                            'view'      => 'uploadFile',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
+                        '/dynamic/tables/import/[table]/import-file' => [
+                            'name'      => 'api.dynamic.table.importFile',
+                            'view'      => 'importFile',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
                     ]
-                )
+                ) + array_merge_array([
+                    'controller' => Relations::class,
+                                                      ], [
+                                                          '/api/dynamic/relation/[relation]' => [
+                                                              'name' => 'api.dynamic.relation',
+                                                              'view' => 'relation',
+                                                              'resolvers' => [
+                                                                  'relation' => Relation::class,
+                                                              ]
+                                                          ]
+                ])
             ),
         ];
     }

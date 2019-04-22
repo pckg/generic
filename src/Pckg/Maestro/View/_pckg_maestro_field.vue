@@ -3,9 +3,9 @@
         <div @dblclick.prevent="toggleEditable">
             <template v-if="type == 'boolean'">
                 <template v-if="!editable">
-                    <pckg-tabelize-field-boolean :field="field.id"
+                    <pckg-tabelize-field-boolean :field="fieldId"
                                                  :record="record.id"
-                                                 :value="record[field.field]"
+                                                 :value="value"
                                                  :table="table"
                                                  :url="toggleFieldUrl"></pckg-tabelize-field-boolean>
                 </template>
@@ -15,20 +15,20 @@
             </template>
             <template v-else-if="type == 'order'">
                 <pckg-tabelize-field-order :key="record.id"
-                                           :field="field.id"
+                                           :field="fieldId"
                                            :record="record.id"
-                                           :value="record[field.field]"
+                                           :value="value"
                                            :table="table"
                                            :url="orderFieldUrl"></pckg-tabelize-field-order>
             </template>
-            <template v-else-if="type == 'datetime' && field.isTogglable">
+            <template v-else-if="type == 'datetime' && isTogglable">
                 <template v-if="!editable">
-                    <pckg-tabelize-field-datetime :field="field.id"
+                    <pckg-tabelize-field-datetime :field="fieldId"
                                                   :record="record.id"
-                                                  :value="record[field.field]"
+                                                  :value="value"
                                                   :table="table"
-                                                  :min="field.minTogglable"
-                                                  :max="field.maxTogglable"
+                                                  :min="minTogglable"
+                                                  :max="maxTogglable"
                                                   :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
                 </template>
                 <template v-else>
@@ -38,22 +38,33 @@
             <template v-else-if="type == 'editor'">
                 <template v-if="!editable">
                     <pckg-tabelize-field-editor
-                            :value="record[field.field]"></pckg-tabelize-field-editor>
+                            :value="value"></pckg-tabelize-field-editor>
                 </template>
                 <template v-else>
-                    <textarea>{{ model | raw }}</textarea>
+                    <textarea v-html="model">{{ model }}</textarea>
+                </template>
+            </template>
+            <template v-else-if="type == 'select'">
+                <template v-if="!editable">
+                    <pckg-maestro-field-indicator :field="myField" :record="record" :db-field="dbField"></pckg-maestro-field-indicator>
+                    <span v-html="richValue"></span>
+                </template>
+            </template>
+            <template v-else-if="type == 'php'">
+                <template v-if="!editable">
+                    <span v-html="value"></span>
                 </template>
             </template>
             <template v-else>
                 <template v-if="!editable">
-                    <template v-if="field.field == 'id'">
-                        <a :href="record.viewUrl" v-html="record[field.field]" class="nobr"></a>
+                    <template v-if="key == 'id'">
+                        <a :href="record.viewUrl" v-html="value" class="nobr" title="Open record"></a>
                     </template>
-                    <template v-else-if="field.field == 'title'">
-                        <a :href="record.viewUrl" v-html="record[field.field]"></a>
+                    <template v-else-if="key == 'title'">
+                        <a :href="record.viewUrl" v-html="value" title="Open record"></a>
                     </template>
-                    <template v-else-if="field.isRaw"><span class="raw">{{ record[field.field] }}</span></template>
-                    <template v-else><span v-html="record[field.field]" class="else"></span></template>
+                    <template v-else-if="true || field.isRaw"><span class="raw">{{ value }}</span></template>
+                    <template v-else><span v-html="value" class="else"></span></template>
                 </template>
                 <template v-else>
                     <input type="text" v-model="model"/>
@@ -87,15 +98,29 @@
                 type: Object,
                 required: true
             },
-            model: {
-                required: true
+            relations: {},
+            parentFields: {}
+        },
+        watch: {
+            field: function (field) {
+                this.myField = field;
+            },
+            relations: function (relations) {
+                this.myRelations = relations;
+            },
+            parentFields: function (fields) {
+                this.myFields = fields;
             }
         },
         data: function () {
             return {
+                myField: this.field,
+                myRelations: this.relations,
+                myFields: this.parentFields,
                 editable: false,
                 toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle'],
-                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order']
+                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order'],
+                model: null
             };
         },
         methods: {
@@ -110,8 +135,95 @@
             }
         },
         computed: {
+            fieldId: function () {
+                let fieldId = null;
+                $.each(this.myFields, function (i, field) {
+                    if (field.field != this.myField.field) {
+                        return;
+                    }
+
+                    fieldId = field.id;
+                    return false;
+                }.bind(this));
+
+                return fieldId;
+            },
+            dbField: function () {
+                if (typeof this.myField.field != 'string') {
+                    return null;
+                }
+
+                let t;
+                $.each(this.myFields, function (i, field) {
+                    if (field.field != this.myField.field) {
+                        return;
+                    }
+
+                    t = field;
+                    return false;
+                }.bind(this));
+
+                return t;
+            },
+            isTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.isTogglable;
+            },
+            minTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.minTogglable;
+            },
+            maxTogglable: function () {
+                let field = this.dbField;
+                if (!field) {
+                    return false;
+                }
+
+                return field.maxTogglable;
+            },
             type: function () {
-                return this.field.fieldType ? this.field.fieldType.slug : null;
+                if (typeof this.myField.field == 'string') {
+                    let t;
+                    $.each(this.myFields, function (i, field) {
+                        if (field.field != this.myField.field) {
+                            return;
+                        }
+
+                        t = field.fieldType.slug;
+                        return false;
+                    }.bind(this));
+
+                    return t;
+                }
+
+                return 'relation';
+            },
+            key: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.myField.field;
+                }
+            },
+            value: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.record[this.key];
+                }
+                // for fields: value
+                // for relations: record[relation.alias]...[field]
+            },
+            richValue: function () {
+                if (typeof this.myField.field == 'string') {
+                    return this.record['*' + this.key];
+                }
+                // for fields: value
+                // for relations: record[relation.alias]...[field]
             }
         },
         mounted: function () {

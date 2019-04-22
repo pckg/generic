@@ -2,10 +2,6 @@
  * Initialize main VueJS app.
  */
 
-/*var $router = new VueRouter({
- routes: []
- });*/
-
 Pckg.vue.stores.auth = {
     state: {
         user: Pckg.auth.user || {}
@@ -14,8 +10,11 @@ Pckg.vue.stores.auth = {
         user: function (state) {
             return state.user;
         },
-        isLoggedIn: function(state){
+        isLoggedIn: function (state) {
             return state.user.id > 0 ? true : false;
+        },
+        isAdmin: function (state) {
+            return state.user.user_group_id == 1;
         }
     },
     mutations: {
@@ -28,15 +27,83 @@ Pckg.vue.stores.auth = {
                 }
             });
 
-            $store.commit('prepareAddresses', { order: params && params.order || null });
+            $store.commit('prepareAddresses', {order: params && params.order || null});
         },
         logoutUser: function (state, callback) {
             http.getJSON('/logout', function () {
-                $store.commit('prepareUser', { callback: callback });
+                $store.commit('prepareUser', {callback: callback});
             });
         }
     }
 };
+
+Pckg.vue.stores.template = {
+    state: {
+        /**
+         * This is something that should be cached per app level.
+         */
+        templates: Pckg.vue.templates,
+    },
+    getters: {
+
+        resolveTemplate: function (state) {
+            console.log('resolving', state);
+            return function (template, opt) {
+                console.log('Template store: resolving template: ' + template, state.templates);
+
+                if (state.templates && Object.keys(state.templates).indexOf(template) >= 0) {
+                    console.log('overriden template');
+                    return state.templates[template];
+                }
+
+                if (false && opt) {
+                    console.log('option');
+                    return opt;
+                }
+
+                /**
+                 * @T00D00 - all available templates should be packed in some template manager?
+                 *         - we can load templates that have .vue or .vue.twig file endings?
+                 */
+                let template1 = '<ul class="categories-list-module vSidebar">\n' +
+                    '    <li v-for="category in categories">\n' +
+                    '        <a :href="category.url"\n' +
+                    '           @click.prevent="emit(\'derive-categories-list:load-category\', category.id)">{{ category.title }}</a>\n' +
+                    '        <ul v-if="category.offers && category.offers.length > 0">\n' +
+                    '            <li v-for="offer in category.offers">\n' +
+                    '                <a :href="offer.url"\n' +
+                    '                   @click.prevent="emit(\'derive-categories-list:load-offer\', offer.id)">{{ offer.title }}</a>\n' +
+                    '            </li>\n' +
+                    '        </ul>\n' +
+                    '    </li>\n' +
+                    '</ul>';
+
+                let template2 = '<div><div v-for="category in categories">{{ category.title }}</div></div>';
+                console.log('1 if sidebar, 2 if not', template);
+
+                return template == 'Derive/Offers:categories/list-vSidebar' ? template1 : template2;
+            };
+        }
+    }
+};
+
+const router = new VueRouter({
+    mode: 'history',
+    routes: Pckg.router.vueUrls || []
+});
+
+router.afterEach(function (to, from) {
+    if (typeof ga === 'undefined') {
+        return;
+    }
+
+    if (from && to.path == from.path) {
+        return;
+    }
+
+    ga('set', 'page', to.path);
+    ga('send', 'pageview');
+});
 
 const $store = new Vuex.Store({
     state: {
@@ -46,15 +113,13 @@ const $store = new Vuex.Store({
         translations: Pckg.translations || {}
     },
     modules: Pckg.vue.stores,
-    actions: {},
-    mutations: {},
-    getters: {}
 });
 
 if ($('nav.header').length > 0) {
     new Vue({
         el: 'nav.header',
         $store,
+        router,
         computed: {
             basket: function () {
                 return $store.state.basket;
@@ -66,12 +131,10 @@ if ($('nav.header').length > 0) {
 const $vue = new Vue({
     el: '#vue-app',
     $store,
-    // router: $router,
-    data: function(){
+    router,
+    data: function () {
         return {
-            alerts: [],
-            //$authStore: $authStore,
-            //$basketStore: $basketStore
+            localBus: new Vue()
         };
     },
     mixins: [pckgDelimiters],
@@ -88,6 +151,11 @@ const $vue = new Vue({
         }
     },
     computed: {
-        '$store': function(){ return $store; }
+        '$store': function () {
+            return $store;
+        },
+        basket: function () {
+            return $store.state.basket;
+        }
     }
 });

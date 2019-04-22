@@ -6,7 +6,7 @@
 {% endif %}
 <div class="pckg-dynamic-record-singular">
 
-    <div class="box-with-padding">
+    <div class="display-block">
         <h2>
             {{ formalize.getTitle() | raw }}
             {% if not formalize.getForm().isEditable() and record.id %}
@@ -15,6 +15,8 @@
             {% endif %}
         </h2>
     </div>
+
+    <div class="clearfix"></div>
 
     {{ formalize | raw }}
 

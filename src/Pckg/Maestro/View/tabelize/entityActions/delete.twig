@@ -1,3 +1,6 @@
-<a type="button" @click.prevent="entityAction('checkDeleteRecords')" class="btn btn-danger" href="#" title="Delete">
-    <i class="fa fa-trash" aria-hidden="true"></i> Delete
-</a>
+{% set json = {
+    event: 'checkDeleteRecords',
+    icon: 'trash',
+    title: 'Delete'
+} %}
+{{ json | json_encode | raw }}

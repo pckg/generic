@@ -3,15 +3,13 @@
 use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Obj;
+use Pckg\Database\Record;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Field;
-use Pckg\Database\Record;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
-use Pckg\Maestro\Service\Tabelize\Cloner;
-use Pckg\Maestro\Service\Tabelize\Delete;
 use Throwable;
 
 class Tabelize
@@ -103,12 +101,9 @@ class Tabelize
     {
         $this->entity = $entity;
         $this->fields = $fields;
-        $this->view = view(
-            'Pckg/Maestro:tabelize',
-            [
-                'tabelize' => $this,
-            ]
-        );
+        $this->view = view('Pckg/Maestro:tabelize', [
+            'tabelize' => $this,
+        ]);
     }
 
     public function make()
@@ -117,7 +112,7 @@ class Tabelize
         $total = $this->entity->total();
 
         $this->setRecords($all)
-             ->setPerPage(25)
+             ->setPerPage(50)
              ->setPage(1)
              ->setTotal($total)
              ->setGroups([])
@@ -266,23 +261,27 @@ class Tabelize
         }
 
         return $this->fields->map(function($item) {
+            if (is_only_callable($item)) {
+                return $item;
+            }
+
             if (is_object($item)) {
                 return $item;
             }
 
             if (is_string($item)) {
                 return new Record([
-                                              'title'                 => $item,
-                                              'field'                 => $item,
-                                              'dynamic_field_type_id' => 1,
-                                          ]);
+                                      'title'                 => $item,
+                                      'field'                 => $item,
+                                      'dynamic_field_type_id' => 1,
+                                  ]);
             }
 
             return new Record([
-                                          'title'                 => $item['title'] ?? null,
-                                          'field'                 => $item['field'] ?? null,
-                                          'dynamic_field_type_id' => 1,
-                                      ]);
+                                  'title'                 => $item['title'] ?? null,
+                                  'field'                 => $item['field'] ?? null,
+                                  'dynamic_field_type_id' => 1,
+                              ]);
         });
     }
 
@@ -298,11 +297,11 @@ class Tabelize
         foreach ($this->fields as $key => $field) {
             if (is_string($field)) {
                 $keys[] = $field;
-            } else if (is_string($key)) {
+            } elseif (is_string($key)) {
                 $keys[] = $key;
-            } else if (is_object($field) && $field instanceof Field) {
+            } elseif (is_object($field) && $field instanceof Field) {
                 $keys[] = $field->field;
-            } else if (is_int($key)) {
+            } elseif (is_int($key)) {
                 $keys[] = $field;
             }
         }
@@ -330,12 +329,12 @@ class Tabelize
      *
      * @return mixed|null
      */
-    public function getRecordValue($field, $originalRecord)
+    public function getRecordValue($field, $originalRecord, &$enrichedValue, &$enriched = false)
     {
         try {
             if (is_string($field)) {
                 return $originalRecord->{$field};
-            } else if (is_only_callable($field)) {
+            } elseif (is_only_callable($field)) {
                 return $field($originalRecord);
             }
 
@@ -353,6 +352,7 @@ class Tabelize
              * but what we need to print is stored in select_relation_user_group_id
              */
             if ($originalRecord->relationExists('relation_' . $field->field)) {
+                $enriched = true;
                 /**
                  * Select type.
                  */
@@ -367,10 +367,16 @@ class Tabelize
                         $eval = '#' . $originalRecord->{$field->field};
                     }
 
-                    return $this->dataOnly
+                    $enrichedValue = $this->dataOnly
                         ? $eval
-                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '">' . $eval . '</a>');
+                        : ('<a href="' . $relation->showTable->getEditUrl($record) . '" title="Open related record">' .
+                            $eval . '</a>');
+                } else {
+                    $enrichedValue = null;
                 }
+            } else {
+                $enriched = true;
+                $enrichedValue = $originalRecord->{$field->field};
             }
 
             return $originalRecord->{$field->field};
@@ -386,7 +392,6 @@ class Tabelize
      * @param null $relation
      *
      * @return mixed|string
-     *
      * See if we can do this in more secure way! @T00D00
      */
     public function eval($eval, $record, $originalRecord, $relation = null)
@@ -462,56 +467,60 @@ class Tabelize
          */
         foreach ([$this->views, $this->listActions] as $data) {
             foreach ($data as $key => $view) {
-                /**
-                 * @T00D00 - this should be automatic ...
-                 */
-                if (is_string($key) && in_array($key, ['delete', 'clone'])) {
-                    $view = $key;
-                }
-
-                $string .= '<!-- start tabelize view' . (is_string($view) ? ' ' . $view : '') . ' -->';
-
-                $wasObject = false;
-                $listAction = true;
-                if (is_object($view)) {
-                    if ($view instanceof View\Twig) {
-                        $view = $view->autoparse();
-                        $wasObject = true;
-                    } else {
-                        $view = $view->template;
-                    }
-                }
-
-                if (!is_string($view)) {
-                    $string .= "\n" . '<!-- entity view (string) -->';
-                    $string .= $view;
-                } elseif (!$wasObject && strpos($view, '@')) {
-                    list($class, $method) = explode('@', $view);
-                    if (strpos($method, ':')) {
-                        list($method, $view) = explode(':', $method);
+                try {
+                    /**
+                     * Hardcoded string actions.
+                     */
+                    if (is_string($key) && in_array($key, ['delete', 'clone'])) {
+                        $string .= '<maestro-tabelize-' . $key . '></maestro-tabelize-' . $key . '>';
+                        continue;
                     }
 
-                    $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
-                    $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
-                } elseif (!$wasObject && $view) {
-                    if ($listAction) {
-                        $string .= "\n" . '<!-- entity view (tabelize/listActions/' . $view . ') -->';
-                        if ($view === 'delete') {
-                            $delete = new Delete();
-                            $string .= $delete->getListAction($this);
-                        } elseif ($view === 'clone') {
-                            $cloner = new Cloner();
-                            $string .= $cloner->getListAction($this);
+                    $originalView = $view;
+
+                    $custom = false;
+                    if (is_object($view)) {
+                        if ($view instanceof View\Twig) {
+                            $view = $view->autoparse();
+                            $custom = true;
                         } else {
-                            $string .= view('tabelize/listActions/' . $view)->autoparse();
+                            $view = $view->template;
                         }
                     }
-                } else {
-                    $string .= "\n" . '<!-- entity view (else) -->';
-                    $string .= $view;
-                }
 
-                $string .= '<!-- end tabelize view' . (is_string($view) && !$wasObject ? ' ' . $view : '') . ' -->';
+                    if (!is_string($view)) {
+                        $string .= $view;
+                        continue;
+                    }
+
+                    if (!$custom) {
+                        if (strpos($view, '@')) {
+                            list($class, $method) = explode('@', $view);
+                            if (strpos($method, ':')) {
+                                list($method, $view) = explode(':', $method);
+                            }
+
+                            $string .= "\n" . '<!-- entity view (plugin ' . $class . '->' . $method . ') -->';
+                            $string .= resolve(Plugin::class)->make($class, $method, [$this->entity, $this->table], true);
+                            continue;
+                        }
+
+                        /**
+                         * View is not needed anymore, it's preloaded with webpack.
+                         * We just need to add line that calls vue action in HTML.
+                         */
+                        $component = $originalView->vueComponent;
+                        $string .= '<' . $component . '></' . $component . '>';
+                        continue;
+                    }
+
+                    $string .= $view;
+
+                } catch (Throwable $e) {
+                    if (!prod()) {
+                        throw $e;
+                    }
+                }
             }
         }
 
@@ -543,8 +552,7 @@ class Tabelize
          * @T00D00 ... scripts should be added to vue manager
          *         ... component usages should be added to template
          */
-        $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews() .
-                           '<!-- end tabelize views-->';
+        $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews() . '<!-- end tabelize views-->';
         $vueTemplate = '';
         $pattern = "#<\s*?script\b[^>]*>(.*?)</script\b[^>]*>#s";
 
@@ -564,17 +572,14 @@ class Tabelize
 
     /**
      * @return array
-     *
      * Transforms collection to array of arrays.
      */
     public function transformRecords()
     {
-        $records = $this->transformCollection($this->getRecords());
-
-        return $records;
+        return $this->transformCollection($this->getRecords());
     }
 
-    protected function transformCollection($collection)
+    public function transformCollection($collection)
     {
         $records = [];
         foreach ($collection as $key => $record) {
@@ -597,15 +602,14 @@ class Tabelize
          */
         foreach ($this->getFields() as $key => $field) {
             $realKey = is_string($key)
-                ? $key
-                : (is_string($field)
-                    ? $field
-                    : (is_object($field)
-                        ? $field->field
+                ? $key : (is_string($field)
+                    ? $field : (is_object($field) ? $field->field
                         : $field['field']));
-            //measure('field.' . $realKey, function() use (&$transformed, $realKey, $field, $record) {
-                $transformed[$realKey] = $this->getRecordValue($field, $record);
-            //});
+            $enriched = null;
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
+            if ($enriched) {
+                $transformed['*' . $realKey] = $enrichedValue;
+            }
         }
 
         /**
@@ -613,9 +617,11 @@ class Tabelize
          */
         foreach ($this->getFieldTransformations() as $key => $field) {
             $realKey = is_string($key) ? $key : (is_string($field) ? $field : $field->field);
-            measure('transformation.' . $key, function() use (&$transformed, $realKey, $field, $record) {
-                $transformed[$realKey] = $this->getRecordValue($field, $record);
-            });
+            $enriched = null;
+            $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
+            if ($enriched) {
+                $transformed['*' . $realKey] = $enrichedValue;
+            }
         }
 
         if ($this->dataOnly) {
@@ -626,9 +632,7 @@ class Tabelize
          * We also need to fetch URLs.
          */
         foreach ($this->getRecordActions() as $recordAction) {
-            $method = is_string($recordAction)
-                ? $recordAction
-                : $recordAction->slug;
+            $method = is_string($recordAction) ? $recordAction : $recordAction->slug;
 
             if (router()->hasUrl('dynamic.record.' . $method)) {
                 $transformed[$method . 'Url'] = url('dynamic.record.' . $method, [
@@ -652,10 +656,16 @@ class Tabelize
         $transformed = array_merge($record->getToArrayValues(), $transformed);
         $transformed = array_merge($transformed, $record->getToJsonValues());
 
+        /**
+         * ID is mandatory.
+         */
         if (!isset($transformed['id'])) {
             $transformed['id'] = $record->id;
         }
 
+        /**
+         * @T00D00 - tabelize class is not needed anymore?
+         */
         if (!isset($transformed['tabelizeClass']) && method_exists($record, 'getTabelizeClassAttribute')) {
             $transformed['tabelizeClass'] = $record->tabelizeClass;
         }
@@ -698,13 +708,101 @@ class Tabelize
         return $html;
     }
 
+    public function getEntityActionsArray($normal = true)
+    {
+        $html = null;
+        $data = $this->viewData;
+        $data['tabelize'] = $this;
+        $actions = [];
+        foreach ($this->getEntityActions() as $action) {
+            try {
+                $template = null;
+                if (isset($action->slug) && isset($action->entityTemplate)) {
+                    $template = 'tabelize/entityActions/' . $action->entityTemplate;
+                } else {
+                    $template = 'tabelize/entityActions/' . $action;
+                }
+
+                if (($normal && in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete'])) ||
+                    (!$normal && !in_array($action, ['add', 'edit', 'export', 'view', 'import', 'delete']))) {
+                    $html .= "\n" . '<!-- entity action template ' . $template . ' -->';
+                    $parsed = trim(view($template, $data)->autoparse());
+
+                    if (strpos($parsed, '{') !== 0) {
+                        dd($template, $parsed);
+                        $actions[] = [
+                            'title' => $template,
+                        ];
+                        continue;
+                    }
+
+                    $a = json_decode($parsed, true);
+                    $a['component'] = $action->vueComponent;
+
+                    $actions[] = $a;
+                }
+            } catch (Throwable $e) {
+                if (!prod()) {
+                    throw $e;
+                }
+            }
+        }
+
+        return $actions;
+    }
+
+    public function getActionsArray()
+    {
+        return [
+            'entity' => $this->getEntityActionsArray(false),
+            'record' => $this->getRecordActionsArray(),
+        ];
+    }
+
+    public function getRecordActionsArray()
+    {
+        $html = null;
+        $data = $this->viewData;
+        $data['tabelize'] = $this;
+        $actions = [];
+        foreach ($this->getRecordActions() as $action) {
+            try {
+                $template = 'tabelize/recordActions/' .
+                    (is_string($action) ? $action : ($action->template ? $action->template : $action->slug));
+
+                $parsed = trim(view($template, $data)->autoparse());
+
+                if (strpos($parsed, '{') !== 0) {
+                    dd("unknown tabelize template", $template, $parsed, $action);
+                    continue;
+                }
+
+                $a = json_decode($parsed, true);
+                if (!$a) {
+                    dd("no tabelize action", $parsed, $a);
+                }
+                if (is_object($action) && !isset($a['component']))  {
+                    $a['component'] = $action->vueComponent;
+                }
+                $actions[] = $a;
+            } catch (Throwable $e) {
+                if (!prod()) {
+                    throw $e;
+                }
+            }
+        }
+
+        return $actions;
+    }
+
     public function getPaginator()
     {
         return [
-            'perPage' => $this->getPerPage(),
-            'page'    => $this->getPage(),
-            'total'   => $this->getTotal(),
-            'url'     => router()->getUri(),
+            'perPage'  => $this->getPerPage(),
+            'page'     => $this->getPage(),
+            'filtered' => $this->getTotal(),
+            'total'    => $this->getTotal(),
+            'url'      => router()->getUri(),
         ];
     }
 
@@ -722,82 +820,76 @@ class Tabelize
 
     public function getResetViewUrl()
     {
-        return url(
-            'dynamic.record.view.reset',
-            [
-                'table' => $this->table,
-            ]
-        );
+        return url('dynamic.record.view.reset', [
+            'table' => $this->table,
+        ]);
     }
 
     public function getSaveViewUrl()
     {
-        return url(
-            $this->tableView
-                ? 'dynamic.record.view.savePlusView'
-                : 'dynamic.record.view.save',
-            [
-                'table'     => $this->table,
-                'tableView' => $this->tableView,
-            ]
-        );
+        return url($this->tableView ? 'dynamic.record.view.savePlusView' : 'dynamic.record.view.save', [
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function getImportUrl()
     {
-        return url(
-            'dynamic.record.import',
-            [
-                'table' => $this->table,
-            ]
-        );
+        return url('dynamic.record.import', [
+            'table' => $this->table,
+        ]);
     }
 
     public function getExportUrl($type)
     {
-        return url(
-            'dynamic.record.export',
-            [
-                'table' => $this->table,
-                'type'  => $type,
-            ]
-        );
+        return url('dynamic.record.export', [
+            'table' => $this->table,
+            'type'  => $type,
+        ]);
     }
 
     public function getAddUrl()
     {
         if ($this->dynamicRelation && $this->dynamicRecord) {
-            return url(
-                'dynamic.record.add.related',
-                [
-                    'table'    => $this->table,
-                    'relation' => $this->dynamicRelation,
-                    'foreign'  => $this->dynamicRecord,
-                ]
-            );
+            return url('dynamic.record.add.related', [
+                'table'    => $this->table,
+                'relation' => $this->dynamicRelation,
+                'foreign'  => $this->dynamicRecord,
+            ]);
         }
 
-        return url(
-            'dynamic.record.add',
-            [
-                'table' => $this->table,
-            ]
-        );
+        return url('dynamic.record.add', [
+            'table' => $this->table,
+        ]);
     }
 
     public function getSavedViews()
     {
-        return (new TableViews())->where('dynamic_table_id', $this->getDynamicTable()->id)->all();
+        $savedViews = (new TableViews())->where('dynamic_table_id', $this->getDynamicTable()->id)->all()->map(function(
+            TableView $tableView
+        ) {
+            return [
+                'id'       => $id,
+                'type'     => 'saved',
+                'title'    => $tableView->title,
+                'settings' => json_decode($tableView->settings, true),
+            ];
+        });
+
+        $entity = $this->getEntity();
+        if (method_exists($entity, 'getSavedViews')) {
+            $entity->getSavedViews()->copyTo($savedViews);
+        }
+
+        return $savedViews->all();
     }
 
     public function getDynamicTable()
     {
         if (!$this->table) {
-            $this->table = (new Tables())->where('framework_entity', get_class($this->entity))->oneOrFail(
-                function() {
-                    response()->notFound('Dynamic table is missing');
-                }
-            );
+            $this->table = (new Tables())->where('framework_entity', get_class($this->entity))->oneOrFail(function() {
+                response()->notFound('Dynamic table is missing');
+            });
         }
 
         return $this->table;
@@ -805,36 +897,27 @@ class Tabelize
 
     public function getTabUrl($tab)
     {
-        return url(
-            'dynamic.record.tab',
-            [
-                'tab'    => $tab,
-                'table'  => $this->table,
-                'record' => $this->dynamicRecord,
-            ]
-        );
+        return url('dynamic.record.tab', [
+            'tab'    => $tab,
+            'table'  => $this->table,
+            'record' => $this->dynamicRecord,
+        ]);
     }
 
     public function getViewUrl()
     {
-        return url(
-            'dynamic.record.list' . ($this->tableView ? 'View' : ''),
-            [
-                'table'     => $this->table,
-                'tableView' => $this->tableView,
-            ]
-        );
+        return url('dynamic.record.list' . ($this->tableView ? 'View' : ''), [
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function getConfigureUrl()
     {
-        return url(
-            'dynamic.record.list' . ($this->tableView ? 'View' : '') . 'Configure',
-            [
-                'table'     => $this->table,
-                'tableView' => $this->tableView,
-            ]
-        );
+        return url('dynamic.record.list' . ($this->tableView ? 'View' : '') . 'Configure', [
+            'table'     => $this->table,
+            'tableView' => $this->tableView,
+        ]);
     }
 
     public function setTableView(TableView $tableView = null)

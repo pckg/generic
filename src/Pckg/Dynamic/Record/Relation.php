@@ -45,10 +45,15 @@ class Relation extends DatabaseRecord
 
     public function applyRecordFilterOnEntity(Record $record, Entity $entity)
     {
+        $this->applyRawFilterOnEntity($record->id, $entity);
+    }
+
+    public function applyRawFilterOnEntity($id, Entity $entity)
+    {
         if ($this->left_foreign_key_id) {
-            $entity->where($this->leftForeignKey->field, $record->id);
+            $entity->where($this->leftForeignKey->field, $id);
         } elseif ($this->on_field_id) {
-            $entity->where($this->onField->field, $record->id);
+            $entity->where($this->onField->field, $id);
         }
     }
 

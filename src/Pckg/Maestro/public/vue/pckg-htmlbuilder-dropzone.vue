@@ -1,31 +1,29 @@
 <template>
     <div class="pckg-htmlbuilder-dropzone" :id="id">
-        <div class="row">
-            <div class="preview" :class="[ current ? 'col-md-3' : '' ]">
-                <img :src="current" class="img-responsive"/>
-            </div>
-            <div :class="[ current ? 'col-md-9' : 'col-md-12' ]">
-                <p>
-                    <button type="button" class="btn btn-info select-files">Select</button>
-                    or drop file for upload.
-                </p>
-                <p v-if="original && current != original">
-                    <button type="button" class="btn btn-warning">Restore</button>
-                    original file.
-                </p>
-                <p v-if="current">
-                    <button type="button" class="btn btn-danger" @click.prevent="deleteFile">Delete</button>
-                    current file.
-                </p>
-
-                <div class="table table-striped files" id="previews"></div>
-            </div>
+        <div v-if="myCurrent" class="display-block">
+            <img :src="cdn(myCurrent)" class="img-responsive"/>
+            <br/>
         </div>
+        <div class="display-block">
+            <button type="button" class="btn btn-default select-files">
+                <i class="fa fa-upload"></i> Upload file
+            </button>
+
+            <button v-if="myCurrent" type="button" class="btn btn-default" @click.prevent="deleteFile">
+                <i class="fa fa-trash"></i> Delete file
+            </button>
+
+            <button v-if="original && myCurrent != original" type="button" class="btn btn-default">
+                <i class="fa fa-redo"></i> Restore original
+            </button>
+        </div>
+        <div class="table table-striped files" :id="id + '-previews'"></div>
     </div>
 </template>
 
 <script>
-    export default{
+    export default {
+        mixins: [pckgCdn],
         props: {
             current: {
                 type: String,
@@ -52,16 +50,23 @@
             value: {
                 type: String,
                 default: ''
+            },
+            accept: {
+                default: null
             }
         },
         data: function () {
             return {
                 original: null,
                 _dropzone: null,
-                _previewTemplate: null
+                _previewTemplate: null,
+                myCurrent: this.current
             };
         },
         watch: {
+            current: function (current) {
+                this.myCurrent = current;
+            },
             url: function (n, o) {
                 this.initDropzone();
             },
@@ -93,24 +98,36 @@
                         '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0"' +
                         ' aria-valuemax="100" aria-valuenow="0">' +
                         '<div class="progress-bar progress-bar-success" style="width:0%;"' +
-                        ' data-dz-uploadprogress></div>' +
+                        ' data-dz-uploadprogress><span class="progress-text"></span></div>' +
                         '</div>' +
                         '</div>';
                 }
 
 
-                this.original = this.current;
+                this.original = this.myCurrent;
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
                     params: this.params,
-                    previewsContainer: '#previews',
+                    previewsContainer: '#' + this.id + '-previews',
                     previewTemplate: this._previewTemplate,
                     clickable: $(this.$el).parent().find('.select-files').get()[0],
                     maxFilesize: 8,
+                    acceptedFiles: this.accept,
+                    uploadprogress: function(file, progress, bytesSent) {
+                        if (file.previewElement) {
+                            var progressElement = file.previewElement.querySelector("[data-dz-uploadprogress]");
+                            progressElement.style.width = progress + "%";
+                            progressElement.querySelector(".progress-text").textContent = progress + "%";
+                            if (progress == 100) {
+                                let animated = file.previewElement.querySelector("[aria-valuemax]");
+                                $(animated).removeClass('active');
+                            }
+                        }
+                    },
                     success: function (file, data) {
                         if (data.success) {
-                            this.prev = this.current;
-                            this.current = data.url;
+                            this.prev = this.myCurrent;
+                            this.myCurrent = data.url;
                         }
 
                         if (data.message) {
@@ -118,16 +135,32 @@
                         }
 
                         this.$emit('input', data.url);
+                        this.$emit('uploaded', {
+                            url: data.url,
+                            data: data
+                        });
+                    }.bind(this),
+                    error: function (data, response) {
+                        this.$emit('uploaded', {
+                            url: null,
+                            data: data
+                        });
                     }.bind(this)
                 });
             },
             deleteFile: function () {
-                http.deleteJSON(this.url, function () {
-                    this.current = '';
+                let params = this.params;
+                let esc = encodeURIComponent;
+                let query = Object.keys(params)
+                    .map(k => esc(k) + '=' + esc(params[k]))
+                    .join('&');
+
+                http.deleteJSON(this.url + (Object.keys(params).length > 0 ? '?' + query : ''), function () {
+                    this.myCurrent = '';
                 }.bind(this));
             }
         },
-        created: function () {
+        mounted: function () {
             this.$nextTick(function () {
                 this.initDropzone();
             }.bind(this));

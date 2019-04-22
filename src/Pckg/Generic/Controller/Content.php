@@ -7,56 +7,34 @@ use Pckg\Generic\Service\Generic\Action;
 class Content
 {
 
-    public function getSimpleAction(ContentRecord $content = null, Action $action)
+    public function getSimpleAction(Action $action)
     {
-        /**
-         * Get content, set it to proper view.
-         */
-        return view(
-            'Pckg/Generic:content/simple',
-            [
-                'content' => $content,
-                'action'  => $action,
-            ]
-        );
+        return $action->toView('Pckg/Generic:content/simple');
     }
 
-    public function getListedAction(ContentRecord $content = null)
+    public function getTreeAction(Action $action)
     {
-        /**
-         * Get content, set it to proper view, also set subcontents.
-         */
-        return view(
-            'content\simple',
-            [
-                'content' => $content,
-            ]
-        );
+        return $action->toView('Pckg/Generic:content/tree');
     }
 
-    public function getTreeAction(ContentRecord $content = null)
-    {
-        /**
-         * Get content, set it to proper view, also set it as tree.
-         */
-        return view(
-            'content\tree',
-            [
-                'content' => $content,
-            ]
-        );
-    }
-
-    public function getTemplateAction(ContentRecord $content = null, Action $action, $settings)
+    /**
+     * @param ContentRecord|null $content
+     * @param Action             $action
+     * @param                    $settings
+     *
+     * @return \Pckg\Framework\View\Twig
+     * @deprecated
+     */
+    public function getTemplateAction(Action $action, $settings)
     {
         return view(
-            $settings->first(
+            $action->getAction()->settings ? $action->getAction()->settings->first(
                 function(Setting $item) {
                     return $item->slug == 'pckg-generic-content-template';
                 }
-            )->pivot->value,
+            )->pivot->value : 'Pckg/Generic:content/simple',
             [
-                'content' => $content,
+                'action' => $action,
             ]
         );
     }
