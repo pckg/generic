@@ -1100,16 +1100,16 @@ const pckgPartialPlatformSettings = {
     data: function () {
         return {
             mode: 'view',
-            settings: {},
-            modules: {},
+            settings: $store.state.settings.settings,
+            modules: $store.state.settings.modules,
             storeTime: null,
-            companies: [],
-            themes: {},
-            stats: {},
-            paymentMethods: {},
-            timezones: {},
-            fonts: {},
-            storeDatetime: null,
+            companies: $store.state.settings.companies,
+            themes: $store.state.settings.themes,
+            stats: $store.state.settings.stats,
+            paymentMethods: $store.state.settings.paymentMethods,
+            timezones: $store.state.settings.timezones,
+            fonts: $store.state.settings.fonts,
+            storeDatetime: $store.state.settings.storeDatetime,
             loaded: false,
             saving: false,
             modal: null
@@ -1159,18 +1159,7 @@ const pckgPartialPlatformSettings = {
             this.initialFetch();
         },
         initialFetch: function () {
-            http.get('/api/comms/platform-settings', function (data) {
-                this.settings = data.settings;
-                this.modules = data.modules;
-                this.companies = data.companies;
-                this.themes = data.themes;
-                this.stats = data.stats;
-                this.paymentMethods = data.paymentMethods;
-                this.timezones = data.timezones;
-                this.storeDatetime = data.datetime;
-                this.fonts = data.fonts;
-                this.loaded = true;
-            }.bind(this));
+            this.loaded = true;
         },
     },
     created: function () {
