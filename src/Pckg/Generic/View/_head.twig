@@ -5,5 +5,6 @@
 {{ _metaManager.getMeta('header.first') | raw }}
 {{ _seoManager | raw }}
 {{ _metaManager.getMeta('header') | raw }}
-{{ _assetManager.getMeta(['css', 'less', 'js'], ['libraries', noTheme ? '' : 'theme', 'main']) | raw }}
+{{ _assetManager.getMeta(['css', 'less'], ['libraries', noTheme ? '' : 'theme', 'main', 'vue', 'footer']) | raw }}
+{{ _assetManager.getMeta(['js'], ['libraries', noTheme ? '' : 'theme', 'main']) | raw }}
 {{ _metaManager.getMeta('headerLast') | raw }}

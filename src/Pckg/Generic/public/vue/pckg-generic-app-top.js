@@ -314,7 +314,23 @@ const pckgPayment = {
 };
 
 const pckgActionAnimation = {
+    watch: {
+        'action.settings.animation.effect': function (newVal) {
+            /**
+             * @T00D00 - remove all other effects - to get effect in effect :D
+             */
+            this.makeEffect(newVal);
+        },
+        'action.settings.animation.speed': function (newVal) {
+            this.$el.classList.remove('slow', 'slower', 'fast', 'faster');
+        }
+    },
     methods: {
+        makeEffect: function (effect, delay, speed) {
+            this.$set(this.shared, 'animationStarted', true);
+            this.$el.classList.add('animated', effect, delay || 'no-delay', speed || 'normal-speed');
+            this.$el.classList.remove('animated-out');
+        },
         onScroll: function () {
             if (this.shared.animationStarted) {
                 return;
@@ -333,9 +349,7 @@ const pckgActionAnimation = {
                 return;
             }
 
-            this.$set(this.shared, 'animationStarted', true);
-            this.$el.classList.add('animated', this.animationSettings.effect);
-            this.$el.classList.remove('animated-out');
+            this.makeEffect(this.animationSettings.effect, this.animationSettings.delay, this.animationSettings.speed);
         },
         prepareAnimationSettings: function (defaults) {
             if (!defaults) {
@@ -967,7 +981,7 @@ const pckgElement = {
             }
 
             this.timeout('componentClicked', function () {
-                $dispatcher.$emit('pckg-frontpage:selectAction', this.action);
+                $dispatcher.$emit('pckg-editor:actionChanged', this.action);
             }.bind(this), 333);
 
             return false;
@@ -1033,7 +1047,7 @@ const pckgElement = {
                 //console.log('not edit');
                 return;
             }
-            $store.commit('setActionFocus', {actionId: this.action.id, focus: true});
+            //$store.commit('setActionFocus', {actionId: this.action.id, focus: true});
         },
         componentLeave: function (e) {
             //console.log('componentLeave');
@@ -1041,7 +1055,7 @@ const pckgElement = {
                 //console.log('not edit');
                 return;
             }
-            $store.commit('setActionFocus', {actionId: this.action.id, focus: false});
+            //$store.commit('setActionFocus', {actionId: this.action.id, focus: false});
         }
     },
     computed: {

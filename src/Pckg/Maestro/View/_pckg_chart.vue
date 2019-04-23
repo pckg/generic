@@ -1,10 +1,9 @@
-<script type="text/x-template" id="pckg-chart">
+<template>
     <canvas class="pckg-chart" id="pckg-chart-1" width="3" height="1"></canvas>
-</script>
+</template>
 
 <script>
-    Vue.component('pckg-chart', {
-        mixins: [pckgDelimiters],
+    export default {
         template: '#pckg-chart',
         props: {
             data: null,
@@ -65,5 +64,5 @@
             };*/
             this.$nextTick(this.initChart);
         }
-    });
+    }
 </script>
