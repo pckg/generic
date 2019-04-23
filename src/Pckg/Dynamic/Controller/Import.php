@@ -120,10 +120,35 @@ class Import extends Controller
         $headers = [];
         //$csv->setHeaderOffset(1);
 
+        $availableFields = $table->listableFields(function(HasMany $fields) {
+            $fields->realFields();
+        });
+        $arrAvailableFields = $availableFields->map('field')->all();
+
         $mapped = [];
+        // id, title, title*en, title*de, description (all), test, *notok
         foreach ($data as $i => $row) {
             if ($i == 0) {
-                $headers = $row;
+                $headers = collect($row)->filter(function($field) use ($arrAvailableFields) {
+                    if (!trim($field)) {
+                        return false;
+                    }
+
+                    $asterisk = strpos($field, '*');
+
+                    if ($asterisk === false) {
+                        return in_array($field, $arrAvailableFields);
+                    }
+
+                    if ($asterisk === 0) {
+                        // exported relation
+                        return false;
+                    }
+
+                    // translated value
+                    $expl = explode('*', $field);
+                    return in_array($expl, $field[0]);
+                });
                 continue;
             }
 
@@ -134,14 +159,12 @@ class Import extends Controller
             $mapped[] = $d;
         }
 
-        $availableFields = $table->listableFields(function(HasMany $fields) {
-            $fields->realFields();
-        });
         $uniqueFields = $availableFields->filter(function(Field $field) {
             return in_array($field->dynamic_field_type_id, [1, 6]); // id, slug
         });
+        $defaultLocales = $this->localeManager()->getFrontendLanguages()->keyBy('slug')->map('slug')->all();
 
-        collect($mapped)->each(function($item) use ($uniqueFields, $availableFields, $table) {
+        collect($mapped)->each(function($item) use ($uniqueFields, $availableFields, $table, $defaultLocales) {
             $locales = [];
             foreach ($item as $field => $value) {
                 if ($pos = strpos($field, '*')) {
@@ -151,7 +174,7 @@ class Import extends Controller
             }
 
             if (!$locales) {
-                $locales['all'] = 'all';
+                $locales = $defaultLocales;
             }
 
             $prevRecord = null;
@@ -176,6 +199,10 @@ class Import extends Controller
                         $values[$field->field] = $val;
                     }
                 });
+
+                if (!$values) {
+                    continue;
+                }
 
                 runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord) {
                     $entity = $table->createEntity();
