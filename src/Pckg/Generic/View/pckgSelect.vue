@@ -1,28 +1,10 @@
 <template>
-    <div class="pckg-select" :class="styleClass">
-        <div v-if="false">
-            <select v-if="myMultiple" class="form-control" multiple v-model="selectedModel" :name="name">
-                <option value v-if="withEmpty">{{ withEmpty }}</option>
-                <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
-                <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                    <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
-                </optgroup>
-            </select>
-            <select v-else class="form-control" v-model="selectedModel" :name="name">
-                <option value v-if="withEmpty"> -- select value --</option>
-                <option v-for="(option, key) in finalOptions" :value="key" v-html="option"></option>
-                <optgroup v-for="(optgroup, label) in finalOptionGroups" :label="label">
-                    <option v-for="(option, key) in optgroup" :value="key" v-html="option"></option>
-                </optgroup>
-            </select>
-        </div>
-
+    <div class="pckg-select" :class="[styleClass, isDisabled ? 'is-disabled' : '']">
         <div class="btn-group">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" @click="focusSearch">
                 <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
-                <template v-if="myMultiple && Array.isArray(selected) && selected.length > 1">({{ selected.length }})
-                </template>
-                {{ selectedTitle }} <span class="caret text-right"></span>
+                <template v-if="hasMultipleSelected">({{ selected.length }})</template>
+                {{ selectedTitle }} <span class="caret text-right" v-if="!isDisabled"></span>
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">
@@ -173,6 +155,9 @@
 
                 return joined;
             },
+            hasMultipleSelected: function () {
+                return this.myMultiple && Array.isArray(this.selected) && this.selected.length > 1;
+            }
         },
         watch: {
             search: function () {
