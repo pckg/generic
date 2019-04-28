@@ -1124,7 +1124,6 @@ const pckgPartialPlatformSettings = {
             timezones: $store.state.settings.timezones,
             fonts: $store.state.settings.fonts,
             storeDatetime: $store.state.settings.storeDatetime,
-            loaded: false,
             saving: false,
             modal: null
         };
@@ -1132,7 +1131,10 @@ const pckgPartialPlatformSettings = {
     computed: {
         stateSettings: function () {
             return $store.state.settings.settings;
-        }
+        },
+        loaded: function() {
+            return $store.state.settings.loaded;
+        },
     },
     methods: {
         edit: function () {
@@ -1170,14 +1172,7 @@ const pckgPartialPlatformSettings = {
         },
         cancel: function () {
             this.mode = 'view';
-            this.initialFetch();
-        },
-        initialFetch: function () {
-            this.loaded = true;
-        },
-    },
-    created: function () {
-        this.initialFetch();
+        }
     }
 };
 /*

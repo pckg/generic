@@ -19,7 +19,6 @@ use Pckg\Dynamic\Resolver\Tab as TabResolver;
 use Pckg\Dynamic\Resolver\Table as TableResolver;
 use Pckg\Dynamic\Resolver\TableView as ViewResolver;
 use Pckg\Framework\Provider;
-use Pckg\Framework\Provider\Frontend as FrontendProvider;
 use Pckg\Framework\View\Event\RenderingView;
 
 class Dynamic extends Provider
@@ -28,7 +27,6 @@ class Dynamic extends Provider
     public function providers()
     {
         return [
-            FrontendProvider::class,
             HttpQl::class,
         ];
     }

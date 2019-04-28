@@ -29,16 +29,6 @@ class PageStructure
 
     public function getInitialFetchAction()
     {
-        $data = [
-            'availableScopes'                => config('pckg.generic.scopes'),
-            'availableContainers'            => config('pckg.generic.editor.containers'),
-            'availableBackgroundSizes'       => config('pckg.generic.editor.bgSizes'),
-            'availableBackgroundRepeats'     => config('pckg.generic.editor.bgRepeats'),
-            'availableBackgroundAttachments' => config('pckg.generic.editor.bgAttachments'),
-            'availableBackgroundPositions'   => config('pckg.generic.editor.bgPositions'),
-            'templates'                      => config('pckg.generic.templates'),
-        ];
-
         foreach (['structures', 'pages', 'footers'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
 
