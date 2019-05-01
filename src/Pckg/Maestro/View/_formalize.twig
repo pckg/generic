@@ -22,7 +22,6 @@
     Vue.component('pckg-maestro-formalize', {
         name: 'pckg-maestro-formalize',
         template: '#pckg-maestro-formalize',
-        mixins: [pckgDelimiters],
         data: function () {
             return {
                 form: {{ form.getData() | json_encode | raw }},
