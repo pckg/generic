@@ -804,10 +804,10 @@ const pckgSmartItem = {
         },
         perRow: function () {
             if (this.myAction) {
-                return this.myAction.settings.perRow || 3;
+                return this.myAction.settings.perRow || 2;
             }
 
-            return this.settings.perRow || 3;
+            return this.settings.perRow || 2;
         }
     },
     mounted: function () {

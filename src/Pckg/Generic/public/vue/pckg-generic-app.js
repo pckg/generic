@@ -115,9 +115,9 @@ const $store = new Vuex.Store({
     modules: Pckg.vue.stores,
 });
 
-if ($('header.header').length > 0) {
+if ($('header.c-header').length > 0) {
     new Vue({
-        el: 'header.header',
+        el: 'header.c-header',
         $store,
         router,
         computed: {
