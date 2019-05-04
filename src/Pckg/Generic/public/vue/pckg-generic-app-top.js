@@ -590,6 +590,15 @@ const pckgFakeImage = {
     }
 };
 
+const pckgFinalComponent = {
+    mixins: [pckgTranslations, pckgCdn],
+    props: {
+        action: {
+            required: true
+        }
+    }
+};
+
 const pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout, pckgStaticComponent],
     props: {
@@ -768,25 +777,20 @@ const pckgSmartItem = {
             required: true
         },
         action: {
-            type: Object
+            default: null,
         },
         index: {
             type: Number,
             default: 0
+        },
+        settings: {
+            type: Object,
+            default: function () {
+                return {
+                    perRow: 3,
+                };
+            }
         }
-    },
-    mounted: function () {
-        if (!this.myAction) {
-            return;
-        }
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
-            this.tpl = newTemplate;
-        }.bind(this));
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
-            this.myAction.settings.perRow = newVal;
-        }.bind(this));
     },
     data: function () {
         return {
@@ -813,8 +817,15 @@ const pckgSmartItem = {
                 + ' v' + utils.ucfirst(this.$options.name.replace('derive-item-', '').replace('derive-item', 'default'));
         },
         perRow: function () {
-            return this.myAction.settings.perRow || 3;
+            if (this.myAction) {
+                return this.myAction.settings.perRow || 2;
+            }
+
+            return this.settings.perRow || 2;
         }
+    },
+    mounted: function () {
+        this.registerActionListeners();
     },
     watch: {
         tpl: {
@@ -844,6 +855,21 @@ const pckgSmartItem = {
                     }
                 }
             }
+        }
+    },
+    methods: {
+        registerActionListeners: function () {
+            if (!this.myAction) {
+                return;
+            }
+
+            $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
+                this.tpl = newTemplate;
+            }.bind(this));
+
+            $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
+                this.myAction.settings.perRow = newVal;
+            }.bind(this));
         }
     }
 };

@@ -25,7 +25,7 @@ class Menu
         );
 
         if (!$menu) {
-            return '<!-- no menu ' . $slug . ' -->';
+            return '<!-- no menu -->';
         }
 
         $menuItems = runInLocale(function() use ($menu, $permissions, $repositoryObject, $locale) {
@@ -41,7 +41,9 @@ class Menu
         if ($slug == 'admin') {
             $menuItems = new Collection();
         }
-        trigger(Menu::class . '.collectMenuItems.' . $slug, $menuItems);
+        if (is_string($slug)) {
+            trigger(Menu::class . '.collectMenuItems.' . $slug, $menuItems);
+        }
 
         return view(
             'Pckg\Generic:menu\\' . $menu->template,

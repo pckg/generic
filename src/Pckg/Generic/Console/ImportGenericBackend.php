@@ -129,6 +129,7 @@ class ImportGenericBackend extends Command
          * Import generic lists and items.
          */
         if (!$dos || in_array('lists', $dos)) {
+            $this->outputDated('Importing generic list');
             $this->importGenericList();
         }
 
@@ -136,6 +137,7 @@ class ImportGenericBackend extends Command
          * Import layouts.
          */
         if (!$dos || in_array('layouts', $dos)) {
+            $this->outputDated('Importing layouts');
             $this->importLayouts();
         }
 
@@ -143,6 +145,7 @@ class ImportGenericBackend extends Command
          * Import variables.
          */
         if (!$dos || in_array('variables', $dos)) {
+            $this->outputDated('Importing variables');
             $this->importVariables();
         }
 
@@ -150,6 +153,7 @@ class ImportGenericBackend extends Command
          * Import menus.
          */
         if (!$dos || in_array('menus', $dos)) {
+            $this->outputDated('Importing menus');
             $this->importMenus();
         }
 
@@ -157,6 +161,7 @@ class ImportGenericBackend extends Command
          * Import setting types.
          */
         if (!$dos || in_array('settingTypes', $dos)) {
+            $this->outputDated('Setting types');
             $this->importSettingTypes();
         }
 
@@ -164,6 +169,7 @@ class ImportGenericBackend extends Command
          * Import actions.
          */
         if (!$dos || in_array('actions', $dos)) {
+            $this->outputDated('Importing generic actions');
             $this->importActions();
         }
 

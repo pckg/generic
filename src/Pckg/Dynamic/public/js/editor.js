@@ -71,7 +71,7 @@ tinymce.PluginManager.add('comms', function (editor, url) {
         getMetadata: function () {
             return {
                 name: "Comms TinyMCE plugin",
-                url: "https://startcomms.com/"
+                url: "https://comms.dev/"
             };
         }
     };

@@ -115,9 +115,9 @@ const $store = new Vuex.Store({
     modules: Pckg.vue.stores,
 });
 
-if ($('nav.header').length > 0) {
+if ($('header.a-header').length > 0) {
     new Vue({
-        el: 'nav.header',
+        el: 'header.a-header',
         $store,
         router,
         computed: {
