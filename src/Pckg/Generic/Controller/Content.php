@@ -9,7 +9,7 @@ class Content
 
     public function getSimpleAction(Action $action)
     {
-        return $action->toView('Pckg/Generic:content/simple');
+        return $action->toVue('pckg-generic-content-simple');
     }
 
     public function getTreeAction(Action $action)
