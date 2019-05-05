@@ -45,14 +45,14 @@ class HttpQl
          * @T00D00 - solve this on JS level, apply proper filter.
          */
         $entity = null;
-        if ($relation) {
+        /*if (false && $relation) {
             $entity = $relation->over_table_id ? $relation->overTable->createEntity()
                 : $relation->showTable->createEntity();
 
             $relation->applyRecordFilterOnEntity($record, $entity);
-        } else {
+        } else {*/
             $entity = $table->createEntity(null, false);
-        }
+        //}
 
         $relations = (new \Pckg\Dynamic\Entity\Relations())->withShowTable()
                                                            ->withOnField()
