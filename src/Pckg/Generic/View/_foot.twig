@@ -40,6 +40,9 @@
 
 {{ _assetManager.getMeta(['js'], ['vue']) | raw }}
 
+<!-- vue twig components -->
+{{ _vueManager.getComponents() | raw }}
+
 <!-- vue live components -->
 {{ _vueManager.getViews() | raw }}
 

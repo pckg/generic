@@ -590,6 +590,15 @@ const pckgFakeImage = {
     }
 };
 
+const pckgFinalComponent = {
+    mixins: [pckgTranslations, pckgCdn],
+    props: {
+        action: {
+            required: true
+        }
+    }
+};
+
 const pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout, pckgStaticComponent],
     props: {
@@ -768,25 +777,20 @@ const pckgSmartItem = {
             required: true
         },
         action: {
-            type: Object
+            default: null,
         },
         index: {
             type: Number,
             default: 0
+        },
+        settings: {
+            type: Object,
+            default: function () {
+                return {
+                    perRow: 3,
+                };
+            }
         }
-    },
-    mounted: function () {
-        if (!this.myAction) {
-            return;
-        }
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
-            this.tpl = newTemplate;
-        }.bind(this));
-
-        $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
-            this.myAction.settings.perRow = newVal;
-        }.bind(this));
     },
     data: function () {
         return {
@@ -813,8 +817,15 @@ const pckgSmartItem = {
                 + ' v' + utils.ucfirst(this.$options.name.replace('derive-item-', '').replace('derive-item', 'default'));
         },
         perRow: function () {
-            return this.myAction.settings.perRow || 3;
+            if (this.myAction) {
+                return this.myAction.settings.perRow || 2;
+            }
+
+            return this.settings.perRow || 2;
         }
+    },
+    mounted: function () {
+        this.registerActionListeners();
     },
     watch: {
         tpl: {
@@ -844,6 +855,21 @@ const pckgSmartItem = {
                     }
                 }
             }
+        }
+    },
+    methods: {
+        registerActionListeners: function () {
+            if (!this.myAction) {
+                return;
+            }
+
+            $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
+                this.tpl = newTemplate;
+            }.bind(this));
+
+            $dispatcher.$on('pckg-action:' + this.myAction.id + ':perRow-changed', function (newVal) {
+                this.myAction.settings.perRow = newVal;
+            }.bind(this));
         }
     }
 };
@@ -1082,7 +1108,10 @@ const pckgCookie = {
     data: function () {
         return {
             visible: false,
-            templateClass: this.$options.name
+            templateClass: this.$options.name,
+            selectedCookies: ['system', 'media'],
+            disabledCookies: ['system'],
+            optionsShown: false
         };
     },
     created: function () {
@@ -1096,6 +1125,7 @@ const pckgCookie = {
         accept: function () {
             this.visible = false;
             setCookie('zekom', 1);
+            $dispatcher.$emit('pckg-cookie:accepted');
             if (this.accepted) {
                 this.accepted();
             }
@@ -1105,6 +1135,65 @@ const pckgCookie = {
             if (this.canceled) {
                 this.canceled();
             }
+        },
+        showOptions: function () {
+            this.optionsShown = true;
+        }
+    },
+    computed: {
+        allCookies: function () {
+            let cookies = {
+                system: 'Essential', // basket, session, promo code, referral
+                media: 'Media' // youtube, vimeo, gmaps
+            };
+            let groups = {
+                system: 'Essential',
+                analytics: 'Performance & analytics',
+                advertising: 'Advertising & targeting',
+                chat: 'Support & chat',
+                media: 'Media',
+                other: 'Other'
+            };
+
+            let all = [
+                {
+                    group: 'analytics',
+                    config: 'google-remarketing-tag',
+                },
+                {
+                    group: 'analytics',
+                    config: 'google-analytics',
+                },
+                {
+                    group: 'analytics',
+                    config: 'sumo-me',
+                },
+                {
+                    group: 'advertising',
+                    config: 'google-conversion-page',
+                },
+                {
+                    group: 'advertising',
+                    config: 'facebook-conversion-pixel',
+                },
+                {
+                    group: 'chat',
+                    config: 'facebook-chat',
+                },
+                {
+                    group: 'chat',
+                    config: 'tawk-to',
+                },
+                {
+                    group: 'other',
+                    config: 'google-tag-manager',
+                },
+            ];
+            $.each(all, function (i, one) {
+                cookies[one.group] = groups[one.group];
+            });
+
+            return cookies;
         }
     }
 };
