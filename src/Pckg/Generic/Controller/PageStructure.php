@@ -29,6 +29,9 @@ class PageStructure
 
     public function getInitialFetchAction()
     {
+        $data = [
+            'templates' => config('pckg.generic.templates', []),
+        ];
         foreach (['structures', 'pages', 'footers'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
 
