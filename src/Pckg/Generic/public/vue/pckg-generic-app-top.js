@@ -585,6 +585,17 @@ const pckgFinalComponent = {
     }
 };
 
+const pckgNativeEvents = {
+    methods: {
+        onNative: function (element, event, callback) {
+            $(element).on(event, callback.bind(this));
+        },
+        offNative: function (element, callback) {
+            $(element).off(callback);
+        }
+    }
+};
+
 const pckgSmartComponent = {
     mixins: [pckgTranslations, pckgCdn, pckgTimeout, pckgStaticComponent],
     props: {
