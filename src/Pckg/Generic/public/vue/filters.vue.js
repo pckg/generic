@@ -68,3 +68,13 @@ Vue.filter('nl2br', function (string) {
 
     return utils.nl2br(nl2br);
 });
+
+Vue.filter('html2text', function (html) {
+    if (!html) {
+        return '';
+    }
+
+    let span = document.createElement('span');
+    span.innerHTML = html;
+    return span.textContent || span.innerText;
+});
