@@ -92,8 +92,8 @@ class Import extends Controller
                 'headers'   => $headers,
                 'columns'   => $columns,
                 'delimiter' => $delimiter,
-                'rows'      => $csv->count(),
-                'newsline'  => $newline,
+                'rows'      => $csv->count() - 1,
+                // 'newline'  => $newline,
                 'file' => $file,
             ],
         ];
@@ -104,6 +104,7 @@ class Import extends Controller
         $meta = post('meta');
         $file = $meta['file'];
         $delimiter = $meta['delimiter'];
+        // $newline = $meta['newline'];
         $csv = Reader::createFromPath(path('tmp') . $file);
         $csv->setDelimiter($delimiter);
         $import = $this->importContent($table, $csv);
@@ -118,7 +119,7 @@ class Import extends Controller
     {
         $data = $csv->getIterator();
         $headers = [];
-        //$csv->setHeaderOffset(1);
+        $csv->setHeaderOffset(1);
 
         $availableFields = $table->listableFields(function(HasMany $fields) {
             $fields->realFields();
