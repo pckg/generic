@@ -1,8 +1,19 @@
 /**
- * Register main Vue event dispatcher
+ * Register main Vue event dispatcher.
+ * Dispatcher is shared with parent window so we transmit all events between iframes and host.
+ *
  * @type {Vue}
  */
-var $dispatcher = new Vue();
+const $dispatcher = window === window.top || window.location.hostname !== window.parent.location.hostname
+    ? (new Vue())
+    : window.parent._$dispatcher;
+
+/**
+ * Allow iframes to have access to same dispatcher.
+ */
+if (window === window.top) {
+    window._$dispatcher = $dispatcher;
+}
 
 var $scroller = new Vue({
     methods: {
@@ -1025,7 +1036,7 @@ const pckgElement = {
         },
         componentDblClicked: function ($event) {
             console.log('componentDblClicked');
-            if (this.genericMode != 'edit') {
+            if (this.genericMode != 'edit' && this.viewMode != 'threesome') {
                 console.log('not edit');
                 return;
             }
@@ -1070,6 +1081,16 @@ const pckgElement = {
                 }.bind(this),
                 init_instance_callback: function (editor) {
                     editor.execCommand('mceFocus', false);
+
+                    /*editor.on('Change', function () {
+                        let content = this.content;
+                        let editorContent = editor.getContent();
+                        if (editorContent === content.content) {
+                            return;
+                        }
+                        content.content = editor.getContent();
+                        $store.commit('setActionContent', {action: this.action, content: content});
+                    }.bind(this));*/
                 }.bind(this)
             });
             console.log('initialized');
@@ -1096,6 +1117,9 @@ const pckgElement = {
         }
     },
     computed: {
+        viewMode: function () {
+            return $store.state.generic.viewMode;
+        },
         genericMode: function () {
             return $store.state.generic.genericMode;
         },
@@ -1232,7 +1256,7 @@ const pckgPartialPlatformSettings = {
         stateSettings: function () {
             return $store.state.settings.settings;
         },
-        loaded: function() {
+        loaded: function () {
             return $store.state.settings.loaded;
         },
     },

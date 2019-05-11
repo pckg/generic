@@ -47,9 +47,9 @@ class Generic
             $structure = '<component v-for="a in $store.getters.rootElements" :action-id="a.id" :is="\'pckg-\' + a.type" :key="a.id"></component>';
 
             if ($auth->isLoggedIn() && $auth->isAdmin()) {
-                $structure = '<pckg-frontpage-deck v-if="$store.getters.genericRoute"></pckg-frontpage-deck>' .
-                    '<template v-if="[\'threesome\', \'device\'].indexOf($store.state.generic.genericMode) >= 0"><pckg-threesome></pckg-threesome></template>' .
-                    '<template v-else>' . $structure . '</template>';
+                $structure = '<pckg-frontpage-deck v-if="!inIframe && $store.getters.genericRoute"></pckg-frontpage-deck>' .
+                    '<template v-if="!inIframe && [\'threesome\', \'device\'].indexOf($store.state.generic.viewMode) >= 0"><pckg-threesome></pckg-threesome></template>' .
+                     $structure;
             }
 
             $vars = [
