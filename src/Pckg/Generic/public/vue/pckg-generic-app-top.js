@@ -447,6 +447,25 @@ const pckgFormValidator = {
     }
 };
 
+const pckgActionbuilderSettings = {
+    mixins: [pckgFormValidator],
+    props: {
+        action: {
+            type: Object,
+            required: true
+        }
+    },
+    methods: {
+        config: function (key, def) {
+            return $store.getters.config(key, def);
+        },
+        initialFetch: function(){ }
+    },
+    created: function () {
+        this.initialFetch();
+    }
+};
+
 const pckgGoogleRecaptcha = {
     methods: {
         collectGoogleRecaptcha: function (data) {

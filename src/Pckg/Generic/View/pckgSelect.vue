@@ -12,7 +12,7 @@
                 </li>
                 <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty
                     }}</a></li>
-                <li v-for="(option, key) in finalOptions">
+                <li v-for="(option, key) in finalOptions" :key="key">
                     <a href="#" @click.prevent="toggleOption($event, key)">
                         <span class="text-left">
                             <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
@@ -23,8 +23,8 @@
                     </a>
                 </li>
                 <template v-for="(optgroup, label) in finalOptionGroups">
-                    <li><b>{{ label }}</b></li>
-                    <li v-for="(option, key) in optgroup">
+                    <li :key="label"><b>{{ label }}</b></li>
+                    <li v-for="(option, key) in optgroup" :key="label + key">
                         <a href="#" @click.prevent="toggleOption($event, key)">
                             <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>

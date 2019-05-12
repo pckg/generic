@@ -39,14 +39,13 @@ class PageStructure
             });
         }
 
-        foreach (['partials'] as $type) {
+        /*foreach (['partials'] as $type) {
             $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partials) {
-
                 return collect($partials)->map(function($partial) {
                     return (new $partial)->forJson();
                 });
             });
-        }
+        }*/
 
         $listTemplates = config('pckg.generic.templateEngine.list', []);
         foreach ($data['templates'] as $controller => $config) {

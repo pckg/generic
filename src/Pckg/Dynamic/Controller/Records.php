@@ -533,7 +533,7 @@ class Records extends Controller
                          ->setDynamicRecord($record);
 
         $this->vueManager()
-             ->addView('Pckg/Maestro:_pckg_chart')
+             // ->addView('Pckg/Maestro:_pckg_chart')
              ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
                                                                         'recordActions' => $actions,
                                                                         'table'         => $table->table,
