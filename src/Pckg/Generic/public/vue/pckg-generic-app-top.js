@@ -1144,12 +1144,12 @@ const pckgCookie = {
                 media: 'Media' // youtube, vimeo, gmaps
             };
             let groups = {
-                system: 'Essential',
-                analytics: 'Performance & analytics',
-                advertising: 'Advertising & targeting',
-                chat: 'Support & chat',
-                media: 'Media',
-                other: 'Other'
+                system: 'Essential cookies',
+                analytics: 'Performance & analytics cookies',
+                advertising: 'Advertising & targeting cookies',
+                chat: 'Support & chat cookies',
+                media: 'Media cookies',
+                other: 'Other cookies'
             };
 
             let all = [
