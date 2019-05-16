@@ -286,6 +286,7 @@ const pckgPayment = {
 
                 this.afterFetch(data);
                 this.state = 'fetched';
+                this.afterFetched(data);
             }.bind(this), function (response) {
                 this.state = 'error';
                 this.error = 'Error initializing payment';
@@ -295,6 +296,8 @@ const pckgPayment = {
             }.bind(this));
         },
         afterFetch: function (data) {
+        },
+        afterFetched: function (data) {
         }
     },
     created: function () {
