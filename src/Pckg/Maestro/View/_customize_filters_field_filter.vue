@@ -35,6 +35,9 @@
                              :initial-refresh="true"
                              :initial-multiple="Array.isArray(myFilter.value)"></pckg-select>
             </template>
+            <template v-else-if="fieldType == 'mysql'">
+                <input type="text" class="form-control" v-model="myFilter.value"/>
+            </template>
         </div>
     </div>
 </template>
