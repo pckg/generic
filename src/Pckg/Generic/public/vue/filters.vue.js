@@ -43,7 +43,7 @@ Vue.filter('timespan', function (timespan) {
     };
 
     let f = null;
-    $.each(mapper, function(k, v){
+    $.each(mapper, function (k, v) {
         if (format.indexOf(k) >= 0) {
             f = v;
             return false;

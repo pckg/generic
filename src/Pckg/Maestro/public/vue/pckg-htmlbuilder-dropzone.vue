@@ -1,23 +1,40 @@
 <template>
-    <div class="pckg-htmlbuilder-dropzone" :id="id">
-        <div v-if="myCurrent" class="display-block">
-            <img :src="cdn(myCurrent)" class="img-responsive"/>
-            <br/>
-        </div>
-        <div class="display-block">
-            <button type="button" class="btn btn-default select-files">
-                <i class="fa fa-upload"></i> Upload file
-            </button>
 
-            <button v-if="myCurrent" type="button" class="btn btn-default" @click.prevent="deleteFile">
-                <i class="fa fa-trash"></i> Delete file
-            </button>
+    <div class="c-pckg-htmlbuilder-dropzone" :class="stateClass" :id="id">
 
-            <button v-if="original && myCurrent != original" type="button" class="btn btn-default">
-                <i class="fa fa-redo"></i> Restore original
-            </button>
+        <!-- visible icon -->
+        <div class="as-table" v-if="iconClass">
+            <div class="s-icon text-center">
+                <i class="__state-icon fa-fw" :class="iconClass"></i>
+            </div>
+            <div class="s-text">
+                <span class="__percentage-progress" v-if="state == 'uploading' && progress > 0">{{ progress }}%</span>
+                {{ infoText }}
+            </div>
+            <div class="s-action text-right" v-if="!state || ['uploading', 'drag', 'success'].indexOf(state) == -1">
+                <a href="#" @click.prevent="openSelection">Upload new</a>
+            </div>
         </div>
-        <div class="table table-striped files" :id="id + '-previews'"></div>
+
+        <!-- visible image -->
+        <div class="as-table" v-else-if="myCurrent">
+            <div class="s-img" v-if="!iconClass">
+                <a :href="cdn(myCurrent)" d-popup-iframe>
+                    <img :src="cdn(myCurrent)" class="__img"/>
+                </a>
+            </div>
+            <div class="s-text">
+                {{ infoText }}
+            </div>
+            <div class="s-action text-left">
+                <a href="#" @click.prevent="openSelection">Re-upload</a> <br/>
+                <a href="#" @click.prevent="deleteFile">Delete</a>
+            </div>
+        </div>
+
+        <!-- dropzone legacy -->
+        <div :id="id + '-previews'" class="hidden"></div>
+
     </div>
 </template>
 
@@ -53,6 +70,13 @@
             },
             accept: {
                 default: null
+            },
+            options: {
+                default: function () {
+                    return {
+                        maxSize: 2
+                    };
+                }
             }
         },
         data: function () {
@@ -60,7 +84,11 @@
                 original: null,
                 _dropzone: null,
                 _previewTemplate: null,
-                myCurrent: this.current
+                myCurrent: this.current,
+                state: null,
+                hover: false,
+                progress: 0,
+                myOptions: this.options
             };
         },
         watch: {
@@ -74,57 +102,97 @@
                 this.initDropzone();
             }
         },
+        computed: {
+            stateClass: function () {
+                if (this.state === 'error') {
+                    return '--error';
+                }
+
+                if (this.state === 'success') {
+                    return '--success';
+                }
+
+                if (this.state === 'drag' && this.hover) {
+                    return 'is-hover';
+                }
+            },
+            iconClass: function () {
+                if (!this.state) {
+                    if (this.myCurrent) {
+                        return null;
+                    }
+
+                    return 'fal fa-image';
+                }
+
+                if (this.state == 'drag') {
+                    return 'fal fa-arrow-up';
+                }
+
+                if (this.state == 'uploading') {
+                    return 'fal fa-spinner-third fa-spin';
+                }
+
+                if (this.state == 'success') {
+                    return 'fal fa-check';
+                }
+
+                if (this.state == 'error') {
+                    return 'fas fa-exclamation-triangle';
+                }
+            },
+            infoText: function () {
+                if (this.state == 'uploading') {
+                    return 'Uploading ...';
+                }
+
+                if (this.state == 'error') {
+                    return 'Error uploading file';
+                }
+
+                if (this.state == 'success') {
+                    return 'File successfully uploaded';
+                }
+
+                if (this.myCurrent) {
+                    let file = this.myCurrent.split('/').reverse()[0];
+                    let short = file.substring(0, 7) + '...' + file.split('.').reverse()[0];
+
+                    if (short.length < file.length) {
+                        return short;
+                    }
+
+                    return file;
+                }
+
+                return 'Drop a file to upload';
+            }
+        },
         methods: {
             initDropzone: function () {
                 if (!this.url) {
-                    console.log("no upload url");
                     return;
                 }
 
                 if (this._dropzone) {
-                    console.log('destroying dropzone');
                     this._dropzone.destroy();
                 }
-
-                console.log('creating dropzone ' + '#' + this.id);
-
-                if (!this._previewTemplate) {
-                    /*var previewNode = document.querySelector("#template");
-                     previewNode.id = "";
-                     previewNode.parentNode.removeChild(previewNode);
-                     this._previewTemplate = previewNode.parentNode.innerHTML;*/
-                    this._previewTemplate = '<div>' +
-                        '<p class="size" data-dz-size></p>' +
-                        '<div class="progress progress-striped active" role="progressbar" aria-valuemin="0"' +
-                        ' aria-valuemax="100" aria-valuenow="0">' +
-                        '<div class="progress-bar progress-bar-success" style="width:0%;"' +
-                        ' data-dz-uploadprogress><span class="progress-text"></span></div>' +
-                        '</div>' +
-                        '</div>';
-                }
-
 
                 this.original = this.myCurrent;
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
                     params: this.params,
                     previewsContainer: '#' + this.id + '-previews',
-                    previewTemplate: this._previewTemplate,
-                    clickable: $(this.$el).parent().find('.select-files').get()[0],
-                    maxFilesize: 8,
+                    previewTemplate: '<div></div>',
+                    clickable: false,
+                    maxFilesize: this.options.maxSize,
                     acceptedFiles: this.accept,
-                    uploadprogress: function(file, progress, bytesSent) {
-                        if (file.previewElement) {
-                            var progressElement = file.previewElement.querySelector("[data-dz-uploadprogress]");
-                            progressElement.style.width = progress + "%";
-                            progressElement.querySelector(".progress-text").textContent = progress + "%";
-                            if (progress == 100) {
-                                let animated = file.previewElement.querySelector("[aria-valuemax]");
-                                $(animated).removeClass('active');
-                            }
-                        }
-                    },
+                    uploadprogress: function (file, progress, bytesSent) {
+                        this.state = 'uploading';
+                        this.progress = progress;
+                    }.bind(this),
                     success: function (file, data) {
+                        this.state = 'success';
                         if (data.success) {
                             this.prev = this.myCurrent;
                             this.myCurrent = data.url;
@@ -139,13 +207,32 @@
                             url: data.url,
                             data: data
                         });
+
+                        setTimeout(function () {
+                            this.setNullState();
+                        }.bind(this), 3333);
                     }.bind(this),
                     error: function (data, response) {
+                        this.state = 'error';
                         this.$emit('uploaded', {
                             url: null,
                             data: data
                         });
-                    }.bind(this)
+                    }.bind(this),
+                    dragenter: function (e) {
+                        this.hover = true;
+                    }.bind(this),
+                    dragleave: function (e) {
+                        if (!($(e.target).is($('#' + this.id)))) {
+                            return;
+                        }
+                        this.hover = false;
+                    }.bind(this),
+                    init: function () {
+                        this.on("drop", function (e) {
+                            $dispatcher.$emit('body:dragend', e);
+                        });
+                    }
                 });
             },
             deleteFile: function () {
@@ -158,12 +245,31 @@
                 http.deleteJSON(this.url + (Object.keys(params).length > 0 ? '?' + query : ''), function () {
                     this.myCurrent = '';
                 }.bind(this));
+            },
+            openSelection: function () {
+                this._dropzone.hiddenFileInput.click();
+            },
+            setDragState: function () {
+                this.state = 'drag';
+            },
+            setNullState: function () {
+                this.state = null;
             }
         },
         mounted: function () {
             this.$nextTick(function () {
                 this.initDropzone();
             }.bind(this));
+        },
+        created: function () {
+            $dispatcher.$on('body:dragenter', this.setDragState);
+            $dispatcher.$on('body:dragleave', this.setNullState);
+            $dispatcher.$on('body:dragend', this.setNullState);
+        },
+        beforeDestroy: function () {
+            $dispatcher.$off('body:dragenter', this.setDragState);
+            $dispatcher.$off('body:dragleave', this.setNullState);
+            $dispatcher.$off('body:dragend', this.setNullState);
         }
     }
 </script>
