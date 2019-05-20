@@ -19,7 +19,7 @@
         <!-- visible image -->
         <div class="as-table" v-else-if="myCurrent" :style="{minHeight: minHeight}">
             <div class="s-img" v-if="!iconClass">
-                <a :href="cdn(myCurrent)" d-popup-iframe>
+                <a :href="cdn(myCurrent)" class="__img-link">
                     <img :src="cdn(myCurrent)" class="__img"/>
                 </a>
             </div>
@@ -148,7 +148,7 @@
                 }
 
                 if (this.state == 'error') {
-                    return 'Error uploading file';
+                    return this.errorMessage;
                 }
 
                 if (this.state == 'success') {
@@ -221,6 +221,7 @@
                     error: function (data, response) {
                         this.hover = false;
                         this.state = 'error';
+                        this.errorMessage = 'Error uploading file';
                         this.$emit('uploaded', {
                             url: null,
                             data: data
@@ -249,11 +250,18 @@
                     .map(k => esc(k) + '=' + esc(params[k]))
                     .join('&');
 
+                this.state = 'deleting';
                 http.deleteJSON(this.url + (Object.keys(params).length > 0 ? '?' + query : ''), function () {
-                    this.myCurrent = '';
+                    this.myCurrent = null;
+                    this.state = null;
+                }.bind(this), function () {
+                    this.state = 'error';
+                    this.errorMessage = 'Error deleting file';
                 }.bind(this));
             },
             openSelection: function () {
+                this.errorMessage = null;
+                this.state = null;
                 this._dropzone.hiddenFileInput.click();
             },
             setDragState: function () {
