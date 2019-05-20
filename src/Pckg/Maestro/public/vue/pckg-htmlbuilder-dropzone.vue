@@ -241,6 +241,7 @@
                     init: function () {
                         this.on("drop", function (e) {
                             $dispatcher.$emit('body:dragend', e);
+                            $('body').removeClass('has-drag');
                         });
                     }
                 });
