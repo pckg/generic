@@ -33,7 +33,7 @@
         </div>
 
         <!-- dropzone legacy -->
-        <div type="file" class="hidden" ref="upload" />
+        <div type="file" class="hidden" ref="upload"/>
         <div :id="id + '-previews'" class="hidden"></div>
 
     </div>
@@ -230,6 +230,7 @@
                     }.bind(this),
                     dragenter: function (e) {
                         this.hover = true;
+                        $dispatcher.$emit('pckg-htmlbuilder-dropzone:all:dragenter', this.id);
                     }.bind(this),
                     dragleave: function (e) {
                         if (!($(e.target).is($('#' + this.id)))) {
@@ -275,6 +276,12 @@
             setNullStateWithHeight: function () {
                 this.minHeight = 'auto';
                 this.setNullState();
+            },
+            checkAllDragEnter: function (id) {
+                if (this.id == id) {
+                    return;
+                }
+                this.hover = false;
             }
         },
         mounted: function () {
@@ -286,11 +293,13 @@
             $dispatcher.$on('body:dragenter', this.setDragState);
             $dispatcher.$on('body:dragleave', this.setNullState);
             $dispatcher.$on('body:dragend', this.setNullStateWithHeight);
+            $dispatcher.$on('pckg-htmlbuilder-dropzone:all:dragenter', this.checkAllDragEnter);
         },
         beforeDestroy: function () {
             $dispatcher.$off('body:dragenter', this.setDragState);
             $dispatcher.$off('body:dragleave', this.setNullState);
             $dispatcher.$off('body:dragend', this.setNullStateWithHeight);
+            $dispatcher.$off('pckg-htmlbuilder-dropzone:all:dragenter', this.checkAllDragEnter);
         }
     }
 </script>
