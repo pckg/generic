@@ -11,7 +11,6 @@ class MaestroAssets extends Provider
     public function assets()
     {
         return [
-            '@' . path('vendor') .'pckg/generic/src/Pckg/Maestro/public/less/maestro_vars.less',
             'less/maestro.less',
         ];
     }
