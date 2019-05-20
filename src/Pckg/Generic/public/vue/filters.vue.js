@@ -78,3 +78,9 @@ Vue.filter('html2text', function (html) {
     span.innerHTML = html;
     return span.textContent || span.innerText;
 });
+
+Vue.directive('popup-image', {
+    bind: function (el) {
+        $(el).magnificPopup({type: 'image'});
+    }
+});

@@ -19,7 +19,7 @@
         <!-- visible image -->
         <div class="as-table" v-else-if="myCurrent" :style="{minHeight: minHeight}">
             <div class="s-img" v-if="!iconClass">
-                <a :href="cdn(myCurrent)" class="__img-link">
+                <a :href="cdn(myCurrent)" class="__img-link" v-popup-image>
                     <img :src="cdn(myCurrent)" class="__img"/>
                 </a>
             </div>
@@ -33,6 +33,7 @@
         </div>
 
         <!-- dropzone legacy -->
+        <div type="file" class="hidden" ref="upload" />
         <div :id="id + '-previews'" class="hidden"></div>
 
     </div>
@@ -175,12 +176,12 @@
         },
         methods: {
             initDropzone: function () {
-                if (!this.url) {
-                    return;
-                }
-
                 if (this._dropzone) {
                     this._dropzone.destroy();
+                }
+
+                if (!this.url) {
+                    return;
                 }
 
                 this.original = this.myCurrent;
@@ -189,7 +190,7 @@
                     params: this.params,
                     previewsContainer: '#' + this.id + '-previews',
                     previewTemplate: '<div></div>',
-                    clickable: false,
+                    clickable: this.$refs.upload,
                     maxFilesize: this.options.maxSize,
                     acceptedFiles: this.accept,
                     uploadprogress: function (file, progress, bytesSent) {
