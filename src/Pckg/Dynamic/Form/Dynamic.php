@@ -267,7 +267,7 @@ class Dynamic extends Bootstrap
                 (!$prevGroup && !$this->lastFieldset)
             ) {
                 $this->lastFieldset = $fieldset = $this->addFieldset('position-' . $position)->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<h4>' . ($field->fieldGroup->title ?? 'General') . '</h4>');
+                $fieldset->addChild('<h4 class="__component-title">' . ($field->fieldGroup->title ?? 'General') . '</h4>');
                 $prevGroup = $field->dynamic_field_group_id;
             }
 
@@ -513,7 +513,6 @@ ifrm.document.close();
             return $element;
         } elseif ($type == 'picture') {
             $element = $this->getFieldset()->addPicture($name);
-            $element->setPrefix('<i class="fa fa-image" aria-hidden="true"></i>');
             $element->setAttribute(
                 'data-url',
                 $this->relation && $this->foreignRecord

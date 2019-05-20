@@ -98,7 +98,7 @@
 
                                 <a href="#" style="margin-right: 1.6rem;" @click.prevent="resetView">Reset view</a>
 
-                                <button type="button" class="btn btn-success" @click.prevent="saveView">Refresh data
+                                <button type="button" class="btn btn-primary" @click.prevent="saveView">Refresh data
                                 </button>
 
                                 <div class="clearfix"></div>
