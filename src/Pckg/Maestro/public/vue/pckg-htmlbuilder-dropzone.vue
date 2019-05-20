@@ -257,6 +257,7 @@
                 http.deleteJSON(this.url + (Object.keys(params).length > 0 ? '?' + query : ''), function () {
                     this.myCurrent = null;
                     this.state = null;
+                    this.$emit('deleted');
                 }.bind(this), function () {
                     this.state = 'error';
                     this.errorMessage = 'Error deleting file';
