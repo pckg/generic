@@ -3,7 +3,7 @@
     <div class="c-pckg-htmlbuilder-dropzone" :class="stateClass" :id="id">
 
         <!-- visible icon -->
-        <div class="as-table" v-if="iconClass">
+        <div class="as-table" v-if="iconClass" :style="{minHeight: minHeight}">
             <div class="s-icon text-center">
                 <i class="__state-icon fa-fw" :class="iconClass"></i>
             </div>
@@ -17,7 +17,7 @@
         </div>
 
         <!-- visible image -->
-        <div class="as-table" v-else-if="myCurrent">
+        <div class="as-table" v-else-if="myCurrent" :style="{minHeight: minHeight}">
             <div class="s-img" v-if="!iconClass">
                 <a :href="cdn(myCurrent)" d-popup-iframe>
                     <img :src="cdn(myCurrent)" class="__img"/>
@@ -88,7 +88,8 @@
                 state: null,
                 hover: false,
                 progress: 0,
-                myOptions: this.options
+                myOptions: this.options,
+                minHeight: 'auto'
             };
         },
         watch: {
@@ -154,6 +155,10 @@
                     return 'File successfully uploaded';
                 }
 
+                if (this.state == 'drag') {
+                    return 'Drop a file to upload';
+                }
+
                 if (this.myCurrent) {
                     let file = this.myCurrent.split('/').reverse()[0];
                     let short = file.substring(0, 7) + '...' + file.split('.').reverse()[0];
@@ -192,6 +197,7 @@
                         this.progress = progress;
                     }.bind(this),
                     success: function (file, data) {
+                        this.hover = false;
                         this.state = 'success';
                         if (data.success) {
                             this.prev = this.myCurrent;
@@ -213,6 +219,7 @@
                         }.bind(this), 3333);
                     }.bind(this),
                     error: function (data, response) {
+                        this.hover = false;
                         this.state = 'error';
                         this.$emit('uploaded', {
                             url: null,
@@ -250,10 +257,15 @@
                 this._dropzone.hiddenFileInput.click();
             },
             setDragState: function () {
+                this.minHeight = $(this.$el).height() + 'px';
                 this.state = 'drag';
             },
             setNullState: function () {
                 this.state = null;
+            },
+            setNullStateWithHeight: function () {
+                this.minHeight = 'auto';
+                this.setNullState();
             }
         },
         mounted: function () {
@@ -264,12 +276,12 @@
         created: function () {
             $dispatcher.$on('body:dragenter', this.setDragState);
             $dispatcher.$on('body:dragleave', this.setNullState);
-            $dispatcher.$on('body:dragend', this.setNullState);
+            $dispatcher.$on('body:dragend', this.setNullStateWithHeight);
         },
         beforeDestroy: function () {
             $dispatcher.$off('body:dragenter', this.setDragState);
             $dispatcher.$off('body:dragleave', this.setNullState);
-            $dispatcher.$off('body:dragend', this.setNullState);
+            $dispatcher.$off('body:dragend', this.setNullStateWithHeight);
         }
     }
 </script>
