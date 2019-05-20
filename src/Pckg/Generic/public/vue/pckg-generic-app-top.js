@@ -1286,7 +1286,7 @@ const pckgPartialPlatformSettings = {
         edit: function () {
             this.mode = 'edit';
         },
-        save: function (section) {
+        save: function (section, emitReload) {
             let data = this.collectData(section) || {};
             this.saving = true;
 
@@ -1297,7 +1297,11 @@ const pckgPartialPlatformSettings = {
                 }
                 this.mode = 'view';
                 this.saving = false;
-                $dispatcher.$emit('notification:success', 'Settings saved');
+                if (!emitReload) {
+                    $dispatcher.$emit('notification:success', 'Settings saved');
+                } else {
+                    $dispatcher.$emit('frontpage-deck:openSettingsSavedModal');
+                }
                 this.errors.clear();
                 if (this.saved) {
                     this.saved();
