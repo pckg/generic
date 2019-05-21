@@ -1021,6 +1021,111 @@ const pckgActionAttrs = {
     }
 }
 
+const pckgComputedModel = function (name) {
+    return {
+        get: function () {
+            return this.getCssAttribute(name);
+        },
+        set: function (value) {
+            this.setCssAttribute(name, value);
+        }
+    }
+};
+
+const pckgComputedHelper = {
+    computed: {
+        selectedDevice: function () {
+            return $store.state.actionbuilder.selectedDevice;
+        },
+        selectedSelector: function () {
+            return $store.state.actionbuilder.selectedSelector;
+        },
+    },
+    props: {
+        action: {
+            required: true
+        }
+    },
+    data: function(){
+        return {
+            mediaQueries: {
+                default: null, // all
+                desktop: '@media only screen and (min-width: 1200px)', // lg
+                laptop: '@media only screen and (max-width: 1199px)', // md
+                tablet: '@media only screen and (max-width: 991px)', // sm
+                mobile: '@media only screen and (max-width: 767px)', // xs
+                smallMobile: '@media only screen and (max-width: 479px)' // xxs
+            },
+        };
+    },
+    methods: {
+        getItemMediaQuery: function (item) {
+            return this.mediaQueries[item.device];
+        },
+        getCssAttribute: function (attribute) {
+            if (!this.selectedSelector || this.selectedSelector.length == 0) {
+                return;
+            }
+            let existing = this.getExistingItem();
+
+            if (!existing) {
+                return '';
+            }
+            existing = this.getExistingItem();
+
+            return existing.css[attribute] || '';
+        },
+        setCssAttribute: function (attribute, value) {
+            if (!this.selectedSelector || this.selectedSelector.length == 0) {
+                return;
+            }
+            let existing = this.getExistingItem();
+
+            if (existing) {
+                if (!value || value.length === 0) {
+                    $vue.$delete(existing.css, attribute);
+
+                    if (Object.keys(existing.css).length === 0) {
+                        utils.splice(this.actionBuilderCss, existing);
+                    }
+                    return;
+                } else {
+                    $vue.$set(existing.css, attribute, value);
+                }
+
+                return;
+            } else if (!value || value.length === 0) {
+                return;
+            }
+
+            let css = {};
+            css[attribute] = value;
+            existing = {device: this.selectedDevice, selector: this.selectedSelector, css: css};
+            this.actionBuilderCss.push(existing);
+        },
+        setOrToggleCssAttribute: function (attribute, value) {
+            let current = this.getCssAttribute(attribute);
+            this.setCssAttribute(attribute, current == value ? '' : value);
+        },
+        getExistingItem: function () {
+            let existing = null;
+            $.each(this.actionBuilderCss, function (i, item) {
+                if (item.device != this.selectedDevice) {
+                    return;
+                }
+                if (item.selector != this.selectedSelector) {
+                    return;
+                }
+
+                existing = item;
+                return false;
+            }.bind(this));
+
+            return existing;
+        },
+    }
+};
+
 const pckgElement = {
     mixins: [pckgCdn, pckgTimeout, pckgActionAttrs, pckgActionAnimation],
     props: {
