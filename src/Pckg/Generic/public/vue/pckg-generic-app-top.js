@@ -954,7 +954,7 @@ const pckgActionAttrs = {
                 'bgRepeat': 'bg-repeat',
                 'bgPosition': 'bg-position',
             };
-            let mainClass = typeSuffix;
+            let mainClass = typeSuffix + ' __action-' + this.action.id;
             $.each(this.action.settings, function (slug, setting) {
                 if (Object.keys(mapper).indexOf(slug) < 0) {
                     return;
@@ -969,14 +969,16 @@ const pckgActionAttrs = {
 
             if (this.genericMode == 'edit') {
                 if (this.action.type == 'action') {
-                    mainClass = mainClass + ' pb-action';
+                    mainClass = mainClass + ' __pb-action';
                 }
                 if (this.action.active) {
-                    mainClass = mainClass + ' ' + 'pb-active-action';
+                    mainClass = mainClass + ' --pb-active';
                 }
             }
 
-            return mainClass;
+            return mainClass.split(' ').filter(function(c){
+                return c.split('').reverse()[0] !== '-';
+            }).join(' ');
         },
         actionStyle: function () {
             if (!this.action) {

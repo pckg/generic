@@ -1,6 +1,7 @@
 <?php namespace Pckg\Generic\Record;
 
 use Complex\Exception;
+use Derive\Layout\Command\GetLessVariables;
 use Derive\Newsletter\Controller\Newsletter;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
@@ -304,6 +305,9 @@ class ActionsMorph extends Record
 
     public function getSettingsArrayAttribute()
     {
+        /**
+         * Map settings by clean slug and value.
+         */
         $settings = $this->settings->map(function(
             Setting $setting
         ) {
@@ -315,6 +319,9 @@ class ActionsMorph extends Record
             ];
         })->keyBy('slug')->map('value');
 
+        /**
+         * Merge default settings to settings.
+         */
         $defaults = $this->getDefaultSettings();
         foreach ($defaults as $key => $val) {
             if ($settings->hasKey($key)) {
@@ -324,6 +331,9 @@ class ActionsMorph extends Record
             $settings->push($val, $key);
         }
 
+        /**
+         * Merge plugin settings to settings.
+         */
         $pluginDefaults = $this->getPluginSettings();
         foreach ($pluginDefaults as $key => $val) {
             if ($settings->hasKey($key)) {
@@ -333,10 +343,17 @@ class ActionsMorph extends Record
             $settings->push($val, $key);
         }
 
+        /**
+         * Get all custom classes.
+         */
         $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
                                                                  ->unique()
                                                                  ->removeEmpty()
                                                                  ->all();
+
+        /**
+         * Split classes by type.
+         */
         $scopeClasses = [];
         $otherClasses = [];
         $widthClasses = [];
@@ -376,6 +393,9 @@ class ActionsMorph extends Record
             }
         }
 
+        /**
+         * Set proper settings.
+         */
         $settings->push($scopeClasses, 'scopes');
         $settings->push($offsetClasses, 'offset');
         $settings->push($widthClasses, 'width');
@@ -401,10 +421,53 @@ class ActionsMorph extends Record
         }*/
 
         if ($this->action->slug == 'pckg-mail-mailchimp-enews') {
-            $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'], 'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
+            $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'],
+                            'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
         }
 
+        /**
+         * Parse settings to attributes.
+         */
+        $this->parseToAttributes($settings);
+
         return $settings;
+    }
+
+    public function parseToAttributes(Collection $settings)
+    {
+        /**
+         * There are scope classes that should be converted to custom style.
+         * This should be moved to migration and migrate all platforms to new definition.
+         */
+        $scopes = $settings['scopes'] ?? [];
+        $classes = explode(' ', $settings['class'] ?? '');
+        $attributes = [
+            'default'     => [],
+            'desktop'     => [],
+            'laptop'      => [],
+            'tablet'      => [],
+            'mobile'      => [],
+            'smallMobile' => [],
+        ];
+        
+        /**
+         * We want to get rid of scope classes and add attributes to css selector.
+         */
+        $scopes = (new GetLessVariables())->parseAttributes($scopes, $attributes);
+        $classes = (new GetLessVariables())->parseAttributes($classes, $attributes);
+
+        $finalAttributes = [];
+        foreach ($attributes as $device => $attrs) {
+            $finalAttributes[] = [
+                'device' => $device,
+                'selector' => '.__action-' . $this->id,
+                'css' => $attrs,
+            ];
+        }
+
+        $settings->push($finalAttributes, 'attributes');
+        $settings->push($scopes, 'scopes');
+        $settings->push(implode(' ', $classes), 'class');
     }
 
     public function getDefaultSettings()
