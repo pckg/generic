@@ -7,7 +7,8 @@
         </h5>
 
         <draggable v-model="myColumns"
-                   :options="{handle:'.move-handle', animation: 333}"
+                   handle=".move-handle"
+                   animation="333"
                    @end="emitTreeChange"
                    v-if="Object.keys(myColumns).length > 0"
         >
