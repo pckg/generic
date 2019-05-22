@@ -1052,11 +1052,11 @@ const pckgComputedHelper = {
         return {
             mediaQueries: {
                 default: null, // all
-                desktop: '@media only screen and (min-width: 1200px)', // lg
-                laptop: '@media only screen and (min-width: 992px)', // md
-                tablet: '@media only screen and (min-width: 768px)', // sm
+                smallMobile: '@media only screen and (max-width: 479px)', // xxs
                 mobile: '@media only screen and (min-width: 480px)', // xs
-                smallMobile: '@media only screen and (max-width: 479px)' // xxs
+                tablet: '@media only screen and (min-width: 768px)', // sm
+                laptop: '@media only screen and (min-width: 992px)', // md
+                desktop: '@media only screen and (min-width: 1200px)', // lg
             },
         };
     },
