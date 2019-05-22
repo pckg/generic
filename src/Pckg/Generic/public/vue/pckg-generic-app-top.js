@@ -1053,9 +1053,9 @@ const pckgComputedHelper = {
             mediaQueries: {
                 default: null, // all
                 desktop: '@media only screen and (min-width: 1200px)', // lg
-                laptop: '@media only screen and (max-width: 1199px)', // md
-                tablet: '@media only screen and (max-width: 991px)', // sm
-                mobile: '@media only screen and (max-width: 767px)', // xs
+                laptop: '@media only screen and (min-width: 992px)', // md
+                tablet: '@media only screen and (min-width: 768px)', // sm
+                mobile: '@media only screen and (min-width: 480px)', // xs
                 smallMobile: '@media only screen and (max-width: 479px)' // xxs
             },
         };
