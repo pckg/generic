@@ -106,6 +106,10 @@
             isDisabled: {
                 type: Boolean,
                 default: false
+            },
+            isRequired: {
+                type: Boolean,
+                default: false
             }
         },
         computed: {

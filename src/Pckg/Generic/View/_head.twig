@@ -1,5 +1,4 @@
-{% do _metaManager.addViewport() %}
-{% do _metaManager.addContentType() %}
+{% do _metaManager.addViewport().addContentType().addCdnPrefetch() %}
 
 {{ _gtmManager | raw }}
 {{ _metaManager.getMeta('header.first') | raw }}
