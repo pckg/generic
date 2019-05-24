@@ -1049,6 +1049,92 @@ const pckgColorOptions = {
     }
 };
 
+const pckgSheetManipulator = {
+    methods: {
+        getCssRule: function (ruleName) {
+            let id = 'style-id-libraries-theme-main-vue-footer';
+
+            ruleName = ruleName.toLowerCase();
+            var result = null;
+            var find = Array.prototype.find;
+
+            find.call(document.styleSheets, styleSheet => {
+                /*if ($(styleSheet).attr('id') !== id) {
+                    return;
+                }*/
+                result = find.call(styleSheet.cssRules, cssRule => {
+                    return cssRule instanceof CSSStyleRule
+                        && cssRule.selectorText.toLowerCase() == ruleName;
+                });
+                return result != null;
+            });
+            return result;
+        },
+        deleteCssRule: function (ruleName) {
+            let styleTag = document.getElementById('style-id-store');
+            let sheet = styleTag.sheet ? styleTag.sheet : styleTag.styleSheet;
+
+            $.each(sheet.cssRules, function (j, cssRule) {
+                if (cssRule instanceof CSSStyleRule
+                    && cssRule.selectorText.toLowerCase() == ruleName) {
+                    sheet.deleteRule(j);
+                }
+            });
+        }
+    },
+    computed: {
+        cssSheet: function () {
+            let css = {};
+            $.each(this.actionBuilderCss, function (i, item) {
+                if (!css[item.device]) {
+                    css[item.device] = {};
+                }
+                if (!css[item.device][item.selector]) {
+                    css[item.device][item.selector] = {};
+                }
+                $.each(item.css, function (attribute, value) {
+                    css[item.device][item.selector][attribute] = value;
+                });
+            }.bind(this));
+
+            /**
+             * Our old rule needs to be deleted?
+             */
+            this.deleteCssRule('.__action-' + this.action.id);
+            // let rule = this.getCssRule('.__action-' + this.action.id);
+
+            let cssArr = [];
+            $.each(this.mediaQueries, function (d, mediaQuery) {
+                let selectorStyles = [];
+                $.each(css[d] || {}, function (selector, attributes) {
+                    let styles = [];
+                    $.each(attributes, function (attribute, value) {
+                        if (value.indexOf('--') === 0) {
+                            value = 'var(' + value + ')';
+                        }
+                        styles.push(attribute + ': ' + value + ';');
+                    });
+                    selectorStyles.push(selector + ' { ' + styles.join(' ') + ' }');
+                });
+                if (selectorStyles.length === 0) {
+                    return;
+                }
+                cssArr.push((!mediaQuery ? '' : (mediaQuery + ' { ')) + selectorStyles.join("\n") + (!mediaQuery ? '' : ' }'));
+            });
+
+            $('#custom-css').remove();
+            let sheet = document.createElement('style');
+            sheet.setAttribute('id', 'custom-css');
+            let cssString = cssArr.join("\n");
+            console.log("Css string", cssString);
+            sheet.innerHTML = cssString;
+            document.body.appendChild(sheet);
+
+            return cssString;
+        },
+    }
+};
+
 const pckgComputedModel = function (name) {
     return {
         get: function () {
@@ -1067,6 +1153,18 @@ const pckgComputedHelper = {
         },
         selectedSelector: function () {
             return $store.state.actionbuilder.selectedSelector;
+        },
+        actionBuilderCss: {
+            get: function () {
+                if (this.action) {
+                    return this.action.settings.attributes;
+                }
+
+                return {};
+            },
+            set: function (value) {
+                this.action.settings.attributes = value;
+            }
         },
     },
     props: {
