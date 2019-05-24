@@ -1037,6 +1037,9 @@ const pckgColorOptions = {
             colors[designSettings.vars.colorS] = designSettings.vars.colorS;
             $.each(designSettings.scopes, function (scope, vars) {
                 $.each(vars, function (i, color) {
+                    if (i === 'title') {
+                        return;
+                    }
                     colors[color] = color;
                 });
             });
