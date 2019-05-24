@@ -4,7 +4,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" @click="focusSearch">
                 <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
                 <template v-if="hasMultipleSelected">({{ selected.length }})</template>
-                {{ selectedTitle }} <i class="__more-icon fa fa-chevron-down pull-right" :class="isDisabled ? 'color-grayish' : ''"></i>
+                {{ selectedTitle }} <i class="__more-icon far fa-chevron-down pull-right" :class="isDisabled ? 'color-grayish' : ''"></i>
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">

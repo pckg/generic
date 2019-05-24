@@ -462,7 +462,8 @@ const pckgActionbuilderSettings = {
         config: function (key, def) {
             return $store.getters.config(key, def);
         },
-        initialFetch: function(){ }
+        initialFetch: function () {
+        }
     },
     created: function () {
         this.initialFetch();
@@ -978,7 +979,7 @@ const pckgActionAttrs = {
                 }
             }
 
-            return mainClass.split(' ').filter(function(c){
+            return mainClass.split(' ').filter(function (c) {
                 return c.split('').reverse()[0] !== '-';
             }).join(' ');
         },
@@ -1023,6 +1024,28 @@ const pckgActionAttrs = {
     }
 }
 
+const pckgColorOptions = {
+    computed: {
+        designSettings: function () {
+            return $store.state.settings.settings.design;
+        },
+        colorOptions: function () {
+            let designSettings = this.designSettings;
+            let colors = {};
+
+            colors[designSettings.vars.colorP] = designSettings.vars.colorP;
+            colors[designSettings.vars.colorS] = designSettings.vars.colorS;
+            $.each(designSettings.scopes, function (scope, vars) {
+                $.each(vars, function (i, color) {
+                    colors[color] = color;
+                });
+            });
+
+            return Object.values(colors);
+        }
+    }
+};
+
 const pckgComputedModel = function (name) {
     return {
         get: function () {
@@ -1048,7 +1071,7 @@ const pckgComputedHelper = {
             required: true
         }
     },
-    data: function(){
+    data: function () {
         return {
             mediaQueries: {
                 default: null, // all
