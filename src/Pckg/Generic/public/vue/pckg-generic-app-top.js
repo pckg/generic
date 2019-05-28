@@ -1122,15 +1122,7 @@ const pckgSheetManipulator = {
                 cssArr.push((!mediaQuery ? '' : (mediaQuery + ' { ')) + selectorStyles.join("\n") + (!mediaQuery ? '' : ' }'));
             });
 
-            $('#custom-css').remove();
-            let sheet = document.createElement('style');
-            sheet.setAttribute('id', 'custom-css');
-            let cssString = cssArr.join("\n");
-            console.log("Css string", cssString);
-            sheet.innerHTML = cssString;
-            document.body.appendChild(sheet);
-
-            return cssString;
+            return cssArr;
         },
     }
 };
@@ -1189,22 +1181,15 @@ const pckgComputedHelper = {
             return this.mediaQueries[item.device];
         },
         getCssAttribute: function (attribute) {
-            if (!this.selectedSelector || this.selectedSelector.length == 0) {
-                return;
-            }
             let existing = this.getExistingItem();
 
             if (!existing) {
-                return '';
+                return null;
             }
-            existing = this.getExistingItem();
 
-            return existing.css[attribute] || '';
+            return existing.css[attribute] || null;
         },
         setCssAttribute: function (attribute, value) {
-            if (!this.selectedSelector || this.selectedSelector.length == 0) {
-                return;
-            }
             let existing = this.getExistingItem();
 
             if (existing) {
@@ -1214,13 +1199,17 @@ const pckgComputedHelper = {
                     if (Object.keys(existing.css).length === 0) {
                         utils.splice(this.actionBuilderCss, existing);
                     }
+
+                    $dispatcher.$emit('frontpage-deck:rebuildCss');
                     return;
                 } else {
                     $vue.$set(existing.css, attribute, value);
                 }
 
+                $dispatcher.$emit('frontpage-deck:rebuildCss');
                 return;
             } else if (!value || value.length === 0) {
+                $dispatcher.$emit('frontpage-deck:rebuildCss');
                 return;
             }
 
@@ -1228,6 +1217,7 @@ const pckgComputedHelper = {
             css[attribute] = value;
             existing = {device: this.selectedDevice, selector: this.selectedSelector, css: css};
             this.actionBuilderCss.push(existing);
+            $dispatcher.$emit('frontpage-deck:rebuildCss');
         },
         setOrToggleCssAttribute: function (attribute, value) {
             let current = this.getCssAttribute(attribute);
@@ -1504,7 +1494,8 @@ const pckgPartialPlatformSettings = {
             fonts: $store.state.settings.fonts,
             storeDatetime: $store.state.settings.storeDatetime,
             saving: false,
-            modal: null
+            modal: null,
+            advancedUser: false
         };
     },
     computed: {

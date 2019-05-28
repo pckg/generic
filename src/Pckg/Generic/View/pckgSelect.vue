@@ -7,8 +7,12 @@
                 {{ selectedTitle }} <i class="__more-icon far fa-chevron-down pull-right" :class="isDisabled ? 'color-grayish' : ''"></i>
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
-                <li v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">
-                    <input type="text" class="form-control input-sm" v-model="search" placeholder="Search ..." @keydown.enter="selectFirst" />
+                <li class="no-hover"
+                    v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">
+                    <input type="text" class="form-control input-sm"
+                           v-model="search"
+                           :placeholder="searchPlaceholder"
+                           @keydown.enter="selectFirst" />
                 </li>
                 <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty
                     }}</a></li>
@@ -44,7 +48,6 @@
         name: 'pckg-select',
         model: {
             prop: 'selected',
-            event: 'input'
         },
         data: function () {
             return {
@@ -56,6 +59,9 @@
             };
         },
         props: {
+            searchPlaceholder: {
+                default: 'Search ...',
+            },
             hasSearch: {
                 default: true
             },

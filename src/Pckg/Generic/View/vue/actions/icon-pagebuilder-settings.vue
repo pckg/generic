@@ -4,14 +4,14 @@
         <form-group label="Icon"
                     name="icon"
                     type="select:single"
-                    :options="initialOptions.availableIcons"
+                    :options="{options: initialOptions.availableIcons}"
                     v-model="action.settings.icon"
                     :errors="errors"></form-group>
 
         <form-group label="Style"
                     name="iconStyle"
                     type="select:single"
-                    :options="initialOptions.availableStyles"
+                    :options="{options: initialOptions.availableStyles}"
                     v-model="action.settings.iconStyle"
                     :errors="errors"></form-group>
 
