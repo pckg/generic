@@ -408,15 +408,12 @@ const pckgActionAnimation = {
 const pckgFormValidator = {
     methods: {
         validateAndSubmit: function (submit, invalid) {
-            console.log('validating');
             this.$validator.validateAll().then(function (ok) {
                 if (ok) {
-                    console.log('form valid');
                     submit();
                     return;
                 }
 
-                console.log('form invalid', ok);
                 var element = $(this.$el).find('.htmlbuilder-validator-error').first();
                 if (element && typeof globalScrollTo == Function) {
                     globalScrollTo(element);
@@ -708,7 +705,6 @@ const pckgSmartComponent = {
     },
     mounted: function () {
         $dispatcher.$on('pckg-action:' + this.action.id + ':itemTemplate-changed', function (newTemplate) {
-            console.log('item template changed', newTemplate);
             if (!newTemplate) {
                 return;
             }
@@ -716,7 +712,6 @@ const pckgSmartComponent = {
         }.bind(this));
 
         $dispatcher.$on('pckg-action:' + this.action.id + ':listTemplate-changed', function (newTemplate) {
-            console.log('list template changed', newTemplate);
             if (!newTemplate) {
                 return;
             }
@@ -727,7 +722,6 @@ const pckgSmartComponent = {
          * @T00D00 - only one component should listen?
          */
         $dispatcher.$on('pckg-action:' + this.action.id + ':listSubitemSelected', function (newItem) {
-            console.log('called in pckg-generic-app-top.js');
             /**
              * Categories > Offers > Packets
              * On category page we display offers and all packets. Click on offer reload packets.
@@ -793,7 +787,6 @@ const pckgSmartList = {
     },
     mounted: function () {
         $dispatcher.$on('pckg-action:' + this.myAction.id + ':itemTemplate-changed', function (newTemplate) {
-            console.log('smart list item template changed', newTemplate);
             if (!newTemplate) {
                 return;
             }
@@ -925,6 +918,7 @@ const pckgActionAttrs = {
             if (!this.action) {
                 return;
             }
+
             let typeSuffix = this.$options.name.replace('pckg-', '');
             if (this.action.type == 'container') {
                 typeSuffix = this.action.settings.container && this.action.settings.container.length > 0
@@ -932,20 +926,8 @@ const pckgActionAttrs = {
                     : 'container';
             }
 
-            if (this.action.settings.width.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.width.join(' ');
-            }
-
-            if (this.action.settings.offset.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.offset.join(' ');
-            }
-
-            if (this.action.settings.scopes.length > 0) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.scopes.join(' ');
-            }
-
-            if (this.action.settings.class) {
-                typeSuffix = typeSuffix + ' ' + this.action.settings.class;
+            if (this.action.settings.classes.length > 0) {
+                typeSuffix = typeSuffix + ' ' + this.action.settings.classes.join(' ');
             }
 
             if (this.action.settings.bgVideo) {
@@ -1187,12 +1169,25 @@ const pckgComputedHelper = {
                 return null;
             }
 
+            /**
+             * This solves issue with PHP JSON encode.
+             */
+            if (Array.isArray(existing.css)) {
+                existing.css = {};
+            }
+
             return existing.css[attribute] || null;
         },
         setCssAttribute: function (attribute, value) {
             let existing = this.getExistingItem();
 
             if (existing) {
+                /**
+                 * This solves issue with PHP JSON encode.
+                 */
+                if (Array.isArray(existing.css)) {
+                    existing.css = {};
+                }
                 if (!value || value.length === 0) {
                     $vue.$delete(existing.css, attribute);
 
@@ -1202,13 +1197,14 @@ const pckgComputedHelper = {
 
                     $dispatcher.$emit('frontpage-deck:rebuildCss');
                     return;
-                } else {
-                    $vue.$set(existing.css, attribute, value);
                 }
 
+                $vue.$set(existing.css, attribute, value);
                 $dispatcher.$emit('frontpage-deck:rebuildCss');
                 return;
-            } else if (!value || value.length === 0) {
+            }
+
+            if (!value || value.length === 0) {
                 $dispatcher.$emit('frontpage-deck:rebuildCss');
                 return;
             }
@@ -1259,9 +1255,7 @@ const pckgElement = {
     },
     methods: {
         componentClicked: function ($event) {
-            console.log('componentClicked');
             if (this.genericMode != 'edit') {
-                console.log('not edit');
                 return;
             }
 
@@ -1269,7 +1263,6 @@ const pckgElement = {
             $event.stopPropagation();
 
             if ($(this.$el).find('.mce-content-body').length > 0) {
-                console.log('already initialized, single');
                 return false;
             }
 
@@ -1280,9 +1273,7 @@ const pckgElement = {
             return false;
         },
         componentDblClicked: function ($event) {
-            console.log('componentDblClicked');
             if (this.genericMode != 'edit' && this.viewMode != 'threesome') {
-                console.log('not edit');
                 return;
             }
 
@@ -1291,16 +1282,12 @@ const pckgElement = {
             $event.stopPropagation();
 
             if ($(this.$el).find('.bind-content').length == 0) {
-                console.log('no content');
                 return;
             }
 
             if ($(this.$el).find(this.id + '.mce-content-body').length > 0) {
-                console.log('already initialized');
                 return;
             }
-
-            console.log('initializing');
 
             initTinymce(this.id + ' .bind-content', {
                 menubar: false,
@@ -1338,24 +1325,18 @@ const pckgElement = {
                     }.bind(this));*/
                 }.bind(this)
             });
-            console.log('initialized');
-
             //$dispatcher.$emit('pckg-frontpage:editContent', this.action);
 
             return false;
         },
         componentEnter: function (e) {
-            //console.log('componentEnter');
             if (this.genericMode != 'edit') {
-                //console.log('not edit');
                 return;
             }
             $store.commit('setActionFocus', {actionId: this.action.id, focus: true});
         },
         componentLeave: function (e) {
-            //console.log('componentLeave');
             if (this.genericMode != 'edit') {
-                //console.log('not edit');
                 return;
             }
             $store.commit('setActionFocus', {actionId: this.action.id, focus: false});

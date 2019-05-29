@@ -346,61 +346,16 @@ class ActionsMorph extends Record
         /**
          * Get all custom classes.
          */
-        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')
-                                                                 ->unique()
-                                                                 ->removeEmpty()
-                                                                 ->all();
-
-        /**
-         * Split classes by type.
-         */
-        $scopeClasses = [];
-        $otherClasses = [];
-        $widthClasses = [];
-        $offsetClasses = [];
-        $containerClass = '';
-        foreach ($allClasses as $class) {
-            $found = false;
-            foreach (config('pckg.generic.scopes') as $title => $scopes) {
-                if (in_array($title, ['Padding', 'Margin'])) {
-                    foreach ($scopes as $scps) {
-                        if (array_key_exists($class, $scps)) {
-                            $scopeClasses[] = $class;
-                            $found = true;
-                            break 2;
-                        }
-                    }
-                } else {
-                    if (array_key_exists($class, $scopes)) {
-                        $scopeClasses[] = $class;
-                        $found = true;
-                        break;
-                    }
-                }
-            }
-            if (!$found) {
-                if (strpos($class, 'col-') === 0 && !strpos($class, '-pull-') && !strpos($class, '-push-')) {
-                    if (strpos($class, '-offset-')) {
-                        $offsetClasses[] = $class;
-                    } else {
-                        $widthClasses[] = $class;
-                    }
-                } elseif (strpos($class, 'container') === 0) {
-                    $containerClass = $class;
-                } else {
-                    $otherClasses[] = $class;
-                }
-            }
-        }
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function(
+                $class
+            ) {
+                return substr(strrev($class), 0, 1) !== '-';
+            })->removeEmpty()->all();
 
         /**
          * Set proper settings.
          */
-        $settings->push($scopeClasses, 'scopes');
-        $settings->push($offsetClasses, 'offset');
-        $settings->push($widthClasses, 'width');
-        $settings->push($containerClass, 'container');
-        $settings->push(implode(' ', $otherClasses), 'class');
+        $settings->push($allClasses, 'classes');
 
         /**
          * Add path before image.
@@ -439,8 +394,7 @@ class ActionsMorph extends Record
          * There are scope classes that should be converted to custom style.
          * This should be moved to migration and migrate all platforms to new definition.
          */
-        $scopes = $settings['scopes'] ?? [];
-        $classes = explode(' ', $settings['class'] ?? '');
+        $classes = $settings['classes'];
         $attributes = [
             'default'     => [],
             'desktop'     => [],
@@ -449,25 +403,23 @@ class ActionsMorph extends Record
             'mobile'      => [],
             'smallMobile' => [],
         ];
-        
+
         /**
          * We want to get rid of scope classes and add attributes to css selector.
          */
-        $scopes = (new GetLessVariables())->parseAttributes($scopes, $attributes);
         $classes = (new GetLessVariables())->parseAttributes($classes, $attributes);
 
         $finalAttributes = [];
         foreach ($attributes as $device => $attrs) {
             $finalAttributes[] = [
-                'device' => $device,
+                'device'   => $device,
                 'selector' => '.__action-' . $this->id,
-                'css' => $attrs,
+                'css'      => [],
             ];
         }
 
         $settings->push($finalAttributes, 'attributes');
-        $settings->push($scopes, 'scopes');
-        $settings->push(implode(' ', $classes), 'class');
+        $settings->push($classes, 'classes');
     }
 
     public function getDefaultSettings()
@@ -480,10 +432,8 @@ class ActionsMorph extends Record
          */
         return [
             'class'             => '',
-            'container'         => '',
+            'attributes'        => [],
             'style'             => '',
-            'width'             => [], // column
-            'offset'            => [], // column
             'bgColor'           => '',
             'bgImage'           => '',
             'bgSize'            => '',

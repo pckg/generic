@@ -14,10 +14,13 @@
                            :placeholder="searchPlaceholder"
                            @keydown.enter="selectFirst" />
                 </li>
-                <li v-if="!myMultiple && withEmpty"><a href="#" @click.prevent="toggleOption($event, null)">{{ withEmpty
-                    }}</a></li>
-                <li v-for="(option, key) in finalOptions" :key="key">
-                    <a href="#" @click.prevent="toggleOption($event, key)">
+                <li v-if="!myMultiple && withEmpty" @click.prevent="toggleOption($event, null)">
+                    <a href="#" @click.prevent>
+                        {{ withEmpty
+                    }}</a>
+                </li>
+                <li v-for="(option, key) in finalOptions" :key="key" @click.prevent="toggleOption($event, key)">
+                    <a href="#" @click.prevent>
                         <span class="text-left">
                             <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
@@ -28,8 +31,8 @@
                 </li>
                 <template v-for="(optgroup, label) in finalOptionGroups">
                     <li :key="label"><b>{{ label }}</b></li>
-                    <li v-for="(option, key) in optgroup" :key="label + key">
-                        <a href="#" @click.prevent="toggleOption($event, key)">
+                    <li v-for="(option, key) in optgroup" :key="label + key" @click.prevent="toggleOption($event, key)">
+                        <a href="#" @click.prevent>
                             <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
                             {{ option}}

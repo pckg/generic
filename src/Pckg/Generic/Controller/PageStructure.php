@@ -121,12 +121,12 @@ class PageStructure
             })->sortBy(function(Action $action) {
                 return $action->pivot->order;
             })->map(function(Action $action) {
-                    $array = $action->toArray();
-                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                    $array['pivot']['content'] = $action->pivot->content;
+                $array = $action->toArray();
+                $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                $array['pivot']['content'] = $action->pivot->content;
 
-                    return $array;
-                }),
+                return $array;
+            }),
         ];
     }
 
@@ -159,14 +159,14 @@ class PageStructure
                 $actions->getMiddleEntity()->withAllPermissions();
                 $actions->getMiddleEntity()->withContent();
             })->sortBy(function(Action $action) {
-                    return $action->pivot->order;
-                })->map(function(Action $action) {
-                    $array = $action->toArray();
-                    $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
-                    $array['pivot']['content'] = $action->pivot->content;
+                return $action->pivot->order;
+            })->map(function(Action $action) {
+                $array = $action->toArray();
+                $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
+                $array['pivot']['content'] = $action->pivot->content;
 
-                    return $array;
-                }),
+                return $array;
+            }),
         ];
     }
 
@@ -375,41 +375,38 @@ class PageStructure
     {
         /**
          * Add defaults.
-         *
-         * @T00D00
-         * This should be refactored to plugins. ;-)
          */
         $values = array_merge($actionsMorph->getDefaultSettings(), post('settings'));
         $values = only($values, array_keys($actionsMorph->getDefaultSettings()));
         unset($values['bgImage']);
 
         /**
-         * Add scopes.
+         * Transform classes.
          */
-        $values['class'] .= ' ' . implode(' ', post('settings.scopes', [])) . ' ' .
-            implode(' ', post('settings.width', [])) . ' ' . implode(' ', post('settings.offset', [])) . ' ' .
-            post('settings.container', '');
-        $values['class'] = (new Stringify($values['class']))->explodeToCollection(' ')
-                                                            ->unique()
-                                                            ->removeEmpty()
-                                                            ->implode(' ');
+        $values['class'] = collect(post('settings.classes'))->unique()->removeEmpty()->implode(' ');
+        $values['scopes'] = null; // @deprecated
+
+        /**
+         * Transform attributes.
+         */
+        $values['attributes'] = collect(json_decode($values['attributes'], true))
+            ->filter(function($attribute) {
+            return isset($attribute['css']) && $attribute['css'];
+        })->rekey()->all();
 
         $actions = config('pckg.generic.actions', []);
         $separate = [
-            'scopes',
-            'width',
-            'offset',
-            'container',
             'wrapperLockHide',
             'wrapperLockShow',
             'wrapperLockSystem',
             'animation',
+            'attributes',
         ];
         $separateTypes = [];
 
         foreach ($actions as $actionKey => $actionSettings) {
             foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
-                $separate[] = $settingKey;
+                $separate[$settingKey] = $settingKey;
                 $separateTypes[$settingType][] = $settingKey;
             }
         }
@@ -422,9 +419,8 @@ class PageStructure
          * Other settings, available for plugins.
          */
         foreach ($separateTypes as $type => $keys) {
-            $values = only(post('settings'), $keys);
-
-            collect($values)->each(function($value, $key) use ($actionsMorph, $type) {
+            $tempValues = only(post('settings'), $keys);
+            collect($tempValues)->each(function($value, $key) use ($actionsMorph, $type) {
                 if ($type == 'array') {
                     $value = json_encode($value);
                 } else {
@@ -435,15 +431,17 @@ class PageStructure
         }
 
         if ($actionsMorph->morph_id == Layouts::class) {
-            $values = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
-            collect($values)->each(function($value, $key) use ($actionsMorph) {
-                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
+            $tempValues = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
+            collect($tempValues)->each(function($value, $key) use ($actionsMorph) {
+                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []),
+                                           'array');
             });
         }
 
-        $values = only(post('settings'), ['animation']);
-        collect($values)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []), 'array');
+        $tempValues = only($values, ['animation', 'attributes']);
+        collect($tempValues)->each(function($value, $key) use ($actionsMorph) {
+            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []),
+                                       'array');
         });
 
         /**
@@ -545,7 +543,7 @@ class PageStructure
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action){
+        })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
 
@@ -565,7 +563,7 @@ class PageStructure
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action){
+        })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
 
