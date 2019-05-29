@@ -1350,7 +1350,7 @@ const pckgElement = {
                 //console.log('not edit');
                 return;
             }
-            //$store.commit('setActionFocus', {actionId: this.action.id, focus: true});
+            $store.commit('setActionFocus', {actionId: this.action.id, focus: true});
         },
         componentLeave: function (e) {
             //console.log('componentLeave');
@@ -1358,7 +1358,7 @@ const pckgElement = {
                 //console.log('not edit');
                 return;
             }
-            //$store.commit('setActionFocus', {actionId: this.action.id, focus: false});
+            $store.commit('setActionFocus', {actionId: this.action.id, focus: false});
         }
     },
     computed: {
