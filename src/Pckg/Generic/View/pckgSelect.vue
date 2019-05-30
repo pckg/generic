@@ -351,9 +351,7 @@
                     return this.selectedModel.indexOf(val) >= 0;
                 }
 
-                if (this.selectedModel == val) {
-                    return true;
-                }
+                return this.selectedModel === val;
             },
             mergeOptions: function (newOptions) {
                 let selected = Array.isArray(this.selectedModel) ? this.selectedModel : (this.selectedModel ? [this.selectedModel] : []);
