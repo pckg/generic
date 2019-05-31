@@ -1,7 +1,5 @@
 <TEMPLATE-IS-IN-SCRIPT>
-    <div :id="'action-' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)"
-         @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)"
-         @mouseleave="componentLeave($event)">
+    <div :id="'action-' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder>
         <pckg-action-bg :action="action"></pckg-action-bg>
         <frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>
         <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
@@ -48,7 +46,7 @@
                     }
                     let res;
                     if (true || build.indexOf('slot="') == -1) {
-                        build = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" @click="componentClicked($event)" @dblclick="componentDblClicked($event)" @mouseenter="componentEnter($event)" @mouseleave="componentLeave($event)">'
+                        build = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder>'
                             + '<pckg-action-bg :action="action"></pckg-action-bg>'
                             + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
                             + build
