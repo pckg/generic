@@ -956,8 +956,13 @@ const pckgActionAttrs = {
                 if (this.action.type == 'action') {
                     mainClass = mainClass + ' __pb-action';
                 }
+
                 if (this.action.active) {
                     mainClass = mainClass + ' --pb-active';
+                }
+
+                if (this.action.focus) {
+                    mainClass = mainClass + ' --pb-focus';
                 }
             }
 

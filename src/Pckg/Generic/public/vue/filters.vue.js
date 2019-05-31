@@ -85,8 +85,34 @@ Vue.directive('popup-image', {
     }
 });
 
+Vue.directive('pagebuilder-small', {
+    bind: function(el, directive){
+
+        el.addEventListener('mouseenter', function ($event) {
+            let genericMode = $store.state.generic.genericMode;
+
+            if (genericMode != 'edit') {
+                return;
+            }
+
+            $store.commit('setActionFocus', {actionId: $(el).attr('data-action-id'), focus: true});
+        });
+
+        el.addEventListener('mouseleave', function ($event) {
+            let genericMode = $store.state.generic.genericMode;
+
+            if (genericMode != 'edit') {
+                return;
+            }
+
+            $store.commit('setActionFocus', {actionId: $(el).attr('data-action-id'), focus: false});
+        });
+
+    }
+});
+
 Vue.directive('pagebuilder', {
-    bind: function (el, te) {
+    bind: function (el, directive) {
         /**
          * @T00D00 - this directive should be enabled only when edit mode is enabled
          */
