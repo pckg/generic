@@ -45,8 +45,13 @@
                         console.log('No action.build.')
                     }
                     let res;
-                    if (true || build.indexOf('slot="') == -1) {
-                        build = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder>'
+                    let actionAttributes = ' :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder ';
+                    if (build && this.action.raw) {
+                        let split = build.split(' ', 2);
+                        build = split[0] + actionAttributes + split[1];
+                        console.log('build', build);
+                    } else if (true || build.indexOf('slot="') == -1) {
+                        build = '<div' + actionAttributes + '>'
                             + '<pckg-action-bg :action="action"></pckg-action-bg>'
                             + '<frontpage-action-outline :action="action" v-if="action.active"></frontpage-action-outline>'
                             + build

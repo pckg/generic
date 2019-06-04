@@ -600,6 +600,7 @@ class ActionsMorph extends Record
             'slots'     => $slots,
             'component' => 'pckg-' . $type,
             'config'    => $config['config'] ?? null,
+            'raw'       => !!$config['raw']
         ];
 
         return $data;
