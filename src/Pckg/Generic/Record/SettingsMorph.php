@@ -40,7 +40,11 @@ class SettingsMorph extends Record
         $newValue = $this->setting->type == 'array'
             ? json_decode($this->value, true)
             : $this->value;
-        config()->set($slug, $newValue);
+        $merge = true;
+        if ($slug === 'derive.documents.events') {
+            $merge = false;
+        }
+        config()->set($slug, $newValue, $merge);
 
         return $this;
     }
