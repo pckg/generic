@@ -79,6 +79,27 @@ Vue.filter('html2text', function (html) {
     return span.textContent || span.innerText;
 });
 
+Vue.directive('outer-click', {
+    bind: function (el, binding, vnode) {
+        $dispatcher.$on('body:click', function (e){
+            if ($(e.target).closest(el).is($(el))) {
+                return;
+            }
+
+            binding.value(e);
+        });
+    },
+    unbind: function (el, binding, vnode) {
+        $dispatcher.$off('body:click', function (e){
+            if ($(e.target).closest(el).is($(el))) {
+                return;
+            }
+
+            binding.value(e);
+        });
+    }
+});
+
 Vue.directive('popup-image', {
     bind: function (el) {
         $(el).magnificPopup({type: 'image'});
@@ -86,7 +107,7 @@ Vue.directive('popup-image', {
 });
 
 Vue.directive('pagebuilder-small', {
-    bind: function(el, directive){
+    bind: function (el, directive) {
 
         el.addEventListener('mouseenter', function ($event) {
             let genericMode = $store.state.generic.genericMode;

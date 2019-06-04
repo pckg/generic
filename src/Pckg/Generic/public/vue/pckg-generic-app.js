@@ -32,7 +32,7 @@ if (window === window.top) {
     window._$store = $store;
 } else {
     console.log('subscribing to changes');
-    window.parent._$store.subscribe(function(mutation, parentState) {
+    window.parent._$store.subscribe(function (mutation, parentState) {
         console.log('replacing state in iframe', parentState);
         $store.replaceState(parentState);
     });
@@ -82,5 +82,11 @@ const $vue = new Vue({
         basket: function () {
             return $store.state.basket;
         }
+    },
+    updated: function () {
+        console.log('updated');
+        this.$nextTick(function(){
+            $dispatcher.$emit('vue:updated');
+        });
     }
 });
