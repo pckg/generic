@@ -24,141 +24,48 @@ body {
 }
 
 .maestro-sidebar-bottom {
+  background: @maestro-bg-dark;
   position: fixed;
   bottom: 0;
   left: 0;
   margin-bottom: 1.2rem;
   font-size: 1.8rem;
   float: left;
-  width: 6rem;
+  transition: @transition-d;
+  width: 20rem;
 
-  body.sidebar-static & {
-    position: static;
-    margin-top: 3.6rem;
-    > ul {
-      float: left;
-      width: 100%;
-    }
-  }
-  > ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    > li {
-      display: block;
-      clear: both;
-      padding: 1rem 0;
-      float: left;
-      width: 100%;
-      > a {
-        line-height: 1.6rem;
-        color: @darkGrayActive;
-        >
-        i {
-          width: 5rem;
-          text-align: center;
-          display: block;
-          float: left;
-        }
-      }
-    }
-  }
-}
-
-.maestro-top,
-.maestro-sidebar {
-  a.logo {
-    display: inline-block;
-    body.collapsed & {
-      display: none;
-    }
-  }
-  a.logo,
-  a.logo-collapsed {
-    margin: 2rem 0 2rem 1.5rem;
-    img {
-      max-height: 2rem;
-    }
-  }
-  a.logo-collapsed {
-    display: none;
-    body.collapsed & {
-      display: inline-block;
-    }
-  }
-}
-
-.maestro-top {
-  border: none;
-  font-size: 12px;
-  margin-bottom: 0;
-  border-radius: 0;
-  z-index: 96;
-
-  a {
-
-    &.active {
-      font-weight: bold;
-    }
-  }
-
-  .container-fluid {
-    background: #fff;
-    //border-bottom: 1px solid #eee;
-  }
-
-  .navbar-nav {
-    > li > a {
-      color: inherit;
-    }
-
-    @media only screen and (max-width: 767px) {
-      float: left;
-
-      & > li {
-        float: left;
-      }
-
-      &.navbar-right {
-        float: right;
-
-        & > li {
-          float: right;
-        }
-      }
-    }
+  .user,
+  .language,
+  .collapse-sidebar {
+    width: 5rem;
 
     a {
-      float: left;
-      color: @darkGray;
-      text-shadow: 0 0 0 #000;
-      filter: dropshadow(color=#b31419, offx=0, offy=-1);
-
-      i {
-        font-size: 16px;
-        margin-right: 3px;
-        vertical-align: text-bottom;
-      }
-
-      @media only screen and (max-width: 767px) {
-        i {
-          font-size: 20px;
-          line-height: 20px;
-        }
-
-        span {
-          display: none;
-        }
-      }
-    }
-
-    .dropdown-menu {
-      max-width: 400px;
-      border: 0;
-      border-radius: 0;
+      display: block;
+      line-height: 1.6rem;
+      padding: 1rem 0;
+      text-align: center;
     }
   }
+  .user,
+  .language {
+    float: left;
+    > ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      > li {
+        display: block;
+        clear: both;
+        float: left;
+        width: 100%;
+      }
+    }
+  }
+  .collapse-sidebar {
+    float: right;
+  }
 }
+
 
 .backend {
   .navbar {
@@ -182,64 +89,42 @@ body {
   }
 }
 
-/*.maestro-sidebar-background {
-   background: @darkGray;
-   bottom: 0;
-   top: 0;
-   transition: all 0.333s ease-in-out;
-   width: 20rem;
-   z-index: -1;
-
-   body.collapsed & {
-     transition: all 0.333s ease-in-out;
-     width: 5rem;
-   }
- }
-
-.maestro-sidebar-submenu-background {
-  background: @midGray;
-  bottom: 0;
-  display: none;
-  left: 6rem;
-  position: absolute;
-  top: 0;
-  width: 20rem;
-  z-index: 98;
-}
-
-.maestro-sidebar-inside {
-  background: #fff;
-}*/
-
 .maestro-sidebar {
-  background: #fff;
+  background: @maestro-bg-dark;
   bottom: 0;
+  height: 100%;
   top: 0;
   left: 0;
   position: fixed;
   float: left;
+  padding-bottom: 12rem;
   padding-left: 0;
   padding-right: 0;
-  transition: all 0.333s ease-in-out;
+  overflow-y: auto;
+  transition: @transition-d;
   width: 20rem;
   z-index: 97;
-  //margin-top: 4rem;
   border-right: 1px solid @border-grey;
 
-  body.sidebar-static & {
-    position: static;
+  a {
+    color: @text;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: @clr-secondary;
+    }
   }
+  div.logo {
+    display: block;
+    margin: 2rem 0;
+    text-align: center;
 
+    img {
+      max-height: 2rem;
+    }
+  }
   #main-admin-nav {
-
-    i {
-      color: #666;
-    }
-
-    a {
-      color: #333;
-    }
-
     ul {
       list-style: none;
       padding: 0;
@@ -278,7 +163,6 @@ body {
 
         i {
           float: left;
-          transition: all 0.333s ease-in-out;
           width: 5rem;
           line-height: 2rem;
           font-size: 2rem;
@@ -287,7 +171,6 @@ body {
         span {
           display: block;
           overflow: hidden;
-          transition: all 0.333s ease-in-out;
         }
 
         &:hover,
@@ -300,38 +183,59 @@ body {
 
     .active > a,
     a:hover {
-      &, & > i {
-        color: @clr-secondary;
-      }
+      color: @clr-secondary;
     }
   }
 
-  .collapse-sidebar {
-    a {
-      padding: 1rem 1.7rem;
-      text-align: center;
+  .help {
+    i {
+      float: left;
+      width: 5rem;
+      line-height: 2rem;
+      font-size: 2rem;
+    }
 
-      &:active,
-      &:focus,
-      &:hover {
-        color: #000;
-        text-decoration: none;
+    a {
+      font-size: 1.6rem;
+      line-height: 2rem;
+    }
+  }
+
+  .storefront {
+    background-color: @maestro-bg-darker;
+    color: @midGray;
+    padding: 1rem 1.5rem;
+
+    & > span {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: .2em;
+    }
+
+    a {
+      font-size: 1.4rem;
+
+      span {
+        display: block;
       }
 
       i {
-        vertical-align: middle;
-        transition: all 0.333s ease-in-out;
-        width: 16px;
-      }
-
-      span {
-        transition: all 0.333s ease-in-out;
+        float: left;
+        line-height: 2rem;
+        margin-right: .6rem;
       }
     }
   }
 
+  .hide-on-sidebar-collapse {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
   body.collapsed & {
-    transition: all 0.333s ease-in-out;
+    padding-bottom: 18rem;
+    transition: @transition-d;
     width: 5rem;
 
     #main-admin-nav {
@@ -345,7 +249,7 @@ body {
             & > a {
               &:after {
                 border-bottom: 10px solid transparent;
-                border-right: 10px solid @midGray;
+                border-right: 10px solid #FFF;
                 border-top: 10px solid transparent;
                 content: "";
                 height: 0;
@@ -361,7 +265,7 @@ body {
           & > a {
             span {
               opacity: 0;
-              transition: all 0.333s ease-in-out;
+              transition: @transition-d;
               visibility: hidden;
               width: 0;
             }
@@ -394,7 +298,21 @@ body {
         }
       }
     }
+    .hide-on-sidebar-collapse {
+      opacity: 0;
+      width: 0;
 
+      &.height-too {
+        display: none;
+      }
+    }
+    .maestro-sidebar-bottom {
+      width: 5rem;
+
+      span {
+        opacity: 0;
+      }
+    }
     .collapse-sidebar {
       a {
         i {
@@ -404,12 +322,12 @@ body {
           transform: scaleX(-1);
           filter: FlipH;
           -ms-filter: "FlipH";
-          transition: all 0.333s ease-in-out;
+          transition: @transition-d;
         }
 
         span {
           opacity: 0;
-          transition: all 0.333s ease-in-out;
+          transition: @transition-d;
           visibility: hidden;
         }
       }
@@ -437,7 +355,7 @@ body {
   float: right;
   padding: 2rem 0;
   margin: 0 2rem;
-  transition: all 0.333s ease-in-out;
+  transition: @transition-d;
   width: ~"calc(100% - 24rem)";
 
   &.login {
@@ -480,7 +398,7 @@ textarea,
   border-bottom: 2px solid transparent;
   border-left: 2px solid #ccc;
   border-radius: 0;
-  transition: all 333ms ease-in-out;
+  transition: @transition-d;
   font-size: 1.5rem;
   padding: .6rem;
   height: auto;
@@ -586,7 +504,7 @@ ul.vertical-mid-menu {
         padding: .2rem 0;
         margin-left: 1rem;
       }
-      transition: all 333ms ease-in-out;
+      transition: @transition-d;
       // max-height: 0;
       overflow: hidden;
     }
@@ -639,7 +557,7 @@ ul.vertical-mid-menu {
       -webkit-text-fill-color: transparent;*/
       border: none;
       padding: 1.5rem 2rem;
-      transition: all 333ms ease-in-out;
+      transition: @transition-d;
 
       &:before {
         position: absolute;
@@ -650,7 +568,7 @@ ul.vertical-mid-menu {
         bottom: 0;
         content: '';
         background: linear-gradient(-30deg, #4AD481, #3FB3BA);
-        transition: all 333ms ease-in-out;
+        transition: @transition-d;
         z-index: -2;
       }
 
@@ -663,7 +581,7 @@ ul.vertical-mid-menu {
         bottom: 2px;
         content: '';
         background: #fff;
-        transition: all 333ms ease-in-out;
+        transition: @transition-d;
         z-index: -1;
       }
 

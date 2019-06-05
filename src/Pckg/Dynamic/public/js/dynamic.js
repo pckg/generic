@@ -35,25 +35,7 @@ var initUninitialiedSelectpicker = function () {
     });
 };
 
-let checkSidebarPosition = function () {
-    let sidebarInside = parseFloat($('.maestro-sidebar-inside').outerHeight());
-    let bottomBar = parseFloat($('.maestro-sidebar-bottom').outerHeight());
-    let viewportHeight = parseFloat($(window).height());
-    let offset = 50;
-
-    if (viewportHeight >= sidebarInside + bottomBar + offset) {
-        $('body').removeClass('sidebar-static');
-        return;
-    } else if ($('body').hasClass('sidebar-static')) {
-        return;
-    }
-
-    $('body').addClass('sidebar-static');
-};
-
 $(document).ready(function () {
-    checkSidebarPosition();
-    $(window).on('resize', checkSidebarPosition);
     var $body = $('body');
 
     /**
