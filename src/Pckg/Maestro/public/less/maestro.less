@@ -25,10 +25,10 @@ body {
 
 .maestro-sidebar-bottom {
   background: @maestro-bg-dark;
-  position: fixed;
+  position: absolute;
   bottom: 0;
+  height: 10rem;
   left: 0;
-  margin-bottom: 1.2rem;
   font-size: 1.8rem;
   float: left;
   transition: @transition-d;
@@ -92,19 +92,38 @@ body {
 .maestro-sidebar {
   background: @maestro-bg-dark;
   bottom: 0;
-  height: 100%;
-  top: 0;
-  left: 0;
-  position: fixed;
   float: left;
-  padding-bottom: 12rem;
+  height: 100%;
+  left: 0;
+  overflow: hidden;
+  padding-bottom: 10rem;
   padding-left: 0;
   padding-right: 0;
-  overflow-y: auto;
+  position: fixed;
+  top: 0;
   transition: @transition-d;
   width: 20rem;
   z-index: 97;
-  border-right: 1px solid @border-grey;
+
+  &:before {
+    background: rgb(247,246,252);
+    background: linear-gradient(180deg, rgba(247,246,252,1) 33%, rgba(247,246,252,0) 100%);
+    content: "";
+    height: 1.5rem;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
+  &:after {
+    background: rgb(247,246,252);
+    background: linear-gradient(0deg, rgba(247,246,252,1) 33%, rgba(247,246,252,0) 100%);
+    content: "";
+    height: 1.5rem;
+    margin-top: -15px;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
 
   a {
     color: @text;
@@ -114,6 +133,13 @@ body {
     &:focus {
       color: @clr-secondary;
     }
+  }
+  .maestro-sidebar-inside {
+    height: 100%;
+    padding-bottom: 2rem;
+    padding-right: 1.5rem;
+    overflow: auto;
+    width: calc(100% + 1.5rem);
   }
   div.logo {
     display: block;
@@ -234,7 +260,7 @@ body {
   }
 
   body.collapsed & {
-    padding-bottom: 18rem;
+    padding-bottom: 15.5rem;
     transition: @transition-d;
     width: 5rem;
 
@@ -249,7 +275,7 @@ body {
             & > a {
               &:after {
                 border-bottom: 10px solid transparent;
-                border-right: 10px solid #FFF;
+                border-right: 10px solid @maestro-bg-darker;
                 border-top: 10px solid transparent;
                 content: "";
                 height: 0;
@@ -278,20 +304,21 @@ body {
           }
 
           ul {
+            bottom: 0;
             height: auto !important;
             left: 5rem;
-            margin-top: -40px;
             padding-left: 0;
-            position: absolute;
+            padding-top: 2rem;
+            position: fixed;
             width: 20rem;
             z-index: 99;
-            background: #fff;
-            border: 1px solid @border-grey;
-            border-width: 1px 1px 1px 0;
+            background: @maestro-bg-darker;
+            top: 0;
+            transition: @transition-d;
 
             li {
               a {
-                padding: 1rem;
+                padding: .5rem 2rem;
               }
             }
           }
@@ -307,6 +334,7 @@ body {
       }
     }
     .maestro-sidebar-bottom {
+      height: 15.5rem;
       width: 5rem;
 
       span {
