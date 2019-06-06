@@ -529,7 +529,7 @@ class ActionsMorph extends Record
 
     public function resolveSettings(&$args = [])
     {
-        measure('Resolving', function() use (&$args) {
+        measure('Resolving #' . $this->id, function() use (&$args) {
             if (isset($args['settings'])) {
                 $args['settings']->each(function(Setting $setting) use (&$args) {
                     $setting->pivot->resolve($args);
@@ -576,34 +576,36 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-        $config = config('pckg.generic.actions.' . $this->action->slug, []);
-        $slots = $config['slots'] ?? [];
-        $content = $this->content ? $this->content->jsonSerialize() : null;
-        $type = $this->overloadType();
+        return measure('Serializing action #' . $this->id, function(){
+            $config = config('pckg.generic.actions.' . $this->action->slug, []);
+            $slots = $config['slots'] ?? [];
+            $content = $this->content ? $this->content->jsonSerialize() : null;
+            $type = $this->overloadType();
 
-        $data = [
-            'id'        => $this->id,
-            'title'     => $this->action->title,
-            'morph'     => $this->morph_id,
-            'type'      => $type,
-            'slug'      => $this->action->slug,
-            'parent_id' => $this->parent_id,
-            'class'     => $this->action->class,
-            'method'    => $this->action->method,
-            'settings'  => $this->settingsArray,
-            'content'   => $content,
-            'build'     => $this->getBuildAttribute(),
-            'template'  => $this->template,
-            'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
-            'focus'     => false,
-            'active'    => false,
-            'slots'     => $slots,
-            'component' => 'pckg-' . $type,
-            'config'    => $config['config'] ?? null,
-            'raw'       => !!$config['raw']
-        ];
+            $data = [
+                'id'        => $this->id,
+                'title'     => $this->action->title,
+                'morph'     => $this->morph_id,
+                'type'      => $type,
+                'slug'      => $this->action->slug,
+                'parent_id' => $this->parent_id,
+                'class'     => $this->action->class,
+                'method'    => $this->action->method,
+                'settings'  => $this->settingsArray,
+                'content'   => $content,
+                'build'     => $this->getBuildAttribute(),
+                'template'  => $this->template,
+                'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
+                'focus'     => false,
+                'active'    => false,
+                'slots'     => $slots,
+                'component' => 'pckg-' . $type,
+                'config'    => $config['config'] ?? null,
+                'raw'       => !!($config['raw'] ?? null)
+            ];
 
-        return $data;
+            return $data;
+        });
     }
 
     public function flattenForGenericResponse(Collection $collection)
