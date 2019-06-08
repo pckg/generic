@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Derive\Pagebuilder\Service\Pagebuilder;
 use Pckg\Concept\Context;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
@@ -373,81 +374,8 @@ class PageStructure
 
     public function postActionsMorphSettingsAction(ActionsMorph $actionsMorph)
     {
-        /**
-         * Add defaults.
-         */
-        $values = array_merge($actionsMorph->getDefaultSettings(), post('settings'));
-        $values = only($values, array_keys($actionsMorph->getDefaultSettings()));
-        unset($values['bgImage']);
-
-        /**
-         * Transform classes.
-         */
-        $values['class'] = collect(post('settings.classes'))->unique()->removeEmpty()->implode(' ');
-        $values['scopes'] = null; // @deprecated
-
-        /**
-         * Transform attributes.
-         */
-        $values['attributes'] = collect(json_decode($values['attributes'], true))
-            ->filter(function($attribute) {
-            return isset($attribute['css']) && $attribute['css'];
-        })->rekey()->all();
-
-        $actions = config('pckg.generic.actions', []);
-        $separate = [
-            'wrapperLockHide',
-            'wrapperLockShow',
-            'wrapperLockSystem',
-            'animation',
-            'attributes',
-        ];
-        $separateTypes = [];
-
-        foreach ($actions as $actionKey => $actionSettings) {
-            foreach ($actionSettings['settings'] ?? [] as $settingKey => $settingType) {
-                $separate[$settingKey] = $settingKey;
-                $separateTypes[$settingType][] = $settingKey;
-            }
-        }
-
-        collect($values)->removeKeys($separate)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value);
-        });
-
-        /**
-         * Other settings, available for plugins.
-         */
-        foreach ($separateTypes as $type => $keys) {
-            $tempValues = only(post('settings'), $keys);
-            collect($tempValues)->each(function($value, $key) use ($actionsMorph, $type) {
-                if ($type == 'array') {
-                    $value = json_encode($value);
-                } else {
-                    $type = null;
-                }
-                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, $value, $type);
-            });
-        }
-
-        if ($actionsMorph->morph_id == Layouts::class) {
-            $tempValues = only(post('settings'), ['wrapperLockHide', 'wrapperLockShow', 'wrapperLockSystem']);
-            collect($tempValues)->each(function($value, $key) use ($actionsMorph) {
-                $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []),
-                                           'array');
-            });
-        }
-
-        $tempValues = only($values, ['animation', 'attributes']);
-        collect($tempValues)->each(function($value, $key) use ($actionsMorph) {
-            $actionsMorph->saveSetting('pckg.generic.pageStructure.' . $key, json_encode($value ? $value : []),
-                                       'array');
-        });
-
-        /**
-         * Set template.
-         */
-        $actionsMorph->setAndSave(['template' => post('template')]);
+        $pagebuilderService = (new Pagebuilder());
+        $pagebuilderService->saveActionsMorphSettings($actionsMorph);
 
         return response()->respondWithSuccess();
     }
