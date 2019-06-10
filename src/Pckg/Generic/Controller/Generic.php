@@ -58,7 +58,9 @@ class Generic
 
             trigger(static::class . '.stringifying');
 
-            return (string)($route->layout ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars) : $vars);
+            return $route->layout
+                ? view($route->layout->template ?: 'Pckg/Generic:backend', $vars)->autoparse()
+                : $vars;
         });
     }
 

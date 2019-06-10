@@ -6,9 +6,8 @@
             </div>
         {% endif %}
         {% if action.getSetting('content', true) %}
-            <div class="bind-content {{ action.getSetting('contentWidth', 'col-xs-12') ?? 'col-xs-12' }} {{ action.getSetting('contentOffset', '') }}">
-                {{ content.content | raw }}
-            </div>
+            <div v-pagebuilder-content.noblock
+                 class="{{ action.getSetting('contentWidth', 'col-xs-12') ?? 'col-xs-12' }} {{ action.getSetting('contentOffset', '') }}"></div>
         {% endif %}
         {% if action.getSetting('picture') and action.getSetting('picturePosition') == 'right' %}
             <div class="{{ action.getSetting('pictureWidth') }} {{ action.getSetting('pictureOffset') }}">

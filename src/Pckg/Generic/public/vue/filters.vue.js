@@ -81,7 +81,7 @@ Vue.filter('html2text', function (html) {
 
 Vue.directive('outer-click', {
     bind: function (el, binding, vnode) {
-        $dispatcher.$on('body:click', function (e){
+        $dispatcher.$on('body:click', function (e) {
             if ($(e.target).closest(el).is($(el))) {
                 return;
             }
@@ -90,7 +90,7 @@ Vue.directive('outer-click', {
         });
     },
     unbind: function (el, binding, vnode) {
-        $dispatcher.$off('body:click', function (e){
+        $dispatcher.$off('body:click', function (e) {
             if ($(e.target).closest(el).is($(el))) {
                 return;
             }
@@ -103,138 +103,5 @@ Vue.directive('outer-click', {
 Vue.directive('popup-image', {
     bind: function (el) {
         $(el).magnificPopup({type: 'image'});
-    }
-});
-
-Vue.directive('pagebuilder-small', {
-    bind: function (el, directive) {
-
-        el.addEventListener('mouseenter', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            if (genericMode != 'edit') {
-                return;
-            }
-
-            $store.commit('setActionFocus', {actionId: $(el).attr('data-action-id'), focus: true});
-        });
-
-        el.addEventListener('mouseleave', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            if (genericMode != 'edit') {
-                return;
-            }
-
-            $store.commit('setActionFocus', {actionId: $(el).attr('data-action-id'), focus: false});
-        });
-
-    }
-});
-
-Vue.directive('pagebuilder', {
-    bind: function (el, directive) {
-        /**
-         * @T00D00 - this directive should be enabled only when edit mode is enabled
-         */
-        let timeoutObject = pckgTimeout;
-
-        el.addEventListener('click', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            if (genericMode != 'edit') {
-                return;
-            }
-
-            $event.preventDefault();
-            $event.stopPropagation();
-
-            if ($(el).find('.mce-content-body').length > 0) {
-                return false;
-            }
-
-            timeoutObject.methods.timeout('componentClicked', function () {
-                $dispatcher.$emit('pckg-editor:actionChanged', el.__vue__.action);
-            }, 333, timeoutObject);
-
-            return false;
-        });
-
-        el.addEventListener('dblclick', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            if (genericMode != 'edit' && viewMode != 'threesome') {
-                return;
-            }
-
-            timeoutObject.methods.removeTimeout('componentClicked');
-            $event.preventDefault();
-            $event.stopPropagation();
-
-            if ($(el).find('.bind-content').length == 0) {
-                return;
-            }
-
-            if ($(el).find(el.id + '.mce-content-body').length > 0) {
-                return;
-            }
-
-            let action = el.__vue__.action;
-            let content = el.__vue__.content;
-            initTinymce(el.id + ' .bind-content', {
-                menubar: false,
-                inline: true,
-                //theme: 'inlite',
-                content_css: null,
-                toolbar: (function () {
-                    let toolbar = tinyMceConfig.toolbar.slice(0);
-                    if (toolbar[0].indexOf('save') !== 0) {
-                        toolbar[0] = 'save commsCancel close | ' + toolbar[0];
-                    }
-                    return toolbar;
-                })(),
-                save_onsavecallback: function (editor) {
-                    content.content = editor.getContent();
-                    $store.commit('setActionContent', {action: action, content: content});
-
-                    http.post(utils.url('@pckg.generic.pageStructure.content', {content: content.id}), {content: content}, function (data) {
-                    });
-
-                    editor.destroy();
-                },
-                init_instance_callback: function (editor) {
-                    editor.execCommand('mceFocus', false);
-
-                    /*editor.on('Change', function () {
-                        let content = this.content;
-                        let editorContent = editor.getContent();
-                        if (editorContent === content.content) {
-                            return;
-                        }
-                        content.content = editor.getContent();
-                        $store.commit('setActionContent', {action: this.action, content: content});
-                    }.bind(this));*/
-                }
-            });
-            //$dispatcher.$emit('pckg-frontpage:editContent', this.action);
-
-            return false;
-        });
-
-        el.addEventListener('mouseenter', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            $store.commit('setActionFocus', {actionId: el.__vue__.action.id, focus: true});
-        });
-
-        el.addEventListener('mouseleave', function ($event) {
-            let genericMode = $store.state.generic.genericMode;
-
-            $store.commit('setActionFocus', {actionId: el.__vue__.action.id, focus: false});
-        });
-        /*el.addEventListener("click", event => {
-            event.preventDefault();
-            window.location.assign(event.target.href);
-        });*/
     }
 });
