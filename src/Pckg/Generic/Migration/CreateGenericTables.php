@@ -32,7 +32,6 @@ class CreateGenericTables extends Migration
     {
         $this->layoutsUp();
         $this->routesUp();
-        $this->variablesUp();
         $this->contentsUp();
         $this->actionsUp();
 
@@ -65,12 +64,6 @@ class CreateGenericTables extends Migration
         $routesI18n = $this->translatable('routes');
         $routesI18n->title();
         $routesI18n->varchar('route');
-    }
-
-    protected function variablesUp()
-    {
-        $variables = $this->table('variables');
-        $variables->slug();
     }
 
     protected function contentsUp()
@@ -106,7 +99,7 @@ class CreateGenericTables extends Migration
         $actionsMorphs->parent();
         $actionsMorphs->varchar('type');
         $actionsMorphs->integer('content_id')->references('contents');
-        $actionsMorphs->integer('variable_id')->references('variables'); // @T00D00 - move this to list_items
+        $actionsMorphs->varchar('variable', 32);
         $actionsMorphs->orderable();
         $actionsMorphs->longtext('template');
 

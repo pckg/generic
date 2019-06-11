@@ -158,7 +158,7 @@ class Generic
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable()->withAction();
+            })->withAction();
         });
 
         /**
@@ -218,7 +218,7 @@ class Generic
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable()->withAction();
+            })->withAction();
         })
             : cache(Generic::class . ':readLayout:' . $layout->id,
             function() use ($layout) {
@@ -228,7 +228,7 @@ class Generic
                         $content->withContents();
                     })->withSettings(function(MorphedBy $settings) {
                         $settings->getMiddleEntity()->withSetting();
-                    })->withVariable();
+                    });
                 });
             },
                    'app',
@@ -308,7 +308,7 @@ class Generic
         Route $route,
         $resolved = []
     ) {
-        $block = $this->touchBlock($action->pivot->variable_id ? $action->pivot->variable->slug : null);
+        $block = $this->touchBlock($action->pivot->variable ?? 'content');
 
         $block->addAction($genericAction = new Action($action, $route, $resolved));
 

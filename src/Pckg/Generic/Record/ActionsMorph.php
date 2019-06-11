@@ -595,6 +595,7 @@ class ActionsMorph extends Record
                 'content'   => $content,
                 'build'     => $this->getBuildAttribute(),
                 'template'  => $this->template,
+                'variable'  => $this->variable ?? ($this->morph_id === Layouts::class ? 'footer' : 'content'),
                 'order'     => strpos($this->morph, 'Layout') !== false ? $this->order + 999999 : $this->order,
                 'focus'     => false,
                 'active'    => false,

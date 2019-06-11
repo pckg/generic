@@ -15,6 +15,7 @@ use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Entity\Variables;
 use Pckg\Generic\Form\NewRoute;
+use Pckg\Generic\Form\RouteSeo;
 use Pckg\Generic\Record\Action;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Content;
@@ -230,7 +231,7 @@ class PageStructure
         /**
          * Collect data.
          */
-        $data = post(['action_id', 'poly_id' => 'route_id', 'variable_id', 'content_id', 'parent_id', 'type']);
+        $data = post(['action_id', 'poly_id' => 'route_id', 'content_id', 'parent_id', 'type']);
         $data['morph_id'] = Routes::class;
 
         /**
@@ -309,7 +310,7 @@ class PageStructure
         $orders = post('orders', []);
         $actionsMorphs = (new ActionsMorphs())->where('id', array_keys($orders))->all();
         $root = $actionsMorphs->first(function(ActionsMorph $actionsMorph) {
-            return $actionsMorph->variable_id;
+            return !$actionsMorph->parent_id;
         });
         $routeId = $root ? $root->poly_id : null;
         $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders, $routeId) {
@@ -317,8 +318,7 @@ class PageStructure
                 'order'     => $orders[$actionsMorph->id]['order'],
                 'parent_id' => $orders[$actionsMorph->id]['parent'],
             ];
-            if (!$update['parent_id'] && !$actionsMorph->variable_id) {
-                $update['variable_id'] = 1;
+            if (!$update['parent_id'] && !$actionsMorph->parent_id) {
                 if (!$actionsMorph->poly_id) {
                     $update['poly_id'] = $routeId;
                 }
@@ -444,7 +444,7 @@ class PageStructure
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+            })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
@@ -470,7 +470,7 @@ class PageStructure
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+            })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
@@ -490,7 +490,7 @@ class PageStructure
                 $content->withContents();
             })->withSettings(function(MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
-            })->withVariable()->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
+            })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
             return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
         })->all();
@@ -509,10 +509,14 @@ class PageStructure
         ];
     }
 
-    public function postRouteSeoAction(Route $route)
+    public function postRouteSeoAction(Route $route, RouteSeo $routeSeo)
     {
-        $data = only(post('seo'), ['title', 'description', 'keywords', 'image']);
-        foreach ($data as $key => $val) {
+        $data = $routeSeo->getData();
+        foreach ($data['seo'] ?? [] as $key => $val) {
+            if (!in_array($key, ['title', 'description', 'keywords', 'image'])) {
+                continue;
+            }
+
             SettingsMorph::makeItHappen('pckg.generic.pageStructure.seo.' . $key, $val, Routes::class, $route->id);
         }
 

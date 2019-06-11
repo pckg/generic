@@ -5,8 +5,8 @@
 <script>
     export default {
         name: 'htmlbuilder-validator-error',
+        inject: ['$validator'],
         props: {
-            bag: {},
             name: {},
             message: {
                 default: 'Error'
@@ -16,22 +16,15 @@
                 type: Boolean
             }
         },
-        data: function () {
-            return {
-                myErrors: this.bag
-            };
-        },
-        watch: {
-            bag: function (errors) {
-                this.myErrors = errors;
-            }
-        },
         computed: {
+            keyedErrors: function(){
+                return collection.map(collection.keyBy(this.errors.items, 'field'), 'msg');
+            },
             isVisible: function () {
-                return (this.myErrors && this.myErrors.has(this.name)) || this.shown;
+                return !!this.keyedErrors[this.name];
             },
             getMessage: function () {
-                return (this.myErrors && this.myErrors.first(this.name)) || this.message;
+                return this.keyedErrors[this.name] || this.message;
             }
         },
     }

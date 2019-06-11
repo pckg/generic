@@ -5,15 +5,13 @@
                     name="icon"
                     type="select:single"
                     :options="{options: initialOptions.availableIcons}"
-                    v-model="action.settings.icon"
-                    :errors="errors"></form-group>
+                    v-model="action.settings.icon"></form-group>
 
         <form-group label="Style"
                     name="iconStyle"
                     type="select:single"
                     :options="{options: initialOptions.availableStyles}"
-                    v-model="action.settings.iconStyle"
-                    :errors="errors"></form-group>
+                    v-model="action.settings.iconStyle"></form-group>
 
     </div>
 </template>

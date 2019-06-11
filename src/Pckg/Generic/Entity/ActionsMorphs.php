@@ -16,13 +16,6 @@ class ActionsMorphs extends Entity
                     ->fill('action');
     }
 
-    public function variable()
-    {
-        return $this->belongsTo(Variables::class)
-                    ->foreignKey('variable_id')
-                    ->fill('variable');
-    }
-
     public function content()
     {
         return $this->belongsTo(Contents::class)

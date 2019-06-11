@@ -10,7 +10,6 @@ use Pckg\Generic\Record\ListItem;
 use Pckg\Generic\Record\ListRecord;
 use Pckg\Generic\Record\Menu;
 use Pckg\Generic\Record\SettingType;
-use Pckg\Generic\Record\Variable;
 use Symfony\Component\Console\Input\InputOption;
 
 class ImportGenericBackend extends Command
@@ -84,13 +83,6 @@ class ImportGenericBackend extends Command
         });
     }
 
-    public function importVariables()
-    {
-        (new Collection(config('pckg.generic.variables', [])))->each(function($name, $slug) {
-            Variable::getOrCreate(['slug' => $slug]);
-        });
-    }
-
     public function importMenus()
     {
         (new Collection([['slug' => 'frontend', 'template' => 'frontendMainNav']]))->each(function($menu, $slug) {
@@ -139,14 +131,6 @@ class ImportGenericBackend extends Command
         if (!$dos || in_array('layouts', $dos)) {
             $this->outputDated('Importing layouts');
             $this->importLayouts();
-        }
-
-        /**
-         * Import variables.
-         */
-        if (!$dos || in_array('variables', $dos)) {
-            $this->outputDated('Importing variables');
-            $this->importVariables();
         }
 
         /**
