@@ -447,6 +447,7 @@ class ActionsMorph extends Record
             'bgVideoControls'   => '',
             'bgVideoLoop'       => '',
             'bgVideoMute'       => '',
+            'bgVideoBranding' => '',
             'wrapperLockShow'   => [],
             'wrapperLockHide'   => [],
             'wrapperLockSystem' => [],

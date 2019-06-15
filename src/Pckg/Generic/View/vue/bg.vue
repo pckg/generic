@@ -46,8 +46,9 @@
                             + '?controls=' + (this.action.settings.bgVideoControls == 'yes' ? 1 : 0)
                             + '&autoplay=' + (this.action.settings.bgVideoAutoplay == 'yes' ? 1 : 0)
                             + '&loop=' + (this.action.settings.bgVideoLoop == 'yes' ? 1 : 0)
+                            + '&modestbranding=' + (this.action.settings.bgVideoBranding == 'yes' ? 1 : 0)
                             + (this.action.settings.bgVideoMute ? '&mute=1' : '')
-                            + '&modestbranding=1&playsinline=1&rel=0&showinfo=0&playlist=' + this.identifier;
+                            + '&playsinline=1&rel=0&showinfo=0&playlist=' + this.identifier;
                     } else {
                         return 'https://www.youtube.com/watch?v=' + this.identifier;
                     }
