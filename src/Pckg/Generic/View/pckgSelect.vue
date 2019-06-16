@@ -47,7 +47,7 @@
 
 <script>
     export default {
-        mixins: [pckgTimeout],
+        mixins: [pckgTimeout, pckgParentCssValue],
         name: 'pckg-select',
         model: {
             prop: 'selected',
@@ -58,7 +58,8 @@
                 options: this.initialOptions,
                 selectedModel: this.makeModel(this.selected),
                 loading: false,
-                search: ''
+                search: '',
+                myParentValue: this.parentValue,
             };
         },
         props: {
