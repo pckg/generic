@@ -86,7 +86,7 @@ const pckgTranslations = {
         __: function (key, data) {
             var translation = $store.state.translations[key] || null;
 
-            if (!translation) {
+            if (Object.keys($store.state.translations).indexOf(key) === -1) {
                 if ($store && $store.getters.isAdmin) {
                     return '__' + key;
                 }
