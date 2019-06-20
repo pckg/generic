@@ -22,7 +22,7 @@ class Relation extends DatabaseRecord
          * Is this correct? || !$foreignRecord?
          * http://hi.derive.bob/dynamic/records/edit/23/6751
          */
-        if (!$this->filter) {
+        if (!$this->filter || strpos($this->filter, '?') !== false) {
             return;
         }
 
@@ -54,6 +54,8 @@ class Relation extends DatabaseRecord
             $entity->where($this->leftForeignKey->field, $id);
         } elseif ($this->on_field_id) {
             $entity->where($this->onField->field, $id);
+        } elseif ($this->filter && strpos($this->filter, '?') !== false) {
+            $entity->whereRaw($this->filter, [$id]);
         }
     }
 
