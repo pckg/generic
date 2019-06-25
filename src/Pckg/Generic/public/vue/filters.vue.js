@@ -10,6 +10,10 @@ Vue.filter('roundPrice', function (price, decimals) {
     return locale.roundPrice(price, decimals);
 });
 
+Vue.filter('number', function (price, decimals) {
+    return locale.number(price, decimals);
+});
+
 Vue.filter('roundNumber', function (price, decimals) {
     return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price).toFixed(decimals || 2);
 });
