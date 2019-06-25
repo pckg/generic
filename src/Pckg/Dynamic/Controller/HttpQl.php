@@ -1,5 +1,8 @@
 <?php namespace Pckg\Dynamic\Controller;
 
+use Pckg\Database\Entity;
+use Pckg\Database\Helper\Convention;
+use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
@@ -13,7 +16,8 @@ class HttpQl
     /**
      * @return Table
      */
-    protected function fetchTable(Dynamic $dynamicService) {
+    protected function fetchTable(Dynamic $dynamicService)
+    {
         /**
          * Fetch main table set in request.
          */
@@ -25,8 +29,12 @@ class HttpQl
         return (new TableQl($dynamicService))->resolve($path);
     }
 
-    public function searchIndexAction(Dynamic $dynamicService, Tabelize $tabelize, Table $table = null, $noLimit = false)
-    {
+    public function searchIndexAction(
+        Dynamic $dynamicService,
+        Tabelize $tabelize,
+        Table $table = null,
+        $noLimit = false
+    ) {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
@@ -51,7 +59,7 @@ class HttpQl
 
             $relation->applyRecordFilterOnEntity($record, $entity);
         } else {*/
-            $entity = $table->createEntity(null, false);
+        $entity = $table->createEntity(null, false);
         //}
 
         $relations = (new \Pckg\Dynamic\Entity\Relations())->withShowTable()
@@ -122,12 +130,6 @@ class HttpQl
         }
 
         /**
-         * Fetch page records and total.
-         */
-        $records = $entity->count()->all();
-        $total = $records->total();
-
-        /**
          * Prepare tabelize.
          */
         $tabelize->setTable($table);
@@ -137,38 +139,15 @@ class HttpQl
          */
         $fields = [];
         $fieldTransformations = [];
-        foreach ($ormFields as $field) {
-            if (strpos($field, '.') === false) {
-
-                $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);
-                if (!$fieldRecord) {
-                    continue;
-                }
-
-                $fields[] = $fieldRecord;
-                continue;
-            }
-
-            /**
-             * Select relation field?
-             */
-            $split = explode('.', $field);
-            $relation = Relation::gets(['on_table_id' => $table->id, 'alias' => $split[0]]);
-            if (!$relation) {
-                continue;
-            }
-
-            $fieldRecord = Field::gets(['field' => $split[1], 'dynamic_table_id' => $relation->show_table_id]);
-            if (!$fieldRecord) {
-                continue;
-            }
-
-            $fieldTransformations[$field] = function($record) use ($relation, $fieldRecord) {
-                return $record->{$relation->alias}->{$fieldRecord->field};
-            };
-        }
+        $this->getOrmFieldsAndTransformations($entity, $table, $ormFields, $fields, $fieldTransformations);
         $tabelize->setFields($fields);
         $tabelize->setFieldTransformations($fieldTransformations);
+
+        /**
+         * Fetch page records and total.
+         */
+        $records = $entity->count()->all();
+        $total = $records->total();
 
         /**
          * Transform records for frontend.
@@ -188,6 +167,133 @@ class HttpQl
         ];
     }
 
+    public function getOrmFieldsAndTransformations(
+        Entity $entity,
+        Table $table,
+        $ormFields,
+        &$fields,
+        &$fieldTransformations
+    ) {
+        foreach ($ormFields as $field) {
+            if (strpos($field, '.') === false) {
+
+                $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);
+                if (!$fieldRecord) {
+                    continue;
+                }
+
+                $fields[] = $fieldRecord;
+                continue;
+            }
+
+            /**
+             * Table is orders
+             * Field is ordersUsers.packet.offer.title
+             * Add select: SELECT (...) AS 'ordersUsers.packet.offer.title'
+             */
+            $alias = str_replace(' ', '', Convention::toCamel(str_replace('.', ' ', $field)));
+            $entity->addSelect([
+                                   $field => $alias . '.title',
+                               ]);
+
+            $subquery = $this->getOrmFieldSubquery($table, $field);
+            $keyMatch = $this->getOrmFieldKeyMatch($table, $field);
+
+            if (!$subquery || !$keyMatch) {
+                continue;
+            }
+
+            $entity->join('LEFT JOIN (' . $subquery . ') AS ' . $alias . ' ON ' . $alias . '.' . $keyMatch);
+
+            $fieldTransformations[$field] = function($record) use ($field) {
+                /**
+                 * This should be joined?
+                 */
+                return $record->{$field};
+            };
+        }
+    }
+
+    protected function getOrmFieldKeyMatch(Table $table, $field)
+    {
+        $alias = explode('.', $field)[0];
+
+        $relation = (new \Pckg\Dynamic\Entity\Relations())->where('on_table_id', $table->id)
+            ->where('alias', $alias)->one();
+
+        return $relation->onField->field . ' = ' . $table->table . '.id';
+    }
+
+    /**
+     * @param $field
+     * @param $alias
+     *              orderUsers.packet.offer.title
+     *              Sub-select: SELECT offers.title FROM orders_users INNER JOIN packets INNER JOIN offers GROUP BY
+     *              orders_users.order_id
+     */
+    protected function getOrmFieldSubquery(Table $table, $field)
+    {
+        $split = explode('.', $field);
+        $onTable = $table;
+
+        $from = null;
+        $groupBy = null;
+        $select = [];
+        $join = [];
+        $repositoryCache = $table->getRepository()->getCache();
+        foreach ($split as $i => $relationAlias) {
+            if ($i < (count($split) - 1)) {
+                $relation = (new \Pckg\Dynamic\Entity\Relations())->where('on_table_id', $onTable->id)
+                                                                  ->where('alias', $relationAlias)
+                                                                  ->one();
+
+                if (!$relation) {
+                    return;
+                }
+
+                $showTable = $relation->showTable;
+                $prevOnTable = $onTable;
+                $onTable = $showTable; // set for future
+                if (!$from) {
+                    $from = $showTable->table;
+                    $groupBy = $showTable->table . '.' . $relation->onField->field;
+                    $select[] = $groupBy;
+                    continue;
+                }
+            } else {
+                if ($repositoryCache->tableHasField($showTable->table . '_i18n', $relationAlias)) {
+                    $join[] = $showTable->table . '_i18n ON ' . $showTable->table . '_i18n.id = ' . $showTable->table .
+                        '.id AND ' . $showTable->table . '_i18n.language_id = \'en\'';
+                    $select[] = $showTable->table . '_i18n.' . $relationAlias;
+                    continue;
+                }
+                $select[] = $showTable->table . '.' . $relationAlias;
+                continue;
+            }
+
+            if ($relation->dynamic_relation_type_id === 1) {
+                $join[] = $showTable->table . ' ON ' . $showTable->table . '.id = ' . $prevOnTable->table . '.' .
+                    $relation->onField->field;
+                continue;
+            } elseif ($relation->dynamic_relation_type_id === 2) {
+                $join[] = $showTable->table . ' ON ' . $showTable->table . '.' . $relation->onField->field . ' = ' .
+                    $prevOnTable->table . '.id';
+                continue;
+            }
+
+            return;
+        }
+
+        if (!$from) {
+            return;
+        }
+
+        $select = 'SELECT ' . implode(', ', $select) . ' FROM ' . $from . ' INNER JOIN ' .
+            implode(' INNER JOIN ', $join) . ' GROUP BY ' . $groupBy;
+
+        return $select;
+    }
+
     public function searchExportAction(Dynamic $dynamic, Tabelize $tabelize)
     {
         $table = $this->fetchTable($dynamic);
@@ -203,8 +309,8 @@ class HttpQl
 
         $strategy->setData(collect($data['records']));
 
-        $strategy->setFileName(($table->name ?? $table->table) . '-' . date('Ymd-his') . '-' . substr(sha1(microtime()), 0, 8) . '.' .
-                               $strategy->getExtension());
+        $strategy->setFileName(($table->name ?? $table->table) . '-' . date('Ymd-his') . '-' .
+                               substr(sha1(microtime()), 0, 8) . '.' . $strategy->getExtension());
 
         $file = $strategy->save();
 

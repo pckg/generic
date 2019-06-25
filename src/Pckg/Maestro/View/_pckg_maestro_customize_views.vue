@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c-maestro-customize-views">
         <pckg-select :initial-options="savedViews" :initial-multiple="false" @change="selectView"
                      :flat="true"></pckg-select>
         <!--<h5>

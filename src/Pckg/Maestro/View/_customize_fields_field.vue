@@ -2,7 +2,9 @@
     <div class="pckg-maestro-customize-fields-field">
         <pckg-select v-model="selected"
                      :initial-options="options"
-                     :initial-multiple="false" @change="checkFinal" :with-empty="'Select column'"></pckg-select>
+                     :initial-multiple="false"
+                     @change="checkFinal"
+                     :with-empty="'Select column'"></pckg-select>
         <pckg-maestro-customize-fields-field v-if="!isFinal && isRelation"
                                              :relation="selectedRelation"
                                              :columns="columns"
@@ -17,7 +19,7 @@
         props: {
             columns: {
                 type: Array,
-                default: function(){
+                default: function () {
                     return [];
                 }
             },
@@ -99,20 +101,21 @@
                     console.log('no field');
                     return;
                 }
-                field.frozen = false;
-                field.type = 'field';
+                let e = {
+                    frozen: false,
+                    field: field.field
+                };
 
-                this.$emit('chosen', {field: field.field});
+                this.$emit('chosen', e);
             },
             chosen: function (chosen) {
-                let onRelation = this.selected.indexOf('relation-') === 0;
-                if (onRelation) {
-                    let e = {};
-                    e[this.selectedRelation.alias] = {field: chosen};
-                    this.$emit('chosen', e);
-                    return;
-                }
-                this.$emit('chosen', {field: chosen});
+                let e = {
+                    field: {}
+                };
+                e.field[this.selectedRelation.alias] = chosen;//{field: chosen};
+                console.log('emiting chosen relation', e);
+                this.$emit('chosen', e);
+                return;
             },
             fetchRelation: function () {
                 http.getJSON('/api/dynamic/relation/' + this.relation.id + '?with[]=fields&with[]=relations', function (data) {
@@ -128,7 +131,9 @@
                     relations: {},
                 };
 
-                let selectedFields = this.columns.map(function(column){ return column.field; });
+                let selectedFields = this.columns.map(function (column) {
+                    return column.field;
+                });
                 $.each(this.myFields, function (i, field) {
                     if (selectedFields.indexOf(field.field) >= 0) {
                         return;
@@ -138,7 +143,7 @@
                 });
 
                 $.each(this.myRelations, function (i, relation) {
-                    options.relations['relation-' + relation.id] = relation.title;
+                    options.relations['relation-' + relation.id] = relation.title || relation.alias || ('#' + relation.id);
                 });
 
                 return options;

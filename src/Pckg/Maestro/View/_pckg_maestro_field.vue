@@ -46,7 +46,8 @@
             </template>
             <template v-else-if="type == 'select'">
                 <template v-if="!editable">
-                    <pckg-maestro-field-indicator :field="myField" :record="record" :db-field="dbField"></pckg-maestro-field-indicator>
+                    <pckg-maestro-field-indicator :field="myField" :record="record"
+                                                  :db-field="dbField"></pckg-maestro-field-indicator>
                     <span v-html="richValue"></span>
                 </template>
             </template>
@@ -132,6 +133,17 @@
             },
             cancelChanges: function () {
                 this.editable = false;
+            },
+            findDottedKey: function (field, keys) {
+                if (typeof field === 'string') {
+                    keys.push(field);
+                    return keys;
+                }
+
+                let key = Object.keys(field)[0];
+                keys.push(key);
+
+                return this.findDottedKey(field[key].field, keys);
             }
         },
         computed: {
@@ -214,6 +226,11 @@
             value: function () {
                 if (typeof this.myField.field == 'string') {
                     return this.record[this.key];
+                }
+
+                let key = this.findDottedKey(this.myField.field, []).join('.');
+                if (key && this.record[key]) {
+                    return this.record[key];
                 }
                 // for fields: value
                 // for relations: record[relation.alias]...[field]
