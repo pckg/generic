@@ -67,7 +67,7 @@
                             <div class="col-xs-12">
                                 <h4>Customize view</h4>
 
-                                <div class="pull-right nobr">
+                                <div class="pull-right nobr s-select-view">
                                     Select view
                                     <pckg-maestro-customize-views :views="views"
                                                                   @set-view="setView"></pckg-maestro-customize-views>
@@ -411,9 +411,10 @@
                 this.$nextTick(function () {
                     this.myFilters = settings.filters.length > 0 ? settings.filters : [];
                     this.myFields = settings.fields.length > 0 ? settings.fields : this.myFields;
-                    this.paginator = settings.paginator;
-                    this.sort = settings.sort;
+                    this.paginator = settings.paginator || this.paginator;
+                    this.sort = settings.sort || this.sort;
                     this.refreshData();
+                    this.configureSection = false;
                 }.bind(this));
             },
             recalculateFreeze: function () {
@@ -475,7 +476,7 @@
                     return false;
                 }.bind(this));
 
-                return f;
+                return f || 'Relation*';
             },
             getFieldTypeClass: function (column) {
                 if (typeof column.field == 'string') {

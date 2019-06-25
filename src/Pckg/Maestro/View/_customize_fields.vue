@@ -134,6 +134,10 @@
             addField: function (data) {
                 this.myColumns.push(data);
                 this.$emit('change', this.myColumns);
+                this.mode = null;
+                this.$nextTick(function(){
+                    this.mode = 'add';
+                }.bind(this));
             },
             chosen: function (data) {
                 this.myColumns.push(data);
