@@ -10,8 +10,8 @@ Vue.filter('roundPrice', function (price, decimals) {
     return locale.roundPrice(price, decimals);
 });
 
-Vue.filter('number', function (price, decimals) {
-    return locale.number(price, decimals);
+Vue.filter('number', function (price, decimals, loc) {
+    return locale.number(price, decimals, loc);
 });
 
 Vue.filter('roundNumber', function (price, decimals) {
