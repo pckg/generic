@@ -89,7 +89,7 @@ const pckgTranslations = {
                 /**
                  * Get translation by current locale.
                  */
-                let locale = Pckg.config.locale.current.toLonullwerCase();
+                let locale = Pckg.config.locale.current.toLowerCase();
                 translation = key[locale] || (key[Object.keys(key)[0]])
             } else {
                 translation = $store.state.translations[key] || key;

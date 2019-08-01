@@ -1,7 +1,7 @@
 <script type="text/x-template" id="pckg-dynamic-record-tabs">
     <div class="pckg-dynamic-record-tabs">
         <div class="display-block">
-            <h2>
+            <h2 class="h-page-title">
                 {{ formalize.getTitle() | raw }}
 
                 <pckg-maestro-actions :record="record"
@@ -9,7 +9,7 @@
                                                   :identifier="'{{ table }}'"></pckg-maestro-actions>
             </h2>
 
-            <ul class="nav nav-tabs" role="tablist" id="ajaxTabs">
+            <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active">
                     <a href="#home" aria-controls="home" role="tab" data-toggle="tab">General</a>
                 </li>
