@@ -84,22 +84,31 @@ const pckgCdn = {
 const pckgTranslations = {
     methods: {
         __: function (key, data) {
-            var translation = $store.state.translations[key] || null;
+            let translation;
+            if (typeof key === 'object') {
+                /**
+                 * Get translation by current locale.
+                 */
+                let locale = Pckg.config.locale.current.toLonullwerCase();
+                translation = key[locale] || (key[Object.keys(key)[0]])
+            } else {
+                translation = $store.state.translations[key] || key;
 
-            if (Object.keys($store.state.translations).indexOf(key) === -1) {
-                if ($store && $store.getters.isAdmin) {
-                    return '__' + key;
+                if (false && Object.keys($store.state.translations).indexOf(key) === -1) {
+                    if ($store && $store.getters.isAdmin) {
+                        return '__' + key;
+                    }
+
+                    return key.split('.').reverse()[0];
                 }
-
-                return key.split('.').reverse()[0];
             }
 
             if (!data) {
                 return translation;
             }
 
-            $.each(data, function (key, val) {
-                translation = translation.replace('{{ ' + key + ' }}', val);
+            $.each(data, function (k, val) {
+                translation = translation.replace('{{ ' + k + ' }}', val);
             });
 
             return translation;
@@ -144,6 +153,17 @@ const pckgFormValidator = {
             $.each(response.responseJSON.descriptions || [], function (name, message) {
                 this.errors.remove(name);
                 this.errors.add({field: name, msg: message});
+            }.bind(this));
+
+            /**
+             * Scroll to error.
+             */
+            this.$nextTick(function(){
+                let e = $(this.$el).find('.htmlbuilder-validator-error').first();
+                if (!e) {
+                    return;
+                }
+                globalScrollTo(e);
             }.bind(this));
         }
     }

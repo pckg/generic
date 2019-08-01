@@ -4,7 +4,8 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" @click="focusSearch">
                 <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
                 <template v-if="hasMultipleSelected">({{ selected.length }})</template>
-                {{ selectedTitle }} <i class="__more-icon far fa-chevron-down pull-right" :class="isDisabled ? 'color-grayish' : ''"></i>
+                {{ selectedTitle }} <i class="__more-icon far fa-chevron-down pull-right"
+                                       :class="isDisabled ? 'color-grayish' : ''"></i>
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li class="no-hover"
@@ -12,12 +13,12 @@
                     <input type="text" class="form-control input-sm"
                            v-model="search"
                            :placeholder="searchPlaceholder"
-                           @keydown.enter="selectFirst" />
+                           @keydown.enter="selectFirst"/>
                 </li>
-                <li v-if="!myMultiple && withEmpty" @click.prevent="toggleOption($event, null)">
-                    <a href="#" @click.prevent>
-                        {{ withEmpty
-                    }}</a>
+                <li v-if="!isRequired" @click.prevent="toggleOption($event, null)">
+                    <a href="#" @click.prevent class="color-grayish">
+                        {{ withEmpty }}
+                    </a>
                 </li>
                 <li v-for="(option, key) in finalOptions" :key="key" @click.prevent="toggleOption($event, key)">
                     <a href="#" @click.prevent>
@@ -81,7 +82,7 @@
                 type: Boolean
             },
             withEmpty: {
-                default: ' - - select item - -'
+                default: ' - - open - -'
             },
             initialOptions: {
                 default: function () {
@@ -197,9 +198,10 @@
         },
         methods: {
             focusSearch: function () {
-                setTimeout(function () {
+                this.$nextTick(function () {
+                    this.dropdownOpened();
                     $(this.$el).find('ul.dropdown-menu > li:first-child input').first().focus();
-                }.bind(this), 100);
+                }.bind(this));
             },
             isOptionFiltered: function (key, item) {
                 if (!this.search || this.search.length == 0) {
@@ -245,7 +247,7 @@
 
                 var options = {};
                 $.each(this.options, function (key, item) {
-                    if (typeof item == 'string') {
+                    if (typeof item === 'string' || typeof item === 'number') {
                         return;
                     }
 
@@ -331,6 +333,15 @@
                 }
 
                 this.selectedModel = this.selectedModel == key ? null : key;
+                // close and make normal
+                this.dropdownClosed();
+            },
+            dropdownClosed: function () {
+                $(this).closest('--relative-menu-opened').removeClass('--relative-menu-opened');
+            },
+            dropdownOpened: function () {
+                $('.--relative-menu-opened').removeClass('--relative-menu-opened');
+                $(this.$el).closest('.s-form-field').addClass('--relative-menu-opened');
             },
             refreshList: function () {
                 this.timeout('refreshList', function () {
