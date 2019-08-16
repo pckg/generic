@@ -42,7 +42,7 @@
 
                 if (this.source == 'youtube') {
                     if (this.display == 'background') {
-                        return 'https://www.youtube.com/embed/' + this.identifier
+                        return 'https://www.youtube-nocookie.com/embed/' + this.identifier
                             + '?controls=' + (this.action.settings.bgVideoControls == 'yes' ? 1 : 0)
                             + '&autoplay=' + (this.action.settings.bgVideoAutoplay == 'yes' ? 1 : 0)
                             + '&loop=' + (this.action.settings.bgVideoLoop == 'yes' ? 1 : 0)
@@ -50,7 +50,7 @@
                             + (this.action.settings.bgVideoMute ? '&mute=1' : '')
                             + '&playsinline=1&rel=0&showinfo=0&playlist=' + this.identifier;
                     } else {
-                        return 'https://www.youtube.com/watch?v=' + this.identifier;
+                        return 'https://www.youtube-nocookie.com/watch?v=' + this.identifier;
                     }
                 }
             }

@@ -409,14 +409,30 @@ class ActionsMorph extends Record
          */
         $classes = (new GetLessVariables())->parseAttributes($classes, $attributes);
 
+        /**
+         * Db attributes.
+         */
+        foreach ($settings->getKey('attributes', []) as $attr) {
+            foreach ($attr['css'] as $k => $v) {
+                $attributes[$attr['device']][$k] = $v;
+            }
+        }
+
+        /**
+         * Array of final attributes.
+         */
         $finalAttributes = [];
         foreach ($attributes as $device => $attrs) {
             $finalAttributes[] = [
                 'device'   => $device,
                 'selector' => '.__action-' . $this->id,
-                'css'      => [],
+                'css'      => $attrs,
             ];
         }
+
+        /**
+         * We also need to add existing attributes.
+         */
 
         $settings->push($finalAttributes, 'attributes');
         $settings->push($classes, 'classes');

@@ -258,7 +258,7 @@ class Action implements \JsonSerializable
 
         if ($source == 'youtube') {
             if ($display == 'background') {
-                $youtubeUrl = 'https://www.youtube.com/embed/' . $url . '?controls=' . ($controls == 'yes' ? 1 : 0) . '&autoplay=' . ($autoplay == 'yes' ? 1 : 0) . '&loop=' . ($loop == 'yes' ? 1 : 0) . ($mute ? '&mute=1' : '') . '&modestbranding=1' . '&playsinline=1' . '&rel=0' . '&showinfo=0' . '&playlist=' . $url;
+                $youtubeUrl = 'https://www.youtube-nocookie.com/embed/' . $url . '?controls=' . ($controls == 'yes' ? 1 : 0) . '&autoplay=' . ($autoplay == 'yes' ? 1 : 0) . '&loop=' . ($loop == 'yes' ? 1 : 0) . ($mute ? '&mute=1' : '') . '&modestbranding=1' . '&playsinline=1' . '&rel=0' . '&showinfo=0' . '&playlist=' . $url;
 
                 return '<div class="video-background">
     <div class="video-foreground">
@@ -269,7 +269,7 @@ class Action implements \JsonSerializable
                 /**
                  * We should add some trigger or link or something? :)
                  */
-                $youtubeUrl = 'https://www.youtube.com/watch?v=' . $url;
+                $youtubeUrl = 'https://www.youtube-nocookie.com/watch?v=' . $url;
 
                 return '<a href="' . $youtubeUrl . '" class="popup-iframe"></a>';
             }
