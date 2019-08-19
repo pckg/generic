@@ -415,7 +415,11 @@ class PageStructure
 
     public function postContentAction(Content $content)
     {
-        $content->setAndSave(['content' => post('content.content', null)]);
+        runInLocale(function() use ($content) {
+            $content->setAndSave([
+                                     'content' => post('content.content', null),
+                                 ]);
+        }, post('content.language_id', $content->language_id));
 
         return response()->respondWithSuccess(['content' => $content]);
     }
