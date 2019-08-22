@@ -60,7 +60,7 @@
                             + '&loop=' + (this.action.settings.bgVideoLoop == 'yes' ? 'true' : 'false')
                             + '&byline=' + (this.action.settings.bgVideoBranding == 'yes' ? 'true' : 'false')
                             + (this.action.settings.bgVideoMute ? '&muted=true' : '')
-                            + '&dnt=true&playsinline=true&portrait=false&responsive=true&transparent=true';
+                            + '&dnt=true&playsinline=true&portrait=false&responsive=true';
                     } else {
                         return 'https://player.vimeo.com/video/' + this.identifier;
                     }
