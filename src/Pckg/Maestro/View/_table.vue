@@ -157,7 +157,7 @@
                                                 </span>
 
                                                 <!-- quick filter -->
-                                                <span href="#" v-if="hasQuickFilter(field)">
+                                                <span href="#" v-if="false && hasQuickFilter(field)">
                                                     <i class="fal fa-filter"></i>
                                                 </span>
                                             </div>

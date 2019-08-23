@@ -109,3 +109,34 @@ Vue.directive('popup-image', {
         $(el).magnificPopup({type: 'image'});
     }
 });
+
+Vue.directive('router-link', {
+    bind: function (el, binding, vnode) {
+
+        return;
+        el.addEventListener('click', function ($event) {
+            let path = '/' + el.href.split('/').slice(3).join('/');
+            let managed = false;
+
+            /**
+             * Check if we can render router-view
+             */
+            if (true || vnode.context.$router.currentRoute.name) {
+                $.each(vnode.context.$router.options.routes, function (i, route) {
+                    if (route.path !== path) {
+                        return;
+                    }
+
+                    vnode.context.$router.push({path: path});
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    managed = true;
+                    return false;
+                });
+            }
+
+            return !managed;
+        });
+
+    }
+});
