@@ -176,64 +176,64 @@ let tinyMceConfig = {
     ],
     formats: {
         font_size_xxs: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxs'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xxs'
         },
         font_size_xs: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xs'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xs'
         },
         font_size_s: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-s'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-s'
         },
         font_size_m: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-m'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-m'
         },
         font_size_l: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-l'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-l'
         },
         font_size_xl: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xl'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xl'
         },
         font_size_xxl: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xxl'
         },
         font_size_xxxl: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'font-size-xxxl'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xxxl'
         },
         alignleft: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'left'}
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', styles: {'text-align': 'left'}
         },
         aligncenter: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'center'}
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', styles: {'text-align': 'center'}
         },
         alignright: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', styles: {'text-align': 'right'}
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', styles: {'text-align': 'right'}
         },
         alignjustify: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'text-justify'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'text-justify'
         },
         colordarken: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-darken'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-darken'
         },
         colorlighten: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-lighten'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-lighten'
         },
         colordarkenplus: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-darken-plus'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-darken-plus'
         },
         colorlightenplus: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-lighten-plus'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-lighten-plus'
         },
         colorlight: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-light'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-light'
         },
         colordark: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-dark'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-dark'
         },
         colorprimary: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-primary'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-primary'
         },
         colorsecondary: {
-            selector: 'a,p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table', classes: 'color-secondary'
+            selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'color-secondary'
         },
         button: {
             selector: 'a', classes: 'button'

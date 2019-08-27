@@ -134,11 +134,14 @@ const pckgFormValidator = {
                 }
             }.bind(this));
         },
+        clearErrorResponse: function() {
+            this.errors.clear();
+        },
         hydrateErrorResponse: function (response) {
             /**
              * Clear existing errors.
              */
-            this.errors.clear();
+            this.clearErrorResponse();
 
             /**
              * Skip if no JSON response.

@@ -19,13 +19,13 @@ class RouteSeo extends Bootstrap implements ResolvesOnRequest
         $description = $this->addText('seo[description]')->addCustomValidator(function($value, Custom $validator) {
             $validator->setMsg('Description should be max 130 characters long');
 
-            return strlen($value) <= 68;
+            return strlen($value) <= 130;
         });
 
         $keywords = $this->addText('seo[keywords]')->addCustomValidator(function($value, Custom $validator) {
             $validator->setMsg('Keywords should be max 250 characters long');
 
-            return strlen($value) <= 68;
+            return strlen($value) <= 250;
         });
 
         $image = $this->addText('seo[image]');
