@@ -16,7 +16,9 @@ router.afterEach(function (to, from) {
     ga('send', 'pageview');
 });
 
-const $store = window === window.top || window.location.hostname !== window.parent.location.hostname
+const synced = window !== window.top && window.location.hostname === window.parent.location.hostname;
+console.log('synced', synced);
+const $store = !synced
     ? (new Vuex.Store({
         state: {
             router: {
@@ -28,12 +30,13 @@ const $store = window === window.top || window.location.hostname !== window.pare
     }))
     : window.parent._$store;
 
-if (window === window.top) {
+if (!synced) {
+    console.log('Setting global window store')
     window._$store = $store;
 } else {
-    console.log('subscribing to changes');
+    console.log('Subscribing to changes');
     window.parent._$store.subscribe(function (mutation, parentState) {
-        console.log('replacing state in iframe', parentState);
+        //console.log('replacing state in iframe', parentState, mutation);
         $store.replaceState(parentState);
     });
 }

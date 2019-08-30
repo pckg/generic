@@ -413,8 +413,8 @@ class ActionsMorph extends Record
          * Db attributes.
          */
         foreach ($settings->getKey('attributes', []) as $attr) {
-            foreach ($attr['css'] as $k => $v) {
-                $attributes[$attr['device']][$k] = $v;
+            foreach ($attr['css'] as $a => $v) {
+                $attributes[$attr['device']][$a] = $v;
             }
         }
 
