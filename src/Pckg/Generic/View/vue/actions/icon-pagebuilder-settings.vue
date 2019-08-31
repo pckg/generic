@@ -5,13 +5,13 @@
                     name="icon"
                     type="select:single"
                     :options="{options: initialOptions.availableIcons}"
-                    v-model="action.settings.icon"></form-group>
+                    v-model="iconModel"></form-group>
 
         <form-group label="Style"
                     name="iconStyle"
                     type="select:single"
                     :options="{options: initialOptions.availableStyles}"
-                    v-model="action.settings.iconStyle"></form-group>
+                    v-model="iconStyleModel"></form-group>
 
     </div>
 </template>
@@ -28,5 +28,9 @@
                 }
             };
         },
+        computed: {
+            iconModel: pckgComputedSetting('icon'),
+            iconStyleModel: pckgComputedSetting('iconStyle'),
+        }
     }
 </script>
