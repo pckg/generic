@@ -14,11 +14,9 @@ body {
 
 /* GENERIC */
 .box-with-padding {
-  background: #fff;
-  padding: 2.4rem;
-  border-radius: .6rem;
-  border: 1px solid #e7e7e7;
-  margin-bottom: 2.4rem;
+  padding: 4rem;
+  border-radius: 1.5rem;
+  margin-bottom: 6rem;
   clear: both;
 
   .__separator-line {
@@ -32,6 +30,28 @@ body {
       margin-right: -2.4rem;
     }
   }
+
+  &.--bg-color {
+    background-color: @maestro-bg-dark;
+  }
+
+  &.--rm-padding {
+    padding: 4rem 0;
+  }
+}
+
+.panel {
+  border: none;
+  box-shadow: none;
+
+  .panel-body {
+    padding: 0;
+  }
+}
+
+.btn-size-l {
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
 }
 
 .maestro-sidebar-bottom {
@@ -392,17 +412,17 @@ body {
 
 .maestro-content {
   float: right;
-  padding: 2rem 0;
-  margin: 0 2rem;
+  padding: 6rem 0;
+  margin: 0 6rem;
   transition: @transition-d;
-  width: ~"calc(100% - 24rem)";
+  width: ~"calc(100% - 32rem)";
 
   &.login {
     margin-left: 0;
   }
 
   body.collapsed & {
-    width: ~"calc(100% - 9rem)";
+    width: ~"calc(100% - 17rem)";
   }
 }
 
@@ -441,11 +461,6 @@ textarea,
   font-size: 1.5rem;
   padding: .6rem;
   height: auto;
-
-  &:focus,
-  &:hover {
-    border-bottom: 2px solid #999;
-  }
 }
 
 .pckg-loader {
@@ -573,6 +588,32 @@ ul.vertical-mid-menu {
 }
 
 .derive-setup-wizard {
+  background: @maestro-bg-dark;
+  background-position: center center;
+  margin: -6rem -6rem 6rem;
+  padding: 8rem;
+
+  h2 {
+    border-bottom: 1px solid @border-grey;
+    padding-bottom: 1rem;
+
+    span {
+      font-size: 2rem;
+    }
+    i {
+      transition: @transition-d;
+
+      &.clr-grayish {
+        color: @lightGray;
+      }
+    }
+    a {
+      &:hover i.clr-grayish {
+        color: @clr-primary;
+      }
+    }
+  }
+
   label {
     font-weight: normal;
   }
@@ -586,60 +627,15 @@ ul.vertical-mid-menu {
 
   .step,
   .welcome-screen {
-    .btn {
-      position: relative;
-      color: #3FB3BA;
-      text-transform: uppercase;
-      z-index: 3;
-      /*background: linear-gradient(-30deg, #4AD481, #3FB3BA);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;*/
-      border: none;
-      padding: 1.5rem 2rem;
-      transition: @transition-d;
 
-      &:before {
-        position: absolute;
-        display: block;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        content: '';
-        background: linear-gradient(-30deg, #4AD481, #3FB3BA);
-        transition: @transition-d;
-        z-index: -2;
-      }
-
-      &:after {
-        position: absolute;
-        display: block;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 2px;
-        content: '';
-        background: #fff;
-        transition: @transition-d;
-        z-index: -1;
-      }
-
-      &:hover {
-        color: #4AD481;
-
-        &:before {
-          background: linear-gradient(150deg, #4AD481, #3FB3BA);
-        }
-
-        &:after {
-          background: #fcfcfc;
-        }
-      }
-    }
   }
 
   .step {
     margin-bottom: 1.2rem;
+
+    h3 {
+      margin-bottom: 1rem;
+    }
 
     &.finished {
       background: #fafafa;
@@ -710,5 +706,45 @@ ul.vertical-mid-menu {
         }
       }
     }
+  }
+}
+
+//overrides
+.scope-bg-system select, .scope-bg-system textarea, .scope-bg-system input[type="text"], .scope-bg-system input[type="password"],
+.scope-bg-system input[type="email"], .scope-bg-system input[type="date"], .scope-bg-system input[type="datetime"],
+.scope-bg-system input[type="number"], .scope-bg-system .input-group, .scope-bg-system .form-control, .scope-bg-system
+.pckg-select .dropdown-toggle, .scope-bg-system .c-google-font-selector .dropdown-toggle {
+  font-size: 1.4rem;
+  height: 3.8rem;
+  line-height: 3.8rem;
+}
+.scope-bg-system .pckg-select .__more-icon, .scope-bg-system .c-google-font-selector .__more-icon {
+  margin-top: 1.3rem;
+}
+._component.actionbuilder-panel {
+  padding: 0;
+}
+.panel-modules-all {
+  h4 {
+    margin-bottom: 1rem;
+
+    a {
+      float: right;
+      margin-left: 1rem;
+    }
+
+    nobr {
+      margin-left: 1rem;
+    }
+
+    .fa-toggle-on {
+      color: @clr-success;
+    }
+    .fa-toggle-off {
+      color: @clr-error;
+    }
+  }
+  .box-with-padding {
+    margin-bottom: 2rem;
   }
 }
