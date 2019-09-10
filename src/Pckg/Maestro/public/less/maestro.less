@@ -14,20 +14,20 @@ body {
 
 /* GENERIC */
 .box-with-padding {
-  padding: 4rem;
+  padding: @spacing-m;
   border-radius: 1.5rem;
-  margin-bottom: 6rem;
+  margin-bottom: @spacing-m;
   clear: both;
 
   .__separator-line {
     border-bottom: 1px solid @border-grey;
     left: 0;
-    margin: 20px 0;
+    margin: @spacing-s 0;
     right: 0;
 
     &.--full-width {
-      margin-left: -2.4rem;
-      margin-right: -2.4rem;
+      margin-left: -@spacing-m;
+      margin-right: -@spacing-m;
     }
   }
 
@@ -36,7 +36,11 @@ body {
   }
 
   &.--rm-padding {
-    padding: 4rem 0;
+    padding: @spacing-m 0;
+  }
+
+  &.--mb-s {
+    margin-bottom: @spacing-s;
   }
 }
 
@@ -667,84 +671,89 @@ ul.vertical-mid-menu {
   }
 }
 
-//
+//Stats comparison with the previous track record
+.__comparison {
+  color: @lighterGray;
+  margin-top: 0.5rem;
+  text-decoration-line: underline;
+  text-decoration-style: double;
+  vertical-align: top;
+  .inline-block();
+
+  i {
+    margin-right: .3rem;
+  }
+}
+
+//When word is between two elements
+.__word-separator {
+  .inline-block();
+  margin-left: @spacing-xs;
+  margin-right: @spacing-xs;
+}
+
+//Shows very basic stats (number of orders, revenue...) for a set periof of time (last 7 days, previous month...)
 .c-shop-stats-summary {
-  h2 {
-    display: inline;
-    margin-right: 1rem;
-  }
-  h3 {
-    color: @lightGray;
-    margin-bottom: .5rem;
-  }
-  strong {
-    font-size: 4rem;
-    line-height: 4rem;
-    margin-right: 1.5rem;
-  }
-  .__comparison {
-    color: @lighterGray;
-    margin-top: 0.5rem;
-    text-decoration-line: underline;
-    text-decoration-style: double;
-    vertical-align: top;
-    .inline-block();
+}
 
-    i {
-      margin-right: .3rem;
-    }
+//Maestro modules
+.panel-modules-all {
+  .fa-toggle-on {
+    color: @clr-success;
   }
-  .s-content {
-    .row {
-      .col-md-6 {
-        &:nth-child(2n+1) {
-          border-right: .1rem solid @border-grey;
-
-          @media only screen and (max-width: @xs-max) {
-            border-right: none;
-          }
-        }
-      }
-    }
+  .fa-toggle-off {
+    color: @clr-error;
   }
 }
 
-//overrides
-.scope-bg-system select, .scope-bg-system textarea, .scope-bg-system input[type="text"], .scope-bg-system input[type="password"],
-.scope-bg-system input[type="email"], .scope-bg-system input[type="date"], .scope-bg-system input[type="datetime"],
-.scope-bg-system input[type="number"], .scope-bg-system .input-group, .scope-bg-system .form-control, .scope-bg-system
-.pckg-select .dropdown-toggle, .scope-bg-system .c-google-font-selector .dropdown-toggle {
-  font-size: 1.4rem;
-  height: 3.8rem;
-  line-height: 3.8rem;
+//Initially used for stats
+.__big_number {
+  font-size: 4rem;
+  line-height: 4rem;
+  margin-right: 1.5rem;
 }
-.scope-bg-system .pckg-select .__more-icon, .scope-bg-system .c-google-font-selector .__more-icon {
-  margin-top: 1.3rem;
+
+.__icon-tooltip-right-of-title {
+  margin-left: @spacing-xs;
 }
+.__link-action-floating-right {
+  float: right;
+  margin-left: @spacing-xs;
+}
+
+//overrides from pagebuilder.less
 ._component.actionbuilder-panel {
   padding: 0;
 }
-.panel-modules-all {
-  h4 {
-    margin-bottom: 1rem;
 
-    a {
-      float: right;
-      margin-left: 1rem;
-    }
+//Navigation back button, should be placed left from the page title
+.__maestro-back-button {
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 2rem;
+  height: 3rem;
+  line-height: 3rem;
+  margin-right: @spacing-xs;
+  margin-left: -@spacing-xs;
+  text-align: center;
+  vertical-align: bottom;
+  width: 3rem;
 
-    nobr {
-      margin-left: 1rem;
-    }
-
-    .fa-toggle-on {
-      color: @clr-success;
-    }
-    .fa-toggle-off {
-      color: @clr-error;
-    }
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: @clr-primary;
+    color: #FFF;
   }
-  .box-with-padding {
-    margin-bottom: 2rem;
+}
+
+/* Utilities */
+
+//Border used as a vertical separator between columns
+.u-vertical-separator-hidden-xs {
+  border-right: .1rem solid @border-grey;
+
+  @media only screen and (max-width: @xs-max) {
+    border-right: none;
   }
 }
