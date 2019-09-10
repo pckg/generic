@@ -37,7 +37,9 @@ class EnrichResponse
                 $output = (string)$output;
 
                 $generic = Reflect::create(Generic::class);
-                if ((substr($output, 0, 5)) !== '<html' && strtolower(substr($output, 0, 9)) != '<!doctype') {
+                if ((substr($output, 0, 5)) !== '<html'
+                    && strtolower(substr($output, 0, 9)) !== '<!doctype'
+                    && strtolower(substr($output, 0, 5)) !== '<?xml') {
                     $output = $generic->wrapIntoGenericContainer($output, 'Pckg/Generic:frontend');
                 }
             }

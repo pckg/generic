@@ -41,7 +41,8 @@ class SettingsMorph extends Record
             ? json_decode($this->value, true)
             : $this->value;
         $merge = true;
-        if ($slug === 'derive.documents.events') {
+        $current = config($slug);
+        if (is_associative_array($current)) {
             $merge = false;
         }
         config()->set($slug, $newValue, $merge);

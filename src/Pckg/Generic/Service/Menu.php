@@ -17,19 +17,19 @@ class Menu
 
         $menus = new Menus($repositoryObject);
         $locale = first($language, config('pckg.locale.default'), 'en_GB');
-        $menu = runInLocale(
+        $menus = runInLocale(
             function() use ($menus, $slug) {
-                return $menus->where('slug', $slug)->one();
+                return $menus->where('slug', $slug)->all();
             },
             $locale
         );
 
-        if (!$menu) {
+        if (!$menus->count()) {
             return '<!-- no menu -->';
         }
 
-        $menuItems = runInLocale(function() use ($menu, $permissions, $repositoryObject, $locale) {
-            $entity = (new MenuItems($repositoryObject))->where('menu_id', $menu->id);
+        $menuItems = runInLocale(function() use ($menus, $permissions, $repositoryObject, $locale) {
+            $entity = (new MenuItems($repositoryObject))->where('menu_id', $menus->map('id')->all());
 
             if ($permissions) {
                 $entity->joinPermissionTo('read');
@@ -46,9 +46,10 @@ class Menu
         }
 
         return view(
-            'Pckg\Generic:menu\\' . $menu->template,
+            'Pckg\Generic:menu\\' . $menus->first()->template,
             [
-                'menu'      => $menu,
+                'menu'      => $menus->first(),
+                'menus'     => $menus,
                 'menuItems' => $this->buildTree($menuItems),
                 'params'    => $params,
             ]
