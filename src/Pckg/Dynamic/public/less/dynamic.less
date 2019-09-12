@@ -804,58 +804,6 @@ img.editor-img {
   .list-container-responsive(4, 0, 0, ~'.item', 360px);
 }
 
-.derive-tools-segmentation-component {
-  margin-bottom: 2rem;
-
-  .row {
-    .list-container-responsive(4, 0, 0, ~'.item', 360px);
-
-    .item {
-      .form-group {
-        margin: 0;
-
-        > label {
-          display: block;
-          width: 100%;
-          padding-left: 0;
-        }
-
-        > div {
-          display: block;
-          width: 100%;
-        }
-      }
-
-      &.with-operator {
-        display: table;
-        position: relative;
-        margin-top: 3rem;
-
-        > .pckg-select,
-        > .form-group {
-          display: table-cell;
-          vertical-align: bottom;
-        }
-
-        > .form-group {
-          > label {
-            position: absolute;
-            left: 0;
-            top: -3rem;
-            padding-left: 0;
-          }
-        }
-      }
-
-      &:not(.with-operator) .form-group {
-        > div {
-          padding-left: 0;
-        }
-      }
-    }
-  }
-}
-
 table.table {
   margin-bottom: 0;
 }
