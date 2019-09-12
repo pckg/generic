@@ -41,7 +41,7 @@
                 }
 
                 if (this.source == 'youtube') {
-                    if (this.display == 'background') {
+                    if (true || this.display == 'background') {
                         return 'https://www.youtube-nocookie.com/embed/' + this.identifier
                             + '?controls=' + (this.action.settings.bgVideoControls == 'yes' ? 1 : 0)
                             + '&autoplay=' + (this.action.settings.bgVideoAutoplay == 'yes' ? 1 : 0)
