@@ -1,12 +1,12 @@
 <template>
     <div class="pckg-clipboard" :class="type == 'simple' ? '' : 'input-group'">
-        <a v-if="type == 'default' && link" class="input-group-addon" :href="text" title="Open in new tab"><i class="fa fa-link"></i></a>
+        <a v-if="type == 'default' && link" class="input-group-addon" :href="text" title="Open in new tab"><i class="fal fa-link"></i></a>
         <input type="text" class="form-control"
                @click.prevent="copyToClipboard"
                data-toggle="tooltip" v-model="text"/>
         <a target="_blank" @click.prevent="copyToClipboard" :href="text" title="Copy link"
            :class="type == 'simple' ? '' : 'input-group-addon'"
-        ><i class="fa fa-copy"></i></a>
+        ><i class="fal fa-copy"></i></a>
     </div>
 </template>
 

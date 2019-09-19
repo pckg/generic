@@ -2,7 +2,7 @@
     <div class="pckg-select" :class="[styleClass, isDisabled ? 'is-disabled' : '']">
         <div class="btn-group">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" @click="focusSearch">
-                <i v-if="loading" class="fa fa-spin fa-spinner-third position-absolute"></i>
+                <i v-if="loading" class="fal fa-spin fa-spinner-third position-absolute"></i>
                 <template v-if="hasMultipleSelected">({{ selected.length }})</template>
                 {{ selectedTitle }} <i class="__more-icon far fa-chevron-down pull-right"
                                        :class="isDisabled ? 'color-grayish' : ''"></i>
@@ -23,10 +23,10 @@
                 <li v-for="(option, key) in finalOptions" :key="key" @click.prevent="toggleOption($event, key)">
                     <a href="#" @click.prevent>
                         <span class="text-left">
-                            <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
+                            <i v-if="myMultiple && isValueSelected(key)" class="fal fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
                             {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fa fa-fw fa-check"></i>
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fal fa-fw fa-check"></i>
                         </span>
                     </a>
                 </li>
@@ -34,10 +34,10 @@
                     <li :key="label"><b>{{ label }}</b></li>
                     <li v-for="(option, key) in optgroup" :key="label + key" @click.prevent="toggleOption($event, key)">
                         <a href="#" @click.prevent>
-                            <i v-if="myMultiple && isValueSelected(key)" class="fa fa-fw fa-check-square"></i>
+                            <i v-if="myMultiple && isValueSelected(key)" class="fal fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
                             {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fa fa-fw fa-check"></i>
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fal fa-fw fa-check"></i>
                         </a>
                     </li>
                 </template>

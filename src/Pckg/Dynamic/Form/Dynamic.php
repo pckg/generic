@@ -389,7 +389,7 @@ ifrm.document.close();
                     ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
-                         '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
+                         '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
                          $this->record->{$field->field} . '</a>';
             }
         } elseif ($type == 'picture') {
@@ -400,7 +400,7 @@ ifrm.document.close();
                     cdn($fullPath) . '" /></a>';
             }
         } elseif ($type == 'boolean') {
-            $value = $value ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>';
+            $value = $value ? '<i class="fal fa-check"></i>' : '<i class="fal fa-times"></i>';
         }
 
         $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
@@ -447,7 +447,7 @@ ifrm.document.close();
                             '<a class="btn btn-default btn-md" title="Preview" href="' .
                             $field->getPreviewFileUrlAttribute(
                                 $this->record
-                            ) . '"><i class="fa fa-external-link" aria-hidden="true"></i> Preview ' . $type .
+                            ) . '"><i class="fal fa-external-link" aria-hidden="true"></i> Preview ' . $type .
                             '</a>&nbsp;&nbsp;'
                         );
                     }
@@ -456,14 +456,14 @@ ifrm.document.close();
                             '<a class="btn btn-default btn-md" title="Generate" href="' .
                             $field->getGenerateFileUrlAttribute(
                                 $this->record
-                            ) . '"><i class="fa fa-refresh" aria-hidden="true"></i> Generate ' . $type .
+                            ) . '"><i class="fal fa-refresh" aria-hidden="true"></i> Generate ' . $type .
                             '</a>&nbsp;&nbsp;'
                         );
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild(
                             '<a class="btn btn-default btn-md" title="Download" href="' .
-                            $fullPath . '"><i class="fa fa-download" aria-hidden="true"></i> Download ' .
+                            $fullPath . '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
                             $this->record->{$field->field} . '</a>&nbsp;&nbsp;'
                         );
                     }
@@ -471,7 +471,7 @@ ifrm.document.close();
             } else {
                 $element = $this->getFieldset()->addFile($name);
                 $element->setPrefix(
-                    '<i class="fa fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
+                    '<i class="fal fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
                 );
 
                 if ($fullPath) {
@@ -553,21 +553,21 @@ ifrm.document.close();
         } elseif ($type == 'datetime') {
             $element = $this->getFieldset()->addDatetime($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'date') {
             $element = $this->getFieldset()->addDate($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fa fa-calendar" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
         } elseif ($type == 'time') {
             $element = $this->getFieldset()->addTime($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fa fa-clock-o" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-clock-o" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
 
             return $element;
@@ -590,7 +590,7 @@ ifrm.document.close();
             return $this->getFieldset()->addCheckbox($name);
         } elseif ($type == 'geo') {
             $element = $this->getFieldset()->addGeo($name);
-            $element->setPrefix('<i class="fa fa-map-marker" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-map-marker" aria-hidden="true"></i>');
 
             return $element;
         } elseif ($type == 'select') {

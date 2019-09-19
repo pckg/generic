@@ -10,11 +10,11 @@
             <button type="button" class="dropdown-toggle btn btn-default"
                     title="" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-ellipsis-h"></i>
+                <i class="fal fa-ellipsis-h"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
-                <li><a href="#" @click.prevent="exportView"><i class="fa fa-download"></i> Export</a></li>
-                <li><a href="#" @click.prevent="importView"><i class="fa fa-upload"></i> Import</a></li>
+                <li><a href="#" @click.prevent="exportView"><i class="fal fa-download"></i> Export</a></li>
+                <li><a href="#" @click.prevent="importView"><i class="fal fa-upload"></i> Import</a></li>
                 <li v-for="action in actions">
                     <a href="#" @click.prevent="entityAction(action.event)">
                         <i class="fa" :class="'fa-' + action.icon"></i>
@@ -39,7 +39,7 @@
 
                 <d-input-button :disabled="exportMode == 'exporting'" :loading="exportMode == 'exporting'"
                                 :text="exportMode == 'exporting' ? 'Exporting' : (exportMode == 'exported' ? 'Exported' : 'Make export')"
-                                :icon="exportMode == 'exported' ? 'fa fa-check clr-success' : (exportMode == 'error' ? 'fa fa-times clr-error' : '')"
+                                :icon="exportMode == 'exported' ? 'fal fa-check clr-success' : (exportMode == 'error' ? 'fal fa-times clr-error' : '')"
                                 @click.native.prevent="makeExport"></d-input-button>
             </div>
         </pckg-bootstrap-modal>
@@ -108,7 +108,7 @@
                 <d-input-button :disabled="['preparing', 'imported', 'error'].indexOf(importMode) < 0"
                                 :loading="importMode == 'importing'"
                                 :text="importMode == 'importing' ? 'Importing' : (importMode == 'imported' ? 'Imported' : 'Make import')"
-                                :icon="importMode == 'imported' ? 'fa fa-check clr-success' : (importMode == 'error' ? 'fa fa-times clr-error' : '')"
+                                :icon="importMode == 'imported' ? 'fal fa-check clr-success' : (importMode == 'error' ? 'fal fa-times clr-error' : '')"
                                 @click.native.prevent="makeImport"></d-input-button>
 
             </div>

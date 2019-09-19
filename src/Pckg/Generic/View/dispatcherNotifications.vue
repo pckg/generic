@@ -6,7 +6,7 @@
             v-for="notification in notifications">
 
             <div class="col">
-                <i class="fas fa-fw" :class="iconClass(notification)"></i>
+                <i class="fal fa-fw" :class="iconClass(notification)"></i>
             </div>
             <div class="col" v-html="notification.content"></div>
             <div class="col">

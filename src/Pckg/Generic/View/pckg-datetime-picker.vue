@@ -9,7 +9,7 @@
                 <div class="as-table">
                     <div class="prev">
                         <button type="button" class="btn btn-default btn-sm pull-left" @click.prevent="prev">
-                            <i class="fa fa-chevron-left"></i>
+                            <i class="fal fa-chevron-left"></i>
                         </button>
                     </div>
                     <div class="title">
@@ -19,7 +19,7 @@
                     </div>
                     <div class="next">
                         <button type="button" class="btn btn-default btn-sm pull-right" @click.prevent="next">
-                            <i class="fa fa-chevron-right"></i>
+                            <i class="fal fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                 <template v-else-if="myMode == 'day'">
                     <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
                             @click.prevent="prevHour">
-                        <i class="fa fa-chevron-up"></i>
+                        <i class="fal fa-chevron-up"></i>
                     </button>
 
                     <hr v-if="false"/>
@@ -82,7 +82,7 @@
 
                     <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
                             @click.prevent="nextHour">
-                        <i class="fa fa-chevron-down"></i>
+                        <i class="fal fa-chevron-down"></i>
                     </button>
                 </template>
 

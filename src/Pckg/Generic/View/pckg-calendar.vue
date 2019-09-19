@@ -9,7 +9,7 @@
                         <div class="as-table">
                             <div class="prev">
                                 <button type="button" class="btn btn-default btn-sm pull-left" @click.prevent="prev">
-                                    <i class="fa fa-chevron-left"></i>
+                                    <i class="fal fa-chevron-left"></i>
                                 </button>
                             </div>
                             <div class="title">
@@ -19,7 +19,7 @@
                             </div>
                             <div class="next">
                                 <button type="button" class="btn btn-default btn-sm pull-right" @click.prevent="next">
-                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="fal fa-chevron-right"></i>
                                 </button>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                           :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date).slice(0, 3)" class="__event">
-                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fal fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -86,7 +86,7 @@
                                           :disabled="day.disabled">{{ day.day }}
                                     </span>
                                     <div v-for="event in getDayEvents(day.date)" class="__event">
-                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fal fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>
@@ -104,7 +104,7 @@
                         <tr>
                             <th class="no-border"></th>
                             <th v-for="events in groupedDayEvents()">
-                                <i :style="{color: keyedGroups[events[0].group].color}" class="fas fa-circle"></i>
+                                <i :style="{color: keyedGroups[events[0].group].color}" class="fal fa-circle"></i>
                                 {{ keyedGroups[events[0].group].title }}
                             </th>
                         </tr>
@@ -117,7 +117,7 @@
                                     <div v-for="event in group" class="__event"
                                          style2="position: absolute;"
                                          :style2="getEventStyle(event)">
-                                        <i :style="{color: getEventColor(event)}" class="fas fa-circle"></i>
+                                        <i :style="{color: getEventColor(event)}" class="fal fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>
                                     </div>

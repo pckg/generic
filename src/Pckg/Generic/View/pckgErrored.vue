@@ -1,6 +1,6 @@
 <template>
     <span v-if="myErrored" class="pckg-loader text-center" :class="mode">
-        <i class="fa fa-exclamation fa-2x"></i>
+        <i class="fal fa-exclamation fa-2x"></i>
         <br />
         <p class="clr-error">Error loading content</p>
     </span>

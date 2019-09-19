@@ -1,7 +1,7 @@
 <script type="text/x-template" id="pckg-maestro-actions{{ table ? '-' ~ table ~ '-template' : '' }}">
     <div class="btn-group btn-group-sm pull-right">
         <div class="btn btn-default" v-if="typeof record.language_id != 'undefined' && !record.language_id">
-            &nbsp;&nbsp;&nbsp;<i class="fa fa-globe" title="Not translated" style="color: red;"></i>&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;<i class="fal fa-globe" title="Not translated" style="color: red;"></i>&nbsp;&nbsp;&nbsp;
         </div>
         <div class="btn btn-default">
             {% for action in recordActions %}

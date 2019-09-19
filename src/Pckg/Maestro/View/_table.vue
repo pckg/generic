@@ -19,7 +19,7 @@
                     <i class="fal fa-sliders-h"></i>
                 </a>
                 <a href="#" v-else @click.prevent="configureSection = 'closed'">
-                    <i class="fa fa-sliders-h"></i>
+                    <i class="fal fa-sliders-h"></i>
                 </a>
             </div>
 
@@ -117,12 +117,12 @@
                                 v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
                                 <a v-if="action.recordHref && selectedRecord[action.recordHref]"
                                    :href="selectedRecord[action.recordHref]">
-                                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
+                                    <i class="fal fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
                                 <a v-else-if="action.event" href="#"
                                    @click.prevent="recordAction(selectedRecord, action.event)">
-                                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
+                                    <i class="fal fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
                                 </a>
                             </li>

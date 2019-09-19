@@ -27,10 +27,10 @@
             <!-- when relation is selected -->
             <template v-else-if="isRelation">
                 <template v-if="customizeRelation">
-                    <i class="fa fa-cog" @click.prevent="decustomizeRelation" title="Decustomize relation"></i>
+                    <i class="fal fa-cog" @click.prevent="decustomizeRelation" title="Decustomize relation"></i>
                 </template>
                 <template v-else>
-                    <i class="fa fa-cogs" @click.prevent="customizeRelationBtn" title="Customize relation"></i>
+                    <i class="fal fa-cogs" @click.prevent="customizeRelationBtn" title="Customize relation"></i>
                 </template>
 
                 <!-- another level when customized -->

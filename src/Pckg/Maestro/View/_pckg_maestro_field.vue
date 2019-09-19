@@ -74,10 +74,10 @@
         </div>
         <div v-if="editable">
             <button href="#" class="btn btn-xs btn-danger" title="Cancel changes" @click.prevent="cancelChanges">
-                <i class="fa fa-minus" aria-hidden="true"></i>
+                <i class="fal fa-minus" aria-hidden="true"></i>
             </button>
             <button href="#" class="btn btn-xs btn-success" title="Save changes" @click.prevent="saveChanges">
-                <i class="fa fa-check" aria-hidden="true"></i>
+                <i class="fal fa-check" aria-hidden="true"></i>
             </button>
         </div>
     </div>

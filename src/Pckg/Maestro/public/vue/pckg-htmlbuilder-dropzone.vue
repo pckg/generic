@@ -140,7 +140,7 @@
                 }
 
                 if (this.state == 'error') {
-                    return 'fas fa-exclamation-triangle';
+                    return 'fal fa-exclamation-triangle';
                 }
             },
             infoText: function () {
