@@ -44,15 +44,6 @@ body {
   }
 }
 
-.panel {
-  border: none;
-  box-shadow: none;
-
-  .panel-body {
-    padding: 0;
-  }
-}
-
 .btn-size-l {
   font-size: 1.6rem;
   padding: 1rem 2rem;
@@ -166,7 +157,7 @@ body {
     &:hover,
     &:active,
     &:focus {
-      color: @clr-secondary;
+      color: @clr-primary;
     }
   }
   .maestro-sidebar-inside {
@@ -244,7 +235,7 @@ body {
 
     .active > a,
     a:hover {
-      color: @clr-secondary;
+      color: @clr-primary;
     }
   }
 
@@ -468,7 +459,7 @@ textarea,
 }
 
 .pckg-loader {
-  color: @clr-secondary;
+  color: @clr-primary;
 }
 
 ul.nav-tabs {
@@ -499,7 +490,7 @@ ul.nav-tabs {
         &, &:focus, &:hover {
           background: transparent;
           border: none;
-          color: @clr-secondary;
+          color: @clr-primary;
 
           &:after {
             position: absolute;
@@ -510,7 +501,7 @@ ul.nav-tabs {
             width: 100%;
             display: block;
             content: '';
-            background: @clr-secondary;
+            background: @clr-primary;
           }
         }
       }
@@ -548,7 +539,7 @@ ul.vertical-mid-menu {
       color: inherit;
       //font-weight: bold;
       &.router-link-active {
-        color: @clr-secondary;
+        color: @clr-primary;
       }
     }
 
@@ -574,7 +565,7 @@ ul.vertical-mid-menu {
     }
     &.opened {
       //background: #fafafa;
-      color: @clr-secondary;
+      color: @clr-primary;
       /*> ul {
         max-height: fit-content;
       }
@@ -592,10 +583,7 @@ ul.vertical-mid-menu {
 }
 
 .derive-setup-wizard {
-  background: @maestro-bg-dark;
-  background-position: center center;
-  margin: -6rem -6rem 6rem;
-  padding: 8rem;
+  padding: 2rem 6rem 6rem 6rem;
 
   h2 {
     border-bottom: 1px solid @border-grey;
@@ -747,15 +735,16 @@ ul.vertical-mid-menu {
   }
 }
 
-.__module-disabled {
+.--locked-out {
   color: @lightGray;
 
   .fa-toggle-off {
     color: @lightGray;
   }
-}
-.__module-disabled-message {
-  color: @text;
+
+  .__module-disabled-message {
+    color: @text;
+  }
 }
 
 /* Utilities */
