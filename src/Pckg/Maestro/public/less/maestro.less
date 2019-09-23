@@ -707,6 +707,12 @@ ul.vertical-mid-menu {
 .__link-action-floating-right {
   float: right;
   margin-left: @spacing-xs;
+
+  h1 &,
+  h2 & {
+    font-size: 2rem;
+    line-height: 4.4rem;
+  }
 }
 
 //overrides from pagebuilder.less
@@ -715,17 +721,18 @@ ul.vertical-mid-menu {
 }
 
 //Navigation back button, should be placed left from the page title
-.__maestro-back-button {
+.__maestro-back-button,
+.__maestro-hover-circle-btn {
   border-radius: 50%;
   display: inline-block;
   font-size: 2rem;
-  height: 3rem;
-  line-height: 3rem;
+  line-height: 3.6rem;
+  margin-top: -.5rem;
   margin-right: @spacing-xs;
-  margin-left: -@spacing-xs;
+  margin-left: -1rem;
   text-align: center;
-  vertical-align: bottom;
-  width: 3rem;
+  vertical-align: middle;
+  width: 3.6rem;
 
   &:active,
   &:focus,
@@ -749,25 +756,46 @@ ul.vertical-mid-menu {
 
 /* Utilities */
 
-.table.--table-list {
-  td:first-child,
-  th {
-    font-weight: bold;
-  }
-  td, td {
-    &:first-child {
-      width: 16rem;
+.color-grayish {
+  color: #8c8c8c;
+}
+
+.table {
+  &.--table-list,
+  &.--table-list-btn {
+    th {
+      font-weight: bold;
+    }
+
+    th {
+      border-bottom-width: 1px;
+      text-align: inherit;
+    }
+
+    td {
+      border-top-width: 0;
     }
   }
-  th {
-    border-bottom-width: 1px;
-    text-align: inherit;
+
+  &.--table-list {
+    th, td {
+      &:first-child {
+        width: 16rem;
+        font-weight: bold;
+      }
+    }
   }
-  td {
-    border-top-width: 0;
-  }
-  .color-grayish {
-    color: #8c8c8c;
+
+  &.--table-list-btn {
+    th, td {
+      &:first-child {
+        width: 4rem;
+      }
+      &:nth-child(2) {
+        width: 16rem;
+        font-weight: bold;
+      }
+    }
   }
 }
 

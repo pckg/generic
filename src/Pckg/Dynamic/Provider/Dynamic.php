@@ -91,6 +91,13 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
+                        '/api/dynamic/form/[table]'                                                  => [
+                            'name'      => 'api.dynamic.form',
+                            'view'      => 'viewFormApi',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
                         '/api/dynamic/table/[table]/relation/[relation]/record/[record]'                                                  => [
                             'name'      => 'api.dynamic.record.relation.list',
                             'view'      => 'viewTableApi',

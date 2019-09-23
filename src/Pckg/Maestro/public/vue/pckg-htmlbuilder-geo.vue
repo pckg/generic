@@ -1,55 +1,42 @@
-<script type="text/x-template" id="pckg-htmlbuilder-geo">
+<template>
     <div class="pckg-htmlbuilder-geo">
         <button type="button" @click.prevent="openMap()" class="btn btn-info btn-md" title="Open map">
             <i class="fal fa-globe" aria-hidden="true"></i>
         </button>
 
-        {% embed 'Pckg/Generic/View/modal.twig' with {'close': true, 'id': 'pckgHtmlbuilderGeoModal'} %}
-            {% block header %}
-                Select location
-            {% endblock %}
-            {% block body %}
+        <pckg-bootstrap-modal :visible="modal" @close="modal = null">
+            <div slot="header">Select location</div>
+            <div slot="body">
                 <vue-component-gmaps selector="#gmap" id="gmap" theme="base" :search="search" :ref="'gmap'"
                                      center="46.055144;14.512284" :zoom="10"
                                      :locations="locations" v-model="value"></vue-component-gmaps>
 
-                {{ _formService.open() | raw }}
-                {{ _formService.addText('search').setAttribute('v-model', 'search').setLabel('Search') | raw }}
-                {{ _formService.close() | raw }}
-            {% endblock %}
-            {% block footer %}
+                <form-group type="text" label="Search" v-model="search"></form-group>
+
                 <button type="button" class="btn btn-success" data-dismiss="modal" @click.prevent="selectAndClose">
                     Select and close
                 </button>
-            {% endblock %}
-        {% endembed %}
+            </div>
+        </pckg-bootstrap-modal>
     </div>
-</script>
-
-<style>
-    #gmap {
-        height: 400px;
-        width: 100%;
-    }
-</style>
+</template>
 
 <script>
-    var pckgHtmlbuilderGeo = Vue.component('pckg-htmlbuilder-geo', {
-        mixins: [pckgDelimiters],
-        template: '#pckg-htmlbuilder-geo',
+    export default {
         props: {
             value: {}
         },
         data: function () {
             return {
-                search: null
+                search: null,
+                modal: null
             };
         },
         computed: {
             locations: function () {
                 var locations = [];
                 if (this.value) {
-                    locations.push({geo:this.geoValue});
+                    locations.push({geo: this.geoValue});
                 }
                 return locations;
             },
@@ -64,7 +51,7 @@
                     this.$refs.gmap.setCenter(value);
                 }
                 this.$refs.gmap.singletonMap();
-                $('#pckgHtmlbuilderGeoModal').modal('show');
+                this.modal = true;
             },
             selectAndClose: function () {
                 var val = this.$refs.gmap.getLocation().geo.join(';');
@@ -80,5 +67,5 @@
                 //$(this.$el).parent().find('input.geo').on('focus', this.openMap);
             });
         }
-    });
+    }
 </script>

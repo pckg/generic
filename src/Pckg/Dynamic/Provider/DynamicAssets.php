@@ -6,16 +6,6 @@ use Pckg\Framework\Provider;
 class DynamicAssets extends Provider
 {
 
-    public function registered()
-    {
-        vueManager()->addComponent(
-            [
-                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-maestro-table',
-                'vendor/pckg/generic/src/Pckg/Maestro/public/vue/pckg-htmlbuilder-geo',
-            ]
-        );
-    }
-
     /**
      * @return array
      */
