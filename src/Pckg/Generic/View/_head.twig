@@ -1,9 +1,7 @@
-{% do _metaManager.addViewport().addContentType().addCdnPrefetch() %}
-
-{{ _gtmManager | raw }}
-{{ _metaManager.getMeta('header.first') | raw }}
-{{ _seoManager | raw }}
+{% do _metaManager.addCharset().addViewport().addContentType().addCdnPrefetch() %}
 {{ _metaManager.getMeta('header') | raw }}
+{{ _gtmManager | raw }}
+{{ _seoManager | raw }}
 {{ _assetManager.getMeta(['css', 'less'], ['libraries', noTheme ? '' : 'theme', 'main', 'vue', 'footer']) | raw }}
 {{ _assetManager.getMeta(['css', 'less'], ['store']) | raw }}
 {{ _assetManager.getMeta(['js'], ['libraries', noTheme ? '' : 'theme', 'main']) | raw }}
