@@ -280,7 +280,7 @@ class Dynamic extends Bootstrap
                  * PHP field is not editable.
                  * Should we display content?
                  */
-                if (!$this->record->id) {
+                if (!$this->record || !$this->record->id) {
                     continue;
                 }
 
@@ -319,7 +319,8 @@ class Dynamic extends Bootstrap
                 if ($field->required) {
                     $label = '* ' . $label;
                 }
-                $translatable = $field->isTranslatable($this->record->getEntity()) && localeManager()->getFrontendLanguages()->count() > 1
+                $entity = $this->record ? $this->record->getEntity() : $this->table->getEntity();
+                $translatable = $field->isTranslatable($entity) && localeManager()->getFrontendLanguages()->count() > 1
                     ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
                     : '';
                 $element->setLabel($label . $translatable);

@@ -313,8 +313,11 @@ class ActionsMorph extends Record
         ) {
             return [
                 'slug'  => str_replace('pckg.generic.pageStructure.', '', $setting->slug),
-                'value' => $setting->type == 'array' ? ($setting->pivot->value ? (json_decode($setting->pivot->value,
-                                                                                              true) ?? []) : [])
+                'value' => $setting->type == 'array'
+                    ? ($setting->pivot->value
+                        ? (json_decode($setting->pivot->value, true) ?? [])
+                        : []
+                    )
                     : $setting->pivot->value,
             ];
         })->keyBy('slug')->map('value');
@@ -347,10 +350,10 @@ class ActionsMorph extends Record
          * Get all custom classes.
          */
         $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function(
-                $class
-            ) {
-                return substr(strrev($class), 0, 1) !== '-';
-            })->removeEmpty()->all();
+            $class
+        ) {
+            return substr(strrev($class), 0, 1) !== '-';
+        })->removeEmpty()->all();
 
         /**
          * Set proper settings.
@@ -400,8 +403,8 @@ class ActionsMorph extends Record
             'desktop'     => [],
             'laptop'      => [],
             'tablet'      => [],
+            'smallTablet' => [],
             'mobile'      => [],
-            'smallMobile' => [],
         ];
 
         /**
@@ -412,9 +415,11 @@ class ActionsMorph extends Record
         /**
          * Db attributes.
          */
+        //$attributes = $settings->getKey('attributes', []);
         foreach ($settings->getKey('attributes', []) as $attr) {
             foreach ($attr['css'] as $a => $v) {
-                $attributes[$attr['device']][$a] = $v;
+                $device = $attr['device'] === 'smallMobile' ? 'mobile' : $attr['device'];
+                $attributes[$device][$a] = $v;
             }
         }
 
@@ -463,7 +468,7 @@ class ActionsMorph extends Record
             'bgVideoControls'   => '',
             'bgVideoLoop'       => '',
             'bgVideoMute'       => '',
-            'bgVideoBranding' => '',
+            'bgVideoBranding'   => '',
             'wrapperLockShow'   => [],
             'wrapperLockHide'   => [],
             'wrapperLockSystem' => [],
@@ -593,7 +598,7 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-        return measure('Serializing action #' . $this->id, function(){
+        return measure('Serializing action #' . $this->id, function() {
             $config = config('pckg.generic.actions.' . $this->action->slug, []);
             $slots = $config['slots'] ?? [];
             $content = $this->content ? $this->content->jsonSerialize() : null;
@@ -619,7 +624,7 @@ class ActionsMorph extends Record
                 'slots'     => $slots,
                 'component' => 'pckg-' . $type,
                 'config'    => $config['config'] ?? null,
-                'raw'       => !!($config['raw'] ?? null)
+                'raw'       => !!($config['raw'] ?? null),
             ];
 
             return $data;

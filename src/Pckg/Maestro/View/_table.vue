@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="panel panel-default" v-if="mode != 'filter' && records.length> 0">
+                <div class="display-block" v-if="mode != 'filter' && records.length> 0">
                     <div style="position: relative;" class="closest">
 
                         <!-- context menu -->

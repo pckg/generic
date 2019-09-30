@@ -76,21 +76,21 @@ $(document).ready(function () {
         $(this).closest('tr').find('td input[type=checkbox]').prop('checked', $(this).is(':checked'));
     });
 
-    $('input.datetime:not(.vue-takeover)').datetimepicker({
+    /*$('input.datetime:not(.vue-takeover)').datetimepicker({
         format: 'YYYY-MM-DD HH:mm'
-    })/*.on('dp.change', function (ev) {
+    }).on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');
      })*/;
 
-    $('input.date:not(.vue-takeover)').datetimepicker({
+    /*$('input.date:not(.vue-takeover)').datetimepicker({
         format: 'YYYY-MM-DD'
-    })/*.on('dp.change', function (ev) {
+    }).on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');
      })*/;
 
-    $('input.time:not(.vue-takeover)').datetimepicker({
+    /*$('input.time:not(.vue-takeover)').datetimepicker({
         format: 'HH:mm'
-    })/*.on('dp.change', function (ev) {
+    }).on('dp.change', function (ev) {
      //$(this).datetimepicker('hide');
      })*/;
 

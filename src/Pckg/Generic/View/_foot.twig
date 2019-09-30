@@ -38,16 +38,10 @@
 <!-- vue components -->
 <!--  vue css, less and js -->
 
-{{ _assetManager.getMeta(['js'], ['vue']) | raw }}
-
-<!-- vue twig components -->
-{{ _vueManager.getComponents() | raw }}
-
 <!-- vue live components -->
 {{ _vueManager.getViews() | raw }}
 
-<!-- last javascript -->
-{{ _assetManager.getMeta(['js'], ['footer']) | raw }}
+{{ _assetManager.getMeta(['js'], ['vue', 'footer']) | raw }}
 
 <!-- external assets-->
 {{ _assetManager.getExternals() | raw }}

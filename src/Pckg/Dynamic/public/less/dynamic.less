@@ -24,7 +24,7 @@
 }
 
 a {
-  color: @clr-secondary;
+  color: @clr-primary;
   transition: all ease-in-out 0.25s;
 
   &:hover {
@@ -383,7 +383,7 @@ Style tds
   }
 
   tr.selected td.checkboxes {
-    color: @clr-secondary;
+    color: @clr-primary;
   }
 
   tbody tr {
@@ -827,7 +827,7 @@ div.form-control {
   }
 
   table tbody td {
-    cursor: pointer;
+    cursor: context-menu; // was pointer
   }
 
   .header {
@@ -854,8 +854,18 @@ div.form-control {
       margin: 0;
       float: left;
       white-space: nowrap;
+      font-weight: 200;
+      span {
+        margin-left: 1rem;
+      }
+    }
+
+    h2 {
+      font-size: 3rem;
+    }
+
+    h3 {
       font-size: 2rem;
-      font-weight: bold;
     }
 
     .table-actions {

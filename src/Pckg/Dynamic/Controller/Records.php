@@ -6,6 +6,7 @@ use Pckg\Database\Entity;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
@@ -155,9 +156,10 @@ class Records extends Controller
         $dynamicRecord = null,
         $dynamicRelation = null,
         TableView $tableView = null
-    )
-    {
-        return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab, $dynamicRecord, $dynamicRelation, $tableView);
+    ) {
+        return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab,
+                                            $dynamicRecord, $dynamicRelation, $tableView);
+
         return [
             'records' => [],
         ];
@@ -185,9 +187,8 @@ class Records extends Controller
         TableView $tableView = null
     ) {
         return '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
-                ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
-                ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') .
-                '></pckg-maestro-table>';
+            ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
+            ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') . '></pckg-maestro-table>';
     }
 
     public function getViewTableApiAction(
@@ -293,8 +294,10 @@ class Records extends Controller
         };
 
         $this->response()->sendCacheHeaders(1);
-        return cache(Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType . ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''), $executor,
-                     'app', 1);
+
+        return cache(Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType .
+                     ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''),
+                     $executor, 'app', 1);
     }
 
     public function getAddAction(
@@ -338,8 +341,8 @@ class Records extends Controller
         vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $formalize, 'form' => $form]);
 
         return view('edit/singular', [
-                                       'formalize' => $formalize,
-                                   ]);
+            'formalize' => $formalize,
+        ]);
     }
 
     /**
@@ -410,17 +413,17 @@ class Records extends Controller
         }
 
         $url = url('dynamic.record.edit', [
-                                            'table'  => $table,
-                                            'record' => $newRecord ?? $record,
-                                        ]);
+            'table'  => $table,
+            'record' => $newRecord ?? $record,
+        ]);
 
         if ($relation && $foreign) {
             $url = url('dynamic.record.edit.foreign', [
-                                                        'table'    => $table,
-                                                        'record'   => $newRecord ?? $record,
-                                                        'relation' => $relation,
-                                                        'foreign'  => $foreign,
-                                                    ]);
+                'table'    => $table,
+                'record'   => $newRecord ?? $record,
+                'relation' => $relation,
+                'foreign'  => $foreign,
+            ]);
         }
 
         return $this->response()->respondWithSuccess([
@@ -440,9 +443,9 @@ class Records extends Controller
 
         return $this->response()->respondWithSuccess([
                                                          'clonedUrl' => url('dynamic.record.edit', [
-                                                                                                     'table'  => $table,
-                                                                                                     'record' => $clonedRecord,
-                                                                                                 ]),
+                                                             'table'  => $table,
+                                                             'record' => $clonedRecord,
+                                                         ]),
                                                      ]);
     }
 
@@ -465,13 +468,13 @@ class Records extends Controller
 
         $tableEntity = $table->createEntity();
 
-        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2))
-            . path('ds') . 'View' . path('ds');
+        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) .
+            path('ds') . 'View' . path('ds');
         Twig::addDir($dir);
 
         if (config('app') != config('app_parent')) {
-            $partial = implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2))
-                . path('ds') . 'View' . path('ds');
+            $partial = implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) . path('ds') .
+                'View' . path('ds');
             $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
             Twig::addDir($dir);
         }
@@ -533,20 +536,19 @@ class Records extends Controller
                          ->setDynamicRecord($record);
 
         $this->vueManager()
-             // ->addView('Pckg/Maestro:_pckg_chart')
+            // ->addView('Pckg/Maestro:_pckg_chart')
              ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
-                                                                        'recordActions' => $actions,
-                                                                        'table'         => $table->table,
-                                                                    ])
-             ->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
-                                                                   'tabelize'     => $tabelize,
-                                                                   'formalize'    => $formalize,
-                                                                   'tabs'         => $tabs,
-                                                                   'table'        => $table->table,
-                                                                   'tabelizes'    => $tabelizes,
-                                                                   'functionizes' => $functionizes,
-                                                                   'record'       => $record,
-                                                               ]);
+                'recordActions' => $actions,
+                'table'         => $table->table,
+            ])->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
+                'tabelize'     => $tabelize,
+                'formalize'    => $formalize,
+                'tabs'         => $tabs,
+                'table'        => $table->table,
+                'tabelizes'    => $tabelizes,
+                'functionizes' => $functionizes,
+                'record'       => $record,
+            ]);
 
         return view('edit/tabs', ['tabelize' => $tabelize]);
     }
@@ -601,9 +603,9 @@ class Records extends Controller
          * We have to build tab.
          */
         return view('edit/tab', [
-                                  'functionizes' => $functionizes,
-                                  'tabelizes'    => $tabelizes,
-                              ]);
+            'functionizes' => $functionizes,
+            'tabelizes'    => $tabelizes,
+        ]);
     }
 
     protected function getTabelizesAndFunctionizes(
@@ -701,10 +703,9 @@ class Records extends Controller
         return $this->response()->respondWithSuccess([
                                                          'message'  => __('dynamic.records.edit.success'),
                                                          'redirect' => post('as_new') ? url('dynamic.record.edit', [
-                                                                                                                     'table'  => $table,
-                                                                                                                     'record' => $record,
-                                                                                                                 ])
-                                                             : null,
+                                                             'table'  => $table,
+                                                             'record' => $record,
+                                                         ]) : null,
                                                      ]);
     }
 
@@ -937,8 +938,54 @@ class Records extends Controller
 
         return [
             'template' => view('Pckg/Maestro:_table_actions', [
-                                                                'tabelize' => $tabelize,
-                                                            ]),
+                'tabelize' => $tabelize,
+            ]),
+        ];
+    }
+
+    public function getViewFormApiAction(Table $table)
+    {
+        $fields = $table->fields;
+        $vueTypeMap = [
+            'boolean' => 'toggle',
+            'decimal' => 'number',
+            'select'  => 'select:single',
+        ];
+        $typeMapper = function(Field $field) use ($vueTypeMap) {
+            if (array_key_exists($field->fieldType->slug, $vueTypeMap)) {
+                return $vueTypeMap[$field->fieldType->slug];
+            }
+
+            return $field->fieldType->slug;
+        };
+
+        $formObject = (new Dynamic())->setTable($table)->initFields();
+        $initialOptions = $formObject->getInitialOptions();
+        $form = [
+            'fields' => $fields->filter('field', 'id', '!=')->map(function(Field $field) use ($typeMapper, $initialOptions) {
+                $options = new \stdClass();
+                $type = $typeMapper($field);
+
+                if ($field->fieldType->slug === 'select') {
+                    $options = [
+                        'options' => $initialOptions[$field->slug] ?? [],
+                    ];
+                }
+
+                return [
+                    'title'    => $field->title,
+                    'slug'     => $field->field,
+                    'type'     => $type,
+                    'help'     => $field->help,
+                    'required' => !!$field->required,
+                    'options'  => $options,
+                    'group'    => $field->fieldGroup,
+                ];
+            })->rekey(),
+        ];
+
+        return [
+            'form' => $form,
         ];
     }
 

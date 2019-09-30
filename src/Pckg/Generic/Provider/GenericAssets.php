@@ -23,9 +23,6 @@ class GenericAssets extends Provider
             'main'      => [
                 'less/generic.less',
             ],
-            'vue' => [
-                'vue/filters.vue.js',
-            ],
             'footer'    => [
                 100 => 'vue/pckg-generic-app.js',
             ],
