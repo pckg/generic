@@ -5,8 +5,8 @@
                 :title="content"
                 data-toggle="tooltip">
             <span v-if="text">{{ text }}</span>
-            <template v-if="icon && icon.length > 0"><i :class="iconStyle + ' fa-' + icon"></i></template>
-            <template v-else-if="icon"><i :class="iconStyle" class="fa-question-circle"></i></template>
+            <template v-if="icon && icon.length > 0"><i :class="iconStyle + ' fa-fw fa-' + icon"></i></template>
+            <template v-else-if="icon"><i :class="iconStyle" class="fa-fw fa-question-circle"></i></template>
         </span>
     </component>
 </template>
