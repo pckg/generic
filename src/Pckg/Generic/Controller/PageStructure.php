@@ -428,6 +428,14 @@ class PageStructure
     {
         $partial = $actionsMorph->addPartial(post('partial', null));
 
+        if ($order = post('order')) {
+            $partial->setAndSave(['order' => $order]);
+        }
+
+        if ($variable = post('variable')) {
+            $partial->setAndSave(['variable' => $variable]);
+        }
+
         $parent = $partial->mostParent;
 
         $flatActions = $parent->flattenForGenericResponse(collect());
