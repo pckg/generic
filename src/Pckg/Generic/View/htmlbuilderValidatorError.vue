@@ -1,5 +1,5 @@
 <template>
-    <div class="htmlbuilder-validator-error" v-if="isVisible">{{ getMessage }}</div>
+    <div class="htmlbuilder-validator-error animated fadeIn" v-if="isVisible">{{ getMessage }}</div>
 </template>
 
 <script>
