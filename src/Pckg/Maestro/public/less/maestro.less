@@ -694,14 +694,34 @@ ul.vertical-mid-menu {
 .__icon-tooltip-right-of-title {
   margin-left: @spacing-xs;
 }
+.__link-action {
+  margin-left: @spacing-xs;
+}
 .__link-action-floating-right {
   float: right;
   margin-left: @spacing-xs;
+}
 
+.__link-action,
+.__link-action-floating-right {
   h1 &,
   h2 & {
     font-size: 2rem;
     line-height: 4.4rem;
+  }
+}
+
+.u-hover-wrapper {
+  .visible\@wrapper-hover {
+    display: none;
+    transition: all 333ms ease-in-out;
+    opacity: 0;
+  }
+  &:hover {
+    .visible\@wrapper-hover {
+      display: block;
+      opacity: 1;
+    }
   }
 }
 
