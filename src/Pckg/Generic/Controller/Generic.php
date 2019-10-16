@@ -84,6 +84,11 @@ class Generic
         return null;
     }
 
+    public function propfindGenericAction()
+    {
+        return null;
+    }
+
     public function wrapIntoGeneric($view, $template = 'Pckg/Generic:frontend')
     {
         message('Wrapping into generic ' . $template);

@@ -87,7 +87,6 @@ const $vue = new Vue({
         }
     },
     updated: function () {
-        console.log('updated');
         this.$nextTick(function () {
             $dispatcher.$emit('vue:updated');
         });
