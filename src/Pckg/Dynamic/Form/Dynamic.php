@@ -123,7 +123,7 @@ class Dynamic extends Bootstrap
 
             if ($provider = $field->getSetting('pckg.dynamic.field.passwordProvider')) {
                 $record->{$field->field} = auth($provider)->hashPassword($password);
-            } else if ($encrypt = $field->getSetting('pckg.dynamic.field.encrypt')) {
+            } elseif ($encrypt = $field->getSetting('pckg.dynamic.field.encrypt')) {
                 $record->{$field->field} = Crypto::encrypt($password,
                                                            Key::loadFromAsciiSafeString(config('security.key')));
             } else {
@@ -146,12 +146,11 @@ class Dynamic extends Bootstrap
          */
         $sessionLanguageId = $_SESSION['pckg_dynamic_lang_id'];
         $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
-        $this->addSelect('language_id')
-             ->setValue($languageId)
-             ->addOptions($languages->keyBy('slug')->map(function(Language $language){
-                 return $language->title;
-             }))
-             ->setLabel('Language');
+        $this->addSelect('language_id')->setValue($languageId)->addOptions($languages->keyBy('slug')->map(function(
+            Language $language
+        ) {
+            return $language->title;
+        }))->setLabel('Language');
 
         if ($this->isEditable()) {
             $fieldset->addButton('switch_language')->setValue('Switch language')->a('@click.prevent', 'switchLanguage');
@@ -166,11 +165,9 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - this should be handled separately, like in different form or even different page/tab.
          */
-        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->map(
-            function($permissions) {
-                return (new Collection($permissions))->keyBy('action');
-            }
-        )->toArray();
+        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->map(function($permissions) {
+            return (new Collection($permissions))->keyBy('action');
+        })->toArray();
 
         $this->addFieldset('permissionable');
 
@@ -198,8 +195,8 @@ class Dynamic extends Bootstrap
             $child .= '<td>' . $permissionTitle . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
             foreach ($authGroups as $group) {
                 $child .= '<td><input type="checkbox" name="p17n[table][' . $group->id . '][' . $permissionKey .
-                          ']" value="1" ' .
-                          (isset($allPermissions[$group->id][$permissionKey]) ? 'checked = checked ' : '') . ' /></td>';
+                    ']" value="1" ' . (isset($allPermissions[$group->id][$permissionKey]) ? 'checked = checked ' : '') .
+                    ' /></td>';
             }
             $child .= '</tr>';
         }
@@ -209,16 +206,13 @@ class Dynamic extends Bootstrap
         foreach ($table->actions as $action) {
             $child .= '<tr>';
             $child .= '<td>' . $action->slug . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
-            $allActionPermissions = $action->allPermissions->groupBy('user_group_id')->each(
-                function($permissions) {
-                    return (new Collection($permissions))->groupBy('id');
-                }
-            )->toArray();
+            $allActionPermissions = $action->allPermissions->groupBy('user_group_id')->each(function($permissions) {
+                return (new Collection($permissions))->groupBy('id');
+            })->toArray();
             foreach ($authGroups as $group) {
                 $child .= '<td><input type="checkbox" name="p17n[action][' . $group->id . '][' . $action->id .
-                          ']" value="1" ' .
-                          (isset($allActionPermissions[$group->id][$action->id]) ? 'checked = checked ' : '') .
-                          '/></td>';
+                    ']" value="1" ' .
+                    (isset($allActionPermissions[$group->id][$action->id]) ? 'checked = checked ' : '') . '/></td>';
             }
             $child .= '</tr>';
         }
@@ -229,111 +223,105 @@ class Dynamic extends Bootstrap
 
     public function initFields()
     {
-        $this->setDecoratorClasses(
-            [
-                'label'           => '',
-                'field'           => '',
-                'fullField'       => '',
-                'offset'          => '',
-                'offsetField'     => '',
-                'offsetFullField' => '',
-            ]
-        );
+        $this->setDecoratorClasses([
+                                       'label'           => '',
+                                       'field'           => '',
+                                       'fullField'       => '',
+                                       'offset'          => '',
+                                       'offsetField'     => '',
+                                       'offsetFullField' => '',
+                                   ]);
 
-        $fields = $this->table->listableFields(
-            function(HasMany $fields) {
-                $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
-                $fields->withPermissions();
-                $fields->withHasOneSelectRelation(
-                    function(HasOne $relation) {
-                        $relation->withOnTable();
-                        $relation->withShowTable();
-                    }
-                );
-                $fields->withFieldGroup();
-            }
-        );
+        $fields = $this->table->listableFields(function(HasMany $fields) {
+            $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
+            $fields->withPermissions();
+            $fields->withHasOneSelectRelation(function(HasOne $relation) {
+                $relation->withOnTable();
+                $relation->withShowTable();
+            });
+            $fields->withFieldGroup();
+        });
 
         $prevGroup = null;
-        $fieldPositions = $fields->groupBy(function(Field $field){
+        $fieldPositions = $fields->groupBy(function(Field $field) {
             return $field->dynamic_field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
         });
 
         foreach ($fieldPositions as $position => $fields) {
             // $positionFieldset = $this->addFieldset('position-' . $position);
-        foreach ($fields as $field) {
-            if (($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
-                (!$prevGroup && $field->dynamic_field_group_id) ||
-                (!$prevGroup && !$this->lastFieldset)
-            ) {
-                $this->lastFieldset = $fieldset = $this->addFieldset('position-' . $position)->setAttribute('data-field-group', $field->dynamic_field_group_id);
-                $fieldset->addChild('<h4 class="__component-title">' . ($field->fieldGroup->title ?? 'General') . '</h4>');
-                $prevGroup = $field->dynamic_field_group_id;
-            }
+            foreach ($fields as $field) {
+                if (($prevGroup && $prevGroup != $field->dynamic_field_group_id) ||
+                    (!$prevGroup && $field->dynamic_field_group_id) || (!$prevGroup && !$this->lastFieldset)) {
+                    $this->lastFieldset = $fieldset = $this->addFieldset('position-' . $position)
+                                                           ->setAttribute('data-field-group',
+                                                                          $field->dynamic_field_group_id);
+                    $fieldset->addChild('<h4 class="__component-title">' . ($field->fieldGroup->title ?? 'General') .
+                                        '</h4>');
+                    $prevGroup = $field->dynamic_field_group_id;
+                }
 
-            $type = $field->fieldType->slug;
-            $name = $field->field;
-            $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
+                $type = $field->fieldType->slug;
+                $name = $field->field;
+                $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
 
-            if ($type == 'php') {
-                /**
-                 * PHP field is not editable.
-                 * Should we display content?
-                 */
-                if (!$this->record || !$this->record->id) {
+                if ($type == 'php') {
+                    /**
+                     * PHP field is not editable.
+                     * Should we display content?
+                     */
+                    if (!$this->record || !$this->record->id) {
+                        continue;
+                    }
+
+                    $element = $fieldset->addDiv()->addChild('<div class="form-group grouped php" data-field-id="' .
+                                                             $field->id . '"><label>' . $field->title . '</label>
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>');
+                    continue;
+                } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') &&
+                    config('pckg.dynamic.permissions')) {
+                    $element = $fieldset->addDiv()
+                                        ->addChild('<div class="form-group grouped readonly" data-field-id="' .
+                                                   $field->id . '"><label></label>
+<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>');
+
+                    continue;
+                } elseif (!$this->editable/* !$field->hasPermissionTo('edit')*/) {
+                    $this->createReadonlyElementByType($type, $name, $field);
+
+                    continue;
+                } elseif ($field->id == $this->foreignFieldId) {
+                    $this->createElementByType('hidden', $name, $field);
+                    continue;
+                } elseif ($type == 'mysql') {
                     continue;
                 }
 
-                $element = $fieldset->addDiv()->addChild(
-                    '<div class="form-group grouped php" data-field-id="' . $field->id . '"><label>' .
-                    $field->title . '</label>
-<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
-                );
-                continue;
-            } elseif ($type != 'hidden' && !$field->hasPermissionTo('write') && config('pckg.dynamic.permissions')) {
-                $element = $fieldset->addDiv()->addChild(
-                    '<div class="form-group grouped readonly" data-field-id="' . $field->id . '"><label></label>
-<div>' . $this->record->{$field->field} . '</div>' . $helpHtml . '</div>'
-                );
+                $element = $this->createElementByType($type, $name, $field);
 
-                continue;
-            } elseif (!$this->editable/* !$field->hasPermissionTo('edit')*/) {
-                $this->createReadonlyElementByType($type, $name, $field);
+                /**
+                 * We need to replace some elements, such as checkbox, editor, ...
+                 */
+                $element->setBuilder(new Pckg($element));
 
-                continue;
-            } elseif ($field->id == $this->foreignFieldId) {
-                $this->createElementByType('hidden', $name, $field);
-                continue;
-            } elseif ($type == 'mysql') {
-                continue;
-            }
-
-            $element = $this->createElementByType($type, $name, $field);
-
-            /**
-             * We need to replace some elements, such as checkbox, editor, ...
-             */
-            $element->setBuilder(new Pckg($element));
-
-            if (($label = $field->label)) {
-                if ($field->required) {
-                    $label = '* ' . $label;
+                if (($label = $field->label)) {
+                    if ($field->required) {
+                        $label = '* ' . $label;
+                    }
+                    $entity = $this->record ? $this->record->getEntity() : $this->table->getEntity();
+                    $translatable = $field->isTranslatable($entity) &&
+                    localeManager()->getFrontendLanguages()->count() > 1
+                        ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>' : '';
+                    $element->setLabel($label . $translatable);
                 }
-                $entity = $this->record ? $this->record->getEntity() : $this->table->getEntity();
-                $translatable = $field->isTranslatable($entity) && localeManager()->getFrontendLanguages()->count() > 1
-                    ? '&nbsp;<pckg-tooltip icon="globe" content="Field is translatable"></pckg-tooltip>'
-                    : '';
-                $element->setLabel($label . $translatable);
+
+                $element->setHelp($field->help);
+
+                $element->setAttribute('data-field-id', $field->id);
+
+                if ($field->required) {
+                    $element->required();
+                }
             }
-
-            $element->setHelp($field->help);
-
-            $element->setAttribute('data-field-id', $field->id);
-
-            if ($field->required) {
-                $element->required();
-            }
-        }
         }
 
         if ($this->isEditable()) {
@@ -355,20 +343,17 @@ class Dynamic extends Bootstrap
                 $relatedRecord = $field->getRecordForSelect($this->record, $this->foreignRecord, $value);
                 if ($relatedRecord) {
                     $relationTitle = $field->eval($relation->value, $relatedRecord, $relation);
-                    $url = url(
-                        'dynamic.record.view',
-                        [
-                            'table'  => $relation->showTable,
-                            'record' => $relatedRecord,
-                        ]
-                    );
+                    $url = url('dynamic.record.view', [
+                        'table'  => $relation->showTable,
+                        'record' => $relatedRecord,
+                    ]);
                     $value = '<a href="' . $url . '">' . $relationTitle . '</a>';
                 }
             }
         } elseif ($field->getSetting('pckg.dynamic.field.iframe')) {
             $tempValue = $value;
-            $htmlValue = '<script type="text/x-template" id="iframe-field-div-' . $field->id .
-                         '">' . $tempValue . '</script>';
+            $htmlValue = '<script type="text/x-template" id="iframe-field-div-' . $field->id . '">' . $tempValue .
+                '</script>';
             $htmlValue .= '<script type="text/javascript">$(document).ready(function(){
     var ifrm = document.getElementById(\'iframe-field-' . $field->id . '\');
     ifrm = ifrm.contentWindow || ifrm.contentDocument.document || ifrm.contentDocument;
@@ -379,19 +364,16 @@ ifrm.document.close();
 });</script>';
             vueManager()->addStringView($htmlValue);
             $value = '<iframe id="iframe-field-' . $field->id .
-                     '" style="border: 0; width: 100%; min-height: 360px;"></iframe>';
+                '" style="border: 0; width: 100%; min-height: 360px;"></iframe>';
         } elseif (in_array($type, ['file', 'pdf'])) {
             if ($this->record->{$field->field}) {
-                $dir = $field->getAbsoluteDir(
-                    $field->getSetting('pckg.dynamic.field.dir'),
-                    $field->getSetting('pckg.dynamic.field.privateUpload')
-                );
-                $fullPath = $this->record->{$field->field}
-                    ? media($this->record->{$field->field}, null, true, $dir)
+                $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'),
+                                              $field->getSetting('pckg.dynamic.field.privateUpload'));
+                $fullPath = $this->record->{$field->field} ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
-                         '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
-                         $this->record->{$field->field} . '</a>';
+                    '"><i class="fal fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} .
+                    '</a>';
             }
         } elseif ($type == 'picture') {
             if ($this->record->{$field->field}) {
@@ -406,11 +388,10 @@ ifrm.document.close();
 
         $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
 
-        $element = $this->lastFieldset->addDiv()->addChild(
-            '<div class="form-group grouped" data-field-id="' . $field->id . '"><label>' . $label . '
+        $element = $this->lastFieldset->addDiv()->addChild('<div class="form-group grouped" data-field-id="' .
+                                                           $field->id . '"><label>' . $label . '
 </label>
-<div>' . $value . '</div>' . $helpHtml . '</div>'
-        );
+<div>' . $value . '</div>' . $helpHtml . '</div>');
     }
 
     protected function createElementByType($type, $name, Field $field)
@@ -429,14 +410,11 @@ ifrm.document.close();
         if (in_array($type, $auto)) {
             return $this->getFieldset()->{'add' . ucfirst($type)}($name);
         } elseif (in_array($type, ['file', 'pdf'])) {
-            $dir = $field->getAbsoluteDir(
-                $field->getSetting('pckg.dynamic.field.dir'),
-                $field->getSetting('pckg.dynamic.field.privateUpload')
-            );
+            $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'),
+                                          $field->getSetting('pckg.dynamic.field.privateUpload'));
             $fullPath = null;
             if ($this->record) {
-                $fullPath = $this->record->{$field->field}
-                    ? media($this->record->{$field->field}, null, true, $dir)
+                $fullPath = $this->record->{$field->field} ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
             }
 
@@ -444,110 +422,74 @@ ifrm.document.close();
                 $element = $this->getFieldset()->addDiv();
                 if ($this->record) {
                     if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
-                        $element->addChild(
-                            '<a class="btn btn-default btn-md" title="Preview" href="' .
-                            $field->getPreviewFileUrlAttribute(
-                                $this->record
-                            ) . '"><i class="fal fa-external-link" aria-hidden="true"></i> Preview ' . $type .
-                            '</a>&nbsp;&nbsp;'
-                        );
+                        $element->addChild('<a class="btn btn-default btn-md" title="Preview" href="' .
+                                           $field->getPreviewFileUrlAttribute($this->record) .
+                                           '"><i class="fal fa-external-link" aria-hidden="true"></i> Preview ' .
+                                           $type . '</a>&nbsp;&nbsp;');
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
-                        $element->addChild(
-                            '<a class="btn btn-default btn-md" title="Generate" href="' .
-                            $field->getGenerateFileUrlAttribute(
-                                $this->record
-                            ) . '"><i class="fal fa-refresh" aria-hidden="true"></i> Generate ' . $type .
-                            '</a>&nbsp;&nbsp;'
-                        );
+                        $element->addChild('<a class="btn btn-default btn-md" title="Generate" href="' .
+                                           $field->getGenerateFileUrlAttribute($this->record) .
+                                           '"><i class="fal fa-refresh" aria-hidden="true"></i> Generate ' . $type .
+                                           '</a>&nbsp;&nbsp;');
                     }
                     if ($this->record->{$field->field}) {
-                        $element->addChild(
-                            '<a class="btn btn-default btn-md" title="Download" href="' .
-                            $fullPath . '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
-                            $this->record->{$field->field} . '</a>&nbsp;&nbsp;'
-                        );
+                        $element->addChild('<a class="btn btn-default btn-md" title="Download" href="' . $fullPath .
+                                           '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
+                                           $this->record->{$field->field} . '</a>&nbsp;&nbsp;');
                     }
                 }
             } else {
                 $element = $this->getFieldset()->addFile($name);
-                $element->setPrefix(
-                    '<i class="fal fa-file' . ($type == 'pdf' ? '-pdf' : '') . '-o" aria-hidden="true"></i>'
-                );
+                $element->setPrefix('<i class="fal fa-file' . ($type == 'pdf' ? '-pdf' : '') .
+                                    '-o" aria-hidden="true"></i>');
 
                 if ($fullPath) {
                     $element->setAttribute('data-image', $fullPath);
                 }
                 $element->setAttribute('data-type', $type);
 
-                $element->setAttribute(
-                    'data-url',
-                    $this->relation && $this->foreignRecord
-                        ? url(
-                        'dynamic.records.field.upload.newForeign',
-                        [
-                            'table'    => $this->table,
-                            'field'    => $field,
-                            'relation' => $this->relation,
-                            'record'   => $this->foreignRecord,
-                        ]
-                    )
-                        : ($this->record->id
-                        ? url(
-                            'dynamic.records.field.upload',
-                            [
-                                'table'  => $this->table,
-                                'field'  => $field,
-                                'record' => $this->record,
-                            ]
-                        )
-                        : url(
-                            'dynamic.records.field.upload.new',
-                            [
-                                'table' => $this->table,
-                                'field' => $field,
-                            ]
-                        ))
-                );
+                $element->setAttribute('data-url', $this->relation && $this->foreignRecord
+                    ? url('dynamic.records.field.upload.newForeign', [
+                        'table'    => $this->table,
+                        'field'    => $field,
+                        'relation' => $this->relation,
+                        'record'   => $this->foreignRecord,
+                    ])
+                    : ($this->record->id
+                        ? url('dynamic.records.field.upload', [
+                            'table'  => $this->table,
+                            'field'  => $field,
+                            'record' => $this->record,
+                        ])
+                        : url('dynamic.records.field.upload.new', [
+                            'table' => $this->table,
+                            'field' => $field,
+                        ])));
             }
 
             return $element;
         } elseif ($type == 'picture') {
             $element = $this->getFieldset()->addPicture($name);
-            $element->setAttribute(
-                'data-url',
-                $this->relation && $this->foreignRecord
-                    ? url(
-                    'dynamic.records.field.upload.newForeign',
-                    [
-                        'table'    => $this->table,
-                        'field'    => $field,
-                        'relation' => $this->relation,
-                        'record'   => $this->foreignRecord,
-                    ]
-                )
-                    : ($this->record->id
-                    ? url(
-                        'dynamic.records.field.upload',
-                        [
-                            'table'  => $this->table,
-                            'field'  => $field,
-                            'record' => $this->record,
-                        ]
-                    )
-                    : url(
-                        'dynamic.records.field.upload.new',
-                        [
-                            'table' => $this->table,
-                            'field' => $field,
-                        ]
-                    ))
-            );
+            $element->setAttribute('data-url', $this->relation && $this->foreignRecord
+                ? url('dynamic.records.field.upload.newForeign', [
+                    'table'    => $this->table,
+                    'field'    => $field,
+                    'relation' => $this->relation,
+                    'record'   => $this->foreignRecord,
+                ])
+                : ($this->record->id
+                    ? url('dynamic.records.field.upload', [
+                        'table'  => $this->table,
+                        'field'  => $field,
+                        'record' => $this->record,
+                    ])
+                    : url('dynamic.records.field.upload.new', [
+                        'table' => $this->table,
+                        'field' => $field,
+                    ])));
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-            $element->setAttribute(
-                'data-image',
-                img($this->record->{$field->field}, null, true, $dir)
-            );
+            $element->setAttribute('data-image', img($this->record->{$field->field}, null, true, $dir));
             $element->setAttribute('data-type', 'picture');
 
             return $element;
@@ -577,10 +519,8 @@ ifrm.document.close();
 
             $element->setAttribute('autocomplete', 'off');
             $element->readonly();
-            $element->setAttribute(
-                'onfocus',
-                "if (this.hasAttribute('readonly')) { this.removeAttribute('readonly'); this.blur(); this.focus(); }"
-            );
+            $element->setAttribute('onfocus',
+                                   "if (this.hasAttribute('readonly')) { this.removeAttribute('readonly'); this.blur(); this.focus(); }");
 
             return $element;
         } elseif (in_array($type, ['slug', 'order', 'hash'])) {
@@ -596,69 +536,61 @@ ifrm.document.close();
             return $element;
         } elseif ($type == 'select') {
 
-            if ($this->record) {
-                $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
+            $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
 
-                $element = $this->getFieldset()->addSelect($name);
-                /**
-                 * @T00D00 - add setting for select placeholder for speciffic field
-                 */
-                $options = [];
-                $rawValue = $this->record->{$field->field};
-                $foundValue = false;
+            $element = $this->getFieldset()->addSelect($name);
+            /**
+             * @T00D00 - add setting for select placeholder for speciffic field
+             */
+            $options = [];
+            $rawValue = $this->record->{$field->field} ?? null;
+            $foundValue = false;
 
-                foreach ($relation as $id => $value) {
-                    if (is_array($value)) {
-                        $optgroup = [];
-                        foreach ($value as $k => $v) {
-                            $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
-                            $foundValue = $foundValue || $k == $rawValue;
-                        }
-                        $options[$id] = $optgroup;
-                    } else {
-                        $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
-                        $foundValue = $foundValue || $id == $rawValue;
+            foreach ($relation as $id => $value) {
+                if (is_array($value)) {
+                    $optgroup = [];
+                    foreach ($value as $k => $v) {
+                        $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
+                        $foundValue = $foundValue || $k == $rawValue;
                     }
+                    $options[$id] = $optgroup;
+                } else {
+                    $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
+                    $foundValue = $foundValue || $id == $rawValue;
                 }
-
-                if (!$foundValue && $rawValue) {
-                    $item = $field->getItemForSelect(
-                        $this->record,
-                        null,
-                        $rawValue
-                    );
-
-                    if (!trim($item)) {
-                        $item = $rawValue;
-                    }
-
-                    $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
-                }
-
-                $element->setAttribute('data-options', json_encode($options));
-                $element->setAttribute(':initial-multiple', 'false');
-
-                $element->setAttributes([
-                                            'data-url'         => url('dynamic.record.list', [
-                                                                                               'table' => $field->hasOneSelectRelation->showTable,
-                                                                                           ]),
-                                            'data-refresh-url' => url('dynamic.records.field.selectList' .
-                                                                      ($this->record->id ? '' : '.none'), [
-                                                                          'table'  => $this->table,
-                                                                          'field'  => $field,
-                                                                          'record' => $this->record,
-                                                                      ]),
-                                            'data-view-url'    => url('dynamic.record.view', [
-                                                                                               'table' => $field->hasOneSelectRelation->showTable,
-                                                                                           ]),
-                                        ]);
-
-                // $element->addClass('ajax');
-
-                return $element;
-            } else {
-                return $this->getFieldset()->addText($name);
             }
+
+            if (!$foundValue && $rawValue) {
+                $item = $field->getItemForSelect($this->record, null, $rawValue);
+
+                if (!trim($item)) {
+                    $item = $rawValue;
+                }
+
+                $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
+            }
+
+            $element->setAttribute('data-options', json_encode($options));
+            $element->setAttribute(':initial-multiple', 'false');
+
+            $element->setAttributes([
+                                        'data-url'         => url('dynamic.record.list', [
+                                            'table' => $field->hasOneSelectRelation->showTable,
+                                        ]),
+                                        'data-refresh-url' => url('dynamic.records.field.selectList' .
+                                                                  ($this->record->id ? '' : '.none'), [
+                                                                      'table'  => $this->table,
+                                                                      'field'  => $field,
+                                                                      'record' => $this->record,
+                                                                  ]),
+                                        'data-view-url'    => url('dynamic.record.view', [
+                                            'table' => $field->hasOneSelectRelation->showTable,
+                                        ]),
+                                    ]);
+
+            // $element->addClass('ajax');
+
+            return $element;
         } else {
             ddd('Unknown dynamic form type: ' . $type);
         }

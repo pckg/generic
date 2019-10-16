@@ -11,20 +11,22 @@
                             :type="field.type"
                             :help="field.help"
                             :options="field.options"
-                            :name="'field[' + field.slug + ']'"
+                            :name="field.slug"
                             v-model="formModel[field.slug]"></form-group>
 
             </div>
-        </div>
 
-        <div class="form-group">
-            <button type="button"
-                    @click.prevent="submitForm"
-                    class="__submit-btn btn btn-primary">
-                Save
-                <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0" class="fal fa-fw"
-                   :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
-            </button>
+            <div class="form-group">
+                <button type="button"
+                        @click.prevent="submitForm"
+                        class="__submit-btn btn btn-primary"
+                        :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
+                    Save
+                    <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
+                       class="fal fa-fw"
+                       :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
+                </button>
+            </div>
         </div>
 
     </div>
@@ -35,6 +37,11 @@
         mixins: [pckgFormValidator, pckgTranslations],
         props: {
             tableId: {},
+            formModel: {
+                default: function () {
+                    return {};
+                }
+            }
         },
         created: function () {
             this.initialFetch();
@@ -44,7 +51,6 @@
                 myForm: {
                     fields: []
                 },
-                formModel: {},
                 state: 'loading'
             };
         },
@@ -73,23 +79,31 @@
             },
             submitForm: function () {
                 this.state = 'submitting';
-                return;
-                this.successStateHtml = [];
                 this.validateAndSubmit(function () {
-
-                    http.post('/api/forms/' + this.myForm.id + '/respond', this.collectGoogleRecaptcha(this.collectFormData()), function (data) {
+                    let url = this.formModel.id
+                        ? ('/dynamic/records/edit/' + this.tableId + '/' + this.formModel.id)
+                        : ('/dynamic/records/add/' + this.tableId);
+                    http.post(url, this.collectFormData(), function (data) {
                         this.state = 'success';
-                        this.handleSuccessResponses();
+                        this.clearErrorResponse();
+                        if (!this.formModel.id) {
+                            this.state = 'redirecting';
+                            $dispatcher.$emit('notification:info', 'The record has been added, redirecting to new page');
+                            http.redirect(data.redirect);
+                        } else {
+                            $dispatcher.$emit('notification:success', 'The record has been updated');
+                        }
                     }.bind(this), function (response) {
                         this.state = 'error';
                         this.hydrateErrorResponse(response);
+                        $dispatcher.$emit('notification:error', 'Something went wrong, try again');
                     }.bind(this));
-
                 }.bind(this), function () {
                     this.state = 'error';
                 }.bind(this));
             },
             handleSuccessResponses: function () {
+                return;
                 this.successStateHtml = [];
                 $.each(this.myForm.settings.responses, function (i, response) {
                     if (response.type === 'html:replace') {
@@ -105,10 +119,10 @@
             },
             collectFormData: function () {
                 let d = {};
-                $.each(this.mappedFields(''), function (field, label) {
-                    d[field] = this.formModel[field] || null;
+                $.each(this.myForm.fields, function (i, field) {
+                    d[field.slug] = this.formModel[field.slug] || null;
                 }.bind(this));
-                return {field: d};
+                return d;
             },
             getFieldLabel: function (field) {
                 return (field.required ? '* ' : '') + field.title;

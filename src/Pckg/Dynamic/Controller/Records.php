@@ -384,6 +384,16 @@ class Records extends Controller
         }
 
         $form->populateFromRequest();
+
+        if (!$form->isValid($errors, $descriptions)) {
+            return response()->code(422)->respond([
+                                                      'error'        => true,
+                                                      'success'      => false,
+                                                      'errors'       => $errors,
+                                                      'descriptions' => $descriptions,
+                                                  ]);
+        }
+        
         $form->populateToRecord($record);
         $form->populatePasswords($record);
 
@@ -683,6 +693,16 @@ class Records extends Controller
         }
 
         $form->populateFromRequest();
+
+        if (!$form->isValid($errors, $descriptions)) {
+            return response()->code(422)->respond([
+                                                                'error'        => true,
+                                                                'success'      => false,
+                                                                'errors'       => $errors,
+                                                                'descriptions' => $descriptions,
+                                                            ]);
+        }
+
         $form->populateToRecord($record);
         $form->populatePasswords($record);
 
@@ -962,13 +982,13 @@ class Records extends Controller
         $formObject = (new Dynamic())->setTable($table)->initFields();
         $initialOptions = $formObject->getInitialOptions();
         $form = [
-            'fields' => $fields->filter('field', 'id', '!=')->map(function(Field $field) use ($typeMapper, $initialOptions) {
+            'fields' => $fields->map(function(Field $field) use ($typeMapper, $initialOptions) {
                 $options = new \stdClass();
                 $type = $typeMapper($field);
 
                 if ($field->fieldType->slug === 'select') {
                     $options = [
-                        'options' => $initialOptions[$field->slug] ?? [],
+                        'options' => $initialOptions[$field->field] ?? [],
                     ];
                 }
 
