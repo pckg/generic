@@ -535,11 +535,18 @@ class Generic
             /**
              * Generic controller will take care of rendering and all actions.
              */
+            $tags = stringify($route->tags)->explodeToCollection(',')->removeEmpty();
+            
+            if ($route->layout && strpos($route->layout->template, 'frontend') !== false) {
+                $tags->push('layout:frontend');
+                $tags = $tags->unique()->all();
+            }
+
             $newRoute = [
                 "controller" => GenericController::class,
                 "view"       => "generic",
                 'resolvers'  => $resolvers,
-                'tags'       => explode(',', $route->tags),
+                'tags'       => $tags,
             ];
 
             /**
