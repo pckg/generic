@@ -1,5 +1,6 @@
 <template>
-    <div class="c-pckg-maestro-form">
+    <pckg-loader v-if="state === 'loading'"></pckg-loader>
+    <div class="c-pckg-maestro-form" v-else>
 
         <div v-for="group in groupedFields" class="s-form-field-group box-with-padding --bg-color">
             <div class="s-form-field animated fadeIn"
@@ -21,7 +22,7 @@
                         @click.prevent="submitForm"
                         class="__submit-btn btn btn-primary"
                         :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
-                    Save
+                    {{ formModel.id ? 'Save changes' : 'Add' }}
                     <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
                        class="fal fa-fw"
                        :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
