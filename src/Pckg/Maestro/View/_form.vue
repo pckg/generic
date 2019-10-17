@@ -2,7 +2,7 @@
     <pckg-loader v-if="state === 'loading'"></pckg-loader>
     <div class="c-pckg-maestro-form" v-else>
 
-        <div v-for="group in groupedFields" class="s-form-field-group box-with-padding --bg-color">
+        <div v-for="group in groupedFields" class="s-form-field-group">
             <div class="s-form-field animated fadeIn"
                  :class="'--field-type' + field.type"
                  v-for="(field, i) in group">
