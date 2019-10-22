@@ -494,6 +494,7 @@ class Generic
         $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
 
         $arrRoutes = $routes->nonDeleted()
+                            ->withLayout()
                             ->withAllTranslations(function(HasMany $translations){
                                 $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
                             })
