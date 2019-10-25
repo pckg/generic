@@ -8,6 +8,7 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\Relations;
+use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Form\Dynamic;
 use Pckg\Dynamic\Record\Field;
@@ -307,6 +308,13 @@ class Records extends Controller
         Relation $relation = null,
         Record $foreign = null
     ) {
+        (new TableActions())->joinPermissionTo('execute')
+                            ->where('dynamic_table_id', $table->id)
+                            ->where('slug', 'edit')
+                            ->oneOrFail(function(){
+                                $this->response()->unauthorized();
+                            });
+
         if (!$table->listableFields->count()) {
             $this->response()->notFound('Missing view field permissions.');
         }
@@ -361,6 +369,13 @@ class Records extends Controller
         Relation $relation = null,
         Record $foreign = null
     ) {
+        (new TableActions())->joinPermissionTo('execute')
+                            ->where('dynamic_table_id', $table->id)
+                            ->where('slug', 'edit')
+                            ->oneOrFail(function(){
+                                $this->response()->unauthorized();
+                            });
+
         $entity = $table->createEntity();
         $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();
         $record->setEntity($entity);
@@ -463,11 +478,18 @@ class Records extends Controller
     {
         $form->setEditable(false);
 
-        return $this->getEditAction($form, $record, $table, $dynamic);
+        return $this->getEditAction($form, $record, $table, $dynamic, 'view');
     }
 
-    public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService)
+    public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService, $mode = 'edit')
     {
+        (new TableActions())->joinPermissionTo('execute')
+                            ->where('dynamic_table_id', $table->id)
+                            ->where('slug', $mode)
+                            ->oneOrFail(function(){
+                                $this->response()->unauthorized();
+                            });
+
         $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' .
                                       $record->id . ' - ' . config('site.title'));
 
@@ -677,6 +699,13 @@ class Records extends Controller
         Table $table,
         Entity $entity
     ) {
+        (new TableActions())->joinPermissionTo('execute')
+                            ->where('dynamic_table_id', $table->id)
+                            ->where('slug', 'edit')
+                            ->oneOrFail(function(){
+                                $this->response()->unauthorized();
+                            });
+
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);
@@ -775,6 +804,13 @@ class Records extends Controller
         Record $record,
         Table $table
     ) {
+        (new TableActions())->joinPermissionTo('execute')
+                            ->where('dynamic_table_id', $table->id)
+                            ->where('slug', 'delete')
+                            ->oneOrFail(function(){
+                                $this->response()->unauthorized();
+                            });
+
         $entity = $table->createEntity();
         $record->delete($entity);
 

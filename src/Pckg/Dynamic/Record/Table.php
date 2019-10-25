@@ -33,7 +33,7 @@ class Table extends Record
         return $this->actions(
             function(HasMany $relation) {
                 $relation->where('type', ['record', 'record-plugin', 'mixed']);
-                //$relation->joinPermission();
+                $relation->joinPermission();
             }
         );
     }
