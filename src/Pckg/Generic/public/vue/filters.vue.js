@@ -114,6 +114,7 @@ Vue.directive('router-link', {
     bind: function (el, binding, vnode) {
 
         return;
+
         el.addEventListener('click', function ($event) {
             let path = '/' + el.href.split('/').slice(3).join('/');
             let managed = false;

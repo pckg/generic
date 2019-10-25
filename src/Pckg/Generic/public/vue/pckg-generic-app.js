@@ -3,6 +3,18 @@ const router = new VueRouter({
     routes: Pckg.router.vueUrls || []
 });
 
+router.beforeEach(function(to, from, next) {
+    /**
+     * When redirecting from non-vue to vue.
+     */
+    if (from.matched.length === 0 && to.matched.length > 0 && from.fullPath !== '/') {
+        next(false);
+        http.redirect(to.fullPath);
+        return;
+    }
+    next();
+});
+
 router.afterEach(function (to, from) {
     if (typeof ga === 'undefined') {
         return;
