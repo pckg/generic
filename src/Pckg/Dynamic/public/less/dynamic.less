@@ -25,11 +25,23 @@
 
 a {
   color: @clr-primary;
-  transition: all ease-in-out 0.25s;
+  .transition(@transition-d);
 
   &:hover {
     color: @clr-secondary;
   }
+}
+
+.clr-white {
+  color: #FFF;
+}
+
+.clr-text {
+  color: #222;
+}
+
+.clr-heading {
+  color: #222;
 }
 
 .clr-success {
@@ -50,6 +62,10 @@ a {
 
 .clr-primary {
   color: @clr-primary;
+}
+
+.clr-secondary {
+  color: @clr-secondary;
 }
 
 .panel-heading .dropdown-menu {

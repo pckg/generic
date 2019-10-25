@@ -35,6 +35,10 @@ body {
     background-color: @maestro-bg-dark;
   }
 
+  &.--drop-shadow {
+    .shadow-box();
+  }
+
   &.--rm-padding {
     padding: 0;
   }
@@ -583,6 +587,42 @@ ul.vertical-mid-menu {
     /*& + li {
       margin-top: 2rem;
     }*/
+  }
+}
+
+.__title-bullet {
+  font-size: 1.6rem;
+  line-height: 3.3rem;
+  margin-right: @spacing-xs;
+  vertical-align: bottom;
+}
+
+.c-store-status {
+  .box-with-padding {
+    overflow: hidden;
+    position: relative;
+
+    &:before {
+      content: "";
+      border-radius: 50%;
+      bottom: -5rem;
+      height: 30rem;
+      left: -18rem;
+      position: absolute;
+      width: 30rem;
+      z-index: -1;
+    }
+
+    &.not-live {
+      &:before {
+        background: #ffeded;
+      }
+    }
+    &.live {
+      &:before {
+        background: #f6f9f2;
+      }
+    }
   }
 }
 
