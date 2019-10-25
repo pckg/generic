@@ -587,7 +587,9 @@ textarea.form-control {
   > div:nth-child(2n) {
     color: grey;
     font-size: 13px;
-    margin-top: 25px;
+    @media (min-width: 992px) {
+      margin-top: 25px; // label margin, align with field
+    }
   }
 
   > div {
@@ -1080,7 +1082,9 @@ p.label {
 }
 
 .form-group div.form-control {
-  line-height: 100%;
+  line-height: 125%;
+  height: auto;
+  padding: .666rem;
 }
 
 table {

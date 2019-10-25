@@ -17,7 +17,6 @@ router.afterEach(function (to, from) {
 });
 
 const synced = window !== window.top && window.location.hostname === window.parent.location.hostname;
-console.log('synced', synced);
 const $store = !synced
     ? (new Vuex.Store({
         state: {
@@ -31,10 +30,8 @@ const $store = !synced
     : window.parent._$store;
 
 if (!synced) {
-    console.log('Setting global window store')
     window._$store = $store;
 } else {
-    console.log('Subscribing to changes');
     window.parent._$store.subscribe(function (mutation, parentState) {
         //console.log('replacing state in iframe', parentState, mutation);
         $store.replaceState(parentState);
