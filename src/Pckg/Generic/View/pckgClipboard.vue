@@ -1,48 +1,39 @@
 <template>
-    <div class="pckg-clipboard" :class="type == 'simple' ? '' : (type == 'inline' ? '--inline' : 'input-group')">
-        <a v-if="type == 'default' && link" class="input-group-addon" :href="text" title="Open in new tab"><i
-                class="fal fa-link"></i></a>
-        <textarea v-if="type === 'textarea'"
-                  class="form-control"
-                  @click.prevent="copyToClipboard"
-                  data-toggle="tooltip"
-                  v-model="text"></textarea>
-        <input v-else
-               type="text"
-               class="form-control"
+    <div class="c-pckg-clipboard"
+         v-outer-click="onBodyClick"
+         :class="type ? '--' + type : ''">
+
+        <!-- mandatory element -->
+        <input type="text"
+               class="__copy-element"
                @click.prevent="copyToClipboard"
                data-toggle="tooltip" v-model="text"/>
+
+        <!-- copy handle -->
         <a target="_blank"
            @click.prevent="copyToClipboard"
            :href="text"
-           title="Copy link"
-           class="__copy-handle"
-           :class="type == 'simple' ? '' : 'input-group-addon'"
-        ><i class="fal fa-copy"></i></a>
-        <slot name="copy"></slot>
+           title="Copy to clipboard"
+           class="__copy-handle input-group-addon"><i class="fal fa-fw fa-copy"></i></a>
+
     </div>
 </template>
 
 <style lang="less" scoped>
-    .pckg-clipboard {
-        &.--inline {
-            display: inline-block;
+    .c-pckg-clipboard {
+        position: relative;
+        display: inline-block;
 
-            .form-control {
-                border: none;
-                background: transparent;
-                box-shadow: none;
-                display: inline;
-                font-size: inherit;
-                line-height: inherit;
-                font-weight: bold;
-                width: fit-content;
-                width: 10rem;
-            }
+        .__copy-handle {
+            padding: 3px;
+        }
 
-            .__copy-handle {
-                display: none;
-            }
+        .__copy-element {
+            position: absolute;
+            z-index: -1;
+            left: 0;
+            right: 0;
+            opacity: 0;
         }
     }
 </style>
@@ -70,6 +61,11 @@
             };
         },
         methods: {
+            onBodyClick: function () {
+                var element = $(this.$el).find('input').get(0);
+                $(element).tooltip('hide');
+                $(this.$el).find('.tooltip').remove();
+            },
             copyToClipboard: function () {
                 var element = $(this.$el).find('input').get(0);
                 var title = 'Please press Ctrl/Cmd+C to copy';

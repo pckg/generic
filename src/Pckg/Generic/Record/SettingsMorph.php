@@ -108,7 +108,7 @@ class SettingsMorph extends Record
                                                  ]);
         $finalValue = collect($settingsMorph->getFinalValueAttribute())->push($value)->unique()->all();
         $settingsMorph->setAndSave([
-                                       'value' => $finalValue,
+                                       'value' => json_encode($finalValue),
                                    ]);
 
         return $settingsMorph;
