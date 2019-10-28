@@ -60,6 +60,15 @@ class SettingsMorph extends Record
         return $this->setting->type == 'array' ? $this->getJsonValueAttribute() : $this->value;
     }
 
+    /**
+     * @param      $key
+     * @param      $value
+     * @param      $morph
+     * @param      $poly
+     * @param null $type
+     *
+     * @return SettingsMorph
+     */
     public static function makeItHappen($key, $value, $morph, $poly, $type = null)
     {
         $setting = Setting::getOrNew(['slug' => $key]);
@@ -74,6 +83,35 @@ class SettingsMorph extends Record
         $settingsMorph->setAndSave([
                                        'value' => is_array($value) ? json_encode($value) : $value,
                                    ]);
+
+        return $settingsMorph;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @param $morph
+     * @param $poly
+     *
+     * @return SettingsMorph
+     */
+    public static function makeItPush($key, $value, $morph, $poly)
+    {
+        $setting = Setting::getOrNew(['slug' => $key]);
+        if (!$setting->id) {
+            $setting->setAndSave(['type' => 'array']);
+        }
+        $settingsMorph = SettingsMorph::getOrNew([
+                                                     'setting_id' => $setting->id,
+                                                     'poly_id'    => $poly,
+                                                     'morph_id'   => $morph,
+                                                 ]);
+        $finalValue = collect($settingsMorph->getFinalValueAttribute())->push($value)->unique()->all();
+        $settingsMorph->setAndSave([
+                                       'value' => $finalValue,
+                                   ]);
+
+        return $settingsMorph;
     }
 
     public static function getSettingOrDefault($slug, $morph, $poly, $default = null)

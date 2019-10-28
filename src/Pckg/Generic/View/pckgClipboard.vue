@@ -1,7 +1,15 @@
 <template>
     <div class="pckg-clipboard" :class="type == 'simple' ? '' : (type == 'inline' ? '--inline' : 'input-group')">
-        <a v-if="type == 'default' && link" class="input-group-addon" :href="text" title="Open in new tab"><i class="fal fa-link"></i></a>
-        <input type="text" class="form-control"
+        <a v-if="type == 'default' && link" class="input-group-addon" :href="text" title="Open in new tab"><i
+                class="fal fa-link"></i></a>
+        <textarea v-if="type === 'textarea'"
+                  class="form-control"
+                  @click.prevent="copyToClipboard"
+                  data-toggle="tooltip"
+                  v-model="text"></textarea>
+        <input v-else
+               type="text"
+               class="form-control"
                @click.prevent="copyToClipboard"
                data-toggle="tooltip" v-model="text"/>
         <a target="_blank"
@@ -19,6 +27,7 @@
     .pckg-clipboard {
         &.--inline {
             display: inline-block;
+
             .form-control {
                 border: none;
                 background: transparent;
@@ -30,6 +39,7 @@
                 width: fit-content;
                 width: 10rem;
             }
+
             .__copy-handle {
                 display: none;
             }

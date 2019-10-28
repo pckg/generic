@@ -34,7 +34,7 @@ body {
   &.--bg-color {
     background-color: @maestro-bg-dark;
     .o-help {
-      background-color: #fff;
+      background-color: var(--o-help--bg-color, #fff);
     }
   }
 
@@ -405,17 +405,25 @@ body {
 
 .maestro-content {
   float: right;
-  padding: 6rem 0;
-  margin: 0 6rem;
+  padding: 2rem 0;
+  margin: 0 2rem;
+  width: ~"calc(100% - 24rem)";
+  @media (min-width: 768px) {
+    padding: 6rem 0;
+    margin: 0 6rem;
+    width: ~"calc(100% - 32rem)";
+  }
   transition: @transition-d;
-  width: ~"calc(100% - 32rem)";
 
   &.login {
     margin-left: 0;
   }
 
   body.collapsed & {
-    width: ~"calc(100% - 17rem)";
+    width: ~"calc(100% - 9rem)";
+    @media (min-width: 768px) {
+      width: ~"calc(100% - 17rem)";
+    }
   }
 }
 
@@ -514,7 +522,7 @@ ul.nav-tabs {
 }
 
 ul.vertical-mid-menu {
-  margin: 0 -2.4rem;
+  margin: 0 -2.4rem 2rem -2.4rem;
   padding: 0;
   ul {
     margin: .333rem 0 1rem 0;
@@ -525,6 +533,10 @@ ul.vertical-mid-menu {
   }
 
   > li {
+    float: left;
+    @media (min-width: 992px) {
+      float: none;
+    }
     > span,
     > a {
       display: block;
@@ -542,6 +554,10 @@ ul.vertical-mid-menu {
     }
 
     > ul {
+      display: none;
+      @media (min-width: 992px) {
+        display: block;
+      }
       margin: 0 0 0 .666rem;
       padding: 0;
       list-style-type: none;

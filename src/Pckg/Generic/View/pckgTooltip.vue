@@ -26,7 +26,7 @@
             },
             visible: false,
             iconStyle: {
-                default: 'far'
+                default: 'fal'
             }
         },
         watch: {
