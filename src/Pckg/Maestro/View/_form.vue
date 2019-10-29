@@ -85,6 +85,7 @@
                         ? ('/dynamic/records/edit/' + this.tableId + '/' + this.formModel.id)
                         : ('/dynamic/records/add/' + this.tableId);
                     http.post(url, this.collectFormData(), function (data) {
+                        this.$emit('saved');
                         this.state = 'success';
                         this.clearErrorResponse();
                         if (!this.formModel.id) {
