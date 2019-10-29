@@ -9,7 +9,7 @@
         props: {
             name: {},
             message: {
-                default: 'Error'
+                default: null
             },
             shown: {
                 default: false,
@@ -24,7 +24,7 @@
                 return !!this.keyedErrors[this.name];
             },
             getMessage: function () {
-                return this.keyedErrors[this.name] || this.message;
+                return this.message || this.keyedErrors[this.name] || 'Error';
             }
         },
     }
