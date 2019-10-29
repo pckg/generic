@@ -31,7 +31,9 @@
     Vue.config.performance = true;
     {% endif %}
 
-    moment.locale(Pckg.config.locale.current);
+    if (typeof moment !== 'undefined') {
+        moment.locale(Pckg.config.locale.current);
+    }
 
 </script>
 
