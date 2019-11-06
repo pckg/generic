@@ -12,6 +12,18 @@ router.beforeEach(function(to, from, next) {
         http.redirect(to.fullPath);
         return;
     }
+
+    /**
+     * Auth guard.
+     */
+    if (to.meta.tags && Object.values(to.meta.tags || {}).indexOf('group:admin') >= 0 && (!Pckg.auth.user || [1, 3].indexOf(Pckg.auth.user.user_group_id) === -1)) {
+        next('/login');
+        return;
+    } else if (to.meta.tags && Object.values(to.meta.tags || {}).indexOf('group:superadmin') >= 0 && (!Pckg.auth.user || Pckg.auth.user.user_group_id !== 1)) {
+        next(Pckg.auth.user ? '/' : '/login');
+        return;
+    }
+
     next();
 });
 

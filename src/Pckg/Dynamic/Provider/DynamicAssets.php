@@ -15,8 +15,8 @@ class DynamicAssets extends Provider
             /**
              * Sort
              */
-            'css/actions.css',
-            'js/actions.js',
+            // 'css/actions.css',
+            // 'js/actions.js',
             /**
              * Help popover
              */

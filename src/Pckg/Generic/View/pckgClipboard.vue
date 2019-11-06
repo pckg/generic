@@ -1,31 +1,38 @@
 <template>
     <div class="c-pckg-clipboard"
          v-outer-click="onBodyClick"
+         data-toggle="tooltip"
          :class="type ? '--' + type : ''">
 
         <!-- mandatory element -->
         <input type="text"
                class="__copy-element"
                @click.prevent="copyToClipboard"
-               data-toggle="tooltip" v-model="text"/>
+               v-model="text"/>
 
         <!-- copy handle -->
         <a target="_blank"
            @click.prevent="copyToClipboard"
            :href="text"
            title="Copy to clipboard"
-           class="__copy-handle input-group-addon"><i class="fal fa-fw fa-copy"></i></a>
+           class="__copy-handle"><i class="fal fa-fw fa-copy"></i></a>
 
     </div>
 </template>
 
 <style lang="less" scoped>
     .c-pckg-clipboard {
-        position: relative;
         display: inline-block;
+        vertical-align: bottom;
+        // min width for a clipboard to work
+        width: 3rem;
+        text-align: center;
 
         .__copy-handle {
-            padding: 3px;
+            max-width: 2rem;
+            // this is needed for a clipboard to work
+            display: table-cell;
+            width: 1%;
         }
 
         .__copy-element {
@@ -62,17 +69,18 @@
         },
         methods: {
             onBodyClick: function () {
-                var element = $(this.$el).find('input').get(0);
-                $(element).tooltip('hide');
-                $(this.$el).find('.tooltip').remove();
+                let $el = $(this.$el);
+                $el.tooltip('hide');
+                $el.find('.tooltip').remove();
             },
             copyToClipboard: function () {
-                var element = $(this.$el).find('input').get(0);
-                var title = 'Please press Ctrl/Cmd+C to copy';
+                let input = $(this.$el).find('input').get(0);
+                let title = 'Please copy manually';
 
                 // is element selectable?
-                if (element && element.select) {
-                    element.select();
+                let $el = $(this.$el);
+                if (input && input.select) {
+                    input.select();
 
                     try {
                         document.execCommand('copy');
@@ -84,13 +92,13 @@
 
                 }
 
-                $(element).tooltip({
+                $el.tooltip({
                     'trigger': 'manual',
                     'title': title
                 });
 
-                $(element).tooltip('show').mouseout(function () {
-                    $(element).tooltip('hide');
+                $el.tooltip('show').mouseout(function () {
+                    $el.tooltip('hide');
                 });
             }
         }

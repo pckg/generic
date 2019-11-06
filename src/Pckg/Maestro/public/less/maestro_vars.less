@@ -43,10 +43,17 @@ Open Sans was optimized for print, web, and mobile interfaces, and has excellent
 Roboto ... makes for a more natural reading rhythm more commonly found in humanist and serif types
  */
 @ui-font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@transition-d: all ease-on-out .2s;
 
 .label-style-uppercase() {
   color: @lightGray;
   font-size: 13px;
   text-transform: uppercase;
   font-weight: bold;
+}
+
+.transition(@transition) {
+  -webkit-transition: @transition;
+  -o-transition: @transition;
+  transition: @transition;
 }
