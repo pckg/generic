@@ -21,6 +21,7 @@ use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
+use Pckg\Htmlbuilder\Datasource\Method\Request;
 use Pckg\Locale\Lang;
 use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Helper\Maestro;
@@ -400,6 +401,32 @@ class Records extends Controller
 
         $form->populateFromRequest();
 
+        /**
+         * Populate from session?
+         */
+        $newRecord = null;
+        $sessionUpload = $_SESSION[Records::class]['upload'] ?? [];
+        foreach ($sessionUpload as $i => $uploadedData) {
+            /**
+             * Skip data from other relations.
+             */
+            if ($uploadedData['_relation'] != $relation->id) {
+                continue;
+            }
+
+            /**
+             * This is usually url or picture field?
+             */
+            $field = collect((new Request())->setElement($form)->getElements())->first(function($e) use ($uploadedData) { return $e->getName() === $uploadedData['_field']; });
+            if (!$field) {
+                throw new Exception('No field to save');
+            }
+            /**
+             * Set to validate.
+             */
+            $field->setValue($uploadedData[$uploadedData['_field']]);
+        }
+
         if (!$form->isValid($errors, $descriptions)) {
             return response()->code(422)->respond([
                                                       'error'        => true,
@@ -418,7 +445,7 @@ class Records extends Controller
         }
 
         $newRecord = null;
-        foreach ($_SESSION[Records::class]['upload'] ?? [] as $i => $uploadedData) {
+        foreach ($sessionUpload as $i => $uploadedData) {
             if ($uploadedData['_relation'] != $relation->id) {
                 continue;
             }
@@ -940,9 +967,13 @@ class Records extends Controller
 
         $entity = $table->createEntity();
         if (!$record) {
+            /**
+             * Redis issue: locking sessions
+             */
             $_SESSION[Records::class]['upload'][] = [
                 '_relation'                     => $relation->id,
-                $relation->onField->field ?? '' => $foreignRecord ?? $foreignRecord->id,
+                '_field' => $field->field,
+                $relation->onField->field ?? '' => $foreignRecord ? $foreignRecord->id : null,
                 $field->field                   => $filename,
             ];
         } else {
@@ -954,6 +985,7 @@ class Records extends Controller
         return [
             'success' => true,
             'url'     => img($filename, null, true, $dir),
+            'total'   => count($_SESSION[Records::class]['upload']),
         ];
     }
 
