@@ -13,8 +13,10 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
+                    <li v-for="limit in limits">
+                        <a href="#" @click.prevent="setPerPage(limit)">{{ limit }} per page</a>
+                    </li>
                     <li>
-                        <a v-for="limit in limits" href="#" @click.prevent="setPerPage(limit)">{{ limit }} per page</a>
                         <a href="#" @click.prevent="setPerPage('all')">all</a>
                     </li>
                 </ul>
