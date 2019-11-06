@@ -372,7 +372,7 @@ ifrm.document.close();
                 $fullPath = $this->record->{$field->field} ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
-                    '"><i class="fal fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} .
+                    '"><i class="fal fa-fw fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} .
                     '</a>';
             }
         } elseif ($type == 'picture') {
@@ -383,7 +383,7 @@ ifrm.document.close();
                     cdn($fullPath) . '" /></a>';
             }
         } elseif ($type == 'boolean') {
-            $value = $value ? '<i class="fal fa-check"></i>' : '<i class="fal fa-times"></i>';
+            $value = $value ? '<i class="fal fa-fw fa-check"></i>' : '<i class="fal fa-fw fa-times"></i>';
         }
 
         $helpHtml = $field->help ? '<div class="help">' . $field->help . '</div>' : '';
@@ -424,24 +424,24 @@ ifrm.document.close();
                     if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
                         $element->addChild('<a class="btn btn-default btn-md" title="Preview" href="' .
                                            $field->getPreviewFileUrlAttribute($this->record) .
-                                           '"><i class="fal fa-external-link" aria-hidden="true"></i> Preview ' .
+                                           '"><i class="fal fa-fw fa-external-link" aria-hidden="true"></i> Preview ' .
                                            $type . '</a>&nbsp;&nbsp;');
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {
                         $element->addChild('<a class="btn btn-default btn-md" title="Generate" href="' .
                                            $field->getGenerateFileUrlAttribute($this->record) .
-                                           '"><i class="fal fa-refresh" aria-hidden="true"></i> Generate ' . $type .
+                                           '"><i class="fal fa-fw fa-refresh" aria-hidden="true"></i> Generate ' . $type .
                                            '</a>&nbsp;&nbsp;');
                     }
                     if ($this->record->{$field->field}) {
                         $element->addChild('<a class="btn btn-default btn-md" title="Download" href="' . $fullPath .
-                                           '"><i class="fal fa-download" aria-hidden="true"></i> Download ' .
+                                           '"><i class="fal fa-fw fa-download" aria-hidden="true"></i> Download ' .
                                            $this->record->{$field->field} . '</a>&nbsp;&nbsp;');
                     }
                 }
             } else {
                 $element = $this->getFieldset()->addFile($name);
-                $element->setPrefix('<i class="fal fa-file' . ($type == 'pdf' ? '-pdf' : '') .
+                $element->setPrefix('<i class="fal fa-fw fa-file' . ($type == 'pdf' ? '-pdf' : '') .
                                     '-o" aria-hidden="true"></i>');
 
                 if ($fullPath) {
@@ -494,24 +494,33 @@ ifrm.document.close();
 
             return $element;
         } elseif ($type == 'datetime') {
-            $element = $this->getFieldset()->addDatetime($name);
+            $element = $this->getFieldset()->addText($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fal fa-calendar" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-fw fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
+
+            $element->addClass('hidden')
+                    ->addSibling('<pckg-datetime-picker v-model="form.' . $name . '" :options="{format: \'YYYY-MM-DD HH:mm\',type: \'datetime\',checkEnabled: null}"></pckg-datetime-picker>');
 
             return $element;
         } elseif ($type == 'date') {
-            $element = $this->getFieldset()->addDate($name);
+            $element = $this->getFieldset()->addHidden($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fal fa-calendar" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-fw fa-calendar" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
+
+            $element->addClass('hidden')
+                    ->addSibling('<pckg-datetime-picker v-model="form.' . $name . '" :options="{format: \'YYYY-MM-DD\',type: \'date\',checkEnabled: null}"></pckg-datetime-picker>');
 
             return $element;
         } elseif ($type == 'time') {
             $element = $this->getFieldset()->addTime($name);
             $element->addClass('vue-takeover');
-            $element->setPrefix('<i class="fal fa-clock-o" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-fw fa-clock-o" aria-hidden="true"></i>');
             $element->a('autocomplete', 'off');
+
+            $element->addClass('hidden')
+                    ->addSibling('<pckg-datetime-picker v-model="form.' . $name . '" :options="{format: \'HH:mm\',type: \'time\',checkEnabled: null}"></pckg-datetime-picker>');
 
             return $element;
         } elseif (in_array($type, ['password'])) {
@@ -531,7 +540,7 @@ ifrm.document.close();
             return $this->getFieldset()->addCheckbox($name);
         } elseif ($type == 'geo') {
             $element = $this->getFieldset()->addGeo($name);
-            $element->setPrefix('<i class="fal fa-map-marker" aria-hidden="true"></i>');
+            $element->setPrefix('<i class="fal fa-fw fa-map-marker" aria-hidden="true"></i>');
 
             return $element;
         } elseif ($type == 'select') {

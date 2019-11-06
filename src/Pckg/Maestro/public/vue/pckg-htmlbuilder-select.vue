@@ -1,17 +1,17 @@
 <template>
     <div class="pckg-htmlbuilder-select btn-group">
-        <a href="button" :href="realViewUrl" target="_blank" class="btn btn-default btn-md"
+        <a href="button" :href="realViewUrl" target="_blank" class="btn btn-default btn-sm"
            title="View">
-            <i class="fal fa-search" aria-hidden="true"></i>
+            <i class="fa-fw fal fa-search" aria-hidden="true"></i>
         </a>
-        <a href="button" :href="url" target="_blank" class="btn btn-default btn-md"
+        <a href="button" :href="url" target="_blank" class="btn btn-default btn-sm"
            title="To list">
-            <i class="fal fa-list-ul" aria-hidden="true"></i>
+            <i class="fa-fw fal fa-list-ul" aria-hidden="true"></i>
         </a>
-        <button type="button" @click.prevent="refreshList" class="btn btn-default btn-md"
+        <a @click.prevent="refreshList" href="#" class="btn btn-default btn-sm"
                 title="Refresh">
-            <i class="fal fa-sync-alt" aria-hidden="true"></i>
-        </button>
+            <i class="fa-fw fal fa-sync-alt" aria-hidden="true"></i>
+        </a>
     </div>
 </template>
 

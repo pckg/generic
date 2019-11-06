@@ -109,8 +109,8 @@ a {
     }
   }
 
-  .form-group {
-    margin: 0 0 2rem 0;
+  .form-group:not(:last-child) {
+    margin-bottom: 1rem;
   }
 }
 
@@ -149,12 +149,6 @@ form div.help,
 
   .form-group {
     position: relative;
-  }
-
-  .input-group-addon {
-    border: none;
-    border-bottom: 2px solid #eee;
-    border-radius: 0;
   }
 
   .dropdown.bootstrap-select {
@@ -524,14 +518,14 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
 }
 
 .pckg-htmlbuilder-select {
-  width: 118px;
+  width: 11rem;
   float: right;
 }
 
 .pckg-htmlbuilder-select + div {
   float: left;
-  width: ~'calc(100% - 118px) !important';
-  padding-right: 4px !important;
+  width: ~'calc(100% - 11rem) !important';
+  padding-right: 4px;
   max-width: none;
 }
 
@@ -543,7 +537,7 @@ table.table td.actions .btn-group > ul li:first-child:empty + li:empty + li:not(
 .pckg-htmlbuilder-geo + input {
   float: left;
   width: ~'calc(100% - 41px) !important';
-  padding-right: 4px !important;
+  padding-right: 4px;
 }
 
 .vue-component-gmaps {
