@@ -253,7 +253,7 @@ let tinyMceConfig = {
         'emoticons template paste textcolor colorpicker textpattern imagetools codesample pckg noneditable'
     ],
     toolbar: [ // imagetools
-        'undo redo | link unlink image media | forecolor backcolor | hr table code',
+        'undo redo | link unlink image media | forecolor backcolor | hr table removeformat code',
         'styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent'
     ],
     height: 500,
