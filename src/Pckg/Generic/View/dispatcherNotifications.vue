@@ -18,7 +18,7 @@
 
             </div>
         </div>
-        <div class="pckg-dispatcher-notifications-wrapper top-center">
+        <div class="pckg-dispatcher-notifications-wrapper top-center scope-bg-system">
             <div
                     class="alert alert-dismissible animated" role="alert"
                     :class="alertClass(notification)"
@@ -26,7 +26,7 @@
                 <div class="col" v-html="notification.content"></div>
                 <div class="col">
                     <a type="button" class="btn btn-primary" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true" @click="removeNotification(notification)">GOT IT</span>
+                        <span aria-hidden="true" @click="removePersistentNotification(notification)">GOT IT</span>
                     </a>
                 </div>
 
@@ -51,6 +51,7 @@
             },
             removePersistentNotification: function (notification) {
                 utils.splice(this.persistentNotifications, notification);
+                setCookie(utils.sluggify(notification.content), 'confirmed', moment().add(10, 'year').toDate());
             },
             alertClass: function(notification) {
                 let alertType = 'alert-' + notification.type;
@@ -101,11 +102,13 @@
             }.bind(this));
 
             $dispatcher.$on('persistent-notification:info', function (msg) {
-                var notification = {
-                    content: msg,
-                    type: 'info'
-                };
-                this.persistentNotifications.push(notification);
+                if(!getCookie(utils.sluggify(msg))) {
+                    var notification = {
+                        content: msg,
+                        type: 'info'
+                    };
+                    this.persistentNotifications.push(notification);
+                }
             }.bind(this));
         }
     }
