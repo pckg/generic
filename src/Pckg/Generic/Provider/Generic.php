@@ -37,4 +37,13 @@ class Generic extends Provider
         ];
     }
 
+    public function services()
+    {
+        return [
+            \Pckg\Generic\Service\Generic::class => function() {
+                return new \Pckg\Generic\Service\Generic();
+            },
+        ];
+    }
+
 }
