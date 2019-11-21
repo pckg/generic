@@ -344,7 +344,7 @@ var initTinymce = function (selector, config) {
                 var content = editor.getContent();
                 var updated = content.replace(/<\/?g[^>]*>/g, "");
 
-                if (updated == content) {
+                if (updated === content) {
                     return;
                 }
 

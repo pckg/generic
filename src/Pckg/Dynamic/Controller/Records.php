@@ -309,9 +309,8 @@ class Records extends Controller
         Relation $relation = null,
         Record $foreign = null
     ) {
-        (new TableActions())->joinPermissionTo('execute')
-                            ->where('dynamic_table_id', $table->id)
-                            ->where('slug', 'edit')
+        (new Tables())->joinPermissionTo('write')
+                            ->where('id', $table->id)
                             ->oneOrFail(function(){
                                 $this->response()->unauthorized();
                             });
@@ -370,12 +369,11 @@ class Records extends Controller
         Relation $relation = null,
         Record $foreign = null
     ) {
-        (new TableActions())->joinPermissionTo('execute')
-                            ->where('dynamic_table_id', $table->id)
-                            ->where('slug', 'edit')
-                            ->oneOrFail(function(){
-                                $this->response()->unauthorized();
-                            });
+        (new Tables())->joinPermissionTo('write')
+                      ->where('id', $table->id)
+                      ->oneOrFail(function(){
+                          $this->response()->unauthorized();
+                      });
 
         $entity = $table->createEntity();
         $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();

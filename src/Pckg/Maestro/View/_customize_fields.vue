@@ -123,7 +123,7 @@
                         return;
                     }
 
-                    this.$set(field, 'visible', true);
+                    $vue.$set(field, 'visible', true);
                 }.bind(this));
                 this.newField = '';
             },

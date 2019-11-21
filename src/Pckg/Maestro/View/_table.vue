@@ -37,7 +37,7 @@
 
         <div class="clearfix"></div>
 
-        <pckg-loader :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
+        <pckg-loader :icon="loading === 'error' ? 'fa-exclamation-circle' : 'fa-spinner-third fa-spin'" :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
         <div class="pckg-maestro-table">
@@ -587,6 +587,19 @@
                     if (!this.view.live && this.records.length == 0) {
                         this.refreshData();
                     }
+                }.bind(this), function (response) {
+                    this.loading = 'error';
+                    if (response.status === 401) {
+                        $dispatcher.$emit('notification:error', 'Unauthorized');
+                    } else if (response.status === 403) {
+                        $dispatcher.$emit('notification:error', 'Access to the resource was not granted');
+                    } else if (response.status === 404) {
+                        $dispatcher.$emit('notification:error', 'Resource not found');
+                    } else if (response.status === 500) {
+                        $dispatcher.$emit('notification:error', 'Server error, team has been notified');
+                    } else {
+                        $dispatcher.$emit('notification:error', 'Error ' + response.status + ' (' + response.statusText + ')');
+                    }
                 }.bind(this));
             },
             recordAction: function (record, action) {
@@ -834,7 +847,8 @@
                     this.recalculateFreeze();
                     this.$emit('update:records', this.records);
 
-                }.bind(this)).catch(function () {
+                }.bind(this)).catch(function (e) {
+                    console.log(e, 'error');
                     $dispatcher.$emit('notification:error', 'Error fetching data');
                     this.loading = false;
                 }.bind(this)).then(function (data) {

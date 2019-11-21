@@ -1,6 +1,6 @@
 <template>
     <span v-if="myLoading" class="pckg-loader text-center" :class="mode">
-        <i class="fal fa-spinner-third fa-spin fa-fw" :class="'fa-' + size"></i>
+        <i class="fal fa-fw" :class="['fa-' + size, icon]"></i>
     </span>
 </template>
 
@@ -16,6 +16,9 @@
             },
             size: {
                 default: '2x',
+            },
+            icon: {
+                default: 'fa-spinner-third fa-spin'
             }
         },
         watch: {

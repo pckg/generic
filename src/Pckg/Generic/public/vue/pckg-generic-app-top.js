@@ -1,40 +1,8 @@
-/**
- * Register main Vue event dispatcher.
- * Dispatcher is shared with parent window so we transmit all events between iframes and host.
- *
- * @type {Vue}
- */
-const $dispatcher = window === window.top || window.location.hostname !== window.parent.location.hostname
-    ? (new Vue())
-    : window.parent._$dispatcher;
-
-/**
- * Allow iframes to have access to same dispatcher.
- */
-if (window === window.top) {
-    window._$dispatcher = $dispatcher;
-}
-
-var $scroller = new Vue({
-    methods: {
-        onScroll: function (e) {
-            $scroller.$emit('scroll', e);
-        }
-    },
-    created: function () {
-        $(window).on('scroll', this.onScroll);
-    }
-});
-
-var data = data || {};
-
-var props = props || {};
-
-const pckgDelimiters = {
+export const pckgDelimiters = {
     delimiters: ['${', '}']
 };
 
-const dynamicEvents = {
+export const dynamicEvents = {
     created: function () {
         $.each(this.triggers, function (method, events) {
             $.each(Array.isArray(events) ? events : [events], function (i, event) {
@@ -51,7 +19,7 @@ const dynamicEvents = {
     },
 };
 
-const pckgCdn = {
+export const pckgCdn = {
     methods: {
         cdn: function (file) {
             if (!file) {
@@ -81,7 +49,7 @@ const pckgCdn = {
     }
 };
 
-const pckgTranslations = {
+export const pckgTranslations = {
     methods: {
         __: function (key, data) {
             let translation;
@@ -116,7 +84,7 @@ const pckgTranslations = {
     }
 };
 
-const pckgFormValidator = {
+export const pckgFormValidator = {
     methods: {
         validateAndSubmit: function (submit, invalid) {
             this.$validator.validateAll().then(function (ok) {
@@ -134,7 +102,7 @@ const pckgFormValidator = {
                 }
             }.bind(this));
         },
-        clearErrorResponse: function() {
+        clearErrorResponse: function () {
             this.errors.clear();
         },
         hydrateErrorResponse: function (response) {
@@ -161,7 +129,7 @@ const pckgFormValidator = {
             /**
              * Scroll to error.
              */
-            this.$nextTick(function(){
+            this.$nextTick(function () {
                 let e = $(this.$el).find('.htmlbuilder-validator-error').first();
                 if (!e) {
                     return;
@@ -172,7 +140,7 @@ const pckgFormValidator = {
     }
 };
 
-const pckgSync = {
+export const pckgSync = {
     methods: {
         single: function (name, request) {
             if (typeof object == 'undefined') {
@@ -188,7 +156,7 @@ const pckgSync = {
     }
 };
 
-const pckgLocale = {
+export const pckgLocale = {
     methods: {
         locale: function () {
             return locale;
@@ -196,7 +164,7 @@ const pckgLocale = {
     }
 };
 
-const pckgTimeout = {
+export const pckgTimeout = {
     methods: {
         timeout: function (name, callback, timeout, object) {
             if (typeof object == 'undefined') {
@@ -226,7 +194,7 @@ const pckgTimeout = {
     }
 };
 
-const pckgInterval = {
+export const pckgInterval = {
     methods: {
         interval: function (name, callback, interval, object) {
             if (typeof object == 'undefined') {
@@ -248,7 +216,7 @@ const pckgInterval = {
     }
 };
 
-const pckgCleanRequest = {
+export const pckgCleanRequest = {
     methods: {
         cleanRequest: function (callback, name) {
             if (this['_pckgCleanRequest' + name]) {
@@ -260,7 +228,7 @@ const pckgCleanRequest = {
     }
 };
 
-const pckgNativeEvents = {
+export const pckgNativeEvents = {
     methods: {
         onNative: function (element, event, callback) {
             $(element).on(event, callback.bind(this));

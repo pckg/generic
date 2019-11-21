@@ -53,7 +53,7 @@ class Generic
 
             if ($auth->isLoggedIn() && $auth->isAdmin()) {
                 $structure = '<pckg-frontpage-deck v-if="!inIframe && $store.getters.genericRoute"></pckg-frontpage-deck>' .
-                    '<template v-if="!inIframe && [\'threesome\', \'device\'].indexOf($store.state.generic.viewMode) >= 0"><pckg-threesome></pckg-threesome></template>' .
+                    '<template v-if="!inIframe && ([\'threesome\', \'device\'].indexOf($store.state.generic.viewMode) >= 0)"><pckg-threesome></pckg-threesome></template>' .
                      $structure;
             }
 

@@ -22,7 +22,7 @@
     Pckg.vue.templates = {};
 
     Pckg.auth = {};
-    Pckg.auth.user = {{ _auth.getUser() | json_encode | raw }};
+    Pckg.auth.user = {{ _auth.getUserDataArray() | json_encode | raw }};
 
     {% if _env.isDev() %}
     Vue.config.debug = true;

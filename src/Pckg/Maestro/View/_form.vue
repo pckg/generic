@@ -34,6 +34,7 @@
 </template>
 
 <script>
+
     export default {
         mixins: [pckgFormValidator, pckgTranslations],
         props: {
