@@ -2,7 +2,10 @@
     <div>
         <div @dblclick.prevent="toggleEditable">
             <template v-if="type == 'boolean'">
-                <template v-if="!editable">
+                <template v-if="!hasPrivilegeToEdit">
+                    <i class="fal fa-fw" :class="value ? 'fa-check clr-success' : 'fa-times clr-error'"></i>
+                </template>
+                <template v-else-if="!editable">
                     <pckg-tabelize-field-boolean :field="fieldId"
                                                  :record="record.id"
                                                  :value="value"
@@ -14,7 +17,9 @@
                 </template>
             </template>
             <template v-else-if="type == 'order'">
-                <pckg-tabelize-field-order :key="record.id"
+                <template v-if="!hasPrivilegeToEdit">{{ value }}</template>
+                <pckg-tabelize-field-order v-else
+                                           :key="record.id"
                                            :field="fieldId"
                                            :record="record.id"
                                            :value="value"
@@ -23,7 +28,9 @@
             </template>
             <template v-else-if="type == 'datetime' && isTogglable">
                 <template v-if="!editable">
-                    <pckg-tabelize-field-datetime :field="fieldId"
+                    <template v-if="!hasPrivilegeToEdit">{{ value | datetime }}</template>
+                    <pckg-tabelize-field-datetime v-else
+                                                  :field="fieldId"
                                                   :record="record.id"
                                                   :value="value"
                                                   :table="table"
@@ -241,6 +248,9 @@
                 }
                 // for fields: value
                 // for relations: record[relation.alias]...[field]
+            },
+            hasPrivilegeToEdit: function(){
+                return this.table.privileges.write || false;
             }
         },
         mounted: function () {

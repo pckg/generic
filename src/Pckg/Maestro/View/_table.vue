@@ -23,8 +23,9 @@
                 </a>
             </div>
 
-            <div class="sec table-actions">
-                <pckg-maestro-table-actions :table="table" :actions="actions.entity"
+            <div class="sec table-actions" v-if="table">
+                <pckg-maestro-table-actions :table="table"
+                                            :actions="actions.entity"
                                             @entity-action="entityAction"
                                             :relation-id="relationId"
                                             :record-id="recordId"

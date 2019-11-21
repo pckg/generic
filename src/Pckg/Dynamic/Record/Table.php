@@ -16,6 +16,23 @@ class Table extends Record
 
     protected $entity = Tables::class;
 
+    protected $toArray = ['privileges'];
+
+    public function getPrivilegesAttribute()
+    {
+        $tables = (new Tables(null, null, false));
+        $tables->usePermissionableTable();
+
+        return $tables->where('id', $this->id)
+                      ->where('user_group_id', auth()->getGroupId())
+                      ->all()
+                      ->keyBy('action')
+                      ->map(function() {
+                          return true;
+                      })
+                      ->all();
+    }
+
     public function getEntityActions()
     {
         return $this->actions(
