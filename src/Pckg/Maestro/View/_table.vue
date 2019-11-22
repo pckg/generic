@@ -983,6 +983,8 @@
                 this.contextMenuShown = false;
                 this.selectedRecord = null;
             }.bind(this));
+
+            $dispatcher.$emit('persistent-notification:info', 'Double click on row to open more info, right mouse click to open menu.')
         },
         mounted: function () {
             // this.refreshData();
