@@ -540,8 +540,10 @@ class Generic
             
             if ($route->layout && strpos($route->layout->template, 'frontend') !== false) {
                 $tags->push('layout:frontend');
-                $tags = $tags->unique()->all();
+                $tags = $tags->unique();
             }
+
+            $tags = $tags->all();
 
             $newRoute = [
                 "controller" => GenericController::class,

@@ -150,9 +150,9 @@ class Route extends Record
         /**
          * Check for existing url or slug.
          */
-        $existing = (new Routes())->joinTranslations()
-                                  ->where('route', $newDetails['route'])
-                                  ->orWhere('slug', $newDetails['slug'])
+        $existing = (new Routes())->nonDeleted()
+                                  ->joinTranslations()
+                                  ->whereRaw('routes_i18n.route = ? OR routes.slug = ?', [$newDetails['route'], $newDetails['slug']])
                                   ->one();
 
         if ($existing) {
@@ -161,14 +161,16 @@ class Route extends Record
             return false;
         }
 
-        $route = $this->saveAs($newDetails);
+        return (new Routes())->transaction(function() use ($newDetails) {
+            $route = $this->saveAs($newDetails);
 
-        /**
-         * Simply, export and import. :)
-         */
-        $route->import($this->export());
+            /**
+             * Simply, export and import. :)
+             */
+            $route->import($this->export());
 
-        return $route;
+            return $route;
+        });
     }
 
 }

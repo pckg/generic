@@ -56,11 +56,12 @@ class CreateGenericTables extends Migration
     protected function routesUp()
     {
         $routes = $this->table('routes');
-        $routes->slug();
+        $routes->slug('slug', 128, false); // not unique, unique by slug and deleted_at
         $routes->integer('layout_id')->references('layouts');
         $routes->timeable();
         $routes->varchar('tags');
         $routes->varchar('resolvers');
+        $routes->unique('slug', 'deleted_at');
 
         $routesI18n = $this->translatable('routes');
         $routesI18n->title();
