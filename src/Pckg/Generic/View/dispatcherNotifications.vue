@@ -90,6 +90,17 @@
             },
             processMsg: function (msg, type) {
                 let notification = this.createNotification(msg, type);
+                /**
+                 * Perform unique check if necessarry.
+                 */
+                if (notification.unique) {
+                    let existing = this.notifications.filter(function (existing) {
+                        return existing.message === notification.message;
+                    });
+                    if (existing.length > 0) {
+                        return;
+                    }
+                }
                 this.notifications.push(notification);
                 this.timeoutClose(notification, type);
             },

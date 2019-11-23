@@ -987,6 +987,7 @@
             $dispatcher.$emit('notification:info', {
                 content: 'Double click on row to open more info, right mouse click to open menu.',
                 position: 'top-center',
+                unique: true,
                 condition: function () {
                     return false;
                     /**
