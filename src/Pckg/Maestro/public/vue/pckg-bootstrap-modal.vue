@@ -1,9 +1,9 @@
 <template>
-    <div class="modal fade" :class="visible ? 'in display-block' : ''" tabindex="-1" role="dialog" :id="id">
+    <div class="modal fade" :class="visible ? 'in display-block' : ''" tabindex="-1" role="dialog" :id="id" :data-backdrop="closable ? 'true' : 'static'" :data-keyboard="closable ? 'true' : 'false'">
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
                 <div class="modal-header" v-if="$slots.header || $slots.headerOut">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
+                    <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                         <i class="far fa-times" aria-hidden="true"></i>
                     </button>
                     <h4 class="modal-title" v-if="$slots.header">
@@ -37,7 +37,11 @@
             visible: {
                 default: false
             },
-            size: null
+            size: null,
+            closable: {
+                type: Boolean,
+                default: true
+            },
         },
         data: function () {
             return {
