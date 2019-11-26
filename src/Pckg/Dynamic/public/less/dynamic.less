@@ -117,7 +117,7 @@ a {
 form div.help,
 .form-group div.help {
   margin-top: .5rem;
-  color: grey;
+  color: @lighterGray;
   font-size: 13px;
   float: left;
   clear: both;
@@ -268,6 +268,10 @@ Style tds
     padding: 1rem 2rem 1rem 1rem;
   }
 
+  tbody > tr:nth-of-type(odd) > td {
+    background-color: #f9f9f9;
+  }
+
   td,
   th {
     &.boolean,
@@ -282,6 +286,15 @@ Style tds
     &.decimal {
       text-align: right;
     }
+
+    label {
+      margin-bottom: 0;
+    }
+
+    .fa-chevron-down,
+    .fa-chevron-up {
+      margin-left: 1rem;
+    }
   }
 
   td {
@@ -289,7 +302,7 @@ Style tds
     word-break: normal;
     min-width: 8rem;
     vertical-align: middle;
-    border-top: 1px solid #eee;
+    border: none;
     padding: 1rem 2rem 1rem 1rem;
 
     &.actions,
