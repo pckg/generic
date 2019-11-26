@@ -91,6 +91,13 @@
             processMsg: function (msg, type) {
                 let notification = this.createNotification(msg, type);
                 /**
+                 * Perform condition check.
+                 */
+                if (notification.condition && !notification.condition()) {
+                    return;
+                }
+
+                /**
                  * Perform unique check if necessarry.
                  */
                 if (notification.unique) {
