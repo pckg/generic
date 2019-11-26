@@ -989,14 +989,13 @@
                 position: 'top-center',
                 unique: true,
                 condition: function () {
-                    return false;
                     /**
                      * We will use a new store to determine it.
                      */
-                    return $store.getters.hasFinishedHelper('maestroRightClick');
+                    return !$store.getters.userHasFlag('maestroRightClick');
                 },
                 onConfirm: function () {
-                    $store.commit('finishHelper', 'maestroRightClick');
+                    $store.commit('addUserFlag', 'maestroRightClick');
                 }
             });
         },
