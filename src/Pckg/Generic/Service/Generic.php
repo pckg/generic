@@ -46,7 +46,13 @@ class Generic
 
     public function __construct()
     {
+        /**
+         * Force this to be singleton.
+         */
         $this->actions = new Collection();
+        if (!context()->exists(static::class)) {
+            context()->bind(static::class, $this);
+        }
     }
 
     public function setActions(Collection $actions)
@@ -537,7 +543,7 @@ class Generic
              * Generic controller will take care of rendering and all actions.
              */
             $tags = stringify($route->tags)->explodeToCollection(',')->removeEmpty();
-            
+
             if ($route->layout && strpos($route->layout->template, 'frontend') !== false) {
                 $tags->push('layout:frontend');
                 $tags = $tags->unique();
