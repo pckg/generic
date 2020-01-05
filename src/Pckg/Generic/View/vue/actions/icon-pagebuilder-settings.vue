@@ -3,8 +3,8 @@
 
         <form-group label="Icon"
                     name="icon"
-                    type="select:single"
-                    :options="{options: initialOptions.availableIcons}"
+                    type="text"
+                    help="Enter any icon from Font Awesome"
                     v-model="iconModel"></form-group>
 
         <form-group label="Style"

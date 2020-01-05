@@ -92,6 +92,14 @@ class Route extends Record
     public function addPartial($partial)
     {
         $partial = $this->preparePartial($partial);
+
+        return $partial->addToRoute($this);
+    }
+
+    public function addHubShare($partial)
+    {
+        $partial = null;
+
         return $partial->addToRoute($this);
     }
 

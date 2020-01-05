@@ -23,6 +23,7 @@ use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\SettingsMorph;
 use Pckg\Generic\Service\Generic;
+use Pckg\Generic\Service\Structure\Wrapper;
 use Pckg\Manager\Upload;
 use Pckg\Stringify;
 
@@ -34,20 +35,6 @@ class PageStructure
         $data = [
             'templates' => config('pckg.generic.templates', []),
         ];
-        foreach (['structures', 'pages', 'footers'] as $type) {
-            $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partial) {
-
-                return (new $partial)->forJson();
-            });
-        }
-
-        /*foreach (['partials'] as $type) {
-            $data[$type] = collect(config('pckg.generic.' . $type))->map(function($partials) {
-                return collect($partials)->map(function($partial) {
-                    return (new $partial)->forJson();
-                });
-            });
-        }*/
 
         $listTemplates = config('pckg.generic.templateEngine.list', []);
         foreach ($data['templates'] as $controller => $config) {
@@ -426,7 +413,9 @@ class PageStructure
 
     public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
     {
-        $partial = $actionsMorph->addPartial(post('partial', null));
+        $partial = post('partial', null);
+        $hub = post('hub', null);
+        $partial = $hub ? $actionsMorph->addHubShare($hub) : $actionsMorph->addPartial($partial);
 
         if ($order = post('order')) {
             $partial->setAndSave(['order' => $order]);
@@ -472,7 +461,9 @@ class PageStructure
 
     public function postActionsMorphAddRoutePartialAction(Route $route)
     {
-        $partial = $route->addPartial(post('partial', null));
+        $partial = post('partial', null);
+        $hub = post('hub', null);
+        $partial = $hub ? $route->addHubShare($hub) : $route->addPartial($partial);
 
         $parent = $partial->mostParent;
 

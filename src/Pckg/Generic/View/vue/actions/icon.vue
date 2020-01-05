@@ -11,7 +11,8 @@
             d.mapper = {
                 normal: 'fa',
                 solid: 'fas',
-                light: 'fal'
+                light: 'fal',
+                brand: 'fab',
             };
 
             return d;

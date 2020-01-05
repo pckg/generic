@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Record;
 
+use Comms\Hub\Api;
 use Complex\Exception;
 use Derive\Layout\Command\GetLessVariables;
 use Derive\Newsletter\Controller\Newsletter;
@@ -173,6 +174,52 @@ class ActionsMorph extends Record
     public function addPartial($partial)
     {
         $partial = $this->preparePartial($partial);
+
+        return $partial->add($this);
+    }
+
+    public function addHubShare($share)
+    {
+        /**
+         * Get definition from hub?
+         * @var $hub Api
+         */
+        $hub = resolve(Api::class);
+        $shareDefinition = $hub->getApi('share/' . $share . '/definition')->getApiResponse('share');
+
+        /**
+         * Share definition now holds:
+         *  - object (partial) or extends
+         *  - content
+         *  - attributes
+         *  - settings
+         */
+        $partial = $this->preparePartial($shareDefinition['extends'] ?? $shareDefinition['object']);
+
+        if (isset($shareDefinition['content'])) {
+            $partial->setContent($shareDefinition['content']);
+        }
+
+        if (isset($shareDefinition['settings'])) {
+            $partial->setSettings($shareDefinition['settings']);
+        }
+
+        if (isset($shareDefinition['attributes'])) {
+            $partial->setAttributes($shareDefinition['attributes']);
+        }
+
+        $multi = $shareDefinition['multi'] ?? [];
+        if ($multi) {
+            // what to do when multi sub-shares are re-used?
+            // - link group, button group
+            // we should add first element (which needs a wrapper if needed), and then add all siblings to his parent?
+        }
+
+        $style = $shareDefinition['style'] ?? [];
+        if ($style) {
+            // this is when style is shared
+            // marked span styles, custom heading afters, styled table styles, ...
+        }
 
         return $partial->add($this);
     }
