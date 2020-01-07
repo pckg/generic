@@ -10,6 +10,7 @@ use Pckg\Database\Record;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
+use Pckg\Generic\Service\Generic;
 use Pckg\Generic\Service\Partial\AbstractPartial;
 use Pckg\Stringify;
 
@@ -178,50 +179,15 @@ class ActionsMorph extends Record
         return $partial->add($this);
     }
 
-    public function addHubShare($share)
+    public function addHubShare($share, $defaults = [])
     {
         /**
-         * Get definition from hub?
-         * @var $hub Api
+         * @var $generic Generic
          */
-        $hub = resolve(Api::class);
-        $shareDefinition = $hub->getApi('share/' . $share . '/definition')->getApiResponse('share');
+        $generic = resolve(Generic::class);
+        $partial = $generic->prepareHubPartial($share);
 
-        /**
-         * Share definition now holds:
-         *  - object (partial) or extends
-         *  - content
-         *  - attributes
-         *  - settings
-         */
-        $partial = $this->preparePartial($shareDefinition['extends'] ?? $shareDefinition['object']);
-
-        if (isset($shareDefinition['content'])) {
-            $partial->setContent($shareDefinition['content']);
-        }
-
-        if (isset($shareDefinition['settings'])) {
-            $partial->setSettings($shareDefinition['settings']);
-        }
-
-        if (isset($shareDefinition['attributes'])) {
-            $partial->setAttributes($shareDefinition['attributes']);
-        }
-
-        $multi = $shareDefinition['multi'] ?? [];
-        if ($multi) {
-            // what to do when multi sub-shares are re-used?
-            // - link group, button group
-            // we should add first element (which needs a wrapper if needed), and then add all siblings to his parent?
-        }
-
-        $style = $shareDefinition['style'] ?? [];
-        if ($style) {
-            // this is when style is shared
-            // marked span styles, custom heading afters, styled table styles, ...
-        }
-
-        return $partial->add($this);
+        return $partial->add($this, null, $defaults);
     }
 
     /**

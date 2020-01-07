@@ -2,6 +2,7 @@
 
 namespace Pckg\Generic\Service;
 
+use Comms\Hub\Api;
 use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
@@ -21,6 +22,7 @@ use Pckg\Generic\Record\Route;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
+use Pckg\Generic\Service\Partial\AbstractPartial;
 use Throwable;
 
 /**
@@ -602,6 +604,57 @@ class Generic
                 );
             });
         }
+    }
+
+    /**
+     * @return mixed|object|AbstractPartial
+     * @throws \Exception
+     */
+    public function prepareHubPartial($share)
+    {
+        /**
+         * Get definition from hub?
+         *
+         * @var $hub Api
+         */
+        $hub = resolve(Api::class);
+        $shareDefinition = $hub->getApi('share/' . $share . '/definition')->getApiResponse('share');
+
+        /**
+         * Share definition now holds:
+         *  - object (partial) or extends
+         *  - content
+         *  - attributes
+         *  - settings
+         */
+        $partial = Reflect::create($shareDefinition['extends'] ?? $shareDefinition['object']);
+
+        if (isset($shareDefinition['content'])) {
+            $partial->setContent($shareDefinition['content']);
+        }
+
+        if (isset($shareDefinition['settings'])) {
+            $partial->setSettings($shareDefinition['settings']);
+        }
+
+        if (isset($shareDefinition['attributes'])) {
+            $partial->setAttributes($shareDefinition['attributes']);
+        }
+
+        $multi = $shareDefinition['multi'] ?? [];
+        if ($multi) {
+            // what to do when multi sub-shares are re-used?
+            // - link group, button group
+            // we should add first element (which needs a wrapper if needed), and then add all siblings to his parent?
+        }
+
+        $style = $shareDefinition['style'] ?? [];
+        if ($style) {
+            // this is when style is shared
+            // marked span styles, custom heading afters, styled table styles, ...
+        }
+
+        return $partial;
     }
 
 }

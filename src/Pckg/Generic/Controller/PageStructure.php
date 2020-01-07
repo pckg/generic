@@ -415,15 +415,10 @@ class PageStructure
     {
         $partial = post('partial', null);
         $hub = post('hub', null);
-        $partial = $hub ? $actionsMorph->addHubShare($hub) : $actionsMorph->addPartial($partial);
-
-        if ($order = post('order')) {
-            $partial->setAndSave(['order' => $order]);
-        }
-
-        if ($variable = post('variable')) {
-            $partial->setAndSave(['variable' => $variable]);
-        }
+        $partial = $hub ? $actionsMorph->addHubShare($hub, [
+            'order' => post('order', 0),
+            'variable' => post('variable', $actionsMorph->variable),
+        ]) : $actionsMorph->addPartial($partial);
 
         $parent = $partial->mostParent;
 
@@ -463,7 +458,10 @@ class PageStructure
     {
         $partial = post('partial', null);
         $hub = post('hub', null);
-        $partial = $hub ? $route->addHubShare($hub) : $route->addPartial($partial);
+        $partial = $hub ? $route->addHubShare($hub, [
+                                                      'variable' => post('variable', 'content'),
+                                                      'order'    => post('order', 0),
+                                                  ]) : $route->addPartial($partial);
 
         $parent = $partial->mostParent;
 

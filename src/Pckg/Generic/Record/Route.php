@@ -5,6 +5,7 @@ namespace Pckg\Generic\Record;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\Routes;
+use Pckg\Generic\Service\Generic;
 use Pckg\Generic\Service\Partial\AbstractPartial;
 
 /**
@@ -96,11 +97,15 @@ class Route extends Record
         return $partial->addToRoute($this);
     }
 
-    public function addHubShare($partial)
+    public function addHubShare($share, $defaults = [])
     {
-        $partial = null;
+        /**
+         * @var $generic Generic
+         */
+        $generic = resolve(Generic::class);
+        $partial = $generic->prepareHubPartial($share);
 
-        return $partial->addToRoute($this);
+        return $partial->addToRoute($this, $defaults);
     }
 
     /**
