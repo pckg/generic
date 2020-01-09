@@ -285,7 +285,19 @@ class Records extends Controller
                     'record' => $tabelize->getRecordActionsArray(),
                 ],
                 'table'     => $tableRecord,
-                'fields'    => $tableRecord->fields,
+                'fields'    => $tableRecord->fields->map(function(Field $field){
+                    $data = $field->toArray();
+
+                    $options = [];
+                    if ($field->fieldType->slug === 'picture') {
+                        $options = [
+                            'dir' => $field->getSetting('pckg.dynamic.field.dir', ''),
+                        ];
+                    }
+                    $data['options'] = $options;
+
+                    return $data;
+                }),
                 'relations' => $tableRecord->relations,
                 'view'      => [
                     'columns' => $columns,

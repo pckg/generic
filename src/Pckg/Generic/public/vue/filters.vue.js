@@ -14,8 +14,8 @@ Vue.filter('number', function (price, decimals, loc) {
     return locale.number(price, decimals, loc);
 });
 
-Vue.filter('roundNumber', function (price, decimals) {
-    return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price).toFixed(decimals || 2);
+Vue.filter('roundNumber', function (number, decimals) {
+    return locale.roundNumber(number, decimals);
 });
 
 Vue.filter('date', function (date, format) {

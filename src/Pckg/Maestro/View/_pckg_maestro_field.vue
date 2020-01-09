@@ -63,6 +63,15 @@
                     <span v-html="value"></span>
                 </template>
             </template>
+            <template v-else-if="type == 'picture' && value && Object.keys(dbField.options).indexOf('dir') >= 0">
+                <template v-if="!editable">
+                    <a :href="'/storage/uploads/' + dbField.options.dir + '/' + value"
+                       @click="openPopup($event, '/storage/uploads/' + dbField.options.dir + '/' + value)">
+                        <img :src="cdn(imageCache('/storage/uploads/' + dbField.options.dir + '/' + value, 'c', '64x48'))"
+                             :alt="value" :title="value" class="img-table-preview"/>
+                    </a>
+                </template>
+            </template>
             <template v-else>
                 <template v-if="!editable">
                     <template v-if="key == 'id'">
@@ -92,6 +101,7 @@
 
 <script>
     export default {
+        mixins: [pckgCdn],
         name: 'pckg-maestro-field',
         props: {
             field: {
@@ -132,6 +142,21 @@
             };
         },
         methods: {
+            openPopup: function ($event, url) {
+                if ($event.ctrlKey) {
+                    return;
+                }
+
+                $event.preventDefault();
+                $.magnificPopup.open({
+                    items: {
+                        src: url
+                    },
+                    type: 'image'
+                });
+
+                return false;
+            },
             toggleEditable: function () {
                 // this.editable = !this.editable;
             },
@@ -249,7 +274,7 @@
                 // for fields: value
                 // for relations: record[relation.alias]...[field]
             },
-            hasPrivilegeToEdit: function(){
+            hasPrivilegeToEdit: function () {
                 return this.table.privileges.write || false;
             }
         },
