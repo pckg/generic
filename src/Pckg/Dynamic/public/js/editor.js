@@ -82,14 +82,16 @@ let tinyMceConfig = {
     link_class_list: [
         {title: 'Link', value: ''},
         {title: 'Button', value: 'button'},
-        {title: 'Bordered button', value: 'button button-bordered'},
+        {title: 'Bordered button', value: 'button btn-bordered'},
         {title: 'No shadow button', value: 'button no-shadow'},
         {title: 'Shadow button', value: 'button shadow'},
         {title: 'Primary color', value: 'button color-primary'},
         {title: 'Secondary color', value: 'button color-secondary'},
         {title: 'Dark button', value: 'button color-dark'},
-        {title: 'Light button', value: 'button color-light'}
+        {title: 'Light button', value: 'button color-light'},
+        {title: 'Small button', value: 'button size-xs'}
     ],
+    link_context_toolbar: true,
     style_formats: [
         {
             title: 'Headings',
@@ -172,9 +174,28 @@ let tinyMceConfig = {
                     title: 'Secondary (system)', format: 'font-family-secondary-system',
                 }
             ]
-        }
+        },
+        {
+            title: 'Buttons',
+            items: [
+                {title: 'Button', format: 'buttonelement'},
+                {title: 'Bordered', format: 'buttonborderedelement'},
+            ]
+        },
     ],
     formats: {
+        buttonelement: {
+            selector: 'a', classes: 'button',
+        },
+        buttonborderedelement: {
+            selector: 'a', classes: 'button',
+        },
+        /*buttonsizexs: {
+            selector: 'a', classes: 'button size-xs',
+        },
+        buttonsizesm: {
+            selector: 'a', classes: 'button size-m',
+        },*/
         font_size_xxs: {
             selector: 'a,p,h1,h2,h3,h4,h5,h6,span,td,th,div,ul,ol,li,table', classes: 'font-size-xxs'
         },

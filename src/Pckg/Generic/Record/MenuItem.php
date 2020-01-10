@@ -9,6 +9,15 @@ class MenuItem extends Record
 
     protected $entity = MenuItems::class;
 
+    public function getAdditionalClass()
+    {
+        if (strpos($this->url, '#') !== 0) {
+            return;
+        }
+
+        return 'clicknscroll';
+    }
+
     public function getRealUrl()
     {
         if (strpos($this->url, '://')) {

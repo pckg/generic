@@ -63,6 +63,8 @@ class Formalize
     {
         vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $this, 'form' => $this->form]);
 
+        return '<pckg-maestro-formalize ref="formalize"></pckg-maestro-formalize>';
+
         return (string)view(
             'Pckg/Maestro:formalize',
             [

@@ -142,7 +142,7 @@ export const pckgFormValidator = {
 
 export const pckgSync = {
     methods: {
-        single: function (name, request) {
+        single: function (name, request, object) {
             if (typeof object == 'undefined') {
                 object = this;
             }

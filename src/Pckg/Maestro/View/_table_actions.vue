@@ -96,7 +96,7 @@
 
                     <div class="form-group">
                         <label>Row delimiter</label>
-                        <div v-html="meta.newline"></div>
+                        <div v-text="meta.newline"></div>
                         <div class="help">Automatically detected newline delimiter.</div>
                     </div>
 

@@ -171,7 +171,7 @@
                     return file;
                 }
 
-                return 'Drop a file to upload';
+                return 'Select a file or drop it here to upload';
             }
         },
         methods: {
