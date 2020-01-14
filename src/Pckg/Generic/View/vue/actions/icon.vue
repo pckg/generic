@@ -13,6 +13,7 @@
                 solid: 'fas',
                 light: 'fal',
                 brand: 'fab',
+                duotone: 'fad',
             };
 
             return d;

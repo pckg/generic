@@ -46,6 +46,8 @@ class Generic
      */
     protected $actions;
 
+    protected $metadata = [];
+
     public function __construct()
     {
         /**
@@ -55,6 +57,18 @@ class Generic
         if (!context()->exists(static::class)) {
             context()->bind(static::class, $this);
         }
+    }
+
+    public function pushMetadata($actionId, $key, $value)
+    {
+        $this->metadata[$actionId][$key] = $value;
+
+        return $this;
+    }
+
+    public function getMetaData()
+    {
+        return $this->metadata;
     }
 
     public function setActions(Collection $actions)
