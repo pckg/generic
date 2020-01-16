@@ -528,6 +528,7 @@ class Generic
         foreach ($arrRoutes AS $route) {
             /**
              * Add route to router.
+             * @deprecated
              */
             $existingRouteByName = router()->getRouteByName($route->slug);
 

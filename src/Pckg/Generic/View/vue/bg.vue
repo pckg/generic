@@ -1,6 +1,6 @@
 <template>
-    <a v-if="display == 'popup' && identifier" :href="url" class="popup-iframe"></a>
-    <div v-else-if="identifier" class="video-background">
+    <a v-if="url && display == 'popup'" :href="url" class="popup-iframe"></a>
+    <div v-else-if="url" class="video-background">
         <div class="video-foreground">
             <iframe :src="url" frameborder="0" allowfullscreen></iframe>
         </div>

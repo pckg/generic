@@ -135,6 +135,12 @@ class Dynamic extends Bootstrap
     public function initLanguageFields()
     {
         $languages = localeManager()->getFrontendLanguages();
+        $sessionLanguageId = $_SESSION['pckg_dynamic_lang_id'] ?? ($languages[0]->slug ?? 'en');
+        $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : $sessionLanguageId;
+        $this->addHidden('language_id')->setValue($languageId);
+
+        return $this;
+
 
         if (count($languages) < 2) {
             return;
@@ -144,8 +150,6 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - field language_id could/will interfere with main table fields ...
          */
-        $sessionLanguageId = $_SESSION['pckg_dynamic_lang_id'];
-        $languageId = $this->record ? ($this->record->language_id ?? $sessionLanguageId) : null;
         $this->addSelect('language_id')->setValue($languageId)->addOptions($languages->keyBy('slug')->map(function(
             Language $language
         ) {
