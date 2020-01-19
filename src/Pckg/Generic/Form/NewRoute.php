@@ -24,11 +24,11 @@ class NewRoute extends Bootstrap implements ResolvesOnRequest
             $validator->setMsg('Enter unique route, URL already exists');
 
             return !((new Routes())->joinTranslations()->where('route', $value)->one());
-        })))->addValidator((new Custom(function($value, Custom $validator) {
+        })))/*->addValidator((new Custom(function($value, Custom $validator) {
             $validator->setMsg('Enter valid url');
 
-            return $value == sluggify($value, '-', '\/\[\]\.');
-        })))->addValidator((new Custom(function($value, Custom $validator) {
+            return $value == sluggify($value, '-', '\/\[\]\.'); // no, what about dynamic urls?
+        })))*/->addValidator((new Custom(function($value, Custom $validator) {
             $validator->setMsg('Url should start with /');
 
             return substr($value, 0, 1) == '/';
