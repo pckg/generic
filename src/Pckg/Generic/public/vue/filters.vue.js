@@ -106,7 +106,15 @@ Vue.directive('outer-click', {
 
 Vue.directive('popup-image', {
     bind: function (el) {
-        $(el).magnificPopup({type: 'image'});
+
+        el.addEventListener('click', function () {
+
+            $.magnificPopup.open({
+                items: [{src: $(el).getAttribute('href')}],
+                type: 'image'
+            });
+
+        });
     }
 });
 
