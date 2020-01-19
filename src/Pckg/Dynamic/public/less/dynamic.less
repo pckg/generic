@@ -836,6 +836,12 @@ div.form-control {
   box-shadow: none;
 }
 
+.c-maestro-table {
+  > tbody > td {
+    cursor: context-menu; // was pointer
+  }
+}
+
 .pckg-maestro-tabelize {
   &.mode-full {
     .mode-padding {
@@ -845,10 +851,6 @@ div.form-control {
 
   .sortable-ghost {
     background-color: @border-grey;
-  }
-
-  table tbody td {
-    cursor: context-menu; // was pointer
   }
 
   .header {
