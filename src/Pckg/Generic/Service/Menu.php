@@ -44,9 +44,6 @@ class Menu
         if (is_string($slug)) {
             trigger(Menu::class . '.collectMenuItems.' . $slug, $menuItems);
         }
-        if (isset($params['returnMenuItems'])) {
-            return $this->buildTree($menuItems);
-        }
 
         return view(
             'Pckg\Generic:menu\\' . $menus->first()->template,
