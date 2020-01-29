@@ -29,11 +29,14 @@ class PageStructure extends Provider
                            'urlPrefix'  => '/api/pckg/generic/pageStructure',
                            'namePrefix' => 'pckg.generic.pageStructure',
                            'controller' => PageStructureController::class,
+                           'data'       => [
+                               'tags' => ['group:designer'],
+                           ],
                        ]))->routes([
-                                       '.initialFetch'                 => new Route('/initialFetch', 'initialFetch'),
+                                       '.initialFetch'                 => route('/initialFetch', 'initialFetch'),
                                        '.getRoutes'                    => new Route('/routes', 'routes'),
                                        '.getVariables'                 => new Route('/variables', 'variables'),
-                                       '.getContents'                  => new Route('/contents', 'contents'),
+                                       '.getContents'                  => route('/contents', 'contents'),
                                        '.getActions'                   => new Route('/actions', 'actions'),
                                        '.newRoute'                     => new Route('/new-route', 'newRoute'),
                                        '.route'                        => (new Route('/routes/[route]',
@@ -82,10 +85,10 @@ class PageStructure extends Provider
                                                                                      'actionsMorphSettings'))->resolvers([
                                                                                                                              'actionsMorph' => ActionsMorph::class,
                                                                                                                          ]),
-                                       '.actionsMorphClone'         => (new Route('/actionsMorph/[actionsMorph]/clone',
+                                       '.actionsMorphClone'            => (new Route('/actionsMorph/[actionsMorph]/clone',
                                                                                      'actionsMorphClone'))->resolvers([
-                                                                                                                             'actionsMorph' => ActionsMorph::class,
-                                                                                                                         ]),
+                                                                                                                          'actionsMorph' => ActionsMorph::class,
+                                                                                                                      ]),
                                        '.toggleActionsMorphLock'       => (new Route('/actionsMorph/[actionsMorph]/lock',
                                                                                      'toggleActionsMorphLock'))->resolvers([
                                                                                                                                'actionsMorph' => ActionsMorph::class,
