@@ -1,24 +1,25 @@
 <template>
     <div class="pckg-datetime-picker">
 
-        <input type="text" class="form-control" v-model="myValue" @focus="focused" :placeholder="placeholder" @change="$emit('input', myValue)" />
+        <input type="text" class="form-control" v-model="myValue" @focus="focused" :placeholder="placeholder"
+               @change="$emit('input', myValue)"/>
 
         <div class="picker" v-if="visible" :class="'mode-' + myMode">
 
             <template v-if="true || myMode != 'day'">
                 <div class="as-table">
                     <div class="prev">
-                        <button type="button" class="btn btn-default btn-sm pull-left" @click.prevent="prev">
+                        <button type="button" class="button size-xs pull-left" @click.prevent="prev">
                             <i class="fal fa-chevron-left"></i>
                         </button>
                     </div>
                     <div class="title">
-                        <button type="button" class="btn btn-default btn-sm btn-block" @click.prevent="zoomOut">
+                        <button type="button" class="button size-xs btn-block" @click.prevent="zoomOut">
                             {{ viewTitle }}
                         </button>
                     </div>
                     <div class="next">
-                        <button type="button" class="btn btn-default btn-sm pull-right" @click.prevent="next">
+                        <button type="button" class="button size-xs pull-right" @click.prevent="next">
                             <i class="fal fa-chevron-right"></i>
                         </button>
                     </div>
@@ -30,9 +31,9 @@
             <div class="interval-list">
 
                 <template v-if="['century', 'decade', 'year'].indexOf(myMode) >= 0">
-                    <button type="button" class="btn btn-default" v-for="(item, d) in range"
-                            @click.prevent="select(d)">{{ item }}
-                    </button>
+                    <div v-for="(item, d) in range" class="__interval-item">
+                        <button type="button" class="button size-xs" @click.prevent="select(d)">{{ item }}</button>
+                    </div>
                 </template>
 
                 <template v-else-if="myMode == 'month'">
@@ -45,7 +46,7 @@
                         <tbody>
                         <tr v-for="week in weeks">
                             <td v-for="day in week">
-                                <button class="btn btn-sm btn-default" type="button" @click.prevent="select(day.date)"
+                                <button class="button size-xs btn-block" type="button" @click.prevent="select(day.date)"
                                         :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
                                         :disabled="day.disabled">{{ day.day }}
                                 </button>
@@ -56,7 +57,7 @@
                 </template>
 
                 <template v-else-if="myMode == 'day'">
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
+                    <button v-if="false" type="button" class="button size-xs btn-block"
                             @click.prevent="prevHour">
                         <i class="fal fa-chevron-up"></i>
                     </button>
@@ -67,7 +68,7 @@
                         <tbody>
                         <tr v-for="hour in hours">
                             <td v-for="minute in hour">
-                                <button class="btn btn-sm btn-default" type="button"
+                                <button class="button size-xs btn-block" type="button"
                                         @click.prevent="select(minute.time)"
                                         :class="[minute.transparent ? 'trans-fade' : '', minute.active ? 'active' : '']"
                                         :disabled="minute.disabled">
@@ -80,7 +81,7 @@
 
                     <hr v-if="false"/>
 
-                    <button v-if="false" type="button" class="btn btn-default btn-sm btn-block"
+                    <button v-if="false" type="button" class="button size-xs btn-block"
                             @click.prevent="nextHour">
                         <i class="fal fa-chevron-down"></i>
                     </button>
