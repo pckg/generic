@@ -32,7 +32,7 @@
 
                 <template v-if="['century', 'decade', 'year'].indexOf(myMode) >= 0">
                     <div v-for="(item, d) in range" class="__interval-item">
-                        <button type="button" class="button size-xs" @click.prevent="select(d)">{{ item }}</button>
+                        <button type="button" class="button size-xs btn-block" @click.prevent="select(d)">{{ item }}</button>
                     </div>
                 </template>
 

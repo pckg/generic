@@ -307,6 +307,12 @@ let tinyMceConfig = {
     insert_toolbar: 'quicktable image',
     selection_toolbar: 'bold italic | h2 h3 | blockquote quicklink',
     contextmenu: 'inserttable | cell row column deletetable',
+    table_default_attributes: {},
+    table_default_styles: {},
+    table_resize_bars: false,
+    table_class_list: [],
+    table_cell_class_list: [],
+    table_row_class_list: []
 };
 
 var initTinymce = function (selector, config) {

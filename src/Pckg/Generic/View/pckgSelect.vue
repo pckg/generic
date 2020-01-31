@@ -120,7 +120,7 @@
             },
             isRequired: {
                 type: Boolean,
-                default: false
+                default: true
             }
         },
         computed: {
@@ -204,7 +204,7 @@
                 }.bind(this));
             },
             isOptionFiltered: function (key, item) {
-                if (!this.search || this.search.length == 0) {
+                if (!this.hasSearch || !this.search || this.search.length == 0) {
                     return false;
                 }
 
@@ -332,7 +332,7 @@
                     return;
                 }
 
-                this.selectedModel = this.selectedModel == key ? null : key;
+                this.selectedModel = this.selectedModel == key ? (this.isRequired ? key : null) : key;
                 // close and make normal
                 this.dropdownClosed();
             },
