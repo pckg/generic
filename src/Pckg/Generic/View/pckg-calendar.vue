@@ -114,9 +114,7 @@
                             <td class="no-border __hour_cell"><span class="__hour">{{ hour }}:00</span></td>
                             <td v-for="group in groupedDayEvents(hour)" class="__day_width" :class="getCellClass(hour)">
                                 <div class="height-wrapper" @dblclick.prevent="emitFinalClick($event, hour)">
-                                    <div v-for="event in group" class="__event"
-                                         style2="position: absolute;"
-                                         :style2="getEventStyle(event)">
+                                    <div v-for="event in group" class="__event">
                                         <i :style="{color: getEventColor(event)}" class="fal fa-circle"></i>
                                         <a href="#" @click.prevent>{{ event.start.format('HH:mm') }} {{
                                             event.title }}</a>

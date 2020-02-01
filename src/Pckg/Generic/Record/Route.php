@@ -153,7 +153,7 @@ class Route extends Record
 
         $settings->each(function($value, $slug) use ($seoManager) {
             if ($value) {
-                $seoManager->{'set' . ucfirst($slug)}($value);
+                $seoManager->{'set' . ucfirst($slug)}($value .' @ ' . config('site.title', null));
             }
         });
     }
