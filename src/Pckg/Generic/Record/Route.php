@@ -156,7 +156,7 @@ class Route extends Record
                 return;
             }
             if ($slug === 'title') {
-                $value .= ' @ ' . config('site.title', null);
+                $value .= ' - ' . config('site.title', null);
             }
             $seoManager->{'set' . ucfirst($slug)}($value);
         });
