@@ -1,5 +1,5 @@
 <template>
-    <div class="pckg-datetime-picker">
+    <div class="pckg-datetime-picker clearfix">
 
         <input type="text" class="form-control" v-model="myValue" @focus="focused" :placeholder="placeholder"
                @change="$emit('input', myValue)"/>

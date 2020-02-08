@@ -107,10 +107,11 @@ Vue.directive('outer-click', {
 Vue.directive('popup-image', {
     bind: function (el) {
 
-        el.addEventListener('click', function () {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
 
             $.magnificPopup.open({
-                items: [{src: $(el).getAttribute('href')}],
+                items: [{src: $(el).attr('href')}],
                 type: 'image'
             });
 
@@ -155,27 +156,27 @@ Vue.directive('media-grid', {
         let computeMediaWidth = function (el) {
             var width = parseInt($(el).width());
 
-            if (width < 384) { // 1 per line = 0 - 384
+            if (width < 384) {
                 return 'xxs'; // small mobile
             }
 
-            if (width < 480) { // 2 per line = 192 - 240
+            if (width < 420) {
                 return 'xs'; // mobile
             }
 
-            if (width < 768) { // 3 per line = 213 - 253
+            if (width < 480) {
                 return 'sm'; // small tablet
             }
 
-            if (width < 992) { // 4 per line = 192 - 240
+            if (width < 768) {
                 return 'md'; // tablet
             }
 
-            if (width < 1200) { // 5 per line = 192 - 240
+            if (width < 992) {
                 return 'lg'; // laptop
             }
 
-            if (width < 1200) { // 6 per line = 200+
+            if (width < 1200) {
                 return 'xl'; // small desktop
             }
 

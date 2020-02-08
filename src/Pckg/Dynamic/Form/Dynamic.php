@@ -236,15 +236,28 @@ class Dynamic extends Bootstrap
                                        'offsetFullField' => '',
                                    ]);
 
-        $fields = $this->table->listableFields(function(HasMany $fields) {
-            $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
-            $fields->withPermissions();
-            $fields->withHasOneSelectRelation(function(HasOne $relation) {
-                $relation->withOnTable();
-                $relation->withShowTable();
+        $fields = collect();
+        for ($i = 0; $i < 2; $i++) {
+            $fields = $this->table->listableFields(function(HasMany $fields) use ($i) {
+                $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
+                $fields->withPermissions();
+                $fields->withHasOneSelectRelation(function(HasOne $relation) {
+                    $relation->withOnTable();
+                    $relation->withShowTable();
+                });
+                $fields->withFieldGroup();
+
+                if ($i || $this->record) {
+                    return;
+                }
+
+                $fields->where('required');
             });
-            $fields->withFieldGroup();
-        });
+
+            if ($fields->count()) {
+                break;
+            }
+        }
 
         $prevGroup = null;
         $fieldPositions = $fields->groupBy(function(Field $field) {
