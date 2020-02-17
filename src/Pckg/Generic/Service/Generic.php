@@ -510,9 +510,9 @@ class Generic
         }
         $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
 
-        if (!auth()->isLoggedIn() || (!auth()->isAdmin() && auth()->getGroupId() != 8)) {
+        /*if (!auth()->isLoggedIn() || (!auth()->isAdmin() && auth()->getGroupId() != 8)) {
             $routes->where('published_at', date('Y-m-d H:i'), '<=');
-        }
+        }*/
 
         $arrRoutes = $routes->nonDeleted()
                             ->withLayout()
