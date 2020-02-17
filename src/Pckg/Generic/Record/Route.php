@@ -118,7 +118,7 @@ class Route extends Record
         return Reflect::create($partial);
     }
 
-    public function forPageStructure()
+    public function forPageStructure($resolved = true)
     {
         $data = $this->toArray();
 
@@ -126,12 +126,14 @@ class Route extends Record
                 return $setting->pivot->value;
             });
         $data['resolvers'] = json_decode($data['resolvers'], true);
-        $resolved = router()->getResolves();
 
-        if (array_key_exists('route', $resolved)) {
-            unset($resolved['route']);
+        if ($resolved) {
+            $resolved = router()->getResolves();
+            if (array_key_exists('route', $resolved)) {
+                unset($resolved['route']);
+            }
+            $data['resolved'] = $resolved ?? [];
         }
-        $data['resolved'] = $resolved;
 
         return $data;
     }

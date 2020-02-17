@@ -61,6 +61,7 @@ class CreateGenericTables extends Migration
         $routes->timeable();
         $routes->varchar('tags');
         $routes->varchar('resolvers');
+        $routes->datetime('published_at')->nullable();
         $routes->unique('slug', 'deleted_at');
 
         $routesI18n = $this->translatable('routes');

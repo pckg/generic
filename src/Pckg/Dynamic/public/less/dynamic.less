@@ -604,8 +604,7 @@ textarea.form-control {
   min-height: 10rem;
 }
 
-.row.help-grid {
-  clear: both;
+.help-grid {
 
   > div:nth-child(2n) {
     color: grey;
@@ -615,45 +614,6 @@ textarea.form-control {
     }
   }
 
-  > div {
-    padding-bottom: 0;
-  }
-
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-}
-
-.derive-platform-theme {
-  .row.help-grid > div:nth-child(2n) {
-    margin-top: 0;
-  }
-
-  table {
-    table-layout: fixed;
-    width: 100%;
-    border-collapse: collapse;
-
-    td {
-      border: none !important;
-    }
-
-    input[type=text] {
-      border: none;
-      box-shadow: none;
-      background: transparent;
-      padding: 0;
-      text-align: center;
-      margin: 0;
-      mix-blend-mode: difference;
-    }
-
-    .form-group {
-      margin: 0;
-    }
-  }
 }
 
 .pckg-maestro-formalize {

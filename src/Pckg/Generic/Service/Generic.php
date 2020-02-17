@@ -105,14 +105,9 @@ class Generic
 
     public function getGenericRoutes()
     {
-        return (new Routes())->joinTranslations()->nonDeleted()->all()->map(function(Route $route){
-            return [
-                'id'    => $route->id,
-                'route'     => $route->route,
-                'title'     => $route->title,
-                'resolvers' => json_decode($route->resolvers, true),
-            ];
-        })->all();
+        return (new Routes())->joinTranslations()->withSettings()->nonDeleted()->all()->map(function(Route $route) {
+                return $route->forPageStructure();
+            })->all();
     }
 
     /**
@@ -514,6 +509,10 @@ class Generic
             return;
         }
         $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
+
+        if (!auth()->isLoggedIn() || (!auth()->isAdmin() && auth()->getGroupId() != 8)) {
+            $routes->where('published_at', date('Y-m-d H:i'), '<=');
+        }
 
         $arrRoutes = $routes->nonDeleted()
                             ->withLayout()

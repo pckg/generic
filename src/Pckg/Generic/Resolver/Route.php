@@ -14,6 +14,9 @@ class Route implements RouteResolver
     {
         $routeName = router()->get($this->routeName);
 
+        /**
+         * Remove language suffix :en.
+         */
         if ($this->routeName == 'name' && strpos($routeName, ':')) {
             $routeName = substr($routeName, 0, strpos($routeName, ':'));
         }

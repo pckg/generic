@@ -78,9 +78,7 @@ Vue.filter('html2text', function (html) {
         return '';
     }
 
-    let span = document.createElement('span');
-    span.innerHTML = html;
-    return span.textContent || span.innerText;
+    return utils.html2text(html);
 });
 
 Vue.directive('outer-click', {
@@ -168,25 +166,28 @@ Vue.directive('media-grid', {
                 return 'sm'; // small tablet
             }
 
-            if (width < 768) {
+            if (width < 640) {
                 return 'md'; // tablet
             }
 
+            if (width < 768) {
+                return 'lg'; // small laptop
+            }
+
             if (width < 992) {
-                return 'lg'; // laptop
+                return 'xl'; // laptop
             }
 
             if (width < 1200) {
-                return 'xl'; // small desktop
+                return 'xxl'; // small desktop
             }
 
-            // 6 per line = 200+
-            return 'xxl';
+            return 'xxxl';
         };
 
-        let c = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
+        let c = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
         let processChange = function (el, width) {
-            $(el).removeClass('media-xxs media-xs media-sm media-md media-lg media-xl media-xxl');
+            $(el).removeClass('media-xxs media-xs media-sm media-md media-lg media-xl media-xxl media-xxxl');
             $.each(c, function (i, cl) {
                 $(el).addClass('media-' + cl);
                 if (cl === width) {
@@ -199,11 +200,11 @@ Vue.directive('media-grid', {
             processChange(el, computeMediaWidth(el));
         };
 
-        fullProcess();
-
         $(window).on('resize', fullProcess);
 
-        setTimeout(fullProcess, 100);
+        fullProcess();
+
+        setTimeout(fullProcess, 1);
     },
     unbind: {
         // $(window).off('resize', fullProcess);

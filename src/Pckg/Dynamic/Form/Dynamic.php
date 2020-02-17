@@ -441,7 +441,7 @@ ifrm.document.close();
                     if ($field->getSetting('pckg.dynamic.field.previewFileUrl')) {
                         $element->addChild('<a class="btn btn-default btn-md" title="Preview" href="' .
                                            $field->getPreviewFileUrlAttribute($this->record) .
-                                           '"><i class="fal fa-fw fa-external-link" aria-hidden="true"></i> Preview ' .
+                                           '?zoom=1"><i class="fal fa-fw fa-external-link" aria-hidden="true"></i> Preview ' .
                                            $type . '</a>&nbsp;&nbsp;');
                     }
                     if ($field->getSetting('pckg.dynamic.field.generateFileUrl')) {

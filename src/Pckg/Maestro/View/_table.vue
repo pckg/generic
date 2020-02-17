@@ -229,7 +229,7 @@
 
                 <div class="clearfix"></div>
             </div>
-            <div class="table-paginator">
+            <div class="table-paginator" v-if="paginator && paginator.perPage < paginator.total">
                 <pckg-dynamic-paginator :ref="'maestro-paginator'"
                                         :initial-per-page="paginator.perPage"
                                         :initial-page="paginator.page"

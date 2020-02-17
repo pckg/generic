@@ -11,7 +11,7 @@ class MenuItem extends Record
 
     public function getAdditionalClass()
     {
-        if (strpos($this->url, '#') !== 0) {
+        if (strpos($this->url, '#') !== 0 && strpos($this->url, '/#') !== 0) {
             return;
         }
 
