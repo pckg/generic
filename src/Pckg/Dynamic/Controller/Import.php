@@ -54,12 +54,12 @@ class Import extends Controller
 
     public function postUploadFileAction(Table $table)
     {
-        $upload = new Upload('file');
+        $upload = new Upload();
 
-        if (($success = $upload->validateUpload()) !== true) {
+        if (($message = $upload->validateUpload()) !== true) {
             return [
                 'success' => false,
-                'message' => $success,
+                'message' => $message,
             ];
         }
 
@@ -240,10 +240,10 @@ class Import extends Controller
         $entity = $table->createEntity();
         $upload = new Upload('file');
 
-        if (($success = $upload->validateUpload()) !== true) {
+        if (($message = $upload->validateUpload()) !== true) {
             return [
                 'success' => false,
-                'message' => $success,
+                'message' => $message,
             ];
         }
 

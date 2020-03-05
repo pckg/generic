@@ -378,13 +378,11 @@ class PageStructure
 
     public function postActionsMorphBackgroundImageAction(ActionsMorph $actionsMorph)
     {
-        $upload = new Upload('file');
-        $success = $upload->validateUpload();
-
-        if ($success !== true) {
+        $upload = new Upload();
+        if (($message = $upload->validateUpload()) !== true) {
             return [
                 'success' => false,
-                'message' => $success,
+                'message' => $message,
             ];
         }
 

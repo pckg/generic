@@ -78,6 +78,9 @@
                         maxSize: 2
                     };
                 }
+            },
+            icon: {
+                default: 'image'
             }
         },
         data: function () {
@@ -124,7 +127,7 @@
                         return null;
                     }
 
-                    return 'fal fa-image';
+                    return 'fal fa-' + this.icon;
                 }
 
                 if (this.state == 'drag') {
@@ -199,21 +202,26 @@
                     }.bind(this),
                     success: function (file, data) {
                         this.hover = false;
-                        this.state = 'success';
                         if (data.success) {
                             this.prev = this.myCurrent;
                             this.myCurrent = data.url;
+                            this.state = 'success';
+                        } else {
+                            this.state = 'error';
+                            this.errorMessage = data.message || 'Error uploading file';
                         }
 
                         if (data.message) {
                             $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message);
                         }
 
-                        this.$emit('input', data.url);
-                        this.$emit('uploaded', {
-                            url: data.url,
-                            data: data
-                        });
+                        if (data.success) {
+                            this.$emit('input', data.url);
+                            this.$emit('uploaded', {
+                                url: data.url,
+                                data: data
+                            });
+                        }
 
                         setTimeout(function () {
                             this.setNullState();
