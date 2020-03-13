@@ -164,6 +164,13 @@ class ActionsMorph extends Record
 
         $content = Content::create($content);
 
+        if ($content['contents'] ?? null) {
+            foreach ($content['contents'] as $subcontent) {
+                $subcontent['parent_id'] = $content->id;
+                $this->createNewContent($subcontent);
+            }
+        }
+
         $this->setAndSave(['content_id' => $content->id]);
     }
 
@@ -245,33 +252,51 @@ class ActionsMorph extends Record
         return $this;
     }
 
+    /**
+     * Return object with template, item, list and slot keys.
+     *
+     * @return mixed
+     */
     public function getTemplateAttribute()
     {
         $template = $this->data('template');
 
+        /**
+         * Set default settings for action.
+         */
         if (!$template) {
             return $this->fillTemplateSettings([
-                                                   'template' => null,
                                                    'list'     => null,
                                                    'item'     => null,
                                                    'slot'     => null,
                                                ]);
         }
 
+        /**
+         * Something is set, check if everything is okay.
+         */
         if (substr($template, 0, 1) == '{') {
             $template = (array)json_decode($template, true);
 
             return $this->fillTemplateSettings($template);
         }
 
+        /**
+         * We have only template selected, migrate to object structure?
+         */
         return $this->fillTemplateSettings([
-                                               'template' => $template,
                                                'list'     => null,
                                                'item'     => null,
                                                'slot'     => null,
                                            ]);
     }
 
+    /**
+     * Update template settings with correct settings.
+     *
+     * @param $template
+     * @return mixed
+     */
     public function fillTemplateSettings($template)
     {
         $configKey = 'pckg.generic.templates.' . $this->action->class . '.' . $this->action->method;
@@ -282,35 +307,45 @@ class ActionsMorph extends Record
         }
 
         /**
-         * If config exists set first template if wrong template is set or template is not existent.
+         * Set default slot for slotted actions.
          */
-        if (!array_key_exists('template', $template)) {
-            $template['template'] = null;
-        }
-
-        if (!$template['template'] || !isset($config[$template['template']])) {
-            $template['template'] = array_keys($config)[0];
-        }
-
-        if (!is_string($config[$template['template']])) {
-            $subconfig = $config[$template['template']];
-
-            if (isset($subconfig['item'])) {
-                if (!isset($template['item']) || !isset($subconfig['item'][$template['item']])) {
-                    $template['item'] = array_keys($subconfig['item'])[0];
-                }
-            }
-
-            if (isset($subconfig['list']) || isset($subconfig['item'])) {
-                $listTemplates = config('pckg.generic.templateEngine.list', []);
-                if (!isset($template['list']) || !isset($subconfig['list'][$template['list']])) {
-                    $template['list'] = array_keys($subconfig['list'] ?? $listTemplates)[0];
-                }
-            }
-        }
-
         if (!isset($template['slot'])) {
             $template['slot'] = null;
+        }
+
+        /**
+         * This can be decided on frontend?
+         */
+        if ($config) {
+            $engine = $config['engine'] ?? [];
+
+            /**
+             * Set default item template.
+             */
+            if (in_array('item', $engine)) {
+                $itemTemplates = config('derive.library.shares.item', []);
+                if (!in_array($template['item'] ?? null, array_keys($itemTemplates))) {
+                    $template['item'] = array_keys($itemTemplates)[0] ?? null;
+                }
+            } else if (isset($config['item'])) {
+                if (!in_array($template['item'] ?? null, array_keys($config['item']))) {
+                    $template['item'] = array_keys($config['item'])[0] ?? null;
+                }
+            }
+
+            /**
+             * Set default list template.
+             */
+            if (in_array('list', $engine)) {
+                $listTemplates = config('derive.library.shares.list', []);
+                if (!in_array($template['list'] ?? null, array_keys($listTemplates))) {
+                    $template['list'] = array_keys($listTemplates)[0] ?? null;
+                }
+            } else if (isset($config['list'])) {
+                if (!in_array($template['list'] ?? null, array_keys($config['list']))) {
+                    $template['list'] = array_keys($config['list'])[0] ?? null;
+                }
+            }
         }
 
         return $template;

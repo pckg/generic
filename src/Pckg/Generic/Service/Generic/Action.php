@@ -51,7 +51,7 @@ class Action implements \JsonSerializable
     {
         $mergedProps = [];
         foreach ($props as $prop => $value) {
-            $mergedProps[] = ' ' . $prop . '="' . htmlspecialchars(json_encode($value)) . '"';
+            $mergedProps[] = ' ' . $prop . '="' . (is_numeric($value) ? $value : htmlspecialchars(json_encode($value))) . '"';
         }
 
         return '<' . $component .

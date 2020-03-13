@@ -30,29 +30,14 @@ use Pckg\Stringify;
 class PageStructure
 {
 
+    /**
+     * @return array
+     */
     public function getInitialFetchAction()
     {
-        $data = [
-            'templates' => config('pckg.generic.templates', []),
+        return [
+            'routes' => (new Routes())->joinTranslations()->nonDeleted()->all(),
         ];
-
-        $listTemplates = config('pckg.generic.templateEngine.list', []);
-        foreach ($data['templates'] as $controller => $config) {
-            foreach ($config as $action => $views) {
-                foreach ($views as $view => $config) {
-                    if (!is_array($config)) {
-                        continue;
-                    }
-
-                    $data['templates'][$controller][$action][$view]['list'] = $setting['list'] ??
-                        ($config['list'] ?? $listTemplates);
-                }
-            }
-        }
-
-        $data['routes'] = (new Routes())->joinTranslations()->nonDeleted()->all();
-
-        return $data;
     }
 
     public function getRoutesAction()
@@ -440,7 +425,7 @@ class PageStructure
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
-            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+            return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
         $originalContext->bind(Context::class, $originalContext);
@@ -471,7 +456,7 @@ class PageStructure
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
-            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+            return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
         return response()->respondWithSuccess([
@@ -491,7 +476,7 @@ class PageStructure
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
         })->map(function(Action $action) {
-            return (new Generic\Action($action->checkDeprecation()))->buildAndJsonSerialize();
+            return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
         return response()->respondWithSuccess([

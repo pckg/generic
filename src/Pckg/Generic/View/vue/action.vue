@@ -42,14 +42,17 @@
                 handler: function (newVal, oldVal) {
                     let build = this.action.build || '';
                     if (!build) {
-                        console.log('No action.build.')
+                        //console.log('No action.build.')
                     }
+                    /**
+                     * Push all generic attributes to every action.
+                     */
                     let res;
                     let actionAttributes = ' :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder ';
                     if (build && this.action.raw) {
-                        let split = build.split(' ', 2);
-                        build = split[0] + actionAttributes + split[1];
-                        console.log('build', build);
+                        let split = build.split(' ');
+                        build = split[0] + actionAttributes + split.slice(1).join(' ');
+                        //console.log('Built from RAW', build, split);
                     } else if (true || build.indexOf('slot="') == -1) {
                         build = '<div' + actionAttributes + '>'
                             + '<pckg-action-bg :action="action"></pckg-action-bg>'
@@ -58,6 +61,7 @@
                             + '</div>';
                     }
                     try {
+                        //console.log('Compiling build', build);
                         res = Vue.compile(build);
                     } catch (e) {
                         console.log(build);

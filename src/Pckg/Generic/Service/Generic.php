@@ -178,13 +178,6 @@ class Generic
             })->withAction();
         });
 
-        /**
-         * Check for deprecations.
-         */
-        $this->actions = $this->actions->map(function(ActionRecord $action) {
-            return $action->checkDeprecation();
-        });
-
         $actions = $this->actions->sortBy(function($item) {
             return $item->pivot->order;
         })->tree(function($action) {
