@@ -22,6 +22,10 @@ Vue.filter('date', function (date, format) {
     return locale.date(date, format);
 });
 
+Vue.filter('dates', function (dates, format) {
+    return dates.map(function(date){ return locale.date(date, format); }).join(' - ');
+});
+
 Vue.filter('time', function (date, format) {
     return locale.time(date, format);
 });

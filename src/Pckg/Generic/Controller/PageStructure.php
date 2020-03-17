@@ -40,20 +40,6 @@ class PageStructure
         ];
     }
 
-    public function getRoutesAction()
-    {
-        return [
-            'routes' => (new Routes())->all()->transform(['id', 'route', 'title', 'slug', 'layout_id']),
-        ];
-    }
-
-    public function getVariablesAction()
-    {
-        return [
-            'variables' => (new Variables())->all(),
-        ];
-    }
-
     public function getActionsAction()
     {
         return [

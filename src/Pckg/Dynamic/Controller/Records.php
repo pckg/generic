@@ -541,12 +541,12 @@ class Records extends Controller
             path('ds') . 'View' . path('ds');
         Twig::addDir($dir);
 
-        if (config('app') != config('app_parent')) {
+        /*if (config('app') != config('app_parent')) {
             $partial = implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) . path('ds') .
                 'View' . path('ds');
             $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
             Twig::addDir($dir);
-        }
+        }*/
 
         Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
         Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));

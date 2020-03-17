@@ -34,8 +34,6 @@ class PageStructure extends Provider
                            ],
                        ]))->routes([
                                        '.initialFetch'                 => route('/initialFetch', 'initialFetch'),
-                                       '.getRoutes'                    => new Route('/routes', 'routes'),
-                                       '.getVariables'                 => new Route('/variables', 'variables'),
                                        '.getContents'                  => route('/contents', 'contents'),
                                        '.getActions'                   => new Route('/actions', 'actions'),
                                        '.newRoute'                     => new Route('/new-route', 'newRoute'),

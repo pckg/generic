@@ -62,16 +62,16 @@
             iconClass: function () {
                 if (this.min == '2100-01-01 00:00:00') {
                     return this.value > this.max
-                        ? 'circle far clr-error'
-                        : 'circle fas clr-success';
+                        ? 'square far clr-error'
+                        : 'square fas clr-success';
                 } else if (this.min == null) {
                     return this.value > this.max || this.value == this.min
-                        ? 'circle far clr-error'
-                        : 'circle fas clr-success';
+                        ? 'square far clr-error'
+                        : 'square fas clr-success';
                 } else {
                     return this.value <= this.min
-                        ? 'circle far clr-error'
-                        : 'circle fas clr-success';
+                        ? 'square far clr-error'
+                        : 'square fas clr-success';
                 }
             },
             brValue: function () {

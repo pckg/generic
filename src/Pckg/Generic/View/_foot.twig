@@ -4,6 +4,7 @@
     Pckg.locale = {};
     Pckg.locale.languages = {{ _localeManager.getLanguages().keyBy('slug').map('title') | json_encode | raw }};
 
+    {# cleanup what should be here and move other settings to stores or fetch them some other way #}
     Pckg.config = JSON.parse(utils.base64decode('{{ _config.getPublicConfig() | raw }}'));
 
     Pckg.site = {};
@@ -11,9 +12,11 @@
     Pckg.site.url = 'https://' + Pckg.site.domain;
 
     Pckg.router = {};
+    {# needed by utils.url, mostly in backend or in pagebuilder - deprecate utils.url? #}
     Pckg.router.urls = JSON.parse(utils.base64decode('{{ _router.getPublicRoutes() | json_encode | base64_encode | raw }}'));
+    {# is this even needed? for backend maybe? - check how to lazy load routes? #}
     Pckg.router.vueUrls = JSON.parse(utils.base64decode('{{ _router.getVueRoutes() | json_encode | base64_encode | raw }}'));
-
+    {# there's too much of public translations - see what's used #}
     Pckg.translations = JSON.parse(utils.base64decode('{{ _translator.getPublicTranslations() | json_encode | base64_encode | raw }}'));
 
     Pckg.vue = {};
@@ -35,10 +38,6 @@
 
 </script>
 
-<!-- vue components -->
-<!--  vue css, less and js -->
-
-<!-- vue live components -->
 {{ _vueManager.getViews() | raw }}
 
 {{ _assetManager.getMeta(['js'], ['vue', 'footer']) | raw }}

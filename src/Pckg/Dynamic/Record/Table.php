@@ -208,10 +208,10 @@ class Table extends Record
                 'View' . path('ds');
             $dir = path('app_src') . $partial;
             Twig::addDir($dir);
-            if (config('app') != config('app_parent')) {
+            /*if (config('app') != config('app_parent')) {
                 $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
                 Twig::addDir($dir);
-            }
+            }*/
             /**
              * This is needed for table actions.
              */

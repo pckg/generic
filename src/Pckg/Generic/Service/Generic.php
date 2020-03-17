@@ -458,6 +458,9 @@ class Generic
      */
     public static function addRoutesFromDb()
     {
+        /**
+         * We should cache routes.
+         */
         $router = router();
         $localeManager = localeManager();
         $languages = $localeManager->getFrontendLanguages()->keyBy('slug');
@@ -611,6 +614,10 @@ class Generic
                 );
             });
         }
+
+        /**
+         * This is where cache should be dumped?
+         */
     }
 
     /**
