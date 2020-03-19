@@ -145,15 +145,16 @@ class Route extends Record
         /**
          * Get seo setting and key them by last key.
          */
-        $settings = $this->settings->filter(function(Setting $setting) {
+        $settings = $this->settings->filter(function (Setting $setting) {
             return strpos($setting->slug, 'pckg.generic.pageStructure.seo.') === 0;
-        })->keyBy(function(Setting $setting) {
+        })->keyBy(function (Setting $setting) {
             return str_replace('pckg.generic.pageStructure.seo.', '', $setting->slug);
-        })->map(function(Setting $setting) {
+        })->map(function (Setting $setting) {
             return $setting->pivot->value;
         });
 
-        $settings->each(function($value, $slug) use ($seoManager) {
+        $seoManager->setTitle(config('site.title'));
+        $settings->each(function ($value, $slug) use ($seoManager) {
             if (!$value) {
                 return;
             }

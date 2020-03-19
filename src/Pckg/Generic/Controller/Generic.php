@@ -36,11 +36,12 @@ class Generic
             $this->genericService->readRoute($route);
         });
 
+        $route->applySeoSettings();
+
         measure('Building actions', function() {
             $this->genericService->build();
         });
 
-        $route->applySeoSettings();
         $auth = auth();
 
         return measure('Stringifying output', function() use ($route, $auth) {
