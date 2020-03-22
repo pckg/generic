@@ -462,6 +462,18 @@ class Generic
          * We should cache routes.
          */
         $router = router();
+        /*$cacheName = Generic::class . ':addRoutesFromDb';
+        $cache = cache()->getAppCache();
+
+        if (false && $cache->contains($cacheName)) {
+            $routes = unserialize($cache->fetch($cacheName));
+            $router->setRoutes($routes);
+            return;
+        }*/
+
+        /**
+         *
+         */
         $localeManager = localeManager();
         $languages = $localeManager->getFrontendLanguages()->keyBy('slug');
         $defaultLanguage = $localeManager->getDefaultFrontendLanguage();
@@ -618,6 +630,10 @@ class Generic
         /**
          * This is where cache should be dumped?
          */
+        return;
+        cache($cacheName, function () use ($router) {
+            return serialize($router->getRoutes());
+        }, 'app', '2minutes');
     }
 
     /**

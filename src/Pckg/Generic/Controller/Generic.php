@@ -45,7 +45,7 @@ class Generic
         $auth = auth();
 
         return measure('Stringifying output', function() use ($route, $auth) {
-            $structure = '<template v-for="elements in [$store.getters.groupedRootElements.content, $store.getters.groupedRootElements.footer]">
+            $structure = '<template v-for="elements in groupedActions">
         <component v-for="action in elements"
                    :action-id="action.id"
                    :is="\'pckg-\' + action.type"
