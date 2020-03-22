@@ -21,7 +21,7 @@ export const dynamicEvents = {
 
 export const pckgCdn = {
     methods: {
-        cdn: function (file) {
+        cdn: function (file, id) {
             if (!file) {
                 return file;
             }
@@ -32,6 +32,10 @@ export const pckgCdn = {
 
             if (!Pckg || !Pckg.config || !Pckg.config.cdn || !Pckg.config.cdn.host) {
                 return file;
+            }
+
+            if (id) {
+                return 'https://' + id + '.cdn.startcomms.com' + file;
             }
 
             return 'https://' + Pckg.config.cdn.host + file;
