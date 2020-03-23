@@ -26,6 +26,9 @@ export const pckgCdn = {
                 return file;
             }
 
+            if (typeof file !== 'string') {
+                return null;
+            }
             if (file.indexOf('http://') === 0 || file.indexOf('https://') === 0 || file.indexOf('//') === 0) {
                 return file;
             }

@@ -77,7 +77,7 @@ class Dynamic extends Bootstrap
         return $this;
     }
 
-    public function setRecord(Record $record)
+    public function setRecord(Record $record = null)
     {
         $this->record = $record;
 
@@ -247,7 +247,7 @@ class Dynamic extends Bootstrap
                 });
                 $fields->withFieldGroup();
 
-                if ($i || $this->record) {
+                if ($i || ($this->record && $this->record->id)) {
                     return;
                 }
 

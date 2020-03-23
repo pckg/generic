@@ -74,7 +74,7 @@
         methods: {
             initialFetch: function () {
                 this.state = 'loading';
-                http.get('/api/dynamic/form/' + this.tableId, function (data) {
+                http.get('/api/dynamic/form/' + this.tableId + (this.formModel && this.formModel.id ? '/' + this.formModel.id : ''), function (data) {
                     this.myForm = data.form;
                     this.state = null;
                 }.bind(this));

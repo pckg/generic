@@ -1,15 +1,15 @@
 <template>
     <div class="pckg-htmlbuilder-select btn-group">
-        <a href="button" :href="realViewUrl" target="_blank" class="btn btn-default btn-sm"
+        <a href="button" :href="realViewUrl" :disabled="!value" target="_blank" class="btn btn-default btn-sm"
            title="View">
             <i class="fa-fw fal fa-search" aria-hidden="true"></i>
         </a>
         <a href="button" :href="url" target="_blank" class="btn btn-default btn-sm"
-           title="To list">
+           title="Open list">
             <i class="fa-fw fal fa-list-ul" aria-hidden="true"></i>
         </a>
         <a @click.prevent="refreshList" href="#" class="btn btn-default btn-sm"
-                title="Refresh">
+                title="Refresh dropdown">
             <i class="fa-fw fal fa-sync-alt" aria-hidden="true"></i>
         </a>
     </div>

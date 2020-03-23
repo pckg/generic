@@ -1039,6 +1039,11 @@ class Records extends Controller
 
     public function getViewFormApiAction(Table $table)
     {
+        return $this->getViewFormApiRecordAction($table);
+    }
+
+    public function getViewFormApiRecordAction(Table $table, Record $record = null)
+    {
         $fields = $table->fields;
         $vueTypeMap = [
             'boolean' => 'toggle',
@@ -1053,8 +1058,10 @@ class Records extends Controller
             return $field->fieldType->slug;
         };
 
-        $formObject = (new Dynamic())->setTable($table)->initFields();
+        $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
+
         $initialOptions = $formObject->getInitialOptions();
+
         $form = [
             'fields' => $fields->map(function(Field $field) use ($typeMapper, $initialOptions) {
                 $options = new \stdClass();
