@@ -530,6 +530,27 @@ class Generic
                             ->all();
 
         /**
+         * When theme setup is not finished.
+         * We need config loaded here. :/
+         */
+        if (!$arrRoutes->count()) {
+            if (auth()->isAdmin()) {
+                router()->add(
+                    '/',
+                    [
+                        'tags' => ['layout:backend', 'layout:focused'],
+                        'view' => function () {
+                            return '<derive-setup-themify></derive-setup-themify>';
+                        }
+                    ],
+                    'homepage'
+                );
+            }
+
+            return;
+        }
+
+        /**
          * Should we load routes by domain?
          */
         foreach ($arrRoutes AS $route) {
