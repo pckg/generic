@@ -415,6 +415,13 @@ body {
   }
   transition: @transition-d;
 
+  &:only-child {
+    float: none;
+    margin: 0 auto;
+    max-width: 768px;
+    width: auto;
+  }
+
   &.login {
     margin-left: 0;
   }
