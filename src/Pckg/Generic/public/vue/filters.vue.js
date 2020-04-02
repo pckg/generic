@@ -23,7 +23,9 @@ Vue.filter('date', function (date, format) {
 });
 
 Vue.filter('dates', function (dates, format) {
-    return dates.map(function(date){ return locale.date(date, format); }).join(' - ');
+    return dates.map(function (date) {
+        return locale.date(date, format);
+    }).join(' - ');
 });
 
 Vue.filter('time', function (date, format) {
@@ -153,65 +155,82 @@ Vue.directive('router-link', {
     }
 });
 
+
+let computeMediaWidth = function (el, width) {
+    width = width || parseInt($(el).width());
+
+    if (width < 384) {
+        return 'xxs'; // small mobile
+    }
+
+    if (width < 420) {
+        return 'xs'; // mobile
+    }
+
+    if (width < 480) {
+        return 'sm'; // small tablet
+    }
+
+    if (width < 640) {
+        return 'md'; // tablet
+    }
+
+    if (width < 768) {
+        return 'lg'; // small laptop
+    }
+
+    if (width < 992) {
+        return 'xl'; // laptop
+    }
+
+    if (width < 1200) {
+        return 'xxl'; // small desktop
+    }
+
+    return 'xxxl';
+};
+
+let c = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
+let processChange = function (el, width) {
+    $(el).removeClass('media-xxs media-xs media-sm media-md media-lg media-xl media-xxl media-xxxl');
+    $.each(c, function (i, cl) {
+        $(el).addClass('media-' + cl);
+        if (cl === width) {
+            return false;
+        }
+    });
+};
+
+let fullProcess = function () {
+    processChange(el, computeMediaWidth(el));
+};
+
 Vue.directive('media-grid', {
     bind: function (el, binding, vnode) {
-        let computeMediaWidth = function (el) {
-            var width = parseInt($(el).width());
+        /**
+         * Browser support.
+         */
+        if (typeof ResizeObserver === 'undefined') {
+            $(window).on('resize', fullProcess);
 
-            if (width < 384) {
-                return 'xxs'; // small mobile
+            fullProcess();
+
+            Vue.nextTick(fullProcess);
+
+            setTimeout(fullProcess, 5);
+            return;
+        }
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                processChange(entry.target, computeMediaWidth(entry.target, entry.cliendWidth));
             }
+        });
 
-            if (width < 420) {
-                return 'xs'; // mobile
-            }
-
-            if (width < 480) {
-                return 'sm'; // small tablet
-            }
-
-            if (width < 640) {
-                return 'md'; // tablet
-            }
-
-            if (width < 768) {
-                return 'lg'; // small laptop
-            }
-
-            if (width < 992) {
-                return 'xl'; // laptop
-            }
-
-            if (width < 1200) {
-                return 'xxl'; // small desktop
-            }
-
-            return 'xxxl';
-        };
-
-        let c = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
-        let processChange = function (el, width) {
-            $(el).removeClass('media-xxs media-xs media-sm media-md media-lg media-xl media-xxl media-xxxl');
-            $.each(c, function (i, cl) {
-                $(el).addClass('media-' + cl);
-                if (cl === width) {
-                    return false;
-                }
-            });
-        };
-
-        let fullProcess = function () {
-            processChange(el, computeMediaWidth(el));
-        };
-
-        $(window).on('resize', fullProcess);
-
-        fullProcess();
-
-        setTimeout(fullProcess, 1);
+        resizeObserver.observe(el);
     },
-    unbind: {
-        // $(window).off('resize', fullProcess);
+    unbind: function () {
+        $(window).off('resize', fullProcess);
     }
 });
 

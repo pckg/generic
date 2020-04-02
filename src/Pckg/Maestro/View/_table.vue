@@ -43,7 +43,7 @@
         <!-- table template -->
         <div class="pckg-maestro-table">
             <template v-if="depth > 0">
-                <table class="table table-striped table-hover">
+                <table class="table table-borderless table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">
                         <td>
                             <legend v-if="groups[depth - 1][i]">{{ groups[depth - 1][i] }}</legend>
@@ -134,7 +134,7 @@
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
                         <div class="mode-padding">
                             <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
-                                <table class="c-maestro-table table table-hover table-striped table-items">
+                                <table class="c-maestro-table table table-hover table-borderless table-items">
                                     <thead>
                                     <tr>
                                         <th class="freeze checkboxes" v-if="mode != 'clean'">

@@ -36,10 +36,82 @@ body {
     .o-info {
       background-color: var(--o-info--bg-color, transparent);
     }
+
+    &.--style-error {
+      background-color: @clr-error;
+      color: white;
+      .color-grayish {
+        color: #eee;
+      }
+    }
+
+    // sub box?
+    .--bg-color {
+      background-color: #fff;
+    }
   }
 
   &.--rm-padding {
     padding: 0;
+  }
+
+  &.--selected {
+    box-shadow: 0 0 0 2px @pagebuilder-color;
+    &.--error {
+      box-shadow: 0 0 0 2px @clr-error;
+    }
+  }
+}
+
+.label-primary {
+  background-color: @clr-primary;
+  text: #fff;
+}
+
+.label-secondary {
+  background-color: @clr-secondary;
+  text: #fff;
+}
+
+.table-middle {
+  > tbody > tr > td {
+    vertical-align: middle;
+  }
+}
+
+th .form-group {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .table-condensed {
+    .input-group {
+      .input-group-addon {
+        padding: 0 .5rem;
+      }
+      input {
+        padding-right: .5rem;
+        padding-left: .5rem;
+      }
+    }
+  }
+}
+
+.text-right {
+  input {
+    text-align: right;
+  }
+}
+
+.c-derive-info-box {
+  border: 1px solid @border-grey;
+  background-color: @maestro-bg-dark;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  border-radius: 1.5rem;
+  .--bg-color & {
+    background-color: #fff;
   }
 }
 
@@ -710,7 +782,7 @@ ul.vertical-mid-menu {
   line-height: 3.6rem;
   margin-top: -.5rem;
   margin-right: @spacing-xs;
-  margin-left: -1rem;
+  //margin-left: -1rem;
   text-align: center;
   vertical-align: middle;
   width: 3.6rem;
