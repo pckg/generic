@@ -15,10 +15,12 @@
                     <slot name="body"></slot>
                 </div>
                 <div class="modal-footer" v-if="$slots.footer">
-                    <slot name="footer"></slot>
-                    <button v-if="dismissable" type="button" class="btn btn-default" data-dismiss="modal"
+                    <button v-if="!$slots.footer && dismissable" type="button" class="btn btn-default"
+                            :class="$slots.footer ? 'pull-left' : ''"
+                            data-dismiss="modal"
                             @click="closeModal">Close
                     </button>
+                    <slot name="footer"></slot>
                 </div>
             </div>
         </div>

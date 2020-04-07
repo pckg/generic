@@ -162,7 +162,7 @@
                     return this.withEmpty || ' - - select value - - ';
                 }
 
-                let joined = titles.join(', ');
+                let joined = titles.filter(function(value, index, self){ return self.indexOf(value) === index; }).join(', ');
 
                 if (joined.length > 42) {
                     return joined.substring(0, 42) + ' ...';
