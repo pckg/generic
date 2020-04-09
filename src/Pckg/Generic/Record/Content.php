@@ -39,7 +39,12 @@ class Content extends Record
             return $content;
         }
 
-        return view()->setTemplate($content)->addData($this->preparsedData)->autoparse();
+        return view()->setTemplate(str_replace(['‘', '’'], '\'', $content))->addData($this->preparsedData)->autoparse();
+    }
+
+    public function getOriginalContentAttribute()
+    {
+        return $this->data('content');
     }
 
     public function addPreparsedData($data)

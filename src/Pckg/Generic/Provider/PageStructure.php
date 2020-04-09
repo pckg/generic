@@ -75,10 +75,14 @@ class PageStructure extends Provider
                                                                                      'actionsMorph'))->resolvers([
                                                                                                                      'actionsMorph' => ActionsMorph::class,
                                                                                                                  ]),
-                                       '.content'                      => (new Route('/content/[content]',
-                                                                                     'content'))->resolvers([
-                                                                                                                'content' => Content::class,
-                                                                                                            ]),
+                                        '.content'                      => (new Route('/content/[content]',
+                                            'content'))->resolvers([
+                                            'content' => Content::class,
+                                        ]),
+                                        '.content.imageUpload'                      => (new Route('/content/[content]/image',
+                                            'uploadContentImageApi'))->resolvers([
+                                            'content' => Content::class,
+                                        ]),
                                        '.actionsMorphSettings'         => (new Route('/actionsMorph/[actionsMorph]/settings',
                                                                                      'actionsMorphSettings'))->resolvers([
                                                                                                                              'actionsMorph' => ActionsMorph::class,

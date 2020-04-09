@@ -523,6 +523,7 @@ class Generic
         }*/
 
         $arrRoutes = $routes->nonDeleted()
+                            ->whereHas('routes.slug')
                             ->withLayout()
                             ->withAllTranslations(function(HasMany $translations){
                                 $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
@@ -554,27 +555,28 @@ class Generic
          * Should we load routes by domain?
          */
         foreach ($arrRoutes AS $route) {
-            /**
-             * Add route to router.
-             * @deprecated
-             */
-            $existingRouteByName = router()->getRouteByName($route->slug);
-
             $resolvers = [
                 'route' => RouteResolver::class,
             ];
 
+            /**
+             * Add route to router.
+             * @deprecated
+             */
+            /*$existingRouteByName = router()->getRouteByName($route->slug);
+
             if ($existingRouteByName) {
-                /**
+                / **
                  * Route already exists, remove and replace it.
                  * Keep existing resolvers.
-                 */
+                 * Where was this used? Kalypso offers? Old system?
+                 * /
                 foreach ($existingRouteByName['resolvers'] ?? [] as $key => $res) {
                     $resolvers[$key] = $res;
                 }
                 router()->removeRouteByName($route->slug);
                 message('Removing system route ' . $route->slug);
-            }
+            }*/
 
             $routeResolvers = $route->resolvers;
             if ($routeResolvers) {
@@ -607,8 +609,7 @@ class Generic
              * Register all translated routes.
              */
             $route->_translations->each(function($routeTranslation) use (
-                $route, $multilingual, $defaultLanguage, $existingRouteByName, $newRoute, $router,
-                $languages, $onDefaultDomain
+                $route, $multilingual, $defaultLanguage, $newRoute, $router, $languages, $onDefaultDomain
             ) {
                 /**
                  * Single-lingual is really simple. :)

@@ -65,6 +65,28 @@ class PageStructure
         ];
     }
 
+    public function postUploadContentImageApiAction(Content $content)
+    {
+        $upload = new Upload('file', Upload::MIME_IMAGE);
+        if (($message = $upload->validateUpload()) !== true) {
+            return [
+                'success' => false,
+                'message' => $message,
+            ];
+        }
+
+        $dir = path('app_uploads') . 'contents/';
+        $upload->save($dir);
+        $filename = $upload->getUploadedFilename();
+
+        $content->setAndSave(['picture' => $filename]);
+
+        return [
+            'success' => true,
+            'url'     => img($filename, null, true, $dir),
+        ];
+    }
+
     public function getRouteAction($route)
     {
         return [
