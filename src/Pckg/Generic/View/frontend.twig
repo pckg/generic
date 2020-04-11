@@ -7,12 +7,8 @@
 
 {% include '_body.twig' %}
 
-<div id="vue-app" class="container">
-    <div class="row">
-        <div class="col-xs-12">
-            {% block content %}{{ content | raw }}{% endblock %}
-        </div>
-    </div>
+<div id="vue-app">
+    {% block content %}{{ content | raw }}{% endblock %}
 </div>
 
 {% include '_foot.twig' %}

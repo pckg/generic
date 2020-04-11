@@ -18,7 +18,7 @@
 
         <!-- visible image -->
         <div class="as-table" v-else-if="myCurrent" :style="{minHeight: minHeight}">
-            <div class="s-img" v-if="!iconClass">
+            <div class="s-img" v-if="preview && !iconClass">
                 <a :href="cdn(myCurrent)" class="__img-link" v-popup-image>
                     <img :src="cdn(myCurrent)" class="__img"/>
                 </a>
@@ -40,7 +40,9 @@
 </template>
 
 <script>
+    import Dropzone from "dropzone";
     export default {
+        name: 'pckg-htmlbuilder-dropzone',
         mixins: [pckgCdn],
         props: {
             current: {
@@ -81,6 +83,9 @@
             },
             icon: {
                 default: 'image'
+            },
+            preview: {
+                default: true
             }
         },
         data: function () {

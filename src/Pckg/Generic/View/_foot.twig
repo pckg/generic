@@ -32,7 +32,7 @@
     Vue.config.performance = true;
     {% endif %}
 
-    if (typeof moment !== 'undefined') {
+    if (Pckg.config.locale && typeof moment !== 'undefined') {
         moment.locale(Pckg.config.locale.current);
     }
 
