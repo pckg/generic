@@ -16,7 +16,7 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li v-for="action in actions">
-                    <a v-if="action.event" href="#" @click.prevent="recordAction(action.event)">
+                    <a v-if="action.event" href="#" @click.prevent="recordAction(record, action.event)">
                         <i class="fa" :class="'fa-' + action.icon"></i> ${ action.title }
                     </a>
                     <a v-else :href="record[action.recordHref]">

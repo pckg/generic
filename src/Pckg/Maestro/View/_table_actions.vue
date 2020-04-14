@@ -3,11 +3,11 @@
 
         <a :href="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
            v-if="table.privileges.write"
-           class="btn default">
+           class="btn btn-primary">
             Add new
         </a>
 
-        <div class="btn-group">
+        <div class="btn-group margin-left-xs">
             <button type="button" class="dropdown-toggle btn btn-default"
                     title="" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -174,8 +174,8 @@
                     this.importMode = 'error';
                 }.bind(this));
             },
-            entityAction: function (action) {
-                this.$emit('entity-action', action);
+            entityAction: function (event) {
+                this.$emit('entity-action', event);
             },
         },
         data: function () {

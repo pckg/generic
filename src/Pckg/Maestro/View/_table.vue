@@ -38,7 +38,8 @@
 
         <div class="clearfix"></div>
 
-        <pckg-loader :icon="loading === 'error' ? 'fa-exclamation-circle' : 'fa-spinner-third fa-spin'" :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
+        <pckg-loader :icon="loading === 'error' ? 'fa-exclamation-circle' : 'fa-spinner-third fa-spin'"
+                     :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
         <div class="pckg-maestro-table">
@@ -208,39 +209,19 @@
 
         </div>
 
-        <div v-if="mode != 'filter'" class="table-floating-bottom-bar"
-             :class="ids.length > 0 || paginator.total > paginator.perPage ? 'in' : ''">
-            <div class="table-actions" v-if="ids.length > 0">
-                <div class="pull-left" style="margin-right: 4rem;">
-                    {{ ids.length }} items selected
-                    <template v-if="allChecked && paginator.total != ids.length">
-                        <br/>
-                        <a href="#"> Select all items from all pages</a>
-                    </template>
-                </div>
-
-                <div class="pull-right">
-                    <a href="#" style="margin-left: 2rem;" v-for="action in actions.entity"
-                       @click.prevent="entityAction(action.event)">
-                        <i class="fa" :class="'fa-' + action.icon"></i>
-                        {{ action.title }}
-                    </a>
-                </div>
-
-                <div class="clearfix"></div>
+        <table-statusbar v-if="mode != 'filter'"
+                         :class="ids.length > 0 || paginator.total > paginator.perPage ? 'in' : ''"
+                         :paginator="paginator"
+                         :all-checked="allChecked"
+                         :ids="ids">
+            <div slot="actions">
+                <a href="#" style="margin-left: 2rem;" v-for="action in actions.entity"
+                   @click.prevent="entityAction(action.event)">
+                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    {{ action.title }}
+                </a>
             </div>
-            <div class="table-paginator" v-if="paginator && paginator.perPage < paginator.total">
-                <pckg-dynamic-paginator :ref="'maestro-paginator'"
-                                        :initial-per-page="paginator.perPage"
-                                        :initial-page="paginator.page"
-                                        :total="paginator.total"
-                                        :url="paginator.url"
-                                        :resetpaginatorurl="resetPaginatorUrl"
-                                        :initial-records="records"
-                                        :initial-groups="groups"
-                ></pckg-dynamic-paginator>
-            </div>
-        </div>
+        </table-statusbar>
 
         <!-- additional components -->
         <component :is="component" v-for="component in uniqueActions" :key="component"
@@ -252,6 +233,8 @@
 <script type="text/javascript">
 
     import {Entity, HttpQLRepository, Record, Repository} from "../../../../../helpers-js/webpack/orm";
+
+    import TableStatusbar from "./_table_statusbar.vue";
 
     export class DynamicEntity extends Entity {
 
@@ -274,6 +257,7 @@
     export default {
         name: 'pckg-maestro-table',
         mixins: [pckgTimeout],
+        components: {TableStatusbar},
         props: {
             // full, clean, filter
             mode: {type: String, default: 'full'},

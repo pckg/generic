@@ -192,6 +192,26 @@ th .form-group {
   }
 }
 
+.backend-sidebar-panel {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: ~"max(70vw, 360px)";
+  background: var(--scope-bg);
+  z-index: 2001;
+  overflow: auto;
+}
+.__rest {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+}
+
 .maestro-sidebar {
   background: @maestro-bg-dark;
   bottom: 0;
@@ -263,7 +283,7 @@ th .form-group {
         ul {
           li {
             a {
-              padding: .5rem 1rem .5rem 5rem;
+              padding: .5rem 1.2rem .5rem 5rem;
               font-size: 1.4rem;
             }
 

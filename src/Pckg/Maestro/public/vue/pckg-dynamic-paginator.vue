@@ -56,17 +56,7 @@
             initialPage: 0,
             total: 0,
             url: null,
-            resetpaginatorurl: null,
-            initialRecords: {
-                default: function () {
-                    return [];
-                }
-            },
-            initialGroups: {
-                default: function () {
-                    return [];
-                }
-            }
+            resetpaginatorurl: null
         },
         data: function () {
             return {
@@ -74,8 +64,6 @@
                 limits: [25, 50, 100, 250, 500, 1000, 5000],
                 page: this.initialPage,
                 perPage: this.initialPerPage,
-                groups: this.initialGroups,
-                records: this.initialRecords
             };
         },
         computed: {

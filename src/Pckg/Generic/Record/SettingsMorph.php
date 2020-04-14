@@ -73,7 +73,7 @@ class SettingsMorph extends Record
     {
         $setting = Setting::getOrNew(['slug' => $key]);
         if (!$setting->id) {
-            $setting->setAndSave(['type' => $type ? $type : (is_array($value) ? 'array' : null)]);
+            $setting->setAndSave(['type' => $type ? $type : (is_array($value) || is_object($value) ? 'array' : null)]);
         }
         $settingsMorph = SettingsMorph::getOrNew([
                                                      'setting_id' => $setting->id,
@@ -81,7 +81,7 @@ class SettingsMorph extends Record
                                                      'morph_id'   => $morph,
                                                  ]);
         $settingsMorph->setAndSave([
-                                       'value' => is_array($value) ? json_encode($value) : $value,
+                                       'value' => is_array($value) || is_object($value) ? json_encode($value) : $value,
                                    ]);
 
         return $settingsMorph;
