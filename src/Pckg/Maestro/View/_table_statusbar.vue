@@ -10,7 +10,7 @@
             </div>
 
             <div class="pull-right">
-                <slot name="actions"></slot>
+                <slot name="actions" class="__entity-actions"></slot>
             </div>
 
             <div class="clearfix"></div>

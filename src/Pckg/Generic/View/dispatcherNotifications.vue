@@ -133,6 +133,10 @@
             $dispatcher.$on('notification:info', function (msg) {
                 this.processMsg(msg, 'info');
             }.bind(this));
+
+            $dispatcher.$on('notification:default', function (msg) {
+                this.processMsg(msg, 'default');
+            }.bind(this));
         }
     }
 </script>
