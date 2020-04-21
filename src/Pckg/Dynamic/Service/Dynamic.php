@@ -81,7 +81,7 @@ class Dynamic
                 return;
             }
 
-            $entity->setTranslatableLang((new Lang($_SESSION['pckg_dynamic_lang_id'])));
+            $entity->setTranslatableLang((new Lang(localeManager()->getCurrent(2))));
             $entity->joinTranslations();
         }
     }
