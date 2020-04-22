@@ -42,10 +42,10 @@
 
 {{ _assetManager.getMeta(['js'], ['vue', 'footer']) | raw }}
 
+{{ _metaManager.getMeta('footer') | raw }}
+
 <!-- external assets-->
 {{ _assetManager.getExternals() | raw }}
-
-{{ _metaManager.getMeta('footer') | raw }}
 
 <!-- google fonts -->
 {{ _assetManager.getGoogleFonts() | raw }}
