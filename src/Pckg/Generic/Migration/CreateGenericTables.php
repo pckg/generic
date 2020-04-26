@@ -37,7 +37,7 @@ class CreateGenericTables extends Migration
 
         $dataAttributes = $this->morphtable('data_attributes', null, null);
         $dataAttributes->varchar('slug');
-        $dataAttributes->varchar('value');
+        $dataAttributes->longtext('value');
         $dataAttributes->unique('poly_id', 'morph_id', 'slug');
 
         $this->save();

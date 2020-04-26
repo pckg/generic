@@ -57,7 +57,9 @@ class SettingsMorph extends Record
 
     public function getFinalValueAttribute()
     {
-        return $this->setting->type == 'array' ? $this->getJsonValueAttribute() : $this->value;
+        return $this->setting->type === 'array' || $this->setting->type === 'object'
+            ? $this->getJsonValueAttribute()
+            : $this->value;
     }
 
     /**
@@ -123,9 +125,9 @@ class SettingsMorph extends Record
         }
 
         $settingsMorph = (new SettingsMorphs())->where('setting_id', $setting->id)
-                                               ->where('morph_id', $morph)
-                                               ->where('poly_id', $poly)
-                                               ->one();
+            ->where('morph_id', $morph)
+            ->where('poly_id', $poly)
+            ->one();
 
         if (!$settingsMorph) {
             return $default;

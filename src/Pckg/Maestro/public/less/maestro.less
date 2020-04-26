@@ -902,6 +902,13 @@ ul.vertical-mid-menu {
   height: auto;
 }
 
+.btn,
+.button {
+  & + & {
+    margin-left: 1rem;
+  }
+}
+
 //Border used as a vertical separator between columns
 .u-vertical-separator-hidden-xs {
   border-right: .1rem solid @border-grey;
