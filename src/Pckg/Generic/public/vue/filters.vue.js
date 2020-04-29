@@ -191,8 +191,11 @@ let computeMediaWidth = function (el, width) {
 };
 
 let c = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'];
-let processChange = function (el, width) {
+let cleanupMediaGrid = function (el) {
     $(el).removeClass('media-xxs media-xs media-sm media-md media-lg media-xl media-xxl media-xxxl');
+};
+let processChange = function (el, width) {
+    cleanupMediaGrid(el);
     $.each(c, function (i, cl) {
         $(el).addClass('media-' + cl);
         if (cl === width) {
@@ -201,37 +204,56 @@ let processChange = function (el, width) {
     });
 };
 
-let fullProcess = function () {
+let fullProcess = function (el) {
     processChange(el, computeMediaWidth(el));
 };
 
-Vue.directive('media-grid', {
-    bind: function (el, binding, vnode) {
-        /**
-         * Browser support.
-         */
-        if (typeof ResizeObserver === 'undefined') {
-            $(window).on('resize', fullProcess);
-
-            fullProcess();
-
-            Vue.nextTick(fullProcess);
-
-            setTimeout(fullProcess, 5);
-            return;
-        }
-
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                processChange(entry.target, computeMediaWidth(entry.target, entry.clientWidth));
-            }
-        });
-
-        resizeObserver.observe(el);
-    },
-    unbind: function () {
-        $(window).off('resize', fullProcess);
+const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+        processChange(entry.target, computeMediaWidth(entry.target, entry.clientWidth));
     }
+});
+
+let mediaGridUnbinder = function (el) {
+    resizeObserver ? resizeObserver.unobserve(el) : null;
+    $(window).off('resize', fullProcess);
+};
+
+let mediaGridBinder = function (el, binding, vnode) {
+    /*if (!(!binding.hasOwnProperty('value') || binding.value)) {
+        console.log('no binding value');
+        mediaGridUnbinder(el);
+        cleanupMediaGrid(el);
+        return;
+    } else if ($(el).hasClass('v-media-grid')) {
+        console.log('already initialized');
+        fullProcess(el);
+        return;
+    }*/
+
+    $(el).addClass('v-media-grid');
+
+    /**
+     * Browser support.
+     */
+    if (typeof ResizeObserver === 'undefined') {
+        $(window).on('resize', fullProcess);
+
+        fullProcess(el);
+
+        Vue.nextTick(fullProcess);
+
+        setTimeout(fullProcess, 5);
+        return;
+    }
+
+    resizeObserver.observe(el);
+};
+
+Vue.directive('media-grid', {
+    bind: mediaGridBinder,
+    //update: mediaGridBinder,
+    unbind: mediaGridUnbinder
 });
 
 Vue.directive('vhax', {
