@@ -42,7 +42,7 @@
                      :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
         <!-- table template -->
-        <div class="pckg-maestro-table">
+        <div class="pckg-maestro-table box-with-padding --bg-color padding-sm --radius-sm">
             <template v-if="depth > 0">
                 <table class="table table-borderless table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">

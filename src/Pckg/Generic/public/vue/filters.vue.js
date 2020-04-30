@@ -208,7 +208,7 @@ let fullProcess = function (el) {
     processChange(el, computeMediaWidth(el));
 };
 
-const resizeObserver = new ResizeObserver(entries => {
+const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(entries => {
     for (let entry of entries) {
         processChange(entry.target, computeMediaWidth(entry.target, entry.clientWidth));
     }

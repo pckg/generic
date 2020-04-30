@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  background: #fff;
+  background: #f7f6fc;
 }
 
 .__separator-line {
@@ -32,7 +32,7 @@ body {
   // clear: both;
 
   &.--bg-color {
-    background-color: @maestro-bg-dark;
+    background-color: #fff;//@maestro-bg-dark;
     .o-info {
       background-color: var(--o-info--bg-color, transparent);
     }
@@ -47,7 +47,7 @@ body {
 
     // sub box?
     .--bg-color {
-      background-color: #fff;
+      background-color: #f9f9f9; //@pagebuilder-bg-color;//#fff;
     }
   }
 
@@ -55,11 +55,22 @@ body {
     padding: 0;
   }
 
+  &.--radius-sm {
+    border-radius: var(--radius-sm);
+  }
+
   &.--selected {
     box-shadow: 0 0 0 2px @pagebuilder-color;
     &.--error {
       box-shadow: 0 0 0 2px @clr-error;
     }
+  }
+}
+
+.pckg-maestro-table {
+  .closest {
+    max-height: calc(100vh - 40rem);
+    overflow: visible auto;
   }
 }
 
@@ -213,7 +224,7 @@ th .form-group {
 }
 
 .maestro-sidebar {
-  background: @maestro-bg-dark;
+  background: #fff; // @maestro-bg-dark;
   bottom: 0;
   float: left;
   height: 100%;
@@ -589,7 +600,7 @@ textarea,
 
 ul.nav-tabs {
   border: none;
-  margin-bottom: 2.4rem;
+  margin-bottom: 2rem;
   border-bottom: 2px solid @whiteActive;
 
   > li {
