@@ -45,12 +45,7 @@ class Generic
         $auth = auth();
 
         return measure('Stringifying output', function() use ($route, $auth) {
-            $structure = '<template v-for="elements in groupedActions">
-        <component v-for="action in elements"
-                   :action-id="action.id"
-                   :is="\'pckg-\' + action.type"
-                   :key="action.id"></component>
-    </template>';
+            $structure = '<pckg-app></pckg-app>';
 
             if ($auth->isLoggedIn() && ($auth->isAdmin() || $auth->getGroupId() == 8)) {
                 $structure = '<pckg-frontpage-deck v-if="!inIframe && $store.getters.genericRoute"></pckg-frontpage-deck>' .

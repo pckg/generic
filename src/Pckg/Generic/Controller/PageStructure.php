@@ -36,7 +36,9 @@ class PageStructure
     public function getInitialFetchAction()
     {
         return [
-            'routes' => (new Routes())->joinTranslations()->nonDeleted()->all(),
+            'routes' => (new Routes())->joinTranslations()->withSettings()->nonDeleted()->all()->map(function (Route $route) {
+                return $route->forPageStructure(false);
+            }),
         ];
     }
 
