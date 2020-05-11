@@ -56,6 +56,7 @@ export const pckgCdn = {
     }
 };
 
+// already migrated to pckg/translator
 export const pckgTranslations = {
     methods: {
         __: function (key, data) {
@@ -91,6 +92,7 @@ export const pckgTranslations = {
     }
 };
 
+// already migrated to htmlbuilder?
 export const pckgFormValidator = {
     methods: {
         validateAndSubmit: function (submit, invalid) {
