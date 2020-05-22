@@ -1,4 +1,4 @@
-{% do _metaManager.addCharset().addViewport().addContentType().addCdnPrefetch().addInternetExplorer() %}
+{% do _metaManager.addCharset().addViewport().addContentType().addCdnPrefetch().addInternetExplorer().addCSRF() %}
 {{ _metaManager.getMeta('header') | raw }}
 {{ _gtmManager | raw }}
 {{ _seoManager.getSeoTags() | raw }}
