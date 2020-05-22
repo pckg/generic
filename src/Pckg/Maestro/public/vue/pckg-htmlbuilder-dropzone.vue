@@ -192,10 +192,19 @@
                     return;
                 }
 
+                let elements = document.getElementsByName('pckgvdth');
+                let headers = {};
+                if (elements.length === 1) {
+                    headers = {
+                        'X-Pckg-CSRF': elements[0].getAttribute('content')
+                    };
+                }
+
                 this.original = this.myCurrent;
                 this._dropzone = new Dropzone('#' + this.id, {
                     url: this.url,
                     params: this.params,
+                    headers: headers,
                     previewsContainer: '#' + this.id + '-previews',
                     previewTemplate: '<div></div>',
                     clickable: this.$refs.upload,
