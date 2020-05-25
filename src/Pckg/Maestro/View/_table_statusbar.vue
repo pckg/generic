@@ -21,7 +21,7 @@
                                     :initial-page="paginator.page"
                                     :total="paginator.total"
                                     :url="paginator.url"
-                                    :resetpaginatorurl="resetPaginatorUrl"
+                                    :resetpaginatorurl="$parent.resetPaginatorUrl"
             ></pckg-dynamic-paginator>
         </div>
     </div>

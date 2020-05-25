@@ -31,6 +31,8 @@
 
             </div>
         </div>
+
+        <pckg-loader v-if="loading" class="fixed-center"></pckg-loader>
     </div>
 </template>
 
@@ -41,7 +43,8 @@
         data: function () {
             return {
                 notifications: [],
-                positions: [null, 'top-center']
+                positions: [null, 'top-center'],
+                loading: false
             };
         },
         methods: {
@@ -89,6 +92,7 @@
                 }.bind(this), notification.timeout || 5000, notification);
             },
             processMsg: function (msg, type) {
+                this.loading = false;
                 let notification = this.createNotification(msg, type);
                 /**
                  * Perform condition check.
@@ -136,6 +140,10 @@
 
             $dispatcher.$on('notification:default', function (msg) {
                 this.processMsg(msg, 'default');
+            }.bind(this));
+
+            $dispatcher.$on('notification:loading', function () {
+                this.loading = true;
             }.bind(this));
         }
     }
