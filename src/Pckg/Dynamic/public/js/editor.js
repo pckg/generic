@@ -77,6 +77,9 @@ tinymce.PluginManager.add('comms', function (editor, url) {
     };
 });
 
+let elements = document.getElementsByName('pckgvdth');
+let vdth = elements.length === 1 ? elements[0].getAttribute('content') : null;
+
 let tinyMceConfig = {
     entity_encoding: 'raw',
     link_class_list: [
@@ -300,7 +303,7 @@ let tinyMceConfig = {
          {title: 'Test template 2', content: 'Test 2'}*/
     ],
     image_title: true,
-    images_upload_url: '/dynamic/uploader',
+    images_upload_url: '/dynamic/uploader?vdth=' + vdth,
     automatic_uploads: false,
     autoresize_min_height: '160px',
     allow_script_urls: true,
@@ -325,7 +328,7 @@ var initTinymce = function (selector, config) {
     selected.parent().append($dropzone);
     $dropzone.idify();
     $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
-        url: '/dynamic/uploader',
+        url: '/dynamic/uploader?dropzone',
         previewsContainer: null,
         previewTemplate: '<div></div>',
         maxFilesize: 8

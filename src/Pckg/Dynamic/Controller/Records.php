@@ -1011,9 +1011,11 @@ class Records extends Controller
         $upload->save($dir);
         $filename = $upload->getUploadedFilename();
 
+        $location = img($filename, null, true, $dir);
         return [
             'success' => true,
-            'url'     => img($filename, null, true, $dir),
+            'url'     => $location,
+            'location' => $location, // for tinymce
         ];
     }
 
