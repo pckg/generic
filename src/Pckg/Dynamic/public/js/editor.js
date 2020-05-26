@@ -331,7 +331,10 @@ var initTinymce = function (selector, config) {
         url: '/dynamic/uploader?dropzone',
         previewsContainer: null,
         previewTemplate: '<div></div>',
-        maxFilesize: 8
+        maxFilesize: 8,
+        headers: vdth ? {
+            'X-Pckg-CSRF': vdth
+        } : {}
     });
 
     let c = tinyMceConfig;
