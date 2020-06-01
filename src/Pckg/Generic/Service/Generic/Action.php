@@ -11,6 +11,7 @@ use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\Content;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Record\Setting;
+use Pckg\Generic\Service\Generic;
 use Throwable;
 
 /**
@@ -32,6 +33,16 @@ class Action implements \JsonSerializable
     protected $action;
 
     /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function pushMetadata($key, $value)
+    {
+        return resolve(Generic::class)->pushMetadata($this->getAction()->pivot->id, $key, $value);
+    }
+
+    /**
      * @param string $template
      *
      * @return View\Twig
@@ -51,7 +62,7 @@ class Action implements \JsonSerializable
     {
         $mergedProps = [];
         foreach ($props as $prop => $value) {
-            $mergedProps[] = ' ' . $prop . '="' . (is_numeric($value) ? $value : htmlspecialchars(json_encode($value))) . '"';
+            $mergedProps[] = ' ' . $prop . '="' . (is_numeric($value) ? $value : (substr($prop, 0, 1) === ':' ? $value : htmlspecialchars(json_encode($value)))) . '"';
         }
 
         return '<' . $component .

@@ -63,7 +63,7 @@ class Generic
     {
         $this->metadata[$actionId][$key] = $value;
 
-        return $this;
+        return '$store.state.generic.metadata[' . $actionId . '].' . $key;
     }
 
     public function getMetaData()
