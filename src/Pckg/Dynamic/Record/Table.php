@@ -65,14 +65,21 @@ class Table extends Record
         return $type . ' ' . lcfirst($this->title ?? ('<i>' . $this->table . '</i>'));
     }
 
-    public function getViewUrl()
+    public function getViewUrl(Record $record = null)
     {
-        return url(
-            'dynamic.record.list',
-            [
-                'table' => $this,
-            ]
-        );
+        return $record
+            ? url(
+                'dynamic.record.view',
+                [
+                    'table' => $this,
+                    'record' => $record,
+                ])
+            : url(
+                'dynamic.record.list',
+                [
+                    'table' => $this,
+                ]
+            );
     }
 
     public function getEditUrl(Record $record)
