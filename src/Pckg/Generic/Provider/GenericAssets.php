@@ -15,7 +15,6 @@ class GenericAssets extends Provider
             '@' . path('vendor') . 'pckg/helpers-less/font.less',
             '@' . path('vendor') . 'pckg/helpers-less/list.less',
             '@' . path('vendor') . 'pckg/helpers-less/margin.less',
-            '@' . path('vendor') . 'pckg/helpers-less/objects.less',
             '@' . path('vendor') . 'pckg/helpers-less/padding.less',
             path('vendor') . 'pckg/helpers-js/idify.jquery.js',
             path('vendor') . 'pckg/helpers-js/vha.jquery.js',

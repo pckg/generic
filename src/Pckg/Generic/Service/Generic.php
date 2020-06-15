@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Service;
 
 use Comms\Hub\Api;
+use Derive\Platform\Entity\Platforms;
 use Pckg\Auth\Middleware\RestrictGenericAccess;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
@@ -13,12 +14,15 @@ use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
 use Pckg\Generic\Entity\Actions;
+use Pckg\Generic\Entity\DataAttributes;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
+use Pckg\Generic\Entity\SettingsMorphs;
 use Pckg\Generic\Record\Action as ActionRecord;
 use Pckg\Generic\Record\ActionsMorph;
 use Pckg\Generic\Record\Layout;
 use Pckg\Generic\Record\Route;
+use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
@@ -90,6 +94,21 @@ class Generic
         })->map(function(Action $action) {
             return $action->getFlat();
         })->all();
+    }
+
+    /**
+     * Return all custom styles from the database. 
+     */
+    public function getStyles()
+    {
+        return (new DataAttributes())->whereArr([
+            'morph_id' => Generic::class,
+            'slug' => 'styles',
+        ])->orderBy('poly_id')
+            ->all()
+            ->keyBy('poly_id') // selector that holds array with {device, state, css}
+            ->mapFn('json_decode')
+            ->all();
     }
 
     public function authCheckRoute()

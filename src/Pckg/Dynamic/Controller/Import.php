@@ -3,12 +3,15 @@
 use League\Csv\Reader;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Form\Import as ImportForm;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
 use Pckg\Framework\Controller;
+use Pckg\Maestro\Service\Tabelize;
+use Pckg\Manager\Locale\Locale;
 use Pckg\Manager\Upload;
 
 class Import extends Controller
@@ -250,6 +253,27 @@ class Import extends Controller
         $this->importContent($table, Reader::createFromString($upload->getContent()));
 
         return $this->response()->respondWithSuccessRedirect();
+    }
+
+    public function getExportEmptyImportAction(Table $table, Dynamic $dynamicService)
+    {
+        $strategy = (new ExportService())->useStrategy('csv');
+
+        $dynamicService->setTable($table);
+
+        $listedFields = $table->listableFields->filter(function (Field $field) {
+            return !in_array($field->fieldType->slug, ['mysql', 'php']);
+        });
+
+        $strategy->setHeaders($listedFields->keyBy('field')->map('title')->all());
+
+        $strategy->setFileName($table->table . '-empty');
+
+        $strategy->prepare();
+
+        $strategy->output();
+
+        $this->response()->respond();
     }
 
 }

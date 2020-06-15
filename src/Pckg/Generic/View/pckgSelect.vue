@@ -23,10 +23,10 @@
                 <li v-for="(option, key) in finalOptions" :key="key" @click.prevent="toggleOption($event, key)">
                     <a href="#" @click.prevent>
                         <span class="text-left">
-                            <i v-if="myMultiple && isValueSelected(key)" class="fal fa-fw fa-check-square"></i>
+                            <i v-if="myMultiple && isValueSelected(key)" class="fas fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
                             {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fal fa-fw fa-check"></i>
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fas fa-fw fa-check"></i>
                         </span>
                     </a>
                 </li>
@@ -34,10 +34,10 @@
                     <li :key="label"><b>{{ label }}</b></li>
                     <li v-for="(option, key) in optgroup" :key="label + key" @click.prevent="toggleOption($event, key)">
                         <a href="#" @click.prevent>
-                            <i v-if="myMultiple && isValueSelected(key)" class="fal fa-fw fa-check-square"></i>
+                            <i v-if="myMultiple && isValueSelected(key)" class="fas fa-fw fa-check-square"></i>
                             <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
                             {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fal fa-fw fa-check"></i>
+                            <i v-if="!myMultiple && isValueSelected(key)" class="fas fa-fw fa-check"></i>
                         </a>
                     </li>
                 </template>
@@ -178,10 +178,6 @@
             search: function () {
                 this.refreshList();
             },
-            selectedModel: function (newVal, oldVal) {
-                this.$emit('change', newVal);
-                this.$emit('input', newVal);
-            },
             initialOptions: function (newVal) {
                 if (Object.keys(newVal) != Object.keys(this.options)) {
                     this.options = this.mergeOptions(newVal);
@@ -190,13 +186,19 @@
             selected: function (newVal, oldVal) {
                 this.myMultiple = Array.isArray(newVal);
                 this.selectedModel = this.makeModel(newVal);
+                this.emit();
             },
             initialMultiple: function (newVal, oldVal) {
                 this.myMultiple = newVal;
                 this.selectedModel = this.makeModel(this.selected);
+                this.emit();
             }
         },
         methods: {
+            emit: function(){
+                this.$emit('change', this.selectedModel);
+                this.$emit('input', this.selectedModel);
+            },
             focusSearch: function () {
                 this.$nextTick(function () {
                     this.dropdownOpened();
@@ -325,14 +327,17 @@
                     let i = this.selectedModel.indexOf(key);
                     if (i >= 0) {
                         this.selectedModel.splice(i, 1);
+                        this.emit();
                         return;
                     }
 
                     this.selectedModel.push(key);
+                    this.emit();
                     return;
                 }
 
                 this.selectedModel = this.selectedModel == key ? (this.isRequired ? key : null) : key;
+                this.emit();
                 // close and make normal
                 this.dropdownClosed();
             },

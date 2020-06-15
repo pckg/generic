@@ -29,7 +29,7 @@
                                             @entity-action="entityAction"
                                             :relation-id="relationId"
                                             :record-id="recordId"
-                                            :columns="myFields"
+                                            :columns="dbFields"
                                             :relations="dbRelations"
                                             @export-view="exportView"></pckg-maestro-table-actions>
 

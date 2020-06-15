@@ -295,6 +295,7 @@ class Records extends Controller
                         ];
                     }
                     $data['options'] = $options;
+                    $data['type'] = $field->fieldType->slug ?? null;
 
                     return $data;
                 }),

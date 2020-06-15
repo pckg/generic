@@ -397,6 +397,13 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
+                        '/dynamic/tables/import/[table]/export-empty' => [
+                            'name'      => 'dynamic.record.import.exportEmpty',
+                            'view'      => 'exportEmptyImport',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                            ],
+                        ],
                         '/dynamic/tables/import/[table]/upload-file' => [
                             'name'      => 'api.dynamic.table.uploadFile',
                             'view'      => 'uploadFile',

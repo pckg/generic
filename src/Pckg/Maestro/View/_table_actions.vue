@@ -46,24 +46,38 @@
             </div>
         </pckg-bootstrap-modal>
 
-        <pckg-bootstrap-modal :visible="modal == 'import'" @close="modal = null">
+        <pckg-bootstrap-modal :visible="modal == 'import'" @close="modal = null" size="lg">
             <div slot="body">
                 <p>Prepare columns in same format as they are available in export. Extra fields will not be
                     imported. Pipe (|), comma (,) and semicolon (;) are supported as column delimiters.
                     See Comms Knowledge Base for <a href="#">more info about imports</a>.</p>
 
-                <div class="form-group">
-                    <label>Available columns</label>
-                    <div>
-                        <pckg-tooltip v-for="(column, i) in columns" :key="i + column.field" style="margin-right: 1rem;"
-                                      tag="span"
-                                      :text="column.field" :visible="true"
-                                      :content="column.title + ' - ' + column.help"></pckg-tooltip>
-                    </div>
+                <div class="display-block margin-bottom-sm">
+                    <a :href="'/dynamic/tables/import/' + table.id + '/export-empty'" target="_blank">Download .csv example</a>
+                    <span class="margin-horizontal-xxs">|</span>
+                    <a href="#" v-if="importData.columnsVisible" @click.prevent="importData.columnsVisible = false">Hide available columns</a>
+                    <a href="#" v-else @click.prevent="importData.columnsVisible = true">Show available columns</a>
                 </div>
 
+                <table class="table table-condensed table-borderless table-hover" v-if="importData.columnsVisible">
+                    <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Help</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(column, i) in realColumns">
+                        <th>{{ column.field }}<br /><span class="color-grayish">{{ column.title }}</span></th>
+                        <th>{{ column.type }}<br /><span class="color-grayish">{{ columnLimit(column) }}</span></th>
+                        <th>{{ column.help }}</th>
+                    </tr>
+                    </tbody>
+                </table>
+
                 <div class="form-group">
-                    <label>File</label>
+                    <label>File to import (.csv)</label>
                     <div>
                         <pckg-htmlbuilder-dropzone :url="uploadFileUrl" id="import"
                                                    @uploaded="importUploaded"
@@ -177,6 +191,25 @@
             entityAction: function (event) {
                 this.$emit('entity-action', event);
             },
+            columnLimit: function (column) {
+                let limits = {
+                    id: 'Unique integer',
+                    text: 'Non-html, max 256',
+                    textarea: 'Non-html, max 2048',
+                    editor: 'HTML, max 8096',
+                    select: 'ID integer',
+                    datetime: 'Y-m-d H:i:s',
+                    date: 'Y-m-d',
+                    boolean: 'Empty or 1',
+                    order: 'Integer',
+                    picture: 'Available in .zip'
+                };
+                let f = column.field;
+                if (column.type === 'select' && f.substring(-3) !== '_id') {
+                    return 'key';
+                }
+                return limits[column.type] || null;
+            }
         },
         data: function () {
             return {
@@ -195,8 +228,10 @@
                 meta: {
                     rows: 0,
                     columns: []
+                },
+                importData: {
+                    columnsVisible: false
                 }
-                //templateRender: null
             };
         },
         created: function () {
@@ -212,35 +247,12 @@
             },
             uploadFileUrl: function () {
                 return utils.url('@api.dynamic.table.uploadFile', {table: this.table.id});
+            },
+            realColumns: function () {
+                return this.columns.filter(function (column) {
+                    return ['mysql', 'php', 'password'].indexOf(column.type) === -1;
+                });
             }
         },
-        /*watch: {
-            table: {
-                immediate: true,
-                handler: function (newTable, oldTable) {
-                    console.log(newTable, oldTable);
-                    http.get('/api/vue/dynamic/table/' + 1 + '/actions', function (data) {
-
-                        let res = Vue.compile(data.template);
-
-                        this.templateRender = res.render;
-                        this.$options.staticRenderFns = [];
-                        this._staticTrees = [];
-                        if (res.staticRenderFns) {
-                            for (var i in res.staticRenderFns) {
-                                this.$options.staticRenderFns.push(res.staticRenderFns[i]);
-                            }
-                        }
-                    }.bind(this));
-                }
-            }
-        },
-        render: function (h) {
-            if (!this.templateRender) {
-                return h('div', 'Loading ...');
-            }
-
-            return this.templateRender();
-        },*/
     }
 </script>

@@ -467,7 +467,8 @@ class ActionsMorph extends Record
         foreach ($settings->getKey('attributes', []) as $attr) {
             foreach ($attr['css'] as $a => $v) {
                 $device = $attr['device'] === 'smallMobile' ? 'mobile' : $attr['device'];
-                $attributes[$device][$a] = $v;
+                $state = $attr['state'] ?? 'nostate';
+                $attributes[$device][$state][$a] = $v;
             }
         }
 
@@ -475,12 +476,16 @@ class ActionsMorph extends Record
          * Array of final attributes.
          */
         $finalAttributes = [];
-        foreach ($attributes as $device => $attrs) {
-            $finalAttributes[] = [
-                'device'   => $device,
-                'selector' => '.__action-' . $this->id,
-                'css'      => $attrs,
-            ];
+        foreach ($attributes as $device => $states) {
+            foreach ($states as $state => $attrs) {
+                $state = ($state === 'nostate' ? null : $state);
+                $finalAttributes[] = [
+                    'device'   => $device,
+                    'selector' => '.__action-' . $this->id,
+                    'state' => $state,
+                    'css'      => $attrs,
+                ];
+            }
         }
 
         /**
@@ -674,6 +679,7 @@ class ActionsMorph extends Record
                 'config'       => $config['config'] ?? null,
                 'raw'          => !!($config['raw'] ?? null),
                 'capabilities' => $config['capabilities'] ?? [],
+                'customTemplate' => '<div><p>This is title {{ content.title }}</p>And content:<div v-html="content.content"></div></div>',
             ];
 
             return $data;

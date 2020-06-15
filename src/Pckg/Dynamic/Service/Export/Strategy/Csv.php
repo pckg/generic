@@ -18,8 +18,8 @@ class Csv extends AbstractStrategy
         /**
          * Add header.
          */
-        if ($this->getData()) {
-            fputcsv($fp, array_keys($this->getData()[2]));
+        if ($headers = $this->getHeaders()) {
+            fputcsv($fp, array_keys($headers));
         }
 
         /**
