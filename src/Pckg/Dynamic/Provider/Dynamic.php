@@ -390,13 +390,6 @@ class Dynamic extends Provider
                         'controller' => Import::class,
                     ],
                     [
-                        '/dynamic/tables/import/[table]' => [
-                            'name'      => 'dynamic.record.import',
-                            'view'      => 'importTable',
-                            'resolvers' => [
-                                'table' => TableResolver::class,
-                            ],
-                        ],
                         '/dynamic/tables/import/[table]/export-empty' => [
                             'name'      => 'dynamic.record.import.exportEmpty',
                             'view'      => 'exportEmptyImport',

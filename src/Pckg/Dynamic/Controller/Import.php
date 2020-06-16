@@ -110,7 +110,7 @@ class Import extends Controller
         // $newline = $meta['newline'];
         $csv = Reader::createFromPath(path('tmp') . $file);
         $csv->setDelimiter($delimiter);
-        $import = $this->importContent($table, $csv);
+        $import = $this->importContent($table, $csv, post('strategy'));
 
         return [
             'meta'    => post('meta'),
@@ -118,7 +118,7 @@ class Import extends Controller
         ];
     }
 
-    public function importContent(Table $table, Reader $csv)
+    public function importContent(Table $table, Reader $csv, $strategy = null)
     {
         $data = $csv->getIterator();
         $headers = [];
@@ -151,7 +151,7 @@ class Import extends Controller
 
                     // translated value
                     $expl = explode('*', $field);
-                    return in_array($expl, $field[0]);
+                    return in_array($expl[0], $arrAvailableFields);
                 });
                 continue;
             }
@@ -168,7 +168,7 @@ class Import extends Controller
         });
         $defaultLocales = $this->localeManager()->getFrontendLanguages()->keyBy('slug')->map('slug')->all();
 
-        collect($mapped)->each(function($item) use ($uniqueFields, $availableFields, $table, $defaultLocales) {
+        collect($mapped)->each(function($item) use ($uniqueFields, $availableFields, $table, $defaultLocales, $strategy) {
             $locales = [];
             foreach ($item as $field => $value) {
                 if ($pos = strpos($field, '*')) {
@@ -208,14 +208,18 @@ class Import extends Controller
                     continue;
                 }
 
-                runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord) {
+                runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord, $strategy) {
                     $entity = $table->createEntity();
                     if (!$prevRecord && $uniqueFields && $uniqueValues) {
                         /**
                          * Check for existing records.
                          */
-                        $record = $prevRecord = Record::getOrNew($uniqueValues, $entity);
-                    } elseif (!$prevRecord) {
+                        $record = Record::getOrNew($uniqueValues, $entity);
+                        if ($strategy === 'skip' && !$record->isNew()) {
+                            return;
+                        }
+                        $prevRecord = $record;
+                    } elseif (!$prevRecord) { // no unique fields or no unique values, insert
                         /**
                          * Create new record.
                          */
@@ -236,23 +240,6 @@ class Import extends Controller
                 }, $locale);
             }
         });
-    }
-
-    public function postImportTableAction(Table $table, ImportForm $importForm)
-    {
-        $entity = $table->createEntity();
-        $upload = new Upload('file');
-
-        if (($message = $upload->validateUpload()) !== true) {
-            return [
-                'success' => false,
-                'message' => $message,
-            ];
-        }
-
-        $this->importContent($table, Reader::createFromString($upload->getContent()));
-
-        return $this->response()->respondWithSuccessRedirect();
     }
 
     public function getExportEmptyImportAction(Table $table, Dynamic $dynamicService)

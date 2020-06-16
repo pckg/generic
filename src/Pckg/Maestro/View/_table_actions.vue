@@ -91,6 +91,7 @@
                         <label>Merge strategy</label>
                         <div>
                             <pckg-select
+                                    v-model="importStrategy"
                                     :initial-options="{import:'Import all (invalid on unique check)',skip:'Skip existing records',overwrite:'Overwrite existing records',existing:'Only overwrite existing'}"
                                     :initial-multiple="false"></pckg-select>
                         </div>
@@ -173,12 +174,12 @@
             importUploaded: function (data) {
                 this.importMode = 'preparing';
                 this.meta = data.data.meta;
-                console.log(data);
             },
             makeImport: function () {
                 this.importMode = 'importing';
                 http.post(utils.url('@api.dynamic.table.importFile', {table: this.table.id}), {
-                    meta: this.meta
+                    meta: this.meta,
+                    strategy: this.importStrategy
                 }, function (data) {
                     if (data.success) {
                         this.importMode = 'imported';
@@ -215,6 +216,7 @@
             return {
                 exportMode: null,
                 importMode: null,
+                importStrategy: 'skip',
                 modal: null,
                 exportFormat: 'csv',
                 exportFormats: {
