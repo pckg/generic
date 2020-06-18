@@ -43,6 +43,9 @@
                 default: function () {
                     return {};
                 }
+            },
+            onSuccess: {
+                default: null
             }
         },
         created: function () {
@@ -57,21 +60,31 @@
             };
         },
         computed: {
+            isNew: function () {
+                return !this.formModel.id;
+            },
             groupedFields: function () {
                 let fields = this.myForm.fields;
                 let grouped = {};
                 $.each(fields, function (i, field) {
+                    if (!this.isVisible(field)) {
+                        return;
+                    }
+
                     if (!grouped[field.group ? field.group.id : 'x']) {
                         grouped[field.group ? field.group.id : 'x'] = [];
                     }
 
                     grouped[field.group ? field.group.id : 'x'].push(field);
-                });
+                }.bind(this));
 
                 return grouped;
             },
         },
         methods: {
+            isVisible: function (field) {
+                return !this.isNew || (field.required && field.type !== 'id');
+            },
             initialFetch: function () {
                 this.state = 'loading';
                 http.get('/api/dynamic/form/' + this.tableId + (this.formModel && this.formModel.id ? '/' + this.formModel.id : ''), function (data) {
@@ -89,6 +102,9 @@
                         this.$emit('saved');
                         this.state = 'success';
                         this.clearErrorResponse();
+                        if (this.onSuccess && this.onSuccess()) {
+                            return;
+                        }
                         if (!this.formModel.id) {
                             this.state = 'redirecting';
                             $dispatcher.$emit('notification:info', 'The record has been added, redirecting to new page');

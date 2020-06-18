@@ -508,7 +508,6 @@ class ActionsMorph extends Record
             'class'             => '',
             'attributes'        => [],
             'style'             => '',
-            'bgColor'           => '',
             'bgImage'           => '',
             'bgSize'            => '',
             'bgAttachment'      => '',

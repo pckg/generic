@@ -45,7 +45,7 @@ class Generic
         $auth = auth();
 
         return measure('Stringifying output', function() use ($route, $auth) {
-            $structure = '<pckg-app></pckg-app>';
+            $structure = '<pckg-app data-frontend></pckg-app>';
 
             if ($auth->isLoggedIn() && ($auth->isAdmin() || $auth->getGroupId() == 8)) {
                 $structure = '<pckg-frontpage-deck v-if="!inIframe && $store.getters.genericRoute"></pckg-frontpage-deck>' .
