@@ -87,6 +87,14 @@ Vue.filter('html2text', function (html) {
     return utils.html2text(html);
 });
 
+Vue.filter('ellipsis', function (text, length) {
+    if (text.length < length) {
+        return text;
+    }
+
+    return text.substr(0, length) + '...';
+})
+
 Vue.directive('outer-click', {
     bind: function (el, binding, vnode) {
         $dispatcher.$on('body:click', function (e) {
