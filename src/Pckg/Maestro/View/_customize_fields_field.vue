@@ -98,7 +98,6 @@
             makeSelectedFieldVisible: function () {
                 let field = this.selectedField;
                 if (!field) {
-                    console.log('no field');
                     return;
                 }
                 let e = {
@@ -113,7 +112,6 @@
                     field: {}
                 };
                 e.field[this.selectedRelation.alias] = chosen;//{field: chosen};
-                console.log('emiting chosen relation', e);
                 this.$emit('chosen', e);
                 return;
             },

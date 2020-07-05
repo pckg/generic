@@ -2,7 +2,6 @@
     <div :id="id" :class="actionClass" :style="actionStyle">
         <slot name="body">
             <pckg-action-bg :action="action"></pckg-action-bg>
-            <frontpage-action-outline :action="action" v-if="hasOutline"></frontpage-action-outline>
             <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
         </slot>
     </div>
@@ -33,7 +32,6 @@
             try {
                 return this.templateRender();
             } catch (e) {
-                console.log('Error rendering template', e, this.action);
                 return h('div', 'Error rendering template: ' + e.getMessage())
             }
         },
@@ -44,15 +42,12 @@
                     let res;
                     let b = '<div :id="\'action-\' + action.id" :class="actionClass" :style="actionStyle">'
                         + '<pckg-action-bg :action="action"></pckg-action-bg>'
-                        + '<frontpage-action-outline :action="action" v-if="hasOutline"></frontpage-action-outline>'
                         + (this.action.build)
                         + '</div>';
                     b = this.action.build;
                     try {
                         res = Vue.compile(b);
                     } catch (e) {
-                        console.log(this.action.build);
-                        console.log('error building template', b);
                         res = Vue.compile('<p>Error building template</p>');
                     }
 

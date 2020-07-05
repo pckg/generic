@@ -833,7 +833,6 @@
                     this.$emit('update:records', this.records);
 
                 }.bind(this)).catch(function (e) {
-                    console.log(e, 'error');
                     $dispatcher.$emit('notification:error', 'Error fetching data');
                     this.loading = false;
                 }.bind(this)).then(function (data) {
@@ -913,8 +912,6 @@
                         columns.push(this.getFieldByRelation(this.resolveRelationField(i, column)));
                     }
                 }.bind(this));
-
-                console.log('columns', columns);
 
                 return columns;
             }*/

@@ -144,7 +144,6 @@
                         return;
                     }
 
-                    console.log('changed from', this.myValue, 'to', value);
                     this.$data._momentModel = this.moment(value);
                     this.myValue = value;
                 }
@@ -152,7 +151,6 @@
         },
         methods: {
             moment: function (date) {
-                console.log("parsing", date);
                 let m = date ? moment(date) : moment();
                 m.locale(this.options.locale || 'en');
 
@@ -170,10 +168,8 @@
                 this.visible = true;
                 if (!this.myValue || this.myValue.length == 0) {
                     if (this.options.getDefault) {
-                        console.log('setting default');
                         this.setAndEmitValue(this.options.getDefault());
                     } else {
-                        console.log('setting current');
                         this.setAndEmitValue(this.moment().format(this.options.format));
                     }
                 }
@@ -240,7 +236,6 @@
                     value = currentValue.split(' ')[0] + ' ' + value;
                 } else if (currentValue && currentValue.length >= format.length && value && value.length < format.length) {
                     value = value + '' + currentValue.substring(value.length);
-                    console.log('merged with current value', value);
                 }
                 this.$emit('input', value);
 
@@ -386,7 +381,6 @@
             weeks: function () {
                 let m = this.moment(this.myValue);
                 if (!m.isValid()) {
-                    console.log('invalid value to calc weeks');
                     return [];
                 }
 
@@ -425,16 +419,13 @@
             hours: function () {
                 let m = this.moment(this.myValue);
                 if (!m.isValid()) {
-                    console.log('invalid value to calc hours', this.myValue);
                     m = this.moment(this.moment().format('YYYY-MM-DD') + ' ' + this.myValue);
                 }
 
                 if (!m.isValid()) {
-                    console.log('invalid computed value to calc hours', this.moment().format('YYYY-MM-DD') + ' ' + this.myValue);
                     return [];
                 }
 
-                console.log('building hour tree');
                 let c = {min: 0, max: 23};
                 let startOfDay = m.clone().startOf('day').hour(c.min);
                 let endOfDay = m.clone().endOf('day').hour(c.max);
@@ -472,8 +463,6 @@
                     hours.push(hour);
                     hour = [];
                 }
-
-                console.log('returning', hours);
 
                 return hours;
             }

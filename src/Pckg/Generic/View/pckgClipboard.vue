@@ -87,7 +87,6 @@
                         //element.blur();
                         title = 'Copied!';
                     } catch (err) {
-                        console.log(err);
                     }
 
                 }

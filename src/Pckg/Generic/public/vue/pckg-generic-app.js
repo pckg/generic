@@ -17,12 +17,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach(function(to, from, next) {
-    console.log('router before each');
     /**
      * When redirecting from non-vue to vue.
      */
     if (from.matched.length === 0 && to.matched.length > 0 && from.fullPath !== '/') {
-        console.log('matched first beforeEach');
         next(false);
         http.redirect(to.fullPath);
         return;
@@ -33,12 +31,10 @@ router.beforeEach(function(to, from, next) {
      */
     let redirected = false;
     if (to.meta.tags) {
-        console.log('matched second beforeEach');
         $.each(to.meta.tags, function(i, routeTag){
             if ($store.getters.userHasTag(routeTag)) {
                 return;
             }
-            console.log('no tag', routeTag);
             next(Pckg.auth.user ? '/' : '/login');
             redirected = true;
             return false;
@@ -46,11 +42,9 @@ router.beforeEach(function(to, from, next) {
     }
 
     if (redirected) {
-        console.log('already redirected');
         return;
     }
 
-    console.log('allowing route');
     next();
 });
 
@@ -71,7 +65,6 @@ if (!synced) {
     window._$store = $store;
 } else {
     window.parent.$store.subscribe(function (mutation, parentState) {
-        //console.log('replacing state in iframe', parentState, mutation);
         $store.replaceState(parentState);
     });
 }
@@ -90,7 +83,6 @@ if ($('header.a-header').length > 0) {
     });
 }
 
-console.log('initializing vue');
 const $vue = new Vue({
     el: '#vue-app',
     s,
@@ -128,4 +120,3 @@ const $vue = new Vue({
         });
     }
 });
-console.log('initialized vue');

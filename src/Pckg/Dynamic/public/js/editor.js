@@ -21,7 +21,6 @@ tinymce.PluginManager.add('comms', function (editor, url) {
             if (!confirm('Do you want to lose any unsaved changes?')) {
                 return;
             }
-            console.log('destroying editor');
             editor.destroy();
             // Open window
             /*editor.windowManager.open({
@@ -43,7 +42,6 @@ tinymce.PluginManager.add('comms', function (editor, url) {
             if (!confirm('Do you want to cancel any unsaved changes?')) {
                 return;
             }
-            console.log('canceling changes');
             editor.buttons.cancel.onclick(editor, url);
         }
     });
@@ -320,7 +318,6 @@ let tinyMceConfig = {
 
 var initTinymce = function (selector, config) {
     var selected = $('#' + selector);
-    console.log('Initializing tinymce and dropzone on ' + selector, selected);
     selected.idify();
 
     let $dropzone, $dropzoneInst;

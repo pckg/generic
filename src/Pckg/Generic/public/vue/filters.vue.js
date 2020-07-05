@@ -229,12 +229,10 @@ let mediaGridUnbinder = function (el) {
 
 let mediaGridBinder = function (el, binding, vnode) {
     /*if (!(!binding.hasOwnProperty('value') || binding.value)) {
-        console.log('no binding value');
         mediaGridUnbinder(el);
         cleanupMediaGrid(el);
         return;
     } else if ($(el).hasClass('v-media-grid')) {
-        console.log('already initialized');
         fullProcess(el);
         return;
     }*/

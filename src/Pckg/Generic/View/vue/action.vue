@@ -1,7 +1,6 @@
 <TEMPLATE-IS-IN-SCRIPT>
     <div :id="'action-' + action.id" :class="actionClass" :style="actionStyle" v-pagebuilder>
         <pckg-action-bg :action="action"></pckg-action-bg>
-        <frontpage-action-outline :action="action" v-if="hasOutline"></frontpage-action-outline>
         <component v-for="a in subactions" :action-id="a.id" :is="a.component" :key="a.id"></component>
     </div>
 </TEMPLATE-IS-IN-SCRIPT>
@@ -32,7 +31,6 @@
                 let render = this.templateRender();
                 return render;
             } catch (e) {
-                console.log('Error rendering template', e, this.action);
                 return h('div', 'Error rendering template: ' + e.getMessage())
             }
         },
@@ -41,9 +39,6 @@
                 immediate: true,
                 handler: function (newVal, oldVal) {
                     let build = this.action.build || '';
-                    if (!build) {
-                        //console.log('No action.build.')
-                    }
                     /**
                      * Push all generic attributes to every action.
                      */
@@ -52,20 +47,15 @@
                     if (build && this.action.raw) {
                         let split = build.split(' ');
                         build = split[0] + actionAttributes + split.slice(1).join(' ');
-                        //console.log('Built from RAW', build, split);
                     } else if (true || build.indexOf('slot="') == -1) {
                         build = '<div' + actionAttributes + '>'
                             + '<pckg-action-bg :action="action"></pckg-action-bg>'
-                            + '<frontpage-action-outline :action="action" v-if="hasOutline"></frontpage-action-outline>'
                             + build
                             + '</div>';
                     }
                     try {
-                        //console.log('Compiling build', build);
                         res = Vue.compile(build);
                     } catch (e) {
-                        console.log(build);
-                        console.log('error building template', build);
                         res = Vue.compile('<p>Error building template</p>');
                     }
 

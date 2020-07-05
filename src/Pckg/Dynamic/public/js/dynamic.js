@@ -11,7 +11,6 @@ var initUninitialiedSelectpicker = function () {
                 clearTimeout(searchTimeout);
                 var val = $input.val();
                 searchTimeout = setTimeout(function () {
-                    console.log("searching ...");
                     http.getJSON(dataRefreshUrl + '?search=' + val, function (data) {
                         var val = $select.val();
                         $.each(data.records, function (key, val) {

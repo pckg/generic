@@ -92,7 +92,6 @@
                     });
 
                     if (!f) {
-                        console.log('fetch relation!');
                         return column.field;
                     }
 
@@ -114,7 +113,6 @@
                 return f;
             },
             emitTreeChange: function () {
-                console.log('emitting', this.myColumns);
                 this.$emit('change', this.myColumns);
             },
             makeSelectedFieldVisible: function () {
