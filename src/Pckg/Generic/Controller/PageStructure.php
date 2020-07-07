@@ -86,6 +86,7 @@ class PageStructure
         return [
             'success' => true,
             'url'     => img($filename, null, true, $dir),
+            'filename' => $filename,
         ];
     }
 

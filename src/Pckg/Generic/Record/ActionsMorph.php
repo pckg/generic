@@ -463,7 +463,6 @@ class ActionsMorph extends Record
         /**
          * Db attributes.
          */
-        //$attributes = $settings->getKey('attributes', []);
         foreach ($settings->getKey('attributes', []) as $attr) {
             foreach ($attr['css'] as $a => $v) {
                 $device = $attr['device'] === 'smallMobile' ? 'mobile' : $attr['device'];

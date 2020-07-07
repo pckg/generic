@@ -233,6 +233,7 @@
                             this.$emit('input', data.url);
                             this.$emit('uploaded', {
                                 url: data.url,
+                                filename: data.filename || null,
                                 data: data
                             });
                         }
