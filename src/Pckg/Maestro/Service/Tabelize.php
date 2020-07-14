@@ -369,7 +369,7 @@ class Tabelize
 
                     $enrichedValue = $this->dataOnly
                         ? $eval
-                        : ('<a href="' . $relation->showTable->getViewUrl($record) . '" title="Open related record">' .
+                        : ('<a href="' . ($relation->showTable ? $relation->showTable->getViewUrl($record) : '') . '" title="Open related record">' .
                             htmlspecialchars($eval) . '</a>');
                 } else {
                     $enrichedValue = null;

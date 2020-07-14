@@ -490,9 +490,10 @@ class Records extends Controller
         }
 
         return $this->response()->respondWithSuccess([
-                                                         'message'  => __('dynamic.records.add.success'),
-                                                         'redirect' => $url,
-                                                     ]);
+            'message' => __('dynamic.records.add.success'),
+            'redirect' => $url,
+            'record' => $newRecord ?? $record,
+        ]);
     }
 
     public function postCloneAction(Record $record, Table $table)
@@ -971,9 +972,23 @@ class Records extends Controller
 
         $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'),
                                       $field->getSetting('pckg.dynamic.field.privateUpload'));
-        $upload->save($dir);
-        $filename = $upload->getUploadedFilename();
+        
+        $infoUpload = new Upload('info');
+        $finalDestination = null;
+        if ($infoUpload->validateUpload() === true) {
+            $finalDestination = json_decode(file_get_contents($infoUpload->getFile()['tmp_name']))->final ?? null;
+        }
 
+        try {
+            $upload->save($dir, $finalDestination);
+        } catch (Throwable $e) {
+            return [
+                'success' => false,
+                'message' => exception($e),
+            ];
+        }
+        $filename = $upload->getUploadedFilename();
+        
         $entity = $table->createEntity();
         if (!$record) {
             /**
@@ -986,14 +1001,13 @@ class Records extends Controller
                 $field->field                   => $filename,
             ];
         } else {
-            $record->setEntity($entity);
-            $record->{$field->field} = $filename;
-            $record->save($entity);
+            $record->setEntity($entity)->setAndSave([$field->field => $filename]);
         }
 
         return [
             'success' => true,
             'url'     => img($filename, null, true, $dir),
+            'filename' => $filename,
             'total'   => count($_SESSION[Records::class]['upload']),
         ];
     }

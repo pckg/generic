@@ -289,7 +289,7 @@ class Field extends DatabaseRecord
             return $dir;
         }
 
-        return path($private ? 'app_private' : 'app_uploads') . $dir . path('ds');
+        return path($private ? 'app_private' : 'app_uploads') . ($dir ? $dir . path('ds') : '');
     }
 
     public function getLabelAttribute()

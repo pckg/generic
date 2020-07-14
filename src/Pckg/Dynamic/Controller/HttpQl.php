@@ -2,7 +2,9 @@
 
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
 use Pckg\Dynamic\Record\Table;
@@ -22,19 +24,60 @@ class HttpQl
          * Fetch main table set in request.
          */
         $path = get('path', null);
-        if (substr($path, 0, 1) == '/') {
+        if (substr($path, 0, 1) === '/') {
             $path = substr($path, 1);
         }
 
         return (new TableQl($dynamicService))->resolve($path);
     }
 
+    /**
+     * This works the same as postAddAction from Record.
+     * Except, it accepts data in other format.
+     */
+    public function putIndexAction(Dynamic $dynamicService)
+    {
+        $table = $this->fetchTable($dynamicService);
+        $form = resolve(\Pckg\Dynamic\Form\Dynamic::class);
+        return resolve(Records::class)->postAddAction($form, $table);
+    }
+
+    /**
+     * This works only for file uploads.
+     * It will be refactored to a separate method in next version.
+     */
+    public function postIndexAction(Dynamic $dynamic)
+    {
+        if (!files()->all()) {
+            throw new \Exception('Incomplete request');
+        }
+
+        /**
+         * We are uploading a file to the field.
+         */
+        $table = $this->fetchTable($dynamic);
+        $field = Field::getOrFail(['field' => get('field'), 'dynamic_table_id' => $table->id]);
+        $record = $table->createEntity()->where('id', get('record'))->oneOrFail();
+
+        return resolve(Records::class)->postUploadAction($table, $record, $field);
+    }
+
+    /**
+     * Return list of all records, paginated.
+     *
+     * @param Dynamic $dynamicService
+     * @param Tabelize $tabelize
+     * @param Table|null $table
+     * @param bool $noLimit
+     * @return array
+     */
     public function searchIndexAction(
         Dynamic $dynamicService,
         Tabelize $tabelize,
         Table $table = null,
         $noLimit = false
-    ) {
+    )
+    {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
@@ -46,6 +89,13 @@ class HttpQl
         $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator'), true);
         $ormSearch = json_decode(post('X-Pckg-Orm-Search'), true);
         $ormMeta = json_decode(post('X-Pckg-Orm-Meta'), true);
+
+        /**
+         * Set defaults.
+         */
+        if (!$ormFields) {
+            $ormFields = $table->fields->map('field')->all();
+        }
 
         /**
          * When relation is set we want to display only values for related product.
@@ -63,11 +113,11 @@ class HttpQl
         //}
 
         $relations = (new \Pckg\Dynamic\Entity\Relations())->withShowTable()
-                                                           ->withOnField()
-                                                           ->withForeignField()
-                                                           ->where('on_table_id', $table->id)
-                                                           ->where('dynamic_relation_type_id', 1)
-                                                           ->all();
+            ->withOnField()
+            ->withForeignField()
+            ->where('on_table_id', $table->id)
+            ->where('dynamic_relation_type_id', 1)
+            ->all();
 
         foreach ($relations as $r) {
             $r->loadOnEntity($entity, $dynamicService);
@@ -146,23 +196,24 @@ class HttpQl
         /**
          * Fetch page records and total.
          */
-        $records = $entity->count()->all();
-        $total = $records->total();
+        $one = get('getter') === 'one';
+        $records = $entity->count()->{$one ? 'one' : 'all'}();
+        $total = $one ? 1 : $records->total();
 
         /**
          * Transform records for frontend.
          */
-        $records = $tabelize->transformCollection($records);
+        $records = $records ? $tabelize->transformCollection($one ? collect([$records]) : $records) : null;
 
         /**
          * Return all data.
          */
         return [
-            'records'   => $records,
-            'groups'    => [],
+            ($one ? 'record' : 'records') => $one ? ($records[0] ?? null) : $records,
+            'groups' => [],
             'paginator' => [
                 'total' => $total,
-                'url'   => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
+                'url' => router()->getUri() . (get('search') ? '?search=' . get('search') : ''),
             ],
         ];
     }
@@ -173,7 +224,8 @@ class HttpQl
         $ormFields,
         &$fields,
         &$fieldTransformations
-    ) {
+    )
+    {
         foreach ($ormFields as $field) {
             if (strpos($field, '.') === false) {
 
@@ -193,8 +245,8 @@ class HttpQl
              */
             $alias = str_replace(' ', '', Convention::toCamel(str_replace('.', ' ', $field)));
             $entity->addSelect([
-                                   $field => $alias . '.title',
-                               ]);
+                $field => $alias . '.title',
+            ]);
 
             $subquery = $this->getOrmFieldSubquery($table, $field);
             $keyMatch = $this->getOrmFieldKeyMatch($table, $field);
@@ -205,7 +257,7 @@ class HttpQl
 
             $entity->join('LEFT JOIN (' . $subquery . ') AS ' . $alias . ' ON ' . $alias . '.' . $keyMatch);
 
-            $fieldTransformations[$field] = function($record) use ($field) {
+            $fieldTransformations[$field] = function ($record) use ($field) {
                 /**
                  * This should be joined?
                  */
@@ -244,8 +296,8 @@ class HttpQl
         foreach ($split as $i => $relationAlias) {
             if ($i < (count($split) - 1)) {
                 $relation = (new \Pckg\Dynamic\Entity\Relations())->where('on_table_id', $onTable->id)
-                                                                  ->where('alias', $relationAlias)
-                                                                  ->one();
+                    ->where('alias', $relationAlias)
+                    ->one();
 
                 if (!$relation) {
                     return;
@@ -310,7 +362,7 @@ class HttpQl
         $strategy->setData(collect($data['records']));
 
         $strategy->setFileName(($table->name ?? $table->table) . '-' . date('Ymd-his') . '-' .
-                               substr(sha1(microtime()), 0, 8) . '.' . $strategy->getExtension());
+            substr(sha1(microtime()), 0, 8) . '.' . $strategy->getExtension());
 
         $file = $strategy->save();
 
@@ -324,6 +376,34 @@ class HttpQl
         $file = get('file', null);
 
         response()->download(path('tmp') . $file, $file);
+    }
+
+    public function getDefinitionAction()
+    {
+        return [
+            'entities' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
+                ->joinPermissionTo('write')
+                ->withFields(function(HasMany $fields){
+                    $fields->orderBy('order');
+                    $fields->withFieldType();
+                })
+                ->orderBy('`order`')
+                ->all()
+                ->map(function (Table $table) {
+                    return [
+                        'table' => $table->table,
+                        'title' => $table->title,
+                        'fields' => $table->fields->map(function (Field $field) {
+                            return [
+                                'field' => $field->field,
+                                'title' => $field->title,
+                                'type' => $field->fieldType->slug,
+                                'required' => !!$field->required,
+                            ];
+                        })->keyBy('field')->all()
+                    ];
+                })->keyBy('table')->all(),
+        ];
     }
 
 }

@@ -3,6 +3,7 @@
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pckg\Auth\Entity\UserGroups;
+use Pckg\Auth\Service\Auth;
 use Pckg\Collection;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
@@ -247,7 +248,7 @@ class Dynamic extends Bootstrap
                 });
                 $fields->withFieldGroup();
 
-                if ($i || ($this->record && $this->record->id)) {
+                if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api')) {
                     return;
                 }
 

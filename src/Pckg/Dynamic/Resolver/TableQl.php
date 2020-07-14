@@ -28,7 +28,7 @@ class TableQl implements RouteResolver
                 $dynamic->joinTranslationsIfTranslatable($tables);
                 $dynamic->joinPermissionsIfPermissionable($tables);
 
-                return $tables->where('id', $value)
+                return $tables->where(is_numeric($value) ? 'id' : 'table', $value)
                               ->withRelations(
                                   function(HasMany $relations) {
                                       $relations->joinTranslations();
