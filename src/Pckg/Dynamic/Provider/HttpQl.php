@@ -10,6 +10,9 @@ class HttpQl extends Provider
         return [
             routeGroup([
                 'controller' => \Pckg\Dynamic\Controller\HttpQl::class,
+                'tags' => [
+                    'group:admin',
+                ],
             ], [
                 'api.httpql' => route('/api/http-ql', 'index')/*->methods(['GET', 'SEARCH', 'PUT'])*/,
                 'api.httpql.definition' => route('/api/http-ql/definition', 'definition'),
