@@ -18,10 +18,13 @@
 
         <!-- visible image -->
         <div class="as-table" v-else-if="myCurrent" :style="{minHeight: minHeight}">
-            <div class="s-img" v-if="preview && !iconClass">
+            <div class="s-img" v-if="preview && !iconClass && isImage(myCurrent)">
                 <a :href="cdn(myCurrent)" class="__img-link" v-popup-image>
                     <img :src="cdn(myCurrent)" class="__img"/>
                 </a>
+            </div>
+            <div v-else class="s-icon text-center">
+                <i class="__state-icon fal fa-fw fa-file"></i>
             </div>
             <div class="s-text">
                 {{ infoText }}
@@ -41,6 +44,7 @@
 
 <script>
     import Dropzone from "dropzone";
+
     export default {
         name: 'pckg-htmlbuilder-dropzone',
         mixins: [pckgCdn],
@@ -92,6 +96,9 @@
             return {
                 original: null,
                 _dropzone: null,
+                _dropzoneHash: null,
+                _makeResolve: null,
+                _makeReject: null,
                 _previewTemplate: null,
                 myCurrent: this.current,
                 state: null,
@@ -139,6 +146,10 @@
                     return 'fal fa-arrow-up';
                 }
 
+                if (this.state == 'queued') {
+                    return 'fal fa-upload';
+                }
+
                 if (this.state == 'uploading') {
                     return 'fal fa-spinner-third fa-spin';
                 }
@@ -152,6 +163,10 @@
                 }
             },
             infoText: function () {
+                if (this.state == 'queued') {
+                    return 'File selected for upload';
+                }
+
                 if (this.state == 'uploading') {
                     return 'Uploading ...';
                 }
@@ -183,7 +198,36 @@
             }
         },
         methods: {
+            isImage: function(file) {
+                if (!file) {
+                    return false;
+                }
+
+                let extension = file.split('.').reverse()[0].toLowerCase();
+                return ['png', 'gif', 'png', 'webp', 'jpg', 'jpeg'].indexOf(extension) >= 0;
+            },
+            process: function () {
+                return new Promise((resolve, reject) => {
+                    this._makeResolve = resolve;
+                    this._makeReject = reject;
+                    this._dropzone.processQueue();
+                });
+            },
+            dropzoneHash: function(){
+                return JSON.stringify({
+                    url: this.url,
+                    params: this.params,
+                });
+            },
             initDropzone: function () {
+                let hash = this.dropzoneHash();
+                if (this._dropzoneHash === hash) {
+                    return;
+                } else {
+                    this._dropzoneHash = hash;
+                    this.state = null;
+                }
+
                 if (this._dropzone) {
                     this._dropzone.destroy();
                 }
@@ -208,6 +252,7 @@
                     previewsContainer: '#' + this.id + '-previews',
                     previewTemplate: '<div></div>',
                     clickable: this.$refs.upload,
+                    autoProcessQueue: !this.options.manualProcess,
                     maxFilesize: this.options.maxSize,
                     acceptedFiles: this.accept,
                     uploadprogress: function (file, progress, bytesSent) {
@@ -220,9 +265,15 @@
                             this.prev = this.myCurrent;
                             this.myCurrent = data.url;
                             this.state = 'success';
+                            if (this._makeResolve) {
+                                this._makeResolve();
+                            }
                         } else {
                             this.state = 'error';
                             this.errorMessage = data.message || 'Error uploading file';
+                            if (this._makeReject) {
+                                this._makeReject();
+                            }
                         }
 
                         if (data.message) {
@@ -262,11 +313,17 @@
                         this.hover = false;
                     }.bind(this),
                     init: function () {
-                        this.on("drop", function (e) {
-                            $dispatcher.$emit('body:dragend', e);
-                            $('body').removeClass('has-drag');
-                        });
                     }
+                });
+                this._dropzone.on("drop", (e) => {
+                    $dispatcher.$emit('body:dragend', e);
+                    $('body').removeClass('has-drag');
+                });
+                this._dropzone.on("addedfile", () => {
+                    this.state = 'queued';
+                });
+                this._dropzone.on("addedfiles", () => {
+                    this.state = 'queued';
                 });
             },
             deleteFile: function () {
