@@ -105,7 +105,11 @@ class Generic
     public function wrapIntoGenericContainer($view, $template = 'Pckg/Generic:frontend')
     {
         message('Wrapping into container');
-        $view = '<div class="container" data-frontend>' . $view . '</div>';
+        $class = 'container';
+        if (in_array('container:100', router()->get('tags'))) {
+            $class = 'container-100';
+        }
+        $view = '<div class="' . $class . '" data-frontend>' . $view . '</div>';
 
         return $this->wrapIntoGeneric($view, $template);
     }
