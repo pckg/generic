@@ -108,6 +108,8 @@ class Generic
         $class = 'container';
         if (in_array('container:100', router()->get('tags'))) {
             $class = 'container-100';
+        } else if (in_array('container:wide', router()->get('tags'))) {
+            $class = 'container-wide';
         }
         $view = '<div class="' . $class . '" data-frontend>' . $view . '</div>';
 
