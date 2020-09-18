@@ -8,7 +8,7 @@
 <div class="container">
 
     <h1>{{ __('error.heading') }}</h1>
-    <p>{{ __('error.code_' ~ _response.getCode()) }}</p>
+    <p code="{{ _response.getCode() }}">{{ __('error.code_' ~ _response.getCode()) }}</p>
 
     <p>Go to <a href="#back">previous page</a> or <a href="/">home</a></p>
 
