@@ -47,6 +47,22 @@ class Generic
         return measure('Stringifying output', function() use ($route, $auth) {
             $structure = '<pckg-app data-frontend></pckg-app>';
 
+            /**
+             * Check for themed page?
+             */
+            if (false) {
+                $slug = $route->slug;
+                $themePath = path('src') . 'theme/comms/test/dist/';
+                $pagesPath = $themePath . 'pages/';
+                $layoutsPath = $themePath . 'layouts/';
+                $file = $pagesPath . $slug .'.html';
+                if (file_exists($file)) {
+                    $fileContent = file_get_contents($file);
+                    $layoutContent = file_get_contents($layoutsPath . 'for-homepage.html');
+                    $structure = str_replace('##PAGE##', $fileContent, $layoutContent);
+                }
+            }
+
             if ($auth->isLoggedIn() && ($auth->isAdmin() || $auth->getGroupId() == 8)) {
                 $structure = '<pckg-frontpage-deck v-if="!inIframe && $store.getters.genericRoute"></pckg-frontpage-deck>' .
                     '<template v-if="!inIframe && ([\'threesome\', \'device\'].indexOf($store.state.generic.viewMode) >= 0)"><pckg-threesome></pckg-threesome></template>' .
