@@ -42,9 +42,8 @@ class Generic
             $this->genericService->build();
         });
 
-        $auth = auth();
-
-        return measure('Stringifying output', function() use ($route, $auth) {
+        return measure('Stringifying output', function() use ($route) {
+            $auth = auth();
             $structure = '<pckg-app data-frontend></pckg-app>';
 
             /**
