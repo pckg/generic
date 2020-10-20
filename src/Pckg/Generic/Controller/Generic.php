@@ -32,6 +32,23 @@ class Generic
 
     public function getGenericAction(Route $route)
     {
+        /**
+         * Make sure all cache dependencies are used in cache name.
+         * And that route is actually updated.
+         */
+        if (false) {
+            $cacheName = GenericService::class . '.getGenericAction.' . $route->id . '.' . $route->updated_at . '.' . (auth()->user('user_group_id') ?? 'guest');
+
+            return cache($cacheName, function () use ($route) {
+                return $this->getGenericActionWrapper($route);
+            }, 'app', '1hour');
+        }
+
+        return $this->getGenericActionWrapper($route);
+    }
+
+    public function getGenericActionWrapper(Route $route)
+    {
         measure('Reading route', function() use ($route) {
             $this->genericService->readRoute($route);
         });
