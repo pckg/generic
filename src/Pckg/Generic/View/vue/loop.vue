@@ -10,15 +10,15 @@
 </template>
 
 <script>
-    export default {
-        computed: {
-            groupedActions: function () {
-                return [
-                    $store.getters.groupedRootElements.header,
-                    $store.getters.groupedRootElements.content,
-                    $store.getters.groupedRootElements.footer
-                ];
-            }
+export default {
+    computed: {
+        groupedActions: function () {
+            return [
+                $store.getters.groupedRootElements.header,
+                $store.getters.groupedRootElements.content,
+                $store.getters.groupedRootElements.footer
+            ];
         }
     }
+}
 </script>
