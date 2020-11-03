@@ -1,13 +1,12 @@
 <template>
-    <div v-if="visible"
-         class="modal fade"
+    <div class="modal fade"
          :class="visible ? 'in display-block' : ''"
          tabindex="-1"
          role="dialog"
          :id="id"
          :data-backdrop="closable ? 'true' : 'static'"
          :data-keyboard="closable ? 'true' : 'false'">
-        <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
+        <div class="modal-dialog" :class="[size ? 'modal-' + size : '']" v-if="visible">
             <div class="modal-content">
                 <div class="modal-header" v-if="$slots.header || $slots.headerOut">
                     <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
