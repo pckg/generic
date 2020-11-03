@@ -1,5 +1,12 @@
 <template>
-    <div class="modal fade" :class="visible ? 'in display-block' : ''" tabindex="-1" role="dialog" :id="id" :data-backdrop="closable ? 'true' : 'static'" :data-keyboard="closable ? 'true' : 'false'">
+    <div v-if="visible"
+         class="modal fade"
+         :class="visible ? 'in display-block' : ''"
+         tabindex="-1"
+         role="dialog"
+         :id="id"
+         :data-backdrop="closable ? 'true' : 'static'"
+         :data-keyboard="closable ? 'true' : 'false'">
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
                 <div class="modal-header" v-if="$slots.header || $slots.headerOut">
@@ -11,7 +18,10 @@
                     </h4>
                     <slot name="headerOut" v-if="$slots.headerOut"></slot>
                 </div>
-                <div class="modal-body" v-if="$slots.body">
+                <div class="modal-body" v-if="$slots.default">
+                    <slot></slot>
+                </div>
+                <div class="modal-body" v-else-if="$slots.body">
                     <slot name="body"></slot>
                 </div>
                 <div class="modal-footer" v-if="$slots.footer">
