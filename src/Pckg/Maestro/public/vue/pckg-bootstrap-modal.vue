@@ -6,9 +6,9 @@
          :id="id"
          :data-backdrop="closable ? 'true' : 'static'"
          :data-keyboard="closable ? 'true' : 'false'">
-        <div class="modal-dialog" :class="[size ? 'modal-' + size : '']" v-if="visible">
+        <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
             <div class="modal-content">
-                <div class="modal-header" v-if="$slots.header || $slots.headerOut">
+                <div class="modal-header" v-if="visible && ($slots.header || $slots.headerOut)">
                     <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                         <i class="far fa-times" aria-hidden="true"></i>
                     </button>
@@ -17,13 +17,11 @@
                     </h4>
                     <slot name="headerOut" v-if="$slots.headerOut"></slot>
                 </div>
-                <div class="modal-body" v-if="$slots.default">
+                <div class="modal-body">
+                    <slot name="body" v-if="visible && $slots.body"></slot>
                     <slot></slot>
                 </div>
-                <div class="modal-body" v-else-if="$slots.body">
-                    <slot name="body"></slot>
-                </div>
-                <div class="modal-footer" v-if="$slots.footer">
+                <div class="modal-footer" v-if="visible && $slots.footer">
                     <button v-if="!$slots.footer && dismissable" type="button" class="btn btn-default"
                             :class="$slots.footer ? 'pull-left' : ''"
                             data-dismiss="modal"

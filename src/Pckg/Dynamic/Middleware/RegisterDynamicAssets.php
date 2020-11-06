@@ -15,7 +15,7 @@ class RegisterDynamicAssets
 
     public function handle($view)
     {
-        if (strpos($view, 'backend') !== false) {
+        if (strpos($view, 'backend') !== false || strpos($view, 'checkin') !== false) {
             $this->provider->register();
         }
 
