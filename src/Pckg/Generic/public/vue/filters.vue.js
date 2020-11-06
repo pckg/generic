@@ -1,6 +1,9 @@
-Vue.filter('number', function (price) {
+
+///import Vue from "vue";
+
+/*Vue.filter('number', function (price) {
     return parseInt(price) == parseFloat(price) ? parseInt(price) : parseFloat(price);
-});
+});*/
 
 Vue.filter('price', function (price, decimals, currency) {
     return locale.price(price, decimals, currency);

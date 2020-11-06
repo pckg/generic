@@ -544,7 +544,11 @@ class Generic
         $arrRoutes = $routes->nonDeleted()
                             ->whereHas('routes.slug')
                             ->withLayout()
-                            ->withAllTranslations(function(HasMany $translations){
+                            ->withAllTranslations(function(HasMany $translations) use ($languages) {
+                                /**
+                                 * Load only active translations.
+                                 */
+                                $translations->where('language_id', $languages->keys());
                                 $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
                             })
                             ->all();

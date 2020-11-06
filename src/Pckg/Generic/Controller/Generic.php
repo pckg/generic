@@ -1,5 +1,6 @@
 <?php namespace Pckg\Generic\Controller;
 
+use Derive\Internal\Cache\Service\Cache;
 use Pckg\Generic\Entity\Contents;
 use Pckg\Generic\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
@@ -31,6 +32,27 @@ class Generic
     }
 
     public function getGenericAction(Route $route)
+    {
+        /**
+         * Make sure all cache dependencies are used in cache name.
+         * And that route is actually updated.
+         */
+        if (false && strpos($route->route, '[') === false) {
+            //$lastUpdatedAt = Cache::timestamp($route);
+            $cacheName = Cache::name($route, [
+                GenericService::class . '.getGenericAction',
+                'userGroup' => auth()->user('user_group_id') ?? 'guest',
+            ]);
+
+            return cache($cacheName, function () use ($route) {
+                return $this->getGenericActionWrapper($route);
+            }, 'app', '5minutes');
+        }
+
+        return $this->getGenericActionWrapper($route);
+    }
+
+    public function getGenericActionWrapper(Route $route)
     {
         measure('Reading route', function() use ($route) {
             $this->genericService->readRoute($route);

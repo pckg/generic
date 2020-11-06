@@ -10,7 +10,6 @@
     }
   ],
   "require": {
-    "pckg/framework": "dev-master",
     "phpoffice/phpword": "0.*",
     "phpoffice/phpspreadsheet": "1.*"
   },
