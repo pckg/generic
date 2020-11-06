@@ -221,7 +221,7 @@ class Generic
     public function readSystemRoute($template)
     {
         $repository = (new Layouts())->getRepository();
-        if (!$repository->getCache()->hasTable('layouts')) {
+        if (!$repository || !$repository->getCache()->hasTable('layouts')) {
             return;
         }
 
