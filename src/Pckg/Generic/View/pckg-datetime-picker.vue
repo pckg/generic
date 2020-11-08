@@ -9,17 +9,17 @@
             <template v-if="true || myMode != 'day'">
                 <div class="as-table">
                     <div class="prev">
-                        <button type="button" class="button size-xs pull-left" @click.prevent="prev">
+                        <button type="button" class="button size-xs pull-left btn-bordered" @click.prevent="prev">
                             <i class="fal fa-chevron-left"></i>
                         </button>
                     </div>
                     <div class="title">
-                        <button type="button" class="button size-xs btn-block" @click.prevent="zoomOut">
+                        <button type="button" class="button size-xs btn-block btn-bordered" @click.prevent="zoomOut">
                             {{ viewTitle }}
                         </button>
                     </div>
                     <div class="next">
-                        <button type="button" class="button size-xs pull-right" @click.prevent="next">
+                        <button type="button" class="button size-xs pull-right btn-bordered" @click.prevent="next">
                             <i class="fal fa-chevron-right"></i>
                         </button>
                     </div>
@@ -32,7 +32,7 @@
 
                 <template v-if="['century', 'decade', 'year'].indexOf(myMode) >= 0">
                     <div v-for="(item, d) in range" class="__interval-item">
-                        <button type="button" class="button size-xs btn-block" @click.prevent="select(d)">{{ item }}</button>
+                        <button type="button" class="button size-xs btn-block btn-bordered" @click.prevent="select(d)">{{ item }}</button>
                     </div>
                 </template>
 
@@ -47,7 +47,7 @@
                         <tr v-for="week in weeks">
                             <td v-for="day in week">
                                 <button class="button size-xs btn-block" type="button" @click.prevent="select(day.date)"
-                                        :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : '']"
+                                        :class="[day.transparent ? 'trans-fade' : '', day.active ? 'active' : 'btn-bordered']"
                                         :disabled="day.disabled">{{ day.day }}
                                 </button>
                             </td>
@@ -57,7 +57,7 @@
                 </template>
 
                 <template v-else-if="myMode == 'day'">
-                    <button v-if="false" type="button" class="button size-xs btn-block"
+                    <button v-if="false" type="button" class="button size-xs btn-block btn-bordered"
                             @click.prevent="prevHour">
                         <i class="fal fa-chevron-up"></i>
                     </button>
@@ -70,7 +70,7 @@
                             <td v-for="minute in hour">
                                 <button class="button size-xs btn-block" type="button"
                                         @click.prevent="select(minute.time)"
-                                        :class="[minute.transparent ? 'trans-fade' : '', minute.active ? 'active' : '']"
+                                        :class="[minute.transparent ? 'trans-fade' : '', minute.active ? 'active' : 'btn-bordered']"
                                         :disabled="minute.disabled">
                                     {{ minute.time }}
                                 </button>
@@ -81,7 +81,7 @@
 
                     <hr v-if="false"/>
 
-                    <button v-if="false" type="button" class="button size-xs btn-block"
+                    <button v-if="false" type="button" class="button size-xs btn-block btn-bordered"
                             @click.prevent="nextHour">
                         <i class="fal fa-chevron-down"></i>
                     </button>
