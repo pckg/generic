@@ -558,18 +558,16 @@ class Generic
          * We need config loaded here. :/
          */
         if (!$arrRoutes->count()) {
-            if (auth()->isAdmin()) {
-                router()->add(
-                    '/',
-                    [
-                        'tags' => ['layout:backend', 'layout:focused'],
-                        'view' => function () {
-                            return '<derive-setup-themify></derive-setup-themify>';
-                        }
-                    ],
-                    'homepage'
-                );
-            }
+            router()->add(
+                '/',
+                [
+                    'tags' => ['layout:backend', 'layout:focused', 'group:admin'],
+                    'view' => function () {
+                        return '<derive-setup-themify></derive-setup-themify>';
+                    }
+                ],
+                'homepage'
+            );
 
             return;
         }
