@@ -235,7 +235,7 @@ class Records extends Controller
 
             $groups = $dynamicService->getGroupService()->getAppliedGroups();
             if (method_exists($entity, 'isTranslatable') && $entity->isTranslatable()) {
-                $entity->groupBy('`' . $entity->getTable() . '`.`id`, `' . $entity->getTable() . '`_i18n.`language_id`');
+                $entity->groupBy('`' . $entity->getTable() . '`.`id`, `' . $entity->getTable() . '_i18n`.`language_id`');
             } else {
                 $entity->groupBy('`' . $entity->getTable() . '`.`id`');
             }
