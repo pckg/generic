@@ -234,7 +234,11 @@ class Records extends Controller
              */
 
             $groups = $dynamicService->getGroupService()->getAppliedGroups();
-            $entity->groupBy('`' . $entity->getTable() . '`.`id`');
+            if (method_exists($entity, 'isTranslatable') && $entity->isTranslatable()) {
+                $entity->groupBy('`' . $entity->getTable() . '`.`id`, `' . $entity->getTable() . '`.`language_id`');
+            } else {
+                $entity->groupBy('`' . $entity->getTable() . '`.`id`');
+            }
 
             /**
              * Allow extensions.
