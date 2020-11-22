@@ -60,13 +60,22 @@ class Action implements \JsonSerializable
      */
     public function toVue(string $component, $props = [])
     {
+        /**
+         * @var $generic Generic
+         */
+        $generic = resolve(Generic::class);
         $mergedProps = [];
+        $action = $this->getAction();
         foreach ($props as $prop => $value) {
-            $mergedProps[] = ' ' . $prop . '="' . (is_numeric($value) ? $value : (substr($prop, 0, 1) === ':' ? $value : htmlspecialchars(json_encode($value)))) . '"';
+            if (is_numeric($value) || (is_string($prop) && substr($prop, 0, 1) === ':')) {
+                $mergedProps[] = ' ' . $prop . '="' . $value . '"';
+            } else {
+                $mergedProps[] = ' :' . $prop . '="' . $generic->pushMetadata($action->pivot->id, $prop, $value) . '"';
+            }
         }
 
         return '<' . $component .
-            ($this->getAction()->pivot ? ' :action-id="' . $this->getAction()->pivot->id . '"' : '')
+            ($action->pivot ? ' :action-id="' . $action->pivot->id . '"' : '')
             . implode(' ', $mergedProps)
             . '></' . $component . '>';
     }

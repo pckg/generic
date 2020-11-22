@@ -166,7 +166,7 @@ class Generic
         });
     }
 
-    public function readRoute(Route $route, $resolvers = true)
+    public function readRoute(Route $route, $resolvers = true, $nativeResolvers = null)
     {
         $this->route = $route;
 
@@ -175,7 +175,7 @@ class Generic
          */
         $resolved = [];
         if ($resolvers && $route->resolvers) {
-            $router = router()->get();
+            $router = is_null($nativeResolvers) ? router()->get() : $nativeResolvers;
             $decoded = @json_decode($route->resolvers, true);
             foreach ($decoded ?? [] as $key => $conf) {
                 if (is_array($conf)) {
@@ -614,8 +614,15 @@ class Generic
 
             if ($route->layout && strpos($route->layout->template, 'frontend') !== false) {
                 $tags->push('layout:frontend');
-                $tags = $tags->unique();
             }
+
+            /**
+             * Mark as Vue route.
+             */
+            $tags->push('vue:route');
+            $tags->push('session:close');
+            $tags->push($route->id, 'generic:id');
+            $tags->push('<pckg-app data-frontend></pckg-app>', 'vue:route:template');
 
             $tags = $tags->all();
 
