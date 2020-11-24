@@ -21,6 +21,7 @@ use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
+use Pckg\Generic\Service\Generic;
 use Pckg\Htmlbuilder\Datasource\Method\Request;
 use Pckg\Locale\Lang;
 use Pckg\Locale\Record\Language;
@@ -289,6 +290,7 @@ class Records extends Controller
                     'record' => $tabelize->getRecordActionsArray(),
                 ],
                 'table'     => $tableRecord,
+                'tabs' => $tableRecord->tabs,
                 'fields'    => $tableRecord->fields->map(function(Field $field){
                     $data = $field->toArray();
 
@@ -326,47 +328,10 @@ class Records extends Controller
         Relation $relation = null,
         Record $foreign = null
     ) {
-        (new Tables())->joinPermissionTo('write')
-                            ->where('id', $table->id)
-                            ->oneOrFail(function(){
-                                $this->response()->unauthorized();
-                            });
-
-        if (!$table->listableFields->count()) {
-            $this->response()->notFound('Missing view field permissions.');
-        }
-
-        $tableEntity = $table->createEntity();
-        $record = $record ? $tableEntity->transformRecordToEntities($record) : $tableEntity->getRecord();
-        $record->setEntity($tableEntity);
-
-        $form->setRelation($relation);
-
-        if ($foreign && $relation->on_field_id) {
-            $record->{$relation->onField->field} = $foreign->id;
-            $form->setForeignFieldId($relation->on_field_id);
-            $form->setForeignRecord($relation->onTable->createEntity()->where('id', $foreign->id)->one());
-        }
-
-        $form->setTable($table);
-        $form->setRecord($record);
-        $form->initFields();
-        $form->populateFromRecord($record);
-
-        if ($tableEntity->isTranslatable()) {
-            $form->initLanguageFields();
-        }
-
-        if ($tableEntity->isPermissionable()) {
-            $form->initPermissionFields();
-        }
-
-        $formalize = $this->formalize($form, $record, $table->getFormTitle('Add'));
-
-        vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $formalize, 'form' => $form]);
-
-        return view('edit/singular', [
-            'formalize' => $formalize,
+        return component('dynamic-singular', [
+            ':table' => $table,
+            ':record' => $record,
+            ':actions' => [],
         ]);
     }
 
@@ -526,34 +491,13 @@ class Records extends Controller
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService, $mode = 'edit')
     {
-        (new TableActions())->joinPermissionTo('execute')
-                            ->where('dynamic_table_id', $table->id)
-                            ->where('slug', $mode)
-                            ->oneOrFail(function(){
-                                $this->response()->unauthorized();
-                            });
-
-        $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' .
-                                      $record->id . ' - ' . config('site.title'));
-
-        $listableFields = $table->listableFields;
-        if (!$listableFields->count()) {
-            $this->response()->notFound('Missing view field permissions.');
-        }
+        // $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' . $record->id . ' - ' . config('site.title'));
 
         $tableEntity = $table->createEntity();
 
-        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) .
-            path('ds') . 'View' . path('ds');
+        $dir = path('app_src') . implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) . path('ds') . 'View' . path('ds');
+
         Twig::addDir($dir);
-
-        /*if (config('app') != config('app_parent')) {
-            $partial = implode(path('ds'), array_slice(explode('\\', get_class($tableEntity)), 0, -2)) . path('ds') .
-                'View' . path('ds');
-            $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
-            Twig::addDir($dir);
-        }*/
-
         Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
         Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
 
@@ -610,22 +554,31 @@ class Records extends Controller
                          ->setFieldTransformations($fieldTransformations)
                          ->setDynamicRecord($record);
 
+        /**
+         * @T00D00 - this is one of the remaining .twig templates.
+         */
         $this->vueManager()
-            // ->addView('Pckg/Maestro:_pckg_chart')
              ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
                 'recordActions' => $actions,
                 'table'         => $table->table,
-            ])->addView('Pckg/Maestro:_pckg_dynamic_record_tabs', [
-                'tabelize'     => $tabelize,
-                'formalize'    => $formalize,
-                'tabs'         => $tabs,
-                'table'        => $table->table,
-                'tabelizes'    => $tabelizes,
-                'functionizes' => $functionizes,
-                'record'       => $record,
             ]);
 
-        return view('edit/tabs', ['tabelize' => $tabelize]);
+        $relations = (new Relations())->where('on_table_id', $table->id)
+            ->where('dynamic_table_tab_id', null, 'IS NOT')
+            ->all();
+
+        /**
+         * Resolve record for the frontend.
+         * @var $generic Generic
+         */
+        return component('pckg-dynamic-record-tabs', [
+            ':record' => $tabelize->transformRecord($record),
+            ':table' => $table,
+            ':actions' => $actions,
+            ':tabs' => $tabs,
+            ':relations' => $relations,
+            ':mode' => $form->isEditable() ? 'edit' : 'view',
+        ]);
     }
 
     public function getTabAction(Record $record, Table $table, Tab $tab)

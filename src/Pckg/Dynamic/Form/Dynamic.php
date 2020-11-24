@@ -605,7 +605,7 @@ ifrm.document.close();
                                             'table' => $field->hasOneSelectRelation->showTable,
                                         ]),
                                         'data-refresh-url' => url('dynamic.records.field.selectList' .
-                                                                  ($this->record->id ? '' : '.none'), [
+                                                                  ($this->record && $this->record->id ? '' : '.none'), [
                                                                       'table'  => $this->table,
                                                                       'field'  => $field,
                                                                       'record' => $this->record,

@@ -4,10 +4,13 @@ use Impero\Apache\Record\Site;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Framework\Provider\Helper\PostValidationResolver;
 use Pckg\Framework\Provider\RouteResolver;
 
 class Table implements RouteResolver
 {
+
+    use PostValidationResolver;
 
     /**
      * @var Dynamic
@@ -52,6 +55,8 @@ class Table implements RouteResolver
             },
             'en_GB'
         );
+
+        $this->validate($table);
 
         return $table;
     }

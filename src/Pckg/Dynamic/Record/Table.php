@@ -6,6 +6,7 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
+use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Filter;
 use Pckg\Framework\View\Twig;
@@ -229,6 +230,24 @@ class Table extends Record
         }
 
         return $entity;
+    }
+
+    public function checkPermissionsFor($action = 'write')
+    {
+        if (!$this->hasPermissionTo($action)) {
+            response()->unauthorized('Missing permissions to write');
+        }
+
+        if (!$this->listableFields->count()) {
+            response()->unauthorized('Missing view field permissions.');
+        }
+
+        (new TableActions())->joinPermissionTo('execute')
+            ->where('dynamic_table_id', $this->id)
+            ->where('slug', $action === 'read' ? 'view' : 'edit')
+            ->oneOrFail(function(){
+                $this->response()->unauthorized();
+            });
     }
 
 }

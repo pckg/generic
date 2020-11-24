@@ -117,11 +117,11 @@
                         <div class="showContextMenu dropdown-menu" v-if="selectedRecord">
                             <li v-for="action in actions.record"
                                 v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
-                                <a v-if="action.recordHref && selectedRecord[action.recordHref]"
-                                   :href="selectedRecord[action.recordHref]">
+                                <pb-link v-if="action.recordHref && selectedRecord[action.recordHref]"
+                                   :to="selectedRecord[action.recordHref]">
                                     <i class="fal fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
-                                </a>
+                                </pb-link>
                                 <a v-else-if="action.event" href="#"
                                    @click.prevent="recordAction(selectedRecord, action.event)">
                                     <i class="fal fa-fw" :class="'fa-' + action.icon"></i>

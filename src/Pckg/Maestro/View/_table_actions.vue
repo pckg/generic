@@ -1,11 +1,11 @@
 <template>
     <div>
 
-        <a :href="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
+        <pb-link :to="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
            v-if="table.privileges.write"
            class="btn btn-primary">
             Add new
-        </a>
+        </pb-link>
 
         <div class="btn-group margin-left-xs">
             <button type="button" class="dropdown-toggle btn btn-default"

@@ -1,43 +1,57 @@
 <template>
     <pckg-loader v-if="state === 'loading'"></pckg-loader>
-    <div class="c-pckg-maestro-form" v-else>
+    <div class="c-pckg-maestro-form" v-else :class="'--mode-' + mode">
 
-        <div v-for="group in groupedFields" class="s-form-field-group">
-            <div class="s-form-field animated fadeIn"
-                 :class="'--field-type' + field.type"
-                 v-for="(field, i) in group">
-                <h2 class="__component-title" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
+        <div class="flex-grid --gap-md grid-2-1">
+            <div v-for="position in [leftGroups, rightGroups]" class="flex-grid --gap-md">
+                <div v-for="group in position" class="s-form-field-group box-with-padding --bg-color">
+                    <div class="s-form-field animated fadeIn"
+                         :class="'--field-type' + field.type"
+                         v-for="(field, i) in group">
+                        <h2 class="__component-title" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
 
-                <form-group :label="getFieldLabel(field)"
-                            :type="field.type"
-                            :help="field.help"
-                            :options="field.options"
-                            :name="field.slug"
-                            v-model="formModel[field.slug]"></form-group>
+                        <form-group :label="getFieldLabel(field)"
+                                    :type="mode === 'edit' ? field.type : 'raw'"
+                                    :help="field.help"
+                                    :options="field.options"
+                                    :name="field.slug"
+                                    v-model="formModel[field.slug]"></form-group>
 
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <button type="button"
-                        @click.prevent="submitForm"
-                        class="__submit-btn btn btn-primary"
-                        :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
-                    {{ formModel.id ? 'Save changes' : 'Add' }}
-                    <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
-                       class="fal fa-fw"
-                       :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
-                </button>
-            </div>
+        <div class="form-group margin-top-sm">
+            <button type="button"
+                    @click.prevent="submitForm"
+                    class="__submit-btn btn btn-primary"
+                    :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
+                {{ formModel.id ? 'Save changes' : 'Add' }}
+                <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
+                   class="fal fa-fw"
+                   :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
+            </button>
         </div>
 
     </div>
 </template>
 
-<script>
+<style lang="less" scoped>
+@media (min-width: 640px) {
+    .grid-2-1 {
+        grid-template-columns: 3fr 2fr;
+    }
+}
+</style>
 
+<script>
     export default {
         mixins: [pckgFormValidator, pckgTranslations],
         props: {
+            mode: {
+                default: 'edit'
+            },
             tableId: {},
             formModel: {
                 default: function () {
@@ -63,14 +77,26 @@
             isNew: function () {
                 return !this.formModel.id;
             },
-            groupedFields: function () {
-                let fields = this.myForm.fields;
+            visibleFields: function(){
+                return this.myForm.fields.filter(this.isVisible);
+            },
+            leftFields: function(){
+                return this.visibleFields.filter(field => !field.group || field.group.position === 'left');
+            },
+            rightFields: function(){
+                return this.visibleFields.filter(field => field.group && field.group.position === 'right');
+            },
+            leftGroups: function(){
+                return this.groupFields(this.leftFields);
+            },
+            rightGroups: function(){
+                return this.groupFields(this.rightFields);
+            },
+        },
+        methods: {
+            groupFields: function (fields) {
                 let grouped = {};
                 $.each(fields, function (i, field) {
-                    if (!this.isVisible(field)) {
-                        return;
-                    }
-
                     if (!grouped[field.group ? field.group.id : 'x']) {
                         grouped[field.group ? field.group.id : 'x'] = [];
                     }
@@ -80,8 +106,6 @@
 
                 return grouped;
             },
-        },
-        methods: {
             isVisible: function (field) {
                 return !this.isNew || (field.required && field.type !== 'id');
             },

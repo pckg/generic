@@ -256,6 +256,9 @@ class Action implements \JsonSerializable
         $this->getAction()->pivot->resolveSettings($args);
 
         $build = $this->getAction()->pivot->buildHtml($args);
+        /*if (response()->getCode() !== 200) {
+            ddd($this->getAction()->data());
+        }*/
 
         $this->getAction()->pivot->build = $build;
     }

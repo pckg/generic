@@ -239,7 +239,7 @@ th .form-group {
   width: 20rem;
   z-index: 97;
 
-  &:before {
+  /*&:before {
     background: rgb(247,246,252);
     background: linear-gradient(180deg, rgba(247,246,252,1) 33%, rgba(247,246,252,0) 100%);
     content: "";
@@ -257,7 +257,7 @@ th .form-group {
     position: absolute;
     width: 100%;
     z-index: 1;
-  }
+  }*/
 
   a {
     color: @text;
@@ -618,6 +618,7 @@ ul.nav-tabs {
     & a.active,
     &:hover a,
     &.active-router-link,
+    &.router-link-exact-active,
     & a.active-router-link {
       &,
       > a {

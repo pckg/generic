@@ -5,9 +5,11 @@ use Pckg\Dynamic\Controller\Import;
 use Pckg\Dynamic\Controller\Records;
 use Pckg\Dynamic\Controller\Relations;
 use Pckg\Dynamic\Controller\View;
+use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Middleware\RegisterDynamicAssets;
 use Pckg\Dynamic\Middleware\SetContentLanguage;
 use Pckg\Dynamic\Middleware\SwitchLanguage;
+use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Resolver\ExportStrategy;
 use Pckg\Dynamic\Resolver\Field as FieldResolver;
 use Pckg\Dynamic\Resolver\ForeignRecord;
@@ -56,7 +58,78 @@ class Dynamic extends Provider
 
     public function routes()
     {
+        $backendData = function ($component = null) {
+            return [
+                'tags' => $component ? [
+                    'group:backend',
+                    'layout:backend',
+                    'vue:route',
+                    'vue:route:template' => substr($component, 0, 1) !== '<' ? '<' . $component . '></' . $component . '>' : $component,
+                ] : [
+                    'group:backend',
+                    'layout:backend',
+                    'vue:route',
+                ]
+            ];
+        };
         return [
+            /**
+             * Views.
+             */
+            routeGroup([
+                'controller' => Records::class,
+            ], [
+                'dynamic.record.add' => route('/dynamic/records/add/[table]', 'add')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('write');
+                        });
+                    },
+                ])->mergeToData($backendData('dynamic-singular')),
+
+                'dynamic.record.add.relation' => route('/dynamic/records/add/[table]/[relation]/[foreign]', 'add')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('write');
+                        });
+                    },
+                    'relation' => Relation::class,
+                    'foreign' => ForeignRecord::class,
+                ])->mergeToData($backendData('dynamic-singular')),
+
+                'dynamic.record.view' => route('/dynamic/records/view/[table]/[record]', 'view')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('read');
+                        });
+                    },
+                    'record' => RecordResolver::class,
+                ])->mergeToData($backendData('pckg-dynamic-record-tabs')),
+
+                'dynamic.record.edit' => route('/dynamic/records/edit/[table]/[record]', 'edit')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('write');
+                        });
+                    },
+                    'record'   => RecordResolver::class,
+                ])->mergeToData($backendData('pckg-dynamic-record-tabs')),
+
+                'dynamic.record.edit.foreign' => route('/dynamic/records/edit/[table]/[record]/[relation]/[foreign]', 'edit')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('write');
+                        });
+                    },
+                    'record'   => RecordResolver::class,
+                    'relation' => Relation::class,
+                    'foreign' => ForeignRecord::class,
+                ])->mergeToData($backendData('pckg-dynamic-record-tabs')),
+
+            ]),
+            /**
+             * APIs.
+             */
             'url' => array_merge_array(
                 [
                     'tags' => ['group:backend', 'layout:backend'],
@@ -143,54 +216,6 @@ class Dynamic extends Provider
                             'view'      => 'deleteView',
                             'resolvers' => [
                                 'tableView' => ViewResolver::class,
-                            ],
-                        ],
-                        '/dynamic/records/add/[table]'                                                  => [
-                            'name'      => 'dynamic.record.add',
-                            'view'      => 'add',
-                            'resolvers' => [
-                                'table' => TableResolver::class,
-                            ],
-                        ],
-                        '/dynamic/records/add/[table]/[relation]/[foreign]'                             => [
-                            'name'      => 'dynamic.record.add.related',
-                            'view'      => 'add',
-                            'resolvers' => [
-                                'table'    => TableResolver::class,
-                                'relation' => Relation::class,
-                                'foreign'  => ForeignRecord::class,
-                            ],
-                        ],
-                        '/dynamic/records/view/[table]/[record]'                                        => [
-                            'name'      => 'dynamic.record.view',
-                            'view'      => 'view',
-                            'resolvers' => [
-                                'table'  => TableResolver::class,
-                                'record' => RecordResolver::class,
-                            ],
-                        ],
-                        '/dynamic/records/edit/[table]/[record]'                                        => [
-                            'name'        => 'dynamic.record.edit',
-                            'view'        => 'edit',
-                            'resolvers'   => [
-                                'table'  => TableResolver::class,
-                                'record' => RecordResolver::class,
-                            ],
-                            'middlewares' => [
-                                SwitchLanguage::class,
-                            ],
-                        ],
-                        '/dynamic/records/edit/[table]/[record]/[relation]/[foreign]'                   => [
-                            'name'        => 'dynamic.record.edit.foreign',
-                            'view'        => 'edit',
-                            'resolvers'   => [
-                                'table'    => TableResolver::class,
-                                'record'   => RecordResolver::class,
-                                'relation' => Relation::class,
-                                'foreign'  => ForeignRecord::class,
-                            ],
-                            'middlewares' => [
-                                SwitchLanguage::class,
                             ],
                         ],
                         '/dynamic/records/clone/[table]/[record]'                                       => [

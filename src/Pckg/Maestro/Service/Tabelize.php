@@ -869,7 +869,7 @@ class Tabelize
             TableView $tableView
         ) {
             return [
-                'id'       => $id,
+                'id'       => $tableView->id,
                 'type'     => 'saved',
                 'title'    => $tableView->title,
                 'settings' => json_decode($tableView->settings, true),
