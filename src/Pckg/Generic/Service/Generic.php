@@ -562,6 +562,9 @@ class Generic
                 '/',
                 [
                     'tags' => ['vue:route', 'layout:backend', 'layout:focused', 'group:admin', 'vue:route:template' => '<derive-setup-themify></derive-setup-themify>'],
+                    'view' => function () {
+                        return view('Pckg/Generic/View/backend', ['content' => '<pckg-app data-frontend></pckg-app>']);
+                    }
                 ],
                 'homepage'
             );
