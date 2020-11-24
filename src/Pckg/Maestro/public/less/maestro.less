@@ -316,7 +316,10 @@ th .form-group {
 
       a {
         display: block;
-        padding: 1rem 0;
+        padding: 1.2rem .6rem;
+        body.collapsed & {
+          padding: 1.2rem 0;
+        }
         position: relative;
         font-size: 1.6rem;
         line-height: 2rem;
@@ -325,7 +328,7 @@ th .form-group {
           float: left;
           width: 5rem;
           line-height: 2rem;
-          font-size: 2rem;
+          font-size: 1.8rem;
         }
 
         span {
@@ -348,11 +351,16 @@ th .form-group {
   }
 
   .help {
+    padding: 1.2rem .6rem;
+    body.collapsed & {
+      padding: 1rem 0;
+    }
+
     i {
       float: left;
       width: 5rem;
       line-height: 2rem;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
 
     a {
@@ -842,6 +850,10 @@ ul.vertical-mid-menu {
   &:hover {
     background-color: @clr-primary;
     color: #FFF;
+  }
+
+  &:not(:first-child) {
+    margin-left: @spacing-sm;
   }
 }
 

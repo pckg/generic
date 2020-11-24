@@ -2,13 +2,24 @@
     <pckg-loader v-if="loading"></pckg-loader>
     <div v-else class="pckg-dynamic-record-tabs">
         <div class="display-block">
-            <h2 class="h-page-title">
-                <h2>{{ mode }} {{ table.title }}</h2>
+
+            <h1 class="h-page-title">
+                <router-link to="/maestro" class="__maestro-back-button" title="Go to Dashboard">
+                    <i class="fal fa-chevron-left"></i>
+                </router-link>
+
+                {{ table.title }}
+
+                <router-link to="/maestro" class="__maestro-back-button" title="Open list">
+                    <i class="fal fa-chevron-left"></i>
+                </router-link>
+
+                {{ recordIdentifier }}
 
                 <pckg-maestro-actions :record="record"
                                       :actions="actions"
                                       :identifier="table.table"></pckg-maestro-actions>
-            </h2>
+            </h1>
 
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" :class="!selectedTab ? 'active' : ''">
@@ -132,6 +143,16 @@ export default {
                 components[action.component] = action.component;
             });
             return components;
+        },
+        recordIdentifier: function () {
+            let identifier = this.record.id || null;
+            $.each(['email', 'title', 'slug'], (i, prop) => {
+                if (this.record[prop]) {
+                    identifier = this.record[prop];
+                }
+            })
+
+            return identifier;
         }
     }
 }

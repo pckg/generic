@@ -2,14 +2,11 @@
     <pckg-loader v-if="loading"></pckg-loader>
     <div class="pckg-dynamic-record-singular" v-else>
 
-        <div class="display-block">
-            <h2 v-if="record.id">
-                Edit {{ table.title }}
-            </h2>
-            <h2 v-else>
-                Add {{ table.title }}
-            </h2>
-        </div>
+        <h1 class="h-page-title">
+            <pb-link to="/maestro" class="__maestro-back-button router-link-active">
+                <i class="fal fa-chevron-left"></i>
+            </pb-link> {{ record.id ? mode : 'Add new' }} {{ table.title }}
+        </h1>
 
         <div class="clearfix"></div>
 
