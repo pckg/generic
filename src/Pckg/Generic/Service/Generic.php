@@ -561,10 +561,7 @@ class Generic
             router()->add(
                 '/',
                 [
-                    'tags' => ['layout:backend', 'layout:focused', 'group:admin'],
-                    'view' => function () {
-                        return '<derive-setup-themify></derive-setup-themify>';
-                    }
+                    'tags' => ['vue:route', 'layout:backend', 'layout:focused', 'group:admin', 'vue:route:template' => '<derive-setup-themify></derive-setup-themify>'],
                 ],
                 'homepage'
             );
