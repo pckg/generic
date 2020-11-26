@@ -61,11 +61,13 @@ class Dynamic extends Provider
         $backendData = function ($component = null) {
             return [
                 'tags' => $component ? [
+                    'auth:in',
                     'group:backend',
                     'layout:backend',
                     'vue:route',
                     'vue:route:template' => substr($component, 0, 1) !== '<' ? '<' . $component . '></' . $component . '>' : $component,
                 ] : [
+                    'auth:in',
                     'group:backend',
                     'layout:backend',
                     'vue:route',
