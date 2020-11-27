@@ -316,14 +316,12 @@ let tinyMceConfig = {
     table_row_class_list: []
 };
 
-var initTinymce = function (selector, config) {
+window.initTinymce = function (selector, config) {
     var selected = $('#' + selector);
-    selected.idify();
 
     let $dropzone, $dropzoneInst;
-    $dropzone = $('<div class="manual-dropzone"></div>');
+    $dropzone = $('<div class="manual-dropzone" id="manual-dropzone-' + Math.round(Math.random() * 1000000) + '"></div>');
     selected.parent().append($dropzone);
-    $dropzone.idify();
     $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
         url: '/dynamic/uploader?dropzone',
         previewsContainer: null,
