@@ -27,9 +27,6 @@ class Permissions
          *
          * We need to create views on record level (editing one record's permissions) and entity level (editing all record's permissions).
          */
-
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return view('Pckg/Generic:permissions/permissions');
     }
 
@@ -168,36 +165,26 @@ class Permissions
 
     public function getEditTablePermissionsAction(Record $table)
     {
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return '<pckg-generic-permissions type="table" id="' . $table->id . '"></pckg-generic-permissions>';
     }
 
     public function getEditFieldPermissionsAction(Record $field)
     {
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return '<pckg-generic-permissions type="field" id="' . $field->id . '"></pckg-generic-permissions>';
     }
 
     public function getEditActionPermissionsAction(Record $action)
     {
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return '<pckg-generic-permissions type="action" id="' . $action->id . '"></pckg-generic-permissions>';
     }
 
     public function getEditMenuPermissionsAction(Record $menuItem)
     {
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return '<pckg-generic-permissions type="menu" id="' . $menuItem->id . '"></pckg-generic-permissions>';
     }
 
     public function getEditRoutePermissionsAction(Record $route)
     {
-        vueManager()->addView('Pckg/Generic:permissions/_permissions');
-
         return '<pckg-generic-permissions type="route" id="' . $route->id . '"></pckg-generic-permissions>';
     }
 

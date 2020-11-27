@@ -66,12 +66,12 @@ class Generic
 
         return measure('Stringifying output', function() use ($route) {
             $auth = auth();
-            $structure = '<pckg-app data-frontend></pckg-app>';
+            //$structure = '<pckg-app data-frontend></pckg-app>';
 
             /**
              * Check for themed page?
              */
-            if (false) {
+            /*if (false) {
                 $slug = $route->slug;
                 $themePath = path('src') . 'theme/comms/test/dist/';
                 $pagesPath = $themePath . 'pages/';
@@ -82,11 +82,12 @@ class Generic
                     $layoutContent = file_get_contents($layoutsPath . 'for-homepage.html');
                     $structure = str_replace('##PAGE##', $fileContent, $layoutContent);
                 }
-            }
+            }*/
 
-            $vars = [
+            /*$vars = [
                 'content' => $structure,
-            ];
+            ];*/
+            $vars = [];
 
             trigger(static::class . '.stringifying');
 

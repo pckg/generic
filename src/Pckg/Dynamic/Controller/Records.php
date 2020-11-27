@@ -557,11 +557,11 @@ class Records extends Controller
         /**
          * @T00D00 - this is one of the remaining .twig templates.
          */
-        $this->vueManager()
+        /*$this->vueManager()
              ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
                 'recordActions' => $actions,
                 'table'         => $table->table,
-            ]);
+            ]);*/
 
         $relations = (new Relations())->where('on_table_id', $table->id)
             ->where('dynamic_table_tab_id', null, 'IS NOT')
