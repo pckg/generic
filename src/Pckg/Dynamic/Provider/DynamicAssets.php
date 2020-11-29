@@ -28,7 +28,7 @@ class DynamicAssets extends Provider
     public function providers()
     {
         return [
-            Charts::class,
+            //Charts::class,
         ];
     }
 
