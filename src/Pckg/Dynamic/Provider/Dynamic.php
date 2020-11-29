@@ -74,7 +74,7 @@ class Dynamic extends Provider
 
             if ($tags) {
                 foreach ($tags as $k => $v) {
-                    if (is_numeric($k) && !in_array($v)) {
+                    if (is_numeric($k) && !in_array($v, $defaultTags)) {
                         $defaultTags[] = $v;
                     } else if (!is_numeric($k)) {
                         $defaultTags[$k] = $v;
@@ -100,7 +100,7 @@ class Dynamic extends Provider
                             $table->checkPermissionsFor('write');
                         });
                     },
-                ])->mergeToData($backendData('<pckg-maestro-form :table-id="$route.params.table" :form-model="$route.meta.resolved.record"></pckg-maestro-form>')),
+                ])->mergeToData($backendData('dynamic-singular')),
 
                 /*'dynamic.record.add.relation' => route('/dynamic/records/[table]/add/[relation]/[foreign]', 'add')->resolvers([
                     'table' => function () {

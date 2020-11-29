@@ -1024,7 +1024,9 @@ class Records extends Controller
             'boolean' => 'toggle',
             'decimal' => 'number',
             'select'  => 'select:single',
-            'order'   => 'number',  
+            'order'   => 'number',
+            'integer' => 'number',
+            'slug'    => 'text',
         ];
         $typeMapper = function(Field $field) use ($vueTypeMap) {
             if (array_key_exists($field->fieldType->slug, $vueTypeMap)) {
