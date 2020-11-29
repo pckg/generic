@@ -20,7 +20,7 @@ class Relation extends DatabaseRecord
     {
         /**
          * Is this correct? || !$foreignRecord?
-         * http://hi.derive.bob/dynamic/records/edit/23/6751
+         * http://hi.derive.bob/dynamic/records/23/6751/edit
          */
         if (!$this->filter || strpos($this->filter, '?') !== false) {
             return;

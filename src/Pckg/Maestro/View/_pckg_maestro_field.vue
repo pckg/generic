@@ -74,13 +74,9 @@
             </template>
             <template v-else>
                 <template v-if="!editable">
-                    <template v-if="key == 'id'">
-                        <a :href="record.viewUrl" v-html="value" class="nobr" title="Open record"></a>
-                    </template>
-                    <template v-else-if="key == 'title'">
-                        <a :href="record.viewUrl" v-html="value" title="Open record"></a>
-                    </template>
-                    <template v-else-if="true || field.isRaw"><span class="raw">{{ value }}</span></template>
+                    <pb-link v-if="key == 'id'" :to="record.viewUrl" v-html="value" class="nobr" title="Open record"></pb-link>
+                    <pb-link v-else-if="key == 'title'" :to="record.viewUrl" v-html="value" title="Open record"></pb-link>
+                    <span class="raw" v-else-if="true || field.isRaw">{{ value }}</span>
                     <template v-else><span v-html="value" class="else"></span></template>
                 </template>
                 <template v-else>

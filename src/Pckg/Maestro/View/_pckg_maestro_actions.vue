@@ -8,11 +8,11 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li v-for="action in actions.record"
                 v-if="action.recordHref && record[action.recordHref] || action.event">
-                <a v-if="action.recordHref && record[action.recordHref]"
-                   :href="record[action.recordHref]">
+                <pb-link v-if="action.recordHref && record[action.recordHref]"
+                   :to="record[action.recordHref]">
                     <i class="fa" :class="'fa-' + action.icon"></i>
                     {{ action.title }}
-                </a>
+                </pb-link>
                 <a v-else-if="action.event" href="#"
                    @click.prevent="recordAction(record, action.event)">
                     <i class="fa" :class="'fa-' + action.icon"></i>
@@ -27,7 +27,6 @@
 <script>
     export default {
         name: 'pckg-maestro-actions',
-        template: '#pckg-maestro-actions',
         props: {
             actions: {},
             record: {

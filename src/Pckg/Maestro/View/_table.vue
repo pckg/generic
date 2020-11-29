@@ -530,7 +530,7 @@
                 }.bind(this), 333);
             },
             doubleClick: function (record) {
-                this.$router.push('/dynamic/records/view/' + this.table.id + '/' + record.id);
+                this.$router.push('/dynamic/records/' + this.table.id + '/' + record.id + '/view');
             },
             showContextMenu: function ($event, record) {
                 this.selectedRecord = record;

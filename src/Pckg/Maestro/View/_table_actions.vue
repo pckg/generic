@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <pb-link :to="'/dynamic/records/add/' + table.id + (relationId ? '/' + relationId + '/' + recordId : '')"
+        <pb-link :to="'/dynamic/records/' + table.id + '/add' + (relationId ? '/' + relationId + '/' + recordId : '')"
            v-if="table.privileges.write"
            class="btn btn-primary">
             Add new

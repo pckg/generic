@@ -574,7 +574,7 @@ class Records extends Controller
         return component('pckg-dynamic-record-tabs', [
             ':record' => $tabelize->transformRecord($record),
             ':table' => $table,
-            ':actions' => $actions,
+            ':actions' => $tabelize->getActionsArray(),
             ':tabs' => $tabs,
             ':relations' => $relations,
             ':mode' => $form->isEditable() ? 'edit' : 'view',
@@ -751,6 +751,7 @@ class Records extends Controller
                                                              'table'  => $table,
                                                              'record' => $record,
                                                          ]) : null,
+            'record' => $record,
                                                      ]);
     }
 
@@ -1023,6 +1024,7 @@ class Records extends Controller
             'boolean' => 'toggle',
             'decimal' => 'number',
             'select'  => 'select:single',
+            'order'   => 'number',  
         ];
         $typeMapper = function(Field $field) use ($vueTypeMap) {
             if (array_key_exists($field->fieldType->slug, $vueTypeMap)) {

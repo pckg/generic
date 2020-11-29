@@ -21,14 +21,14 @@
                                       :identifier="table.table"></pckg-maestro-actions>
             </h1>
 
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" :class="!selectedTab ? 'active' : ''">
-                    <a href="#home" aria-controls="home" role="tab" data-toggle="tab" @click.prevent="selectTab(null)">General</a>
+            <ul class="nav nav-tabs">
+                <li :class="!selectedTab ? 'active' : ''">
+                    <pb-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" @click.native="selectTab(null)">General</pb-link>
                 </li>
-                <li role="presentation" v-for="tab in tabs" :class="selectedTab === tab.id ? 'active' : ''">
-                    <a :href="'#dynamic-tab-' + tab.id" :aria-controls="'dynamic-tab-' + tab.id" role="tab"
-                       data-toggle="tab"
-                       @click.prevent="selectTab(tab.id)">{{ tab.title }}</a>
+                <li v-for="tab in tabs" :class="selectedTab === tab.id ? 'active' : ''">
+                    <pb-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" @click.native="selectTab(tab.id)">
+                        {{ tab.title }}
+                    </pb-link>
                 </li>
             </ul>
         </div>
@@ -39,25 +39,13 @@
 
             <div role="tabpanel" class="tab-pane active">
 
-                <div v-if="!selectedTab">
-                    <keep-alive>
-                        <pckg-maestro-form :table-id="$route.params.table"
-                                           :form-model="record"
-                                           :mode="mode"></pckg-maestro-form>
-                    </keep-alive>
-                </div>
-                <div v-else>
-                    <keep-alive>
-                        <div v-for="relation in tabRelations">
-                            <pckg-maestro-table :table-id="relation.show_table_id"
-                                                :relation-id="relation.id"
-                                                :record-id="record.id"></pckg-maestro-table>
-                        </div>
-                    </keep-alive>
-                </div>
-
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
+                
             </div>
         </div>
+
 
         <!-- additional components -->
         <component :is="component" v-for="component in uniqueActions" :key="component"
@@ -104,7 +92,7 @@ export default {
                     }
                 }.bind(this)
             });*/
-        }
+        },
     },
     computed: {
         table: function () {
@@ -126,7 +114,7 @@ export default {
             return this.$store.state.generic.metadata.router.mode || {};
         },
         tabRelations: function () {
-            return this.relations.filter((relation) => relation.dynamic_table_tab_id == this.selectedTab);
+            return this.relations.filter((relation) => relation.dynamic_table_tab_id > 0);
         },
         uniqueActions: function () {
             let components = {};
@@ -156,20 +144,4 @@ export default {
         }
     }
 }
-
-/*{% for tab in tabs %}
-Vue.component('dynamic-tab-{{ tab.id }}', function (resolve) {
-    http.getJSON('{{ tabelize.getTabUrl(tab) }}?html=1', function (data) {
-        $('body').append(data.vue);
-
-        resolve({
-            template: '<div>' + data.html + '</div>',
-            mixins: [pckgDelimiters],
-            mounted: function () {
-                $(this.$el).closest('.tab-pane').find('> .fal').detach();
-            }
-        });
-    });
-});
-{% endfor %}*/
 </script>

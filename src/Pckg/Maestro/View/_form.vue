@@ -2,6 +2,9 @@
     <pckg-loader v-if="state === 'loading'"></pckg-loader>
     <div class="c-pckg-maestro-form" v-else :class="'--mode-' + mode">
 
+        <pre>{{ formModel }}</pre>
+        <pre>{{ visibleFields }}</pre>
+
         <div class="flex-grid --gap-md grid-2-1">
             <div v-for="position in [leftGroups, rightGroups]" class="flex-grid --gap-md">
                 <div v-for="group in position" class="s-form-field-group box-with-padding --bg-color">
@@ -107,7 +110,15 @@
                 return grouped;
             },
             isVisible: function (field) {
-                return !this.isNew || (field.required && field.type !== 'id');
+                if (field.type === 'id') {
+                    return false;
+                }
+
+                if (field.required) {
+                    return true;
+                }
+
+                return !this.isNew;
             },
             initialFetch: function () {
                 this.state = 'loading';
@@ -120,8 +131,8 @@
                 this.state = 'submitting';
                 this.validateAndSubmit(function () {
                     let url = this.formModel.id
-                        ? ('/dynamic/records/edit/' + this.tableId + '/' + this.formModel.id)
-                        : ('/dynamic/records/add/' + this.tableId);
+                        ? ('/dynamic/records/' + this.tableId + '/' + this.formModel.id + '/edit')
+                        : ('/dynamic/records/' + this.tableId + '/add');
                     http.post(url, this.collectFormData(), function (data) {
                         this.$emit('saved');
                         this.state = 'success';
