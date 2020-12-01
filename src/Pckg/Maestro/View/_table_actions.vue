@@ -97,25 +97,25 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" v-if="meta">
                         <label>Column delimiter</label>
                         <div>{{ meta.delimiter }}</div>
                         <div class="help">Automatically detected column delimiter.</div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" v-if="meta">
                         <label>Detected columns</label>
                         <div>{{ meta.columns.join(', ') }}</div>
                         <div class="help">Columns that were properly detected and will be imported.</div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" v-if="meta">
                         <label>Row delimiter</label>
                         <div v-text="meta.newline"></div>
                         <div class="help">Automatically detected newline delimiter.</div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" v-if="meta">
                         <label>Detected rows</label>
                         <div>{{ meta.rows }}</div>
                         <div class="help">Number of all rows in imported document</div>
