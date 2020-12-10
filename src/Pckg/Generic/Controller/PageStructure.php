@@ -408,8 +408,8 @@ class PageStructure
     public function postActionsMorphAddPartialAction(ActionsMorph $actionsMorph)
     {
         $partial = post('partial', null);
-        $hub = post('hub', null);
-        $partial = $hub ? $actionsMorph->addHubShare($hub, [
+        $uuid = post('uuid', null);
+        $partial = $uuid ? $actionsMorph->addHubShare($uuid, [
             'order' => post('order', 0),
             'variable' => post('variable', $actionsMorph->variable),
         ]) : $actionsMorph->addPartial($partial);
@@ -451,8 +451,8 @@ class PageStructure
     public function postActionsMorphAddRoutePartialAction(Route $route)
     {
         $partial = post('partial', null);
-        $hub = post('hub', null);
-        $partial = $hub ? $route->addHubShare($hub, [
+        $uuid = post('uuid', null);
+        $partial = $uuid ? $route->addHubShare($uuid, [
                                                       'variable' => post('variable', 'content'),
                                                       'order'    => post('order', 0),
                                                   ]) : $route->addPartial($partial);

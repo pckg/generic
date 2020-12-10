@@ -690,7 +690,7 @@ class Generic
      * @return mixed|object|AbstractPartial
      * @throws \Exception
      */
-    public function prepareHubPartial($share)
+    public function prepareHubPartial($uuid)
     {
         /**
          * Get definition from hub?
@@ -698,7 +698,7 @@ class Generic
          * @var $hub Api
          */
         $hub = resolve(Api::class);
-        $shareDefinition = $hub->getApi('share/' . $share . '/definition')->getApiResponse('share');
+        $shareDefinition = $hub->getApi('share/' . $uuid . '/definition')->getApiResponse('share');
 
         /**
          * Share definition now holds:
@@ -707,28 +707,34 @@ class Generic
          *  - attributes
          *  - settings
          */
-        $partial = Reflect::create($shareDefinition['extends'] ?? $shareDefinition['object']);
+        $partial = Reflect::create($shareDefinition['props']['extends'] ?? $shareDefinition['props']['object']);
 
-        if (isset($shareDefinition['content'])) {
+        if (isset($shareDefinition['props']['content'])) {
             $partial->setContent($shareDefinition['content']);
         }
 
-        if (isset($shareDefinition['settings'])) {
-            $partial->setSettings($shareDefinition['settings']);
+        if (isset($shareDefinition['props']['settings'])) {
+            $partial->setSettings($shareDefinition['props']['settings']);
         }
 
-        if (isset($shareDefinition['attributes'])) {
-            $partial->setAttributes($shareDefinition['attributes']);
+        if (isset($shareDefinition['props']['attributes'])) {
+            $partial->setAttributes($shareDefinition['props']['attributes']);
         }
 
-        $multi = $shareDefinition['multi'] ?? [];
+        /**
+         * Add multiple shares to the parent?
+         */
+        $multi = $shareDefinition['props']['multi'] ?? [];
         if ($multi) {
             // what to do when multi sub-shares are re-used?
             // - link group, button group
             // we should add first element (which needs a wrapper if needed), and then add all siblings to his parent?
         }
 
-        $style = $shareDefinition['style'] ?? [];
+        /**
+         * Basic events table on Overdose.
+         */
+        $style = $shareDefinition['props']['style'] ?? [];
         if ($style) {
             // this is when style is shared
             // marked span styles, custom heading afters, styled table styles, ...

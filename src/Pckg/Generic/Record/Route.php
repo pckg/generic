@@ -97,13 +97,13 @@ class Route extends Record
         return $partial->addToRoute($this);
     }
 
-    public function addHubShare($share, $defaults = [])
+    public function addHubShare($uuid, $defaults = [])
     {
         /**
          * @var $generic Generic
          */
         $generic = resolve(Generic::class);
-        $partial = $generic->prepareHubPartial($share);
+        $partial = $generic->prepareHubPartial($uuid);
 
         return $partial->addToRoute($this, $defaults);
     }
