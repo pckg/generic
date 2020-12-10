@@ -12,9 +12,9 @@
                     <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
                         <i class="far fa-times" aria-hidden="true"></i>
                     </button>
-                    <h4 class="modal-title" v-if="$slots.header">
+                    <span class="modal-title" v-if="$slots.header">
                         <slot name="header"></slot>
-                    </h4>
+                    </span>
                     <slot name="headerOut" v-if="$slots.headerOut"></slot>
                 </div>
                 <div class="modal-body">
