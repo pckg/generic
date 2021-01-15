@@ -211,7 +211,7 @@ let tinyMceConfig = {
         'comms autosave advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
         'searchreplace wordcount visualblocks visualchars code fullscreen',
         'hr insertdatetime media nonbreaking save table contextmenu directionality',
-        'emoticons template paste textcolor colorpicker textpattern imagetools codesample pckg noneditable'
+        'emoticons template paste textcolor colorpicker textpattern imagetools codesample noneditable'
     ],
     toolbar: [ // imagetools
         'undo redo | link unlink image media | forecolor backcolor | hr table removeformat code',
@@ -247,6 +247,7 @@ let tinyMceConfig = {
     insert_toolbar: 'quicktable image',
     selection_toolbar: 'bold italic | h2 h3 | blockquote quicklink',
     contextmenu: 'inserttable | cell row column deletetable',
+    // inline: false,
     table_default_attributes: {},
     table_default_styles: {},
     table_resize_bars: false,
@@ -273,7 +274,7 @@ window.initTinymce = function (selector, config) {
         });
     }
 
-    let c = tinyMceConfig;
+    let c = JSON.parse(JSON.stringify(tinyMceConfig));
     let contentCss = typeof Dropzone !== 'undefined'
         ? '/app/derive/src/Pckg/Generic/public/tinymce.css'
         : '/storage/tinymce-themes/tinymce.css';
@@ -371,12 +372,72 @@ window.initTinymce = function (selector, config) {
 
 $(document).ready(function () {
 
-    /**
-     * Start pc-kg (editor variable) plugin.
-     */
-    document.createElement('pc-kg');
+    let PluginManager = tinymce.util.Tools.resolve('tinymce.PluginManager');
 
-    tinymce.PluginManager.add('pckg', function (editor, url) {
+    PluginManager.add('comms', function (editor, url) {
+        editor.addButton('close', {
+            text: 'Close',
+            icon: false,
+            onclick: function () {
+                if (!confirm('Do you want to lose any unsaved changes?')) {
+                    return;
+                }
+                editor.destroy();
+                // Open window
+                /*editor.windowManager.open({
+                    title: 'Example plugin',
+                    body: [
+                        {type: 'textbox', name: 'title', label: 'Title'}
+                    ],
+                    onsubmit: function (e) {
+                        // Insert content when the window form is submitted
+                        editor.insertContent('Title: ' + e.data.title);
+                    }
+                });*/
+            }
+        });
+        editor.addButton('commsCancel', {
+            text: 'Cancel',
+            icon: false,
+            onclick: function () {
+                if (!confirm('Do you want to cancel any unsaved changes?')) {
+                    return;
+                }
+                editor.buttons.cancel.onclick(editor, url);
+            }
+        });
+
+        // Adds a menu item to the tools menu
+        /*editor.addMenuItem('example', {
+            text: 'Example plugin',
+            context: 'tools',
+            onclick: function() {
+                // Open window with a specific url
+                editor.windowManager.open({
+                    title: 'TinyMCE site',
+                    url: 'https://www.tinymce.com',
+                    width: 800,
+                    height: 600,
+                    buttons: [{
+                        text: 'Close',
+                        onclick: 'close'
+                    }]
+                });
+            }
+        });*/
+
+        return {
+            getMetadata: function () {
+                return {
+                    name: "Comms TinyMCE plugin",
+                    url: "https://comms.dev/"
+                };
+            }
+        };
+    });
+
+    document.createElement('pc-kg');
+    PluginManager.add('pckg', function (editor, url) {
         // Add a button that opens a window
         editor.addButton('pckgElementButton', {
             text: 'Add 2 pckg',
@@ -466,7 +527,6 @@ $(document).ready(function () {
              ]*/
         });
     });
-
     /**
      * End plugin
      */
