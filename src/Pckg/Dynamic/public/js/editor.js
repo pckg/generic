@@ -1,5 +1,6 @@
 var pckgEditors = {};
 var destroyTinymce = function (selector) {
+    console.log('destroying tinymce', selector);
     //if (pckgEditors[selector]) {
     $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
     //tinymce.remove('#' + selector);
@@ -12,68 +13,6 @@ var destroyTinymce = function (selector) {
     }
     //}
 };
-
-tinymce.PluginManager.add('comms', function (editor, url) {
-    editor.addButton('close', {
-        text: 'Close',
-        icon: false,
-        onclick: function () {
-            if (!confirm('Do you want to lose any unsaved changes?')) {
-                return;
-            }
-            editor.destroy();
-            // Open window
-            /*editor.windowManager.open({
-                title: 'Example plugin',
-                body: [
-                    {type: 'textbox', name: 'title', label: 'Title'}
-                ],
-                onsubmit: function (e) {
-                    // Insert content when the window form is submitted
-                    editor.insertContent('Title: ' + e.data.title);
-                }
-            });*/
-        }
-    });
-    editor.addButton('commsCancel', {
-        text: 'Cancel',
-        icon: false,
-        onclick: function () {
-            if (!confirm('Do you want to cancel any unsaved changes?')) {
-                return;
-            }
-            editor.buttons.cancel.onclick(editor, url);
-        }
-    });
-
-    // Adds a menu item to the tools menu
-    /*editor.addMenuItem('example', {
-        text: 'Example plugin',
-        context: 'tools',
-        onclick: function() {
-            // Open window with a specific url
-            editor.windowManager.open({
-                title: 'TinyMCE site',
-                url: 'https://www.tinymce.com',
-                width: 800,
-                height: 600,
-                buttons: [{
-                    text: 'Close',
-                    onclick: 'close'
-                }]
-            });
-        }
-    });*/
-
-    return {
-        getMetadata: function () {
-            return {
-                name: "Comms TinyMCE plugin",
-                url: "https://comms.dev/"
-            };
-        }
-    };
-});
 
 let elements = document.getElementsByName('pckgvdth');
 let vdth = elements.length === 1 ? elements[0].getAttribute('content') : null;
@@ -322,19 +261,25 @@ window.initTinymce = function (selector, config) {
     let $dropzone, $dropzoneInst;
     $dropzone = $('<div class="manual-dropzone" id="manual-dropzone-' + Math.round(Math.random() * 1000000) + '"></div>');
     selected.parent().append($dropzone);
-    $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
-        url: '/dynamic/uploader?dropzone',
-        previewsContainer: null,
-        previewTemplate: '<div></div>',
-        maxFilesize: 8,
-        headers: vdth ? {
-            'X-Pckg-CSRF': vdth
-        } : {}
-    });
+    if (typeof Dropzone !== 'undefined') {
+        $dropzoneInst = new Dropzone('#' + $dropzone.attr('id'), {
+            url: '/dynamic/uploader?dropzone',
+            previewsContainer: null,
+            previewTemplate: '<div></div>',
+            maxFilesize: 8,
+            headers: vdth ? {
+                'X-Pckg-CSRF': vdth
+            } : {}
+        });
+    }
 
     let c = tinyMceConfig;
+    let contentCss = typeof Dropzone !== 'undefined'
+        ? '/app/derive/src/Pckg/Generic/public/tinymce.css'
+        : '/storage/tinymce-themes/tinymce.css';
+    console.log('content css', contentCss);
     var defaultConfig = Object.assign(c, {
-        content_css: '/app/derive/src/Pckg/Generic/public/tinymce.css',
+        content_css: contentCss,
         selector: '#' + selector,
         file_picker_callback: function (cb, value, meta) {
             if ($dropzoneInst) {
@@ -383,7 +328,29 @@ window.initTinymce = function (selector, config) {
 
     if (config) {
         $.each(config, function (key, val) {
-            if (key == 'setup') {
+            if (key === 'variables') {
+
+                var tempSetup = defaultConfig.setup;
+                defaultConfig.setup = function (editor) {
+                    tempSetup(editor);
+
+                    let menus = val.map((v) => {
+                        return {
+                            text: v.name,
+                            onclick: function () {
+                                editor.insertContent('<span data-var="' + v.key + '" class="tinymce-pckg mceNonEditable">' + v.name + '</span>');
+                            }
+                        };
+                    });
+
+                    editor.addMenuItem('pckgElementMenuItem', {
+                        text: 'Variables',
+                        context: 'tools',
+                        menu: menus
+                    });
+                };
+
+            } else if (key === 'setup') {
                 var tempSetup = defaultConfig.setup;
                 defaultConfig.setup = function (editor) {
                     tempSetup(editor);
@@ -395,7 +362,9 @@ window.initTinymce = function (selector, config) {
         });
     }
 
+    console.log('initializing tinymce', defaultConfig, selected, tinymce);
     pckgEditors[selector] = tinymce.init(defaultConfig);
+    console.log('initialized');
 
     return pckgEditors[selector];
 };
@@ -428,23 +397,32 @@ $(document).ready(function () {
         });
 
         var menus = [];
-        $.each(Pckg.config.editor.variables || {}, function (parentName, subVariables) {
-            var submenus = [];
-            $.each(subVariables, function (name, key) {
-                submenus.push({
-                    text: name,
-                    onclick: function () {
-                        editor.insertContent('<span class="tinymce-pckg mceNonEditable">' + key + '</span>');
-                    }
+        if (Pckg && Pckg.config && Pckg.config.editor && Pckg.config.editor.variables) {
+            $.each(Pckg.config.editor.variables || {}, function (parentName, subVariables) {
+                var submenus = [];
+                $.each(subVariables, function (name, key) {
+                    submenus.push({
+                        text: name,
+                        onclick: function () {
+                            editor.insertContent('<span class="tinymce-pckg mceNonEditable">' + key + '</span>');
+                        }
+                    });
                 });
+                if (submenus.length) {
+                    menus.push({
+                        text: parentName,
+                        menu: submenus
+                    });
+                }
             });
-            if (submenus.length) {
-                menus.push({
-                    text: parentName,
-                    menu: submenus
-                });
-            }
-        });
+        } else {
+            menus.push({
+                text: 'Test variable',
+                onclick: function () {
+                    editor.insertContent('<span class="tinymce-pckg mceNonEditable">Test variable</span>');
+                }
+            });
+        }
 
         // Adds a menu item to the tools menu
         editor.addMenuItem('pckgElementMenuItem', {
@@ -497,7 +475,7 @@ $(document).ready(function () {
      *
      * @type {string}
      */
-    tinymce.baseURL = '/node_modules/tinymce';
+    tinymce.baseURL = '/storage/tinymce-themes';
 
     $('textarea.editor').each(function () {
         var selector = null;
