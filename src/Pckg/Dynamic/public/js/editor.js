@@ -535,7 +535,7 @@ $(document).ready(function () {
      *
      * @type {string}
      */
-    tinymce.baseURL = '/storage/tinymce-themes';
+    tinymce.baseURL = Pckg && Pckg.data && Pckg.data.dimensions ? '/node_modules/tinymce' : '/storage/tinymce-themes';
 
     $('textarea.editor').each(function () {
         var selector = null;
