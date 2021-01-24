@@ -30,12 +30,16 @@ class EncapsulateResponse
                 $tags = router()->get('tags', []);
                 $template = config('pckg.generic.layouts.default', 'Pckg/Generic:frontend');
                 $disable = false;
-                foreach ($tags as $tag) {
+                foreach ($tags as $key => $tag) {
                     if (!is_string($tag)) {
                         continue;
                     }
                     if ($tag == EncapsulateResponse::class . '.disable') {
                         $disable = true;
+                        break;
+                    }
+                    if ($key === 'layout') {
+                        $template = '<' . $tag . '></' . $tag . '>';
                         break;
                     }
                     if (strpos($tag, 'layout:') !== 0) {
