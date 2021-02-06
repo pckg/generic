@@ -108,7 +108,7 @@ class Records extends Controller
         );
     }
 
-    public function getConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', TableView $tableView)
+    public function getConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', TableView $tableView = null)
     {
         $dynamicService->setTable($tableRecord);
         $dynamicService->setView($tableView);
