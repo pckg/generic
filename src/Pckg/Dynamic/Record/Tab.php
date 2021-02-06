@@ -4,6 +4,12 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tabs;
 
+/**
+ * Class Tab
+ * @package Pckg\Dynamic\Record
+ * @property string $title
+ * @property Table $table
+ */
 class Tab extends DatabaseRecord
 {
 

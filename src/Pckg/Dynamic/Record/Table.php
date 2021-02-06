@@ -11,6 +11,14 @@ use Pckg\Dynamic\Service\Filter;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Service\Tabelize;
 
+/**
+ * Class Table
+ * @package Pckg\Dynamic\Record
+ * @property Table $table
+ * @property string $title
+ * @property string $repository
+ * @property string $framework_entity
+ */
 class Table extends Record
 {
 
@@ -185,10 +193,8 @@ class Table extends Record
 
     public function getFields($listableFields, Filter $filterService, $fields = [])
     {
-        $tableRecord = $this;
-
         return $listableFields->reduce(
-            function(Field $field) use ($tableRecord, $filterService, $fields) {
+            function(Field $field) use ($fields) {
                 return in_array($field->field, $fields);
             }
         );

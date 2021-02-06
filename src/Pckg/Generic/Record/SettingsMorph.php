@@ -7,6 +7,13 @@ use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
+/**
+ * Class SettingsMorph
+ * @package Pckg\Generic\Record
+ * @property Setting $setting
+ * @property string $value
+ * @property int $setting_id
+ */
 class SettingsMorph extends Record
 {
 

@@ -144,7 +144,7 @@ class Generic
     }
 
     /**
-     * @param Block ...$blocks
+     * @param string ...$blocks
      *
      * @return Block
      */
@@ -269,7 +269,7 @@ class Generic
             return $action->pivot->parent_id;
         }, function($action) {
             return $action->pivot->id;
-        })->filter(function(ActionRecord $action) use ($resolved, $route) {
+        })->filter(function(ActionRecord $action) use ($route) {
             /**
              * Filter out hidden and shown.
              */
@@ -630,7 +630,7 @@ class Generic
              * Register all translated routes.
              */
             $route->_translations->each(function($routeTranslation) use (
-                $route, $multilingual, $defaultLanguage, $newRoute, $router, $languages, $onDefaultDomain
+                $route, $multilingual, $defaultLanguage, $newRoute, $router, $languages
             ) {
                 /**
                  * Single-lingual is really simple. :)

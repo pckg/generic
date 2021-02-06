@@ -98,7 +98,7 @@ class Export extends Controller
          */
         $language = localeManager()->getLanguageBy('slug', $_SESSION['pckg_dynamic_lang_id']);
         $locale = new Locale($language ? $language->locale : 'en_GB');
-        $listedFields->each(function($field) use ($strategy, &$transformedRecords, $locale) {
+        $listedFields->each(function($field) use ($strategy, &$transformedRecords) {
             if (!($field instanceof Field)) {
                 return;
             }

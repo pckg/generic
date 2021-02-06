@@ -191,10 +191,10 @@ class Action implements \JsonSerializable
      * @return string
      * @throws Exception
      */
-    public function getHtml($innerOnly = false)
+    public function getHtml()
     {
         return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
-            function() use ($innerOnly) {
+            function() {
                 $type = $this->getType();
 
                 if (in_array($type, ['wrapper', 'container', 'row', 'column'])) {

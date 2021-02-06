@@ -28,7 +28,7 @@ class Menu
             return '<!-- no menu -->';
         }
 
-        $menuItems = runInLocale(function() use ($menus, $permissions, $repositoryObject, $locale) {
+        $menuItems = runInLocale(function() use ($menus, $permissions, $repositoryObject) {
             $entity = (new MenuItems($repositoryObject))->where('menu_id', $menus->map('id')->all());
 
             if ($permissions) {

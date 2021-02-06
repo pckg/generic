@@ -4,6 +4,12 @@ use Pckg\Collection;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\MenuItems;
 
+/**
+ * Class MenuItem
+ * @package Pckg\Generic\Record
+ * @property string $url
+ * @property Collection $getChildren
+ */
 class MenuItem extends Record
 {
 

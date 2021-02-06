@@ -11,6 +11,22 @@ use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Service\Dynamic;
 use Throwable;
 
+/**
+ * Class Relation
+ * @package Pckg\Dynamic\Record
+ * @property string $filter
+ * @property int $left_foreign_key_id
+ * @property Field $leftForeignKey
+ * @property int $on_field_id
+ * @property Field $onField
+ * @property string $value
+ * @property Table $showTable
+ * @property Table $onTable
+ * @property string $alias
+ * @property int $dynamic_relation_type_id.
+ * @property Field $foreignField
+ * @property string $method
+ */
 class Relation extends DatabaseRecord
 {
 
@@ -132,7 +148,7 @@ class Relation extends DatabaseRecord
         $records->keyBy(function($record) use ($relation) {
             return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
         })->each(
-            function($record) use ($relation, $entity, $foreignField, &$values) {
+            function($record) use ($relation, $foreignField, &$values) {
                 $relationValue = $this->evalRelationValue($relation, $record);
 
                 $groupValue = $relation->group_value
@@ -183,7 +199,7 @@ class Relation extends DatabaseRecord
     public function createDbRelation(Entity $entity, Entity $relationEntity, $alias)
     {
         if ($this->dynamic_relation_type_id == 2) {
-            $dbRelation = (new HasMany($entity, $relationEntity, $alias))
+            $dbRelation = (new HasMany($entity, $relationEntity))
                 ->foreignKey($this->onField->field)
                 ->fill('relation_' . $this->onField->field)
                 ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
@@ -197,7 +213,7 @@ class Relation extends DatabaseRecord
 
             return $dbRelation;
         } else if ($this->dynamic_relation_type_id == 1) {
-            $dbRelation = (new BelongsTo($entity, $relationEntity, $alias))
+            $dbRelation = (new BelongsTo($entity, $relationEntity))
                 ->foreignKey($this->onField->field)
                 ->fill('relation_' . $this->onField->field)
                 ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')

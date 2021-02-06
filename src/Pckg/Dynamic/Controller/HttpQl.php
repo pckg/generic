@@ -287,6 +287,7 @@ class HttpQl
     {
         $split = explode('.', $field);
         $onTable = $table;
+        $showTable = null;
 
         $from = null;
         $groupBy = null;

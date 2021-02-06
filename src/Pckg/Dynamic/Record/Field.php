@@ -5,6 +5,15 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Fields;
 use Throwable;
 
+/**
+ * Class Field
+ * @package Pckg\Dynamic\Record
+ * @property Relation $hasOneSelectRelation
+ * @property FieldType $fieldType
+ * @property string $settings
+ * @property string $field
+ * @property string $title
+ */
 class Field extends DatabaseRecord
 {
 

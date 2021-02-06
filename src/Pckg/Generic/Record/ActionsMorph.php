@@ -7,6 +7,7 @@ use Derive\Newsletter\Controller\Newsletter;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
+use Pckg\Framework\View\Twig;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
@@ -14,6 +15,24 @@ use Pckg\Generic\Service\Generic;
 use Pckg\Generic\Service\Partial\AbstractPartial;
 use Pckg\Stringify;
 
+/**
+ * Class ActionsMorph
+ * @package Pckg\Generic\Record
+ * @property Collection $subActions
+ * @property ActionsMorph|null $parent
+ * @property ActionsMorph|null $parentAction // duplicate?
+ * @property int|null $parent_id
+ * @property int $content_id
+ * @property Action $action
+ * @property Content $content
+ * @property string $type
+ * @property string $template
+ * @property Record $morph
+ * @property string $morph_id
+ * @property array $settingsArray
+ * @property string $variable
+ * @property int $order
+ */
 class ActionsMorph extends Record
 {
 
@@ -426,6 +445,9 @@ class ActionsMorph extends Record
             }
         }*/
 
+        /**
+         * @T00D00 - move this somewhere else
+         */
         if ($this->action->slug == 'pckg-mail-mailchimp-enews') {
             $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'],
                             'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
@@ -457,6 +479,7 @@ class ActionsMorph extends Record
 
         /**
          * We want to get rid of scope classes and add attributes to css selector.
+         * @T00D00 - move this somewhere else
          */
         $classes = (new GetLessVariables())->parseAttributes($classes, $attributes);
 
@@ -581,7 +604,7 @@ class ActionsMorph extends Record
 
     public function overloadViewTemplate($result)
     {
-        if (!($result instanceof View\Twig)) {
+        if (!($result instanceof Twig)) {
             return;
         }
 
@@ -595,7 +618,6 @@ class ActionsMorph extends Record
         /**
          * In template we store template, list template and item template designs.
          */
-        message('Using action template ' . $newFile . ' ' . $this->action->slug);
         $newFile = str_replace(':', '/View/', $this->template['template']);
         $result->setFile($newFile);
     }

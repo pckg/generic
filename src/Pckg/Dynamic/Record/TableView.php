@@ -4,6 +4,13 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
 
+/**
+ * Class TableView
+ * @package Pckg\Dynamic\Record
+ * @property Table $table
+ * @property int $dynamic_table_id
+ * @property string $settings
+ */
 class TableView extends DatabaseRecord
 {
 

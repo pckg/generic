@@ -1,5 +1,12 @@
 <?php namespace Pckg\Generic\Record;
 
+use Pckg\Database\Collection;
+
+/**
+ * Trait SettingsHelper
+ * @package Pckg\Generic\Record
+ * @property Collection $settings
+ */
 trait SettingsHelper
 {
 

@@ -9,6 +9,8 @@ use Pckg\Generic\Entity\Actions;
  * Class Action
  *
  * @package Pckg\Generic\Record
+ * @property string $class
+ * @property string $method
  */
 class Action extends Record
 {

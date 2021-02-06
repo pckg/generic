@@ -208,7 +208,7 @@ class Import extends Controller
                     continue;
                 }
 
-                runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord, $strategy) {
+                runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, &$prevRecord, $strategy) {
                     $entity = $table->createEntity();
                     if (!$prevRecord && $uniqueFields && $uniqueValues) {
                         /**

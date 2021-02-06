@@ -209,7 +209,6 @@ class Records extends Controller
             $dynamicService,
             $entity,
             $viewType,
-            $returnTabelize,
             $tab,
             $record,
             $relation,
@@ -434,7 +433,7 @@ class Records extends Controller
              */
             $field = collect((new Request())->setElement($form)->getElements())->first(function($e) use ($uploadedData) { return $e->getName() === $uploadedData['_field']; });
             if (!$field) {
-                throw new Exception('No field to save');
+                throw new \Exception('No field to save');
             }
             /**
              * Set to validate.
@@ -512,7 +511,7 @@ class Records extends Controller
         return $this->response()->respondWithSuccess([
                                                          'clonedUrl' => url('dynamic.record.edit', [
                                                              'table'  => $table,
-                                                             'record' => $clonedRecord,
+                                                             'record' => $clonedRecord ?? null,
                                                          ]),
                                                      ]);
     }
@@ -661,7 +660,7 @@ class Records extends Controller
         if ($table->framework_entity) {
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
-        $functions->each(function(Func $function) use (&$functionizes, $pluginService, $record, $args) {
+        $functions->each(function(Func $function) use (&$functionizes, $pluginService, $args) {
             $functionize = $pluginService->make($function->class, $function->method, $args);
 
             $functionizes[] = (string)$functionize;

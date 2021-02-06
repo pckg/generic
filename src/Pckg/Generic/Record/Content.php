@@ -9,6 +9,8 @@ use Pckg\Generic\Entity\Contents;
  * Class Content
  *
  * @package Pckg\Generic\Record
+ * @property string $content
+ * @property string $picture
  */
 class Content extends Record
 {

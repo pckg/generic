@@ -3,6 +3,7 @@
 namespace Pckg\Generic\Record;
 
 use Pckg\Concept\Reflect;
+use Pckg\Database\Collection;
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\Routes;
 use Pckg\Generic\Service\Generic;
@@ -12,6 +13,11 @@ use Pckg\Generic\Service\Partial\AbstractPartial;
  * Class Route
  *
  * @package Pckg\Generic\Record
+ * @property Collection $actionsMorphs
+ * @property Layout $layout
+ * @property Collection $settings
+ * @property Collection $actions
+ * @property string $route
  */
 class Route extends Record
 {

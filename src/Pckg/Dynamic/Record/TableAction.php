@@ -4,6 +4,12 @@ use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\TableActions;
 
+/**
+ * Class TableAction
+ * @package Pckg\Dynamic\Record
+ * @property string $template
+ * @property string $slug
+ */
 class TableAction extends DatabaseRecord
 {
 
