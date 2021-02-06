@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Middleware;
+<?php
+
+namespace Pckg\Generic\Middleware;
 
 use Pckg\Framework\Provider;
 
@@ -26,9 +28,8 @@ class RegisterDynamicProviders extends Provider
 
     protected function getDynamicProviders()
     {
-        return collect(config('pckg.generic.modules'))->filter(function($module) {
+        return collect(config('pckg.generic.modules'))->filter(function ($module) {
             return $module['active'] && ($module['provider'] ?? null);
         })->map('provider')->rekey()->all();
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Service;
+<?php
+
+namespace Pckg\Generic\Service;
 
 use Pckg\Collection;
 use Pckg\Database\Repository;
@@ -17,27 +19,23 @@ class Menu
 
         $menus = new Menus($repositoryObject);
         $locale = first($language, config('pckg.locale.default'), 'en_GB');
-        $menus = runInLocale(
-            function() use ($menus, $slug) {
-                return $menus->where('slug', $slug)->all();
-            },
-            $locale
-        );
+        $menus = runInLocale(function () use ($menus, $slug) {
 
+                return $menus->where('slug', $slug)->all();
+        }, $locale);
         if (!$menus->count()) {
             return '<!-- no menu -->';
         }
 
-        $menuItems = runInLocale(function() use ($menus, $permissions, $repositoryObject, $locale) {
-            $entity = (new MenuItems($repositoryObject))->where('menu_id', $menus->map('id')->all());
+        $menuItems = runInLocale(function () use ($menus, $permissions, $repositoryObject) {
 
+            $entity = (new MenuItems($repositoryObject))->where('menu_id', $menus->map('id')->all());
             if ($permissions) {
                 $entity->joinPermissionTo('read');
             }
 
             return $entity->all();
         }, $locale);
-
         if ($slug == 'admin') {
             $menuItems = new Collection();
         }
@@ -45,20 +43,16 @@ class Menu
             trigger(Menu::class . '.collectMenuItems.' . $slug, $menuItems);
         }
 
-        return view(
-            'Pckg\Generic:menu\\' . $menus->first()->template,
-            [
+        return view('Pckg\Generic:menu\\' . $menus->first()->template, [
                 'menu'      => $menus->first(),
                 'menus'     => $menus,
                 'menuItems' => $this->buildTree($menuItems),
                 'params'    => $params,
-            ]
-        );
+            ]);
     }
 
     protected function buildTree(Collection $menuItems)
     {
         return $menuItems->tree('parent_id', 'id');
     }
-
 }

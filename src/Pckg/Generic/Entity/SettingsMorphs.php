@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Entity;
+<?php
+
+namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
@@ -14,5 +16,4 @@ class SettingsMorphs extends Entity
         return $this->belongsTo(Settings::class)
                     ->foreignKey('setting_id');
     }
-
 }

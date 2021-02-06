@@ -1,4 +1,6 @@
-<?php namespace Pckg\Maestro\Service;
+<?php
+
+namespace Pckg\Maestro\Service;
 
 use Pckg\Database\Record;
 use Pckg\Htmlbuilder\Element\Form;
@@ -10,19 +12,15 @@ class Formalize
      * @var Form
      */
     protected $form;
-
     /**
      * @var Record
      */
     protected $record;
-
     /**
      * @var string
      */
     protected $title;
-
     protected $table;
-
     /**
      * Formalize constructor.
      *
@@ -38,7 +36,6 @@ class Formalize
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -50,13 +47,23 @@ class Formalize
     public function setTable($table)
     {
         $this->table = $table;
-
         return $this;
     }
 
     public function getForm()
     {
         return $this->form;
+    }
+
+    public function __toString()
+    {
+        vueManager()->addView('Pckg/Maestro:_formalize', ['formalize' => $this, 'form' => $this->form]);
+        return '<pckg-maestro-formalize ref="formalize"></pckg-maestro-formalize>';
+        return (string)view('Pckg/Maestro:formalize', [
+                'record'    => $this->record,
+                'form'      => $this->form,
+                'formalize' => $this,
+            ]);
     }
 
     public function getEditUrl()
@@ -66,5 +73,4 @@ class Formalize
             'record' => $this->record,
         ]);
     }
-
 }

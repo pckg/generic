@@ -1,9 +1,17 @@
-<?php namespace Pckg\Dynamic\Record;
+<?php
+
+namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\TableActions;
 
+/**
+ * Class TableAction
+ * @package Pckg\Dynamic\Record
+ * @property string $template
+ * @property string $slug
+ */
 class TableAction extends DatabaseRecord
 {
 
@@ -43,5 +51,4 @@ class TableAction extends DatabaseRecord
 
         return 'derive-' . $expl[0] . '-tabelize-' . $expl[1];
     }
-
 }

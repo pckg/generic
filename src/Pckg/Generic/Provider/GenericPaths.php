@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Provider;
+<?php
+
+namespace Pckg\Generic\Provider;
 
 use Pckg\Framework\Provider;
 
@@ -12,5 +14,4 @@ class GenericPaths extends Provider
 
         return $paths;
     }
-
 }

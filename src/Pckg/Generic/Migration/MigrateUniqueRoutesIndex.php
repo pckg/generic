@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Migration;
+<?php
+
+namespace Pckg\Generic\Migration;
 
 use Pckg\Migration\Constraint\Constraint;
 use Pckg\Migration\Constraint\ForeignKey;
@@ -35,5 +37,4 @@ class MigrateUniqueRoutesIndex extends Migration
             $this->output(exception($e));
         }
     }
-
 }

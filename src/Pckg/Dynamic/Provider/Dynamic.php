@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Provider;
+<?php
+
+namespace Pckg\Dynamic\Provider;
 
 use Pckg\Dynamic\Controller\Export;
 use Pckg\Dynamic\Controller\Import;
@@ -178,9 +180,7 @@ class Dynamic extends Provider
             'url' => array_merge_array(
                 [
                     'tags' => ['group:backend', 'layout:backend'],
-                ],
-                array_merge_array(
-                    [
+                ], array_merge_array([
                         'controller' => Records::class,
                     ],
                     [
@@ -381,12 +381,9 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
-                    ]
-                ) + array_merge_array(
-                    [
+                    ]) + array_merge_array([
                         'controller' => View::class,
-                    ],
-                    [
+                    ], [
                         /*'/dynamic/tables/view/[table]'                      => [
                             'name'      => 'dynamic.record.view',
                             'view'      => 'viewTable',
@@ -431,12 +428,9 @@ class Dynamic extends Provider
                                 'tableView' => ViewResolver::class,
                             ],
                         ],
-                    ]
-                ) + array_merge_array(
-                    [
+                    ]) + array_merge_array([
                         'controller' => Export::class,
-                    ],
-                    [
+                    ], [
                         '/dynamic/tables/export/[table]/[type]' => [
                             'name' => 'dynamic.record.export',
                             'view' => 'exportTable',
@@ -454,12 +448,9 @@ class Dynamic extends Provider
                                 'tableView' => ViewResolver::class,
                             ],
                         ],
-                    ]
-                ) + array_merge_array(
-                    [
+                    ]) + array_merge_array([
                         'controller' => Import::class,
-                    ],
-                    [
+                    ], [
                         '/dynamic/tables/import/[table]/export-empty' => [
                             'name' => 'dynamic.record.import.exportEmpty',
                             'view' => 'exportEmptyImport',
@@ -481,8 +472,7 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
-                    ]
-                ) + array_merge_array([
+                    ]) + array_merge_array([
                     'controller' => Relations::class,
                 ], [
                     '/api/dynamic/relation/[relation]' => [
@@ -492,9 +482,7 @@ class Dynamic extends Provider
                             'relation' => Relation::class,
                         ]
                     ]
-                ])
-            ),
+                    ])),
         ];
     }
-
 }

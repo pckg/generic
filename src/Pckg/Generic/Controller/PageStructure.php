@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Derive\Pagebuilder\Service\Pagebuilder;
 use Pckg\Concept\Context;
@@ -585,5 +587,4 @@ class PageStructure
 
         return ['resolvers' => $resolvers];
     }
-
 }

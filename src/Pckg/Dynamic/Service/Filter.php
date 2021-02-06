@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Foolz\SphinxQL\Connection;
 use Foolz\SphinxQL\SphinxQL;
@@ -44,14 +46,14 @@ class Filter extends AbstractService
 
     public function getAvailableFilters()
     {
-        return $this->makeFields($this->table->listableFields(function(HasMany $fields) {
+        return $this->makeFields($this->table->listableFields(function (HasMany $fields) {
             $fields->where('dynamic_field_type_id', 19, '!=');
         }));
     }
 
     public function getAvailableRelationFilters()
     {
-        return $this->table->relations->map(function(Relation $relation) {
+        return $this->table->relations->map(function (Relation $relation) {
             /**
              * @T00D00 - load via ajax if possible?
              *         - optimize related selects like ($relation->value = '$record->order->user->city->title' ;-))
@@ -74,7 +76,7 @@ class Filter extends AbstractService
 
     protected function makeFields(CollectionInterface $collection)
     {
-        return $collection->each(function(Field $field) {
+        return $collection->each(function (Field $field) {
             $type = $field->fieldType->slug;
 
             $options = [];
@@ -363,8 +365,11 @@ class Filter extends AbstractService
                      */
                     $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
-                    $entity->where($alias . '.' . $field->field, $relationFilter['value'],
-                                   $signMapper[$relationFilter['method']]);
+                    $entity->where(
+                        $alias . '.' . $field->field,
+                        $relationFilter['value'],
+                        $signMapper[$relationFilter['method']]
+                    );
 
                     /*$field = Field::getOrFail(['id' => $relationFilter['field']]);
 
@@ -378,19 +383,27 @@ class Filter extends AbstractService
                 }
 
                 if (!$relationFilter['field'] && !$relationFilter['subfield']) {
-                    $entity->where($relation->onField->field, $relationFilter['value'],
-                                   $signMapper[$relationFilter['method']]);
+                    $entity->where(
+                        $relation->onField->field,
+                        $relationFilter['value'],
+                        $signMapper[$relationFilter['method']]
+                    );
                 }
             } elseif ($relation->dynamic_relation_type_id == 2) {
                 $field = Field::getOrFail(['id' => $relationFilter['field']]);
 
                 $joined = true;
-                $entity->join('INNER JOIN ' . $relation->showTable->table,
-                              $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
-                              $relation->onField->field);
+                $entity->join(
+                    'INNER JOIN ' . $relation->showTable->table,
+                    $relation->onTable->table . '.id = ' . $relation->showTable->table . '.' .
+                    $relation->onField->field
+                );
 
-                $entity->where($relation->showTable->table . '.' . $field->field, $relationFilter['value'],
-                               $signMapper[$relationFilter['method']]);
+                $entity->where(
+                    $relation->showTable->table . '.' . $field->field,
+                    $relationFilter['value'],
+                    $signMapper[$relationFilter['method']]
+                );
             }
 
             if ($joined && !$entity->getQuery()->getGroupBy()) {
@@ -436,8 +449,10 @@ class Filter extends AbstractService
 
         if ($relations && $selected = get('selected')) {
             $exploded = explode(',', $selected);
-            $where->push($entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')',
-                         $exploded);
+            $where->push(
+                $entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')',
+                $exploded
+            );
         }
 
         /**
@@ -563,5 +578,4 @@ class Filter extends AbstractService
 
         return $tables;
     }
-
 }

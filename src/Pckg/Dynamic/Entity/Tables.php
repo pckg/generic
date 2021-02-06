@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Relation\HasMany;
@@ -10,12 +12,9 @@ class Tables extends DatabaseEntity implements MaestroEntity
 {
 
     protected $record = Table::class;
-
     protected $table = 'dynamic_tables';
-
     protected $repositoryName = Repository::class . '.dynamic';
-
-    /**
+/**
      * @param callable|null $callback
      *
      * @return HasMany
@@ -29,14 +28,16 @@ class Tables extends DatabaseEntity implements MaestroEntity
 
     public function listableFields()
     {
-        return $this->fields(function(HasMany $fields) {
+        return $this->fields(function (HasMany $fields) {
+
             //$hasMany->joinPermissionTo('view');
         })->fill('searchableFields');
     }
 
     public function searchableFields()
     {
-        return $this->fields(function(HasMany $fields) {
+        return $this->fields(function (HasMany $fields) {
+
             //$hasMany->joinPermissionTo('view');
             $fields->where('searchable');
         })->fill('listableFields');
@@ -109,5 +110,4 @@ class Tables extends DatabaseEntity implements MaestroEntity
                     ->foreignKey('dynamic_table_id')
                     ->fill('views');
     }
-
 }

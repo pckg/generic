@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -27,7 +29,7 @@ class Group extends AbstractService
     public function getAvailableGroups()
     {
         return $this->table->listableFields->each(
-            function(Field $field) {
+            function (Field $field) {
                 return [
                     'field'   => $field->field,
                     'label'   => $field->title ?? $field->field,
@@ -60,15 +62,15 @@ class Group extends AbstractService
 
             if (!$newCollection) {
                 $newCollection = $collection->groupBy(
-                    function($item) use ($group) {
+                    function ($item) use ($group) {
                         return $item->{$group['field']};
                     }
                 );
             } else {
                 $newCollection = $newCollection->each(
-                    function($groupItems) use ($group) {
+                    function ($groupItems) use ($group) {
                         return (new Collection($groupItems))->groupBy(
-                            function($item) use ($group) {
+                            function ($item) use ($group) {
                                 return $item->{$group['field']};
                             }
                         );
@@ -85,5 +87,4 @@ class Group extends AbstractService
     {
         return [];
     }
-
 }

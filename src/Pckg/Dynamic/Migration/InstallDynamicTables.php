@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Migration;
+<?php
+
+namespace Pckg\Dynamic\Migration;
 
 use Pckg\Database\Collection;
 use Pckg\Dynamic\Entity\Fields;
@@ -2422,7 +2424,7 @@ class InstallDynamicTables extends Migration
 
         $tables = (new Tables())->all()->keyBy('table');
         $fields = (new Fields())->withTable()->all()->keyBy(
-            function(Field $field) {
+            function (Field $field) {
                 return $field->table->table . '.' . $field->field;
             }
         );
@@ -2441,7 +2443,5 @@ class InstallDynamicTables extends Migration
                 ]
             )->save();
         }
-
     }
-
 }

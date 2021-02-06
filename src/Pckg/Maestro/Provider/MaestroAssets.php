@@ -1,4 +1,6 @@
-<?php namespace Pckg\Maestro\Provider;
+<?php
+
+namespace Pckg\Maestro\Provider;
 
 use Pckg\Framework\Provider;
 
@@ -14,5 +16,4 @@ class MaestroAssets extends Provider
             'less/maestro.less',
         ];
     }
-
 }

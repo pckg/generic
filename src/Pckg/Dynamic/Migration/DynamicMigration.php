@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Migration;
+<?php
+
+namespace Pckg\Dynamic\Migration;
 
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\FieldType;
@@ -16,10 +18,8 @@ trait DynamicMigration
             foreach ($properties as $key => $val) {
                 if ($val == 'id') {
                     $this->upDynamicId($dynamicTable);
-
                 } elseif ($val == 'slug') {
                     $this->upDynamicField($dynamicTable, 'slug', ['type' => 'slug']);
-
                 } else if ($key == '_relations') {
                     foreach ($val as $relation) {
                         $this->upDynamicRelation($dynamicTable, $relation);
@@ -84,5 +84,4 @@ trait DynamicMigration
 
         return $relation;
     }
-
 }

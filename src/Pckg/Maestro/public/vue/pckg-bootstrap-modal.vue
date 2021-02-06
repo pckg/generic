@@ -7,21 +7,22 @@
          :data-backdrop="closable ? 'true' : 'static'"
          :data-keyboard="closable ? 'true' : 'false'">
         <div class="modal-dialog" :class="[size ? 'modal-' + size : '']">
-            <div class="modal-content">
-                <div class="modal-header" v-if="visible && ($slots.header || $slots.headerOut)">
-                    <button v-if="closable" type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
-                        <i class="far fa-times" aria-hidden="true"></i>
-                    </button>
+            <button v-if="visible && closable"
+                    type="button" class="close" data-dismiss="modal" aria-label="Close" @click="closeModal">
+                <i class="fas fa-times-circle" aria-hidden="true"></i>
+            </button>
+            <div class="modal-content" v-if="visible">
+                <div class="modal-header" v-if="$slots.header || $slots.headerOut">
                     <span class="modal-title" v-if="$slots.header">
                         <slot name="header"></slot>
                     </span>
                     <slot name="headerOut" v-if="$slots.headerOut"></slot>
                 </div>
                 <div class="modal-body">
-                    <slot name="body" v-if="visible && $slots.body"></slot>
+                    <slot name="body" v-if="$slots.body"></slot>
                     <slot></slot>
                 </div>
-                <div class="modal-footer" v-if="visible && $slots.footer">
+                <div class="modal-footer" v-if="$slots.footer">
                     <button v-if="!$slots.footer && dismissable" type="button" class="btn btn-default"
                             :class="$slots.footer ? 'pull-left' : ''"
                             data-dismiss="modal"

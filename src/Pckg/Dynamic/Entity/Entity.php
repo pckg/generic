@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record;
@@ -15,7 +17,6 @@ class Entity extends DatabaseEntity implements MaestroEntity
 {
 
     protected $record = Record::class;
-
     public function hasManyRelation()
     {
         return $this->belongsTo(Relations::class)
@@ -32,5 +33,4 @@ class Entity extends DatabaseEntity implements MaestroEntity
         return $this->belongsTo(Relations::class)
                     ->foreignKey('on_table_id');
     }
-
 }

@@ -55,10 +55,9 @@ class Routes extends Entity
     {
         return $this->withLayout()
                     ->withActions(
-                        function(MorphsMany $relation) {
+                        function (MorphsMany $relation) {
                             $relation->withContents();
                         }
                     );
     }
-
 }

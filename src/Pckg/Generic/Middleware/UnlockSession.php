@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Middleware;
+<?php
+
+namespace Pckg\Generic\Middleware;
 
 use Pckg\Concept\Reflect;
 use Pckg\Framework\Request;
@@ -15,8 +17,6 @@ class UnlockSession
         }
 
         session_write_close();
-
         return $next();
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Maestro\Service\Tabelize;
+<?php
+
+namespace Pckg\Maestro\Service\Tabelize;
 
 use Pckg\Dynamic\Dataset\Relations;
 use Pckg\Maestro\Service\Tabelize;
@@ -29,5 +31,4 @@ class Cloner
             ]
         );
     }
-
 }

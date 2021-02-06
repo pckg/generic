@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Derive\Internal\Cache\Service\Cache;
 use Pckg\Generic\Entity\Contents;
@@ -161,5 +163,4 @@ class Generic
                                    'languages' => localeManager()->getFrontendLanguages(),
                                ]);
     }
-
 }

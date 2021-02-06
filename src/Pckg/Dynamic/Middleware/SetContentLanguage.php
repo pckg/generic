@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Middleware;
+<?php
+
+namespace Pckg\Dynamic\Middleware;
 
 class SetContentLanguage
 {
@@ -11,5 +13,4 @@ class SetContentLanguage
 
         return $next();
     }
-
 }

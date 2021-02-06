@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
@@ -7,6 +9,13 @@ use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
+/**
+ * Class SettingsMorph
+ * @package Pckg\Generic\Record
+ * @property Setting $setting
+ * @property string $value
+ * @property int $setting_id
+ */
 class SettingsMorph extends Record
 {
 
@@ -14,7 +23,8 @@ class SettingsMorph extends Record
 
     public function resolve(&$args)
     {
-        if ($this->setting->slug == 'resolve-table' ||
+        if (
+            $this->setting->slug == 'resolve-table' ||
             $this->setting->slug == 'pckg-generic-routes-page-structure-actionsmorph'
         ) {
             $args[] = Reflect::create(Table::class)->resolve($this->value);
@@ -135,5 +145,4 @@ class SettingsMorph extends Record
 
         return $settingsMorph->getFinalValueAttribute();
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Exception;
 use Pckg\Database\Record;
@@ -187,5 +189,4 @@ class Permissions
     {
         return '<pckg-generic-permissions type="route" id="' . $route->id . '"></pckg-generic-permissions>';
     }
-
 }

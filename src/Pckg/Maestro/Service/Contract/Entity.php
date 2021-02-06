@@ -1,6 +1,9 @@
-<?php namespace Pckg\Maestro\Service\Contract;
+<?php
+
+namespace Pckg\Maestro\Service\Contract;
 
 interface Entity
 {
+
 
 }

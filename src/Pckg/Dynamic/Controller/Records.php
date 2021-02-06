@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
@@ -32,17 +34,16 @@ use Throwable;
 
 class Records extends Controller
 {
-
     use Maestro;
 
     /**
      * @var Plugin
      */
-    protected $pluginService;
 
-    public function __construct(
-        Plugin $pluginService
-    ) {
+
+    protected $pluginService;
+    public function __construct(Plugin $pluginService)
+    {
         $this->pluginService = $pluginService;
     }
 
@@ -50,32 +51,24 @@ class Records extends Controller
     {
         $language = post('language');
         $_SESSION['pckg_dynamic_lang_id'] = $language;
-
         return $this->response()->respondWithSuccess();
     }
 
-    public function getSelectListAction(
-        Table $table,
-        Field $field = null,
-        Record $record = null,
-        DynamicService $dynamicService
-    ) {
+    public function getSelectListAction(Table $table, Field $field = null, Record $record = null, DynamicService $dynamicService)
+    {
         $dynamicService->setTable($table);
         if (!$field) {
             $field = (new Relations())->where('show_table_id', $table->id)->one()->onField;
         }
 
         $entity = $field->getEntityForSelect($record, null);
-
         $relation = (new Relations())->where('on_field_id', $field->id)->one();
-
         $relations = (new Relations())->withShowTable()
                                       ->withOnField()
                                       ->withForeignField()
                                       ->where('on_table_id', $relation->show_table_id)
                                       ->where('dynamic_relation_type_id', 1)
                                       ->all();
-
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);
         }
@@ -85,19 +78,13 @@ class Records extends Controller
         }
 
         $relation = $field->getRelationForSelect($record, null, $entity);
-
         return [
             'records' => $relation,
         ];
     }
 
-    public function getViewTableViewAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        TableView $tableView,
-        $viewType = 'full'
-    ) {
+    public function getViewTableViewAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, TableView $tableView, $viewType = 'full')
+    {
         /**
          * Set view.
          */
@@ -109,24 +96,26 @@ class Records extends Controller
             $tableView->loadToSessionIfNotLoaded();
         }
 
-        return $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, false, null, null, null,
-                                         $tableView);
+        return $this->getViewTableAction(
+            $tableRecord,
+            $dynamicService,
+            $entity,
+            $viewType,
+            false,
+            null,
+            null,
+            null,
+            $tableView
+        );
     }
 
-    public function getConfigureTableViewAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        $viewType = 'full',
-        TableView $tableView
-    ) {
+    public function getConfigureTableViewAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', TableView $tableView = null)
+    {
         $dynamicService->setTable($tableRecord);
         $dynamicService->setView($tableView);
         $this->getViewTableAction($tableRecord, $dynamicService, $entity, $viewType, true);
-
         $fields = $dynamicService->getFieldsService()->getAvailableFields();
         $relations = $dynamicService->getFieldsService()->getAvailableRelations();
-
         return [
             'fields'        => $fields,
             'relations'     => $relations,
@@ -135,34 +124,29 @@ class Records extends Controller
         ];
     }
 
-    public function postConfigureTableViewAction(
-        Table $tableRecord,
-        TableView $tableView = null,
-        DynamicService $dynamicService
-    ) {
+    public function postConfigureTableViewAction(Table $tableRecord, TableView $tableView = null, DynamicService $dynamicService)
+    {
         $_SESSION['pckg']['dynamic']['view']['table_' . $tableRecord->id . '_' .
         ($tableView ? $tableView->id : '')]['view'] = post()->all();
-
         return [
             'message' => 'ok',
             'data'    => post()->all(),
         ];
     }
 
-    public function searchViewTableAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        $viewType = 'full',
-        $returnTabelize = false,
-        Tab $tab = null,
-        $dynamicRecord = null,
-        $dynamicRelation = null,
-        TableView $tableView = null
-    ) {
-        return $this->getViewTableApiAction($tableRecord, $dynamicService, $entity, $viewType, $returnTabelize, $tab,
-                                            $dynamicRecord, $dynamicRelation, $tableView);
-
+    public function searchViewTableAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', $returnTabelize = false, Tab $tab = null, $dynamicRecord = null, $dynamicRelation = null, TableView $tableView = null)
+    {
+        return $this->getViewTableApiAction(
+            $tableRecord,
+            $dynamicService,
+            $entity,
+            $viewType,
+            $returnTabelize,
+            $tab,
+            $dynamicRecord,
+            $dynamicRelation,
+            $tableView
+        );
         return [
             'records' => [],
         ];
@@ -178,57 +162,27 @@ class Records extends Controller
      *
      * @return $this|Tabelize
      */
-    public function getViewTableAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        $viewType = 'full',
-        $returnTabelize = false,
-        Tab $tab = null,
-        $dynamicRecord = null,
-        $dynamicRelation = null,
-        TableView $tableView = null
-    ) {
+    public function getViewTableAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', $returnTabelize = false, Tab $tab = null, $dynamicRecord = null, $dynamicRelation = null, TableView $tableView = null)
+    {
         return '<pckg-maestro-table :table-id="' . $tableRecord->id . '"' .
             ($dynamicRelation ? ' :relation-id="' . $dynamicRelation->id . '"' : '') .
             ($dynamicRecord ? ' :record-id="' . $dynamicRecord->id . '"' : '') . '></pckg-maestro-table>';
     }
 
-    public function getViewTableApiAction(
-        Table $tableRecord,
-        DynamicService $dynamicService,
-        Entity $entity = null,
-        $viewType = 'full',
-        $returnTabelize = false,
-        Tab $tab = null,
-        Record $record = null,
-        Relation $relation = null,
-        TableView $tableView = null
-    ) {
-        $executor = function() use (
-            $tableRecord,
-            $dynamicService,
-            $entity,
-            $viewType,
-            $returnTabelize,
-            $tab,
-            $record,
-            $relation,
-            $tableView
-        ) {
+    public function getViewTableApiAction(Table $tableRecord, DynamicService $dynamicService, Entity $entity = null, $viewType = 'full', $returnTabelize = false, Tab $tab = null, Record $record = null, Relation $relation = null, TableView $tableView = null)
+    {
+        $executor = function () use ($tableRecord, $dynamicService, $entity, $viewType, $tab, $record, $relation, $tableView) {
+
             /**
              * Set table so sub-services can reuse it later.
              */
             $dynamicService->setTable($tableRecord);
-
             $entity = $tableRecord->loadTwigDirsForEntity($entity, $dynamicService);
-
             /**
              * Get all relations for fields with type (select).
              */
             $listableFields = $tableRecord->listableFields;
             $listedFields = $tableRecord->getFields($listableFields, $dynamicService->getFilterService());
-
             /**
              * @T00D00
              *  - find out joins / scopes / with for field type = php and mysql
@@ -245,7 +199,6 @@ class Records extends Controller
              * Allow extensions.
              */
             trigger(get_class($entity) . '.applyOnEntity', [$entity, 'listableFields' => $listedFields, collect()]);
-
             $tabelize = $this->tabelize()
                              ->setTable($tableRecord)
                              ->setTitle($tableRecord->getListTitle())
@@ -265,25 +218,22 @@ class Records extends Controller
                                                'view' => $dynamicService->getView(),
                                            ])
                              ->setTableView($tableView);
-
             $tabelize->getView()->addData([
                                               'dynamic'   => $dynamicService,
                                               'viewType'  => $viewType,
                                               'searchUrl' => router()->getUri(),
                                               'tab'       => $tab,
                                           ]);
-
             $columns = $tableRecord->fields->filter(function(Field $field) {
+
                 return $field->visible;
             })->map(function(Field $field) {
+
                 $f['field'] = $field->field;
                 $f['freeze'] = false;
-
                 return $f;
             })->rekey()->toArray();
-
             $filters = [];
-
             return [
                 'actions'   => [
                     'entity' => $tabelize->getEntityActionsArray(false),
@@ -292,8 +242,8 @@ class Records extends Controller
                 'table'     => $tableRecord,
                 'tabs' => $tableRecord->tabs,
                 'fields'    => $tableRecord->fields->map(function(Field $field){
-                    $data = $field->toArray();
 
+                    $data = $field->toArray();
                     $options = [];
                     if ($field->fieldType->slug === 'picture') {
                         $options = [
@@ -302,7 +252,6 @@ class Records extends Controller
                     }
                     $data['options'] = $options;
                     $data['type'] = $field->fieldType->slug ?? null;
-
                     return $data;
                 }),
                 'relations' => $tableRecord->relations,
@@ -313,12 +262,15 @@ class Records extends Controller
                 'views'     => $tabelize->getSavedViews(),
             ];
         };
-
         $this->response()->sendCacheHeaders(1);
 
-        return cache(Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType .
+        return cache(
+            Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType .
                      ($record ? '.record-' . $record->id : '') . ($relation ? '.relation-' . $relation->id : ''),
-                     $executor, 'app', 1);
+            $executor,
+            'app',
+            1
+        );
     }
 
     public function getAddAction(
@@ -344,23 +296,17 @@ class Records extends Controller
      *
      * @return \Pckg\Framework\Response
      */
-    public function postAddAction(
-        Dynamic $form,
-        Table $table,
-        Record $record = null,
-        Relation $relation = null,
-        Record $foreign = null
-    ) {
+    public function postAddAction(Dynamic $form, Table $table, Record $record = null, Relation $relation = null, Record $foreign = null)
+    {
         (new Tables())->joinPermissionTo('write')
                       ->where('id', $table->id)
                       ->oneOrFail(function(){
+
                           $this->response()->unauthorized();
                       });
-
         $entity = $table->createEntity();
         $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();
         $record->setEntity($entity);
-
         if ($foreign && $relation->on_field_id) {
             $record->{$relation->onField->field} = $foreign->id;
             $form->setForeignFieldId($relation->on_field_id);
@@ -370,7 +316,6 @@ class Records extends Controller
         $form->setTable($table);
         $form->setRecord($record);
         $form->initFields();
-
         if ($entity->isTranslatable()) {
             $form->initLanguageFields();
         }
@@ -380,7 +325,6 @@ class Records extends Controller
         }
 
         $form->populateFromRequest();
-
         /**
          * Populate from session?
          */
@@ -397,9 +341,11 @@ class Records extends Controller
             /**
              * This is usually url or picture field?
              */
-            $field = collect((new Request())->setElement($form)->getElements())->first(function($e) use ($uploadedData) { return $e->getName() === $uploadedData['_field']; });
+            $field = collect((new Request())->setElement($form)->getElements())->first(function ($e) use ($uploadedData) {
+                return $e->getName() === $uploadedData['_field'];
+            });
             if (!$field) {
-                throw new Exception('No field to save');
+                throw new \Exception('No field to save');
             }
             /**
              * Set to validate.
@@ -418,7 +364,6 @@ class Records extends Controller
         
         $form->populateToRecord($record);
         $form->populatePasswords($record);
-
         if ($record->language_id) {
             $lang = (new Lang($record->language_id));
             $entity->setTranslatableLang($lang);
@@ -438,7 +383,6 @@ class Records extends Controller
 
         if (!$newRecord) {
             $record->save($entity);
-
             if ($this->post()->p17n) {
                 $this->saveP17n($record, $entity);
             }
@@ -448,7 +392,6 @@ class Records extends Controller
             'table'  => $table,
             'record' => $newRecord ?? $record,
         ]);
-
         if ($relation && $foreign) {
             $url = url('dynamic.record.edit.foreign', [
                 'table'    => $table,
@@ -468,7 +411,6 @@ class Records extends Controller
     public function postCloneAction(Record $record, Table $table)
     {
         $clones = between(post('clones'), 1, 99);
-
         while ($clones > 0) {
             $clonedRecord = $record->duplicate($table->createEntity());
             $clones--;
@@ -477,7 +419,7 @@ class Records extends Controller
         return $this->response()->respondWithSuccess([
                                                          'clonedUrl' => url('dynamic.record.edit', [
                                                              'table'  => $table,
-                                                             'record' => $clonedRecord,
+                                                             'record' => $clonedRecord ?? null,
                                                          ]),
                                                      ]);
     }
@@ -485,7 +427,6 @@ class Records extends Controller
     public function getViewAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamic)
     {
         $form->setEditable(false);
-
         return $this->getEditAction($form, $record, $table, $dynamic, 'view');
     }
 
@@ -500,15 +441,11 @@ class Records extends Controller
         Twig::addDir($dir);
         Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
         Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
-
         $record = $tableEntity->transformRecordToEntities($record);
-
         $form->setTable($table);
         $form->setRecord($record);
         $form->initFields();
-
         $form->populateFromRecord($record);
-
         if ($tableEntity->isTranslatable()) {
             $form->initLanguageFields();
         }
@@ -519,14 +456,11 @@ class Records extends Controller
 
         $title = ($form->isEditable() ? 'Edit' : 'View') . ' ' .
             ($record->title ?? ($record->slug ?? ($record->email ?? ($record->num ?? $table->title))));
-
         $formalize = $this->formalize($form, $record, $title)->setTable($table);
-
         /**
          * We also have to return related tables.
          */
         $tabs = $table->tabs;
-
         try {
             list($tabelizes, $functionizes) = $this->getTabelizesAndFunctionizes($tabs, $record, $table, $tableEntity);
         } catch (Throwable $e) {
@@ -538,10 +472,8 @@ class Records extends Controller
         }
 
         $actions = $table->getRecordActions();
-
         ksort($tabelizes);
         ksort($functionizes);
-
         $listableFields = $table->listableFields;
         $fieldTransformations = $dynamicService->getFieldsTransformations($tableEntity, $listableFields);
         $tabelize = $this->tabelize()
@@ -588,6 +520,7 @@ class Records extends Controller
                                       ->all();
         $tabelizes = [];
         $relations->each(function(Relation $relation) use ($record, &$tabelizes, $tab) {
+
             $entity = null;
             $tableId = $relation->over_table_id ?? $relation->show_table_id;
             if ($relation->over_table_id) {
@@ -598,28 +531,33 @@ class Records extends Controller
 
             $dynamicService = Reflect::create(DynamicService::class);
             $relation->applyRecordFilterOnEntity($record, $entity);
-            $tabelize = $this->getViewTableAction((new Tables())->where('id', $tableId)->one(), $dynamicService,
-                                                  $entity, 'related', false, $tab, $record, $relation);
-
+            $tabelize = $this->getViewTableAction(
+                (new Tables())->where('id', $tableId)->one(),
+                $dynamicService,
+                $entity,
+                'related',
+                false,
+                $tab,
+                $record,
+                $relation
+            );
             $tabelizes[] = $tabelize;
         });
-
         $functionizes = [];
         $functions = $table->functions(function(HasMany $functions) use ($tab) {
+
             $functions->where('dynamic_table_tab_id', $tab->id);
         });
-
         $pluginService = $this->pluginService;
         $args = [$record];
         if ($table->framework_entity) {
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
-        $functions->each(function(Func $function) use (&$functionizes, $pluginService, $record, $args) {
-            $functionize = $pluginService->make($function->class, $function->method, $args);
+        $functions->each(function (Func $function) use (&$functionizes, $pluginService, $args) {
 
+            $functionize = $pluginService->make($function->class, $function->method, $args);
             $functionizes[] = (string)$functionize;
         });
-
         if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
             return [
                 'functionizes' => $functionizes,
@@ -636,89 +574,70 @@ class Records extends Controller
         ]);
     }
 
-    protected function getTabelizesAndFunctionizes(
-        $tabs,
-        $record,
-        Table $table,
-        Entity $entity
-    ) {
+    protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, Entity $entity)
+    {
         $relations = $table->hasManyRelation(function(HasMany $query) {
+
             $query->where('dynamic_relation_type_id', 2);
             $query->where('dynamic_table_tab_id', null);
         });
-
         $tabelizes = [];
         $recordsController = Reflect::create(Records::class);
         $relations->each(function(Relation $relation) use ($tabs, $record, &$tabelizes, $recordsController) {
+
             $entity = $relation->showTable->createEntity();
             $entity->where($relation->onField->field, $record->id);
-
             $tableResolver = Reflect::create(\Pckg\Dynamic\Resolver\Table::class);
             $table = $tableResolver->resolve($tableResolver->parametrize($relation->showTable));
-
             $dynamicService = Reflect::create(DynamicService::class);
             $tabelize = $recordsController->getViewTableAction($table, $dynamicService, $entity);
-
             if ($tabs->count()) {
                 $tabelizes[$relation->dynamic_table_tab_id ?? 0][] = (string)$tabelize;
             } else {
                 $tabelizes[] = (string)$tabelize;
             }
         });
-
         $functionizes = [];
         $functions = $table->functions;
         $pluginService = $this->pluginService;
-        $functions->each(function(Func $function) use (
-            $tabs,
-            &$functionizes,
-            $pluginService,
-            $record,
-            $table,
-            $entity
-        ) {
-            $functionize = $pluginService->make($function->class, $function->method,
-                                                [$record, $table->fetchFrameworkRecord($record, $entity)]);
+        $functions->each(function (Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
+
+            $functionize = $pluginService->make(
+                $function->class,
+                $function->method,
+                [$record, $table->fetchFrameworkRecord($record, $entity)]
+            );
             if ($tabs->count()) {
                 $functionizes[$function->dynamic_table_tab_id ?? 0][] = (string)$functionize;
             } else {
                 $functionizes[] = (string)$functionize;
             }
         });
-
         return [$tabelizes, $functionizes];
     }
 
-    public function postEditAction(
-        Dynamic $form,
-        Record $record,
-        Table $table,
-        Entity $entity
-    ) {
+    public function postEditAction(Dynamic $form, Record $record, Table $table, Entity $entity)
+    {
         (new TableActions())->joinPermissionTo('execute')
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'edit')
                             ->oneOrFail(function(){
+
                                 $this->response()->unauthorized();
                             });
-
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);
         $record->setEntity($entity);
-
         $form->setTable($table);
-
         // @T00D00 - check if we can uncomment this?
         $form->setRecord($record);
         $form->initFields();
-
         if ($entity->isTranslatable()) {
             $form->initLanguageFields();
         }
 
         $form->populateFromRequest();
-
         if (!$form->isValid($errors, $descriptions)) {
             return response()->code(422)->respond([
                                                                 'error'        => true,
@@ -730,7 +649,6 @@ class Records extends Controller
 
         $form->populateToRecord($record);
         $form->populatePasswords($record);
-
         if ($record->language_id) {
             $lang = (new Lang())->setLangId($record->language_id);
             $entity->setTranslatableLang($lang);
@@ -755,12 +673,9 @@ class Records extends Controller
                                                      ]);
     }
 
-    protected function saveP17n(
-        Record $record,
-        Entity $entity
-    ) {
+    protected function saveP17n(Record $record, Entity $entity)
+    {
         $p17n = $this->post()->p17n;
-
         if (isset($p17n['table'])) {
             $entity = (new Entity($entity->getRepository()))->setTable($entity->getTable() .
                                                                        $entity->getPermissionableTableSuffix());
@@ -780,8 +695,10 @@ class Records extends Controller
 
         if (isset($p17n['action'])) {
             $entity = (new Entity($entity->getRepository()))->setTable('dynamic_table_actions_p17n');
-            $entity->where('id',
-                           new Raw('SELECT id FROM dynamic_table_actions WHERE dynamic_table_id = ?', [$record->id]))
+            $entity->where(
+                'id',
+                new Raw('SELECT id FROM dynamic_table_actions WHERE dynamic_table_id = ?', [$record->id])
+            )
                    ->delete();
             foreach ($p17n['action'] as $userGroupId => $permissions) {
                 foreach ($permissions as $actionId => $one) {
@@ -797,50 +714,37 @@ class Records extends Controller
         }
     }
 
-    public function deleteDeleteAction(
-        Record $record,
-        Table $table
-    ) {
+    public function deleteDeleteAction(Record $record, Table $table)
+    {
         (new TableActions())->joinPermissionTo('execute')
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'delete')
                             ->oneOrFail(function(){
+
                                 $this->response()->unauthorized();
                             });
-
         $entity = $table->createEntity();
         $record->delete($entity);
-
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function deleteDeleteTranslationAction(
-        Record $record,
-        Table $table,
-        Language $language
-    ) {
+    public function deleteDeleteTranslationAction(Record $record, Table $table, Language $language)
+    {
         $entity = $table->createEntity();
         $record->deleteTranslation($language->slug, $entity);
-
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function deleteForceDeleteAction(
-        Record $record
-    ) {
+    public function deleteForceDeleteAction(Record $record)
+    {
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record->forceDelete($entity);
-
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getToggleFieldAction(
-        Table $table,
-        Field $field,
-        Record $record,
-        $state
-    ) {
+    public function getToggleFieldAction(Table $table, Field $field, Record $record, $state)
+    {
         if ($field->fieldType->slug == 'boolean') {
             $record->{$field->field} = $state ? 1 : null;
         } elseif ($field->fieldType->slug == 'datetime') {
@@ -854,20 +758,13 @@ class Records extends Controller
          */
 
         $record->save($table->createEntity());
-
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getOrderFieldAction(
-        Table $table,
-        Field $field,
-        Record $record,
-        $order
-    ) {
+    public function getOrderFieldAction(Table $table, Field $field, Record $record, $order)
+    {
         $record->{$field->field} = $order;
-
         $record->save($table->createEntity());
-
         return $this->response()->respondWithSuccessRedirect();
     }
 
@@ -892,7 +789,6 @@ class Records extends Controller
         $record->setEntity($entity);
         $record->{$field->field} = $filename;
         $record->save($entity);
-
         return [
             'success' => true,
         ];
@@ -913,13 +809,8 @@ class Records extends Controller
         return $this->processUpload($table, null, $field, $relation, $record);
     }
 
-    protected function processUpload(
-        Table $table,
-        Record $record = null,
-        Field $field,
-        Relation $relation = null,
-        Record $foreignRecord = null
-    ) {
+    protected function processUpload(Table $table, Record $record = null, Field $field, Relation $relation = null, Record $foreignRecord = null)
+    {
         $upload = new Upload();
         if (($message = $upload->validateUpload()) !== true) {
             return [
@@ -928,9 +819,10 @@ class Records extends Controller
             ];
         }
 
-        $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'),
-                                      $field->getSetting('pckg.dynamic.field.privateUpload'));
-        
+        $dir = $field->getAbsoluteDir(
+            $field->getSetting('pckg.dynamic.field.dir'),
+            $field->getSetting('pckg.dynamic.field.privateUpload')
+        );
         $infoUpload = new Upload('info');
         $finalDestination = null;
         if ($infoUpload->validateUpload() === true) {
@@ -946,7 +838,6 @@ class Records extends Controller
             ];
         }
         $filename = $upload->getUploadedFilename();
-        
         $entity = $table->createEntity();
         if (!$record) {
             /**
@@ -983,7 +874,6 @@ class Records extends Controller
         $dir = path('app_uploads') . 'editor' . path('ds');
         $upload->save($dir);
         $filename = $upload->getUploadedFilename();
-
         $location = img($filename, null, true, $dir);
         return [
             'success' => true,
@@ -995,16 +885,13 @@ class Records extends Controller
     public function deleteDeleteViewAction(TableView $tableView)
     {
         $tableView->delete();
-
         return $this->response()->respondWithSuccess();
     }
 
     public function getTableActionsAction(Table $table)
     {
         $tabelize = new Tabelize();
-
         $tabelize->setEntityActions($table->getEntityActions(true));
-
         return [
             'template' => view('Pckg/Maestro:_table_actions', [
                 'tabelize' => $tabelize,
@@ -1029,22 +916,20 @@ class Records extends Controller
             'slug'    => 'text',
         ];
         $typeMapper = function(Field $field) use ($vueTypeMap) {
+
             if (array_key_exists($field->fieldType->slug, $vueTypeMap)) {
                 return $vueTypeMap[$field->fieldType->slug];
             }
 
             return $field->fieldType->slug;
         };
-
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
-
         $initialOptions = $formObject->getInitialOptions();
-
         $form = [
             'fields' => $fields->map(function(Field $field) use ($typeMapper, $initialOptions) {
+
                 $options = new \stdClass();
                 $type = $typeMapper($field);
-
                 if ($field->fieldType->slug === 'select') {
                     $options = [
                         'options' => $initialOptions[$field->field] ?? [],
@@ -1062,10 +947,8 @@ class Records extends Controller
                 ];
             })->rekey(),
         ];
-
         return [
             'form' => $form,
         ];
     }
-
 }

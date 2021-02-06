@@ -144,7 +144,7 @@ class Generic
     }
 
     /**
-     * @param Block ...$blocks
+     * @param string ...$blocks
      *
      * @return Block
      */
@@ -249,7 +249,8 @@ class Generic
                 $settings->getMiddleEntity()->withSetting();
             })->withAction();
         })
-            : cache(Generic::class . ':readLayout:' . $layout->id,
+            : cache(
+                Generic::class . ':readLayout:' . $layout->id,
             function() use ($layout) {
                 return $layout->actions(function(MorphedBy $actions) {
                     // $actions->getMiddleEntity()->joinPermissionTo('read');
@@ -261,7 +262,8 @@ class Generic
                 });
             },
                    'app',
-                   1);
+                1
+            );
 
         $layoutActions = $layoutActions->sortBy(function($item) {
             return $item->pivot->order;
@@ -269,7 +271,7 @@ class Generic
             return $action->pivot->parent_id;
         }, function($action) {
             return $action->pivot->id;
-        })->filter(function(ActionRecord $action) use ($resolved, $route) {
+        })->filter(function (ActionRecord $action) use ($route) {
             /**
              * Filter out hidden and shown.
              */
@@ -575,7 +577,7 @@ class Generic
         /**
          * Should we load routes by domain?
          */
-        foreach ($arrRoutes AS $route) {
+        foreach ($arrRoutes as $route) {
             $resolvers = [
                 'route' => RouteResolver::class,
             ];
@@ -637,7 +639,12 @@ class Generic
              * Register all translated routes.
              */
             $route->_translations->each(function($routeTranslation) use (
-                $route, $multilingual, $defaultLanguage, $newRoute, $router, $languages, $onDefaultDomain
+                $route,
+                $multilingual,
+                $defaultLanguage,
+                $newRoute,
+                $router,
+                $languages
             ) {
                 /**
                  * Single-lingual is really simple. :)
@@ -742,5 +749,4 @@ class Generic
 
         return $partial;
     }
-
 }

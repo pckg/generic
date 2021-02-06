@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Table;
@@ -89,5 +91,4 @@ class View extends Controller
             )
         );
     }
-
 }

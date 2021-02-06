@@ -1,4 +1,6 @@
-<?php namespace Pckg\Maestro\Helper;
+<?php
+
+namespace Pckg\Maestro\Helper;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
@@ -32,5 +34,4 @@ trait Maestro
     {
         return (new Formalize($form, $record))->setTitle($title);
     }
-
 }

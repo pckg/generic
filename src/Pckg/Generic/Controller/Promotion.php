@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 class Promotion
 {
@@ -9,5 +11,4 @@ class Promotion
          * Get content, assign it to proper view.
          */
     }
-
 }

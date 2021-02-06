@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Provider;
+<?php
+
+namespace Pckg\Dynamic\Provider;
 
 use Pckg\Framework\Provider;
 
@@ -21,5 +23,4 @@ class HttpQl extends Provider
             ]),
         ];
     }
-
 }

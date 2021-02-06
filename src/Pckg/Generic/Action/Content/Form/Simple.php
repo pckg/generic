@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Action\Content\Form;
+<?php
+
+namespace Pckg\Generic\Action\Content\Form;
 
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Htmlbuilder\Element\Form\ResolvesOnRequest;
@@ -53,5 +55,4 @@ class Simple extends Bootstrap implements ResolvesOnRequest
 
         return $this;
     }
-
 }

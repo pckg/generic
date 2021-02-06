@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Entity;
+<?php
+
+namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Generic\Record\ListItem;
@@ -13,5 +15,4 @@ class ListItems extends Entity
         /*$this->joinTranslation()
              ->addSelect(['value' => 'IFNULL(' . $this->getAlias() . '_i18n.value, ' . $this->getAlias() . '.value)']);*/
     }
-
 }

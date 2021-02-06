@@ -1,8 +1,15 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
 use Pckg\Generic\Entity\ListItems;
 
+/**
+ * Class ListItem
+ * @package Pckg\Generic\Record
+ * @property string $value
+ */
 class ListItem extends Record
 {
 
@@ -12,5 +19,4 @@ class ListItem extends Record
     {
         return $this->value;
     }
-
 }

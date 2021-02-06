@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
@@ -76,8 +78,7 @@ class HttpQl
         Tabelize $tabelize,
         Table $table = null,
         $noLimit = false
-    )
-    {
+    ) {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
@@ -224,11 +225,9 @@ class HttpQl
         $ormFields,
         &$fields,
         &$fieldTransformations
-    )
-    {
+    ) {
         foreach ($ormFields as $field) {
             if (strpos($field, '.') === false) {
-
                 $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);
                 if (!$fieldRecord) {
                     continue;
@@ -287,6 +286,7 @@ class HttpQl
     {
         $split = explode('.', $field);
         $onTable = $table;
+        $showTable = null;
 
         $from = null;
         $groupBy = null;
@@ -383,7 +383,7 @@ class HttpQl
         return [
             'entities' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
                 ->joinPermissionTo('write')
-                ->withFields(function(HasMany $fields){
+                ->withFields(function (HasMany $fields) {
                     $fields->orderBy('order');
                     $fields->withFieldType();
                 })
@@ -405,5 +405,4 @@ class HttpQl
                 })->keyBy('table')->all(),
         ];
     }
-
 }

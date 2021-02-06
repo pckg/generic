@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Record;
+<?php
+
+namespace Pckg\Dynamic\Record;
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
@@ -12,23 +14,29 @@ use Pckg\Dynamic\Service\Filter;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Service\Tabelize;
 
+/**
+ * Class Table
+ * @package Pckg\Dynamic\Record
+ * @property Table $table
+ * @property string $title
+ * @property string $repository
+ * @property string $framework_entity
+ */
 class Table extends Record
 {
 
     protected $entity = Tables::class;
-
     protected $toArray = ['privileges'];
-
     public function getPrivilegesAttribute()
     {
         $tables = (new Tables(null, null, false));
         $tables->usePermissionableTable();
-
         return $tables->where('id', $this->id)
                       ->where('user_group_id', auth()->getGroupId())
                       ->all()
                       ->keyBy('action')
                       ->map(function() {
+
                           return true;
                       })
                       ->all();
@@ -36,24 +44,21 @@ class Table extends Record
 
     public function getEntityActions()
     {
-        return $this->actions(
-            function(HasMany $relation) {
+        return $this->actions(function (HasMany $relation) {
+
                 $relation->where('type', ['entity', 'entity-plugin', 'mixed']);
                 $relation->joinPermission();
-            }
-        );
-
+        });
         return $actions;
     }
 
     public function getRecordActions()
     {
-        return $this->actions(
-            function(HasMany $relation) {
+        return $this->actions(function (HasMany $relation) {
+
                 $relation->where('type', ['record', 'record-plugin', 'mixed']);
                 $relation->joinPermission();
-            }
-        );
+        });
     }
 
     public function getListTitle()
@@ -69,29 +74,21 @@ class Table extends Record
     public function getViewUrl(Record $record = null)
     {
         return $record
-            ? url(
-                'dynamic.record.view',
-                [
+            ? url('dynamic.record.view', [
                     'table' => $this,
                     'record' => $record,
                 ])
-            : url(
-                'dynamic.record.list',
-                [
+            : url('dynamic.record.list', [
                     'table' => $this,
-                ]
-            );
+                ]);
     }
 
     public function getEditUrl(Record $record)
     {
-        return url(
-            'dynamic.record.edit',
-            [
+        return url('dynamic.record.edit', [
                 'table'  => $this,
                 'record' => $record,
-            ]
-        );
+            ]);
     }
 
     public function getListUrl()
@@ -103,22 +100,20 @@ class Table extends Record
     {
         return $this->relationExists('hasManyRelation')
             ? $this->getRelation('hasManyRelation')
-            : $this->hasManyRelation(
-                function(HasMany $relation) {
+            : $this->hasManyRelation(function (HasMany $relation) {
+
                     $relation->where('on_table_id', $this->id);
-                }
-            );
+            });
     }
 
     public function getBelongsToRelation()
     {
         return $this->relationExists('belongsToRelation')
             ? $this->getRelation('belongsToRelation')
-            : $this->belongsToRelation(
-                function(BelongsTo $relation) {
+            : $this->belongsToRelation(function (BelongsTo $relation) {
+
                     $relation->where('on_table_id', $this->id);
-                }
-            );
+            });
     }
 
     /**
@@ -127,7 +122,6 @@ class Table extends Record
     public function getRepository()
     {
         $r = $this->repository;
-
         if (!$r) {
             $r = 'default';
         }
@@ -152,21 +146,16 @@ class Table extends Record
         $entityClass = $this->framework_entity
             ? $this->framework_entity
             : Entity::class;
-        $entity = runInLocale(
-            function() use ($entityClass, $repository, $alias, $extensions) {
+        $entity = runInLocale(function () use ($entityClass, $repository, $alias, $extensions) {
+
                 $entity = new $entityClass($repository, $alias);
-
                 $entity->setTable($this->table);
-
                 if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
                     $entity->joinTranslations();
                 }
 
                 return $entity;
-            },
-            $_SESSION['pckg_dynamic_lang_id']
-        );
-
+        }, $_SESSION['pckg_dynamic_lang_id']);
         return $entity;
     }
 
@@ -186,13 +175,10 @@ class Table extends Record
 
     public function getFields($listableFields, Filter $filterService, $fields = [])
     {
-        $tableRecord = $this;
+        return $listableFields->reduce(function (Field $field) use ($fields) {
 
-        return $listableFields->reduce(
-            function(Field $field) use ($tableRecord, $filterService, $fields) {
                 return in_array($field->field, $fields);
-            }
-        );
+        });
     }
 
     /*public function getStringVues($entity, $dynamicService)
@@ -211,7 +197,6 @@ class Table extends Record
     {
         if (!$entity) {
             $entity = $this->createEntity(null, false);
-
             $partial = implode(path('ds'), array_slice(explode('\\', get_class($entity)), 0, -2)) . path('ds') .
                 'View' . path('ds');
             $dir = path('app_src') . $partial;
@@ -225,12 +210,12 @@ class Table extends Record
              */
             Twig::addDir($dir . 'tabelize' . path('ds') . 'recordActions' . path('ds'));
             Twig::addDir($dir . 'tabelize' . path('ds') . 'entityActions' . path('ds'));
-
             $dynamicService->selectScope($entity);
         }
 
         return $entity;
     }
+<<<<<<< HEAD
 
     public function checkPermissionsFor($action = 'write')
     {
@@ -250,4 +235,6 @@ class Table extends Record
             });
     }
 
+=======
+>>>>>>> master
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use League\Csv\Reader;
 use Pckg\Database\Record;
@@ -21,9 +23,7 @@ class Import extends Controller
      * @var ExportService
      */
     protected $exportService;
-
     protected $dynamic;
-
     public function __construct(ExportService $exportService, Dynamic $dynamic)
     {
         $this->exportService = $exportService;
@@ -32,33 +32,26 @@ class Import extends Controller
 
     public function getImportTableAction(Table $table, Dynamic $dynamicService, ImportForm $importForm)
     {
-        $availableFields = $table->listableFields(
-            function(HasMany $listableFields) {
+        $availableFields = $table->listableFields(function (HasMany $listableFields) {
+
                 $listableFields->realFields();
-            }
-        );
+        });
+        $uniqueFields = $availableFields->filter(function (Field $field) {
 
-        $uniqueFields = $availableFields->filter(
-            function(Field $field) {
-                return in_array($field->dynamic_field_type_id, [1, 6]); // id, slug
-            }
-        );
-
-        return view(
-            'import/index',
-            [
+                return in_array($field->dynamic_field_type_id, [1, 6]);
+        // id, slug
+        });
+        return view('import/index', [
                 'table'        => $table,
                 'fields'       => $availableFields,
                 'uniqueFields' => $uniqueFields,
                 'importForm'   => $importForm,
-            ]
-        );
+            ]);
     }
 
     public function postUploadFileAction(Table $table)
     {
         $upload = new Upload();
-
         if (($message = $upload->validateUpload()) !== true) {
             return [
                 'success' => false,
@@ -81,14 +74,14 @@ class Import extends Controller
             }
         }
 
-        $columns = $table->fields->filter(function(Field $field) use ($headers) {
+        $columns = $table->fields->filter(function (Field $field) use ($headers) {
+
             return in_array($field->field, $headers) && $field->isImportable();
-        })->rekey()->map(function(Field $field) {
+        })->rekey()->map(function (Field $field) {
+
             return $field->field;
         });
-
         $file = $upload->save(path('tmp'));
-
         return [
             'success' => true,
             'meta'    => [
@@ -107,11 +100,10 @@ class Import extends Controller
         $meta = post('meta');
         $file = $meta['file'];
         $delimiter = $meta['delimiter'];
-        // $newline = $meta['newline'];
+// $newline = $meta['newline'];
         $csv = Reader::createFromPath(path('tmp') . $file);
         $csv->setDelimiter($delimiter);
         $import = $this->importContent($table, $csv, post('strategy'));
-
         return [
             'meta'    => post('meta'),
             'success' => true,
@@ -123,29 +115,28 @@ class Import extends Controller
         $data = $csv->getIterator();
         $headers = [];
         $csv->setHeaderOffset(1);
+        $availableFields = $table->listableFields(function (HasMany $fields) {
 
-        $availableFields = $table->listableFields(function(HasMany $fields) {
             $fields->realFields();
         });
         $arrAvailableFields = $availableFields->map('field')->all();
-
         $mapped = [];
-        // id, title, title*en, title*de, description (all), test, *notok
+// id, title, title*en, title*de, description (all), test, *notok
         foreach ($data as $i => $row) {
             if ($i == 0) {
-                $headers = collect($row)->filter(function($field) use ($arrAvailableFields) {
+                $headers = collect($row)->filter(function ($field) use ($arrAvailableFields) {
+
                     if (!trim($field)) {
-                        return false;
+                            return false;
                     }
 
                     $asterisk = strpos($field, '*');
-
                     if ($asterisk === false) {
                         return in_array($field, $arrAvailableFields);
                     }
 
                     if ($asterisk === 0) {
-                        // exported relation
+                // exported relation
                         return false;
                     }
 
@@ -163,12 +154,14 @@ class Import extends Controller
             $mapped[] = $d;
         }
 
-        $uniqueFields = $availableFields->filter(function(Field $field) {
-            return in_array($field->dynamic_field_type_id, [1, 6]); // id, slug
+        $uniqueFields = $availableFields->filter(function (Field $field) {
+
+            return in_array($field->dynamic_field_type_id, [1, 6]);
+// id, slug
         });
         $defaultLocales = $this->localeManager()->getFrontendLanguages()->keyBy('slug')->map('slug')->all();
+        collect($mapped)->each(function ($item) use ($uniqueFields, $availableFields, $table, $defaultLocales, $strategy) {
 
-        collect($mapped)->each(function($item) use ($uniqueFields, $availableFields, $table, $defaultLocales, $strategy) {
             $locales = [];
             foreach ($item as $field => $value) {
                 if ($pos = strpos($field, '*')) {
@@ -184,58 +177,59 @@ class Import extends Controller
             $prevRecord = null;
             foreach ($locales as $locale) {
                 $uniqueValues = [];
-                $uniqueFields->each(function(Field $field) use ($item, &$uniqueValues) {
+                $uniqueFields->each(function (Field $field) use ($item, &$uniqueValues) {
+
                     if (array_key_exists($field->field, $item)) {
                         $uniqueValues[$field->field] = $item[$field->field];
                     }
                 });
-
                 $values = [];
-                $availableFields->each(function(Field $field) use ($item, &$values, $locale) {
+                $availableFields->each(function (Field $field) use ($item, &$values, $locale) {
+
                     if (array_key_exists($field->field . '*' . $locale, $item)) {
                         $values[$field->field] = $item[$field->field . '*' . $locale];
                     } elseif (array_key_exists($field->field, $item)) {
                         $val = $item[$field->field];
                         if ($field->fieldType->slug == 'geo') {
-                            $val = explode(';', $val);
-                            $val = ['x' => $val[0], 'y' => $val[1]];
+                                        $val = explode(';', $val);
+                                        $val = ['x' => $val[0], 'y' => $val[1]];
                         }
                         $values[$field->field] = $val;
                     }
                 });
-
                 if (!$values) {
-                    continue;
+                        continue;
                 }
 
-                runInLocale(function() use ($uniqueFields, $table, $values, $uniqueValues, $locale, &$prevRecord, $strategy) {
+                runInLocale(function () use ($uniqueFields, $table, $values, $uniqueValues, &$prevRecord, $strategy) {
+
                     $entity = $table->createEntity();
                     if (!$prevRecord && $uniqueFields && $uniqueValues) {
-                        /**
-                         * Check for existing records.
-                         */
+                    /**
+                                             * Check for existing records.
+                                             */
                         $record = Record::getOrNew($uniqueValues, $entity);
                         if ($strategy === 'skip' && !$record->isNew()) {
                             return;
                         }
                         $prevRecord = $record;
-                    } elseif (!$prevRecord) { // no unique fields or no unique values, insert
+                    } elseif (!$prevRecord) {
+                    // no unique fields or no unique values, insert
                         /**
                          * Create new record.
                          */
                         $record = $prevRecord = new Record([], $entity);
                     } else {
-                        /**
-                         * Update translation.
-                         */
+                    /**
+                                             * Update translation.
+                                             */
                         $record = $prevRecord;
                     }
 
                     $record->set($values);
-
-                    /**
-                     * Save record.
-                     */
+    /**
+                         * Save record.
+                         */
                     $record->save($entity);
                 }, $locale);
             }
@@ -245,22 +239,15 @@ class Import extends Controller
     public function getExportEmptyImportAction(Table $table, Dynamic $dynamicService)
     {
         $strategy = (new ExportService())->useStrategy('csv');
-
         $dynamicService->setTable($table);
-
         $listedFields = $table->listableFields->filter(function (Field $field) {
+
             return !in_array($field->fieldType->slug, ['mysql', 'php']);
         });
-
         $strategy->setHeaders($listedFields->keyBy('field')->map('title')->all());
-
         $strategy->setFileName($table->table . '-empty');
-
         $strategy->prepare();
-
         $strategy->output();
-
         $this->response()->respond();
     }
-
 }

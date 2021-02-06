@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Exception;
 use Pckg\Dynamic\Service\Export\Strategy;
@@ -11,7 +13,6 @@ class Export
 {
 
     protected $strategy;
-
     protected $strategies = [
         'txt'  => Strategy\Txt::class,
         'csv'  => Csv::class,
@@ -20,8 +21,7 @@ class Export
         'docx' => Docx::class,
         'pdf'  => Strategy\Pdf::class,
     ];
-
-    /**
+/**
      * @param $strategy
      *
      * @return Strategy
@@ -34,9 +34,7 @@ class Export
         }
 
         $strategy = $this->strategies[$strategy];
-        $this->strategy = new $strategy;
-
+        $this->strategy = new $strategy();
         return $this->strategy;
     }
-
 }

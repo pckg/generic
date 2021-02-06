@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Provider;
+<?php
+
+namespace Pckg\Generic\Provider;
 
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
@@ -40,10 +42,9 @@ class Generic extends Provider
     public function services()
     {
         return [
-            \Pckg\Generic\Service\Generic::class => function() {
+            \Pckg\Generic\Service\Generic::class => function () {
                 return new \Pckg\Generic\Service\Generic();
             },
         ];
     }
-
 }

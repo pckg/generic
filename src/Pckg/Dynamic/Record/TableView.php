@@ -1,9 +1,18 @@
-<?php namespace Pckg\Dynamic\Record;
+<?php
+
+namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Entity\TableViews;
 
+/**
+ * Class TableView
+ * @package Pckg\Dynamic\Record
+ * @property Table $table
+ * @property int $dynamic_table_id
+ * @property string $settings
+ */
 class TableView extends DatabaseRecord
 {
 
@@ -51,14 +60,15 @@ class TableView extends DatabaseRecord
     {
         $_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
                                              $this->id]['view'] = json_decode(
-            $this->settings,
-            true
-        );
+                                                 $this->settings,
+                                                 true
+                                             );
     }
 
     public function loadToSessionIfNotLoaded()
     {
-        if (!isset($_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
+        if (
+            !isset($_SESSION['pckg']['dynamic']['view']['table_' . $this->dynamic_table_id . '_' .
                                                         $this->id]['view'])
         ) {
             $this->loadToSession();
@@ -79,5 +89,4 @@ class TableView extends DatabaseRecord
 
         $this->save();
     }
-
 }

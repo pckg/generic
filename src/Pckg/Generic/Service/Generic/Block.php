@@ -71,5 +71,4 @@ class Block
 
         return $html;
     }
-
 }

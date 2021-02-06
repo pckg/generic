@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Comms\Hub\Api;
 use Complex\Exception;
@@ -7,6 +9,7 @@ use Derive\Newsletter\Controller\Newsletter;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
+use Pckg\Framework\View\Twig;
 use Pckg\Generic\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Layouts;
 use Pckg\Generic\Entity\Routes;
@@ -14,9 +17,26 @@ use Pckg\Generic\Service\Generic;
 use Pckg\Generic\Service\Partial\AbstractPartial;
 use Pckg\Stringify;
 
+/**
+ * Class ActionsMorph
+ * @package Pckg\Generic\Record
+ * @property Collection $subActions
+ * @property ActionsMorph|null $parent
+ * @property ActionsMorph|null $parentAction // duplicate?
+ * @property int|null $parent_id
+ * @property int $content_id
+ * @property Action $action
+ * @property Content $content
+ * @property string $type
+ * @property string $template
+ * @property Record $morph
+ * @property string $morph_id
+ * @property array $settingsArray
+ * @property string $variable
+ * @property int $order
+ */
 class ActionsMorph extends Record
 {
-
     use SettingsHelper;
 
     protected $entity = ActionsMorphs::class;
@@ -87,7 +107,7 @@ class ActionsMorph extends Record
          */
         $data = $this->data();
         $data['action_slug'] = $this->action->slug;
-        $settings = $this->settings->map(function(Setting $setting) {
+        $settings = $this->settings->map(function (Setting $setting) {
             $data = $setting->pivot->data();
             $data['slug'] = $setting->slug;
 
@@ -236,7 +256,6 @@ class ActionsMorph extends Record
             ];
         } elseif (is_string($template)) {
             if (substr($template, 0, 1) === '{') {
-
             } else {
                 $template = [
                     'template' => $template,
@@ -356,7 +375,7 @@ class ActionsMorph extends Record
         /**
          * Map settings by clean slug and value.
          */
-        $settings = $this->settings->map(function(
+        $settings = $this->settings->map(function (
             Setting $setting
         ) {
             return [
@@ -397,7 +416,7 @@ class ActionsMorph extends Record
         /**
          * Get all custom classes.
          */
-        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function(
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function (
             $class
         ) {
             return substr(strrev($class), 0, 1) !== '-';
@@ -426,9 +445,14 @@ class ActionsMorph extends Record
             }
         }*/
 
+        /**
+         * @T00D00 - move this somewhere else
+         */
         if ($this->action->slug == 'pckg-mail-mailchimp-enews') {
-            $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'],
-                            'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
+            $settings->push(
+                (new Newsletter())->getActionConsentsAction($this)['consents'],
+                'pckg.generic.actions.pckg-mail-mailchimp-enews.consents'
+            );
         }
 
         /**
@@ -457,6 +481,7 @@ class ActionsMorph extends Record
 
         /**
          * We want to get rid of scope classes and add attributes to css selector.
+         * @T00D00 - move this somewhere else
          */
         $classes = (new GetLessVariables())->parseAttributes($classes, $attributes);
 
@@ -581,7 +606,7 @@ class ActionsMorph extends Record
 
     public function overloadViewTemplate($result)
     {
-        if (!($result instanceof View\Twig)) {
+        if (!($result instanceof Twig)) {
             return;
         }
 
@@ -595,16 +620,15 @@ class ActionsMorph extends Record
         /**
          * In template we store template, list template and item template designs.
          */
-        message('Using action template ' . $newFile . ' ' . $this->action->slug);
         $newFile = str_replace(':', '/View/', $this->template['template']);
         $result->setFile($newFile);
     }
 
     public function resolveSettings(&$args = [])
     {
-        measure('Resolving #' . $this->id, function() use (&$args) {
+        measure('Resolving #' . $this->id, function () use (&$args) {
             if (isset($args['settings'])) {
-                $args['settings']->each(function(Setting $setting) use (&$args) {
+                $args['settings']->each(function (Setting $setting) use (&$args) {
                     $setting->pivot->resolve($args);
                 });
             }
@@ -649,7 +673,7 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-        return measure('Serializing action #' . $this->id, function() {
+        return measure('Serializing action #' . $this->id, function () {
             $config = config('pckg.generic.actions.' . $this->action->slug, []);
             $slots = $config['slots'] ?? [];
             $content = $this->content ? $this->content->jsonSerialize() : null;
@@ -722,17 +746,16 @@ class ActionsMorph extends Record
         /**
          * Clone settings.
          */
-        $this->settings->each(function(Setting $setting) use ($newActionsMorph) {
+        $this->settings->each(function (Setting $setting) use ($newActionsMorph) {
             $setting->pivot->saveAs(['poly_id' => $newActionsMorph->id]);
         });
         /**
          * Clone subactions.
          */
-        $this->subActions->each(function(ActionsMorph $subaction) use ($newActionsMorph) {
+        $this->subActions->each(function (ActionsMorph $subaction) use ($newActionsMorph) {
             $subaction->cloneRecursively(['parent_id' => $newActionsMorph->id]);
         });
 
         return $newActionsMorph;
     }
-
 }

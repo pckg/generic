@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Resolver;
+<?php
+
+namespace Pckg\Dynamic\Resolver;
 
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Database\Record;
@@ -12,10 +14,8 @@ class ForeignRecord implements RouteResolver
      * @var Dynamic
      */
     protected $dynamic;
-
-    public function __construct(
-        Dynamic $dynamic
-    ) {
+    public function __construct(Dynamic $dynamic)
+    {
         $this->dynamic = $dynamic;
     }
 
@@ -25,29 +25,24 @@ class ForeignRecord implements RouteResolver
         $resolvedRelation = router()->resolved('relation');
         $showTable = $resolvedRelation->showTable;
         $onTable = $resolvedRelation->onTable;
-
         $tablesEntity = new Tables();
         $tablesEntity->setTable($onTable->table);
         $tablesEntity->setRecordClass(Record::class);
-
         if ($onTable->repository) {
             $tablesEntity->setRepository($onTable->getRepository());
         }
 
         $this->dynamic->joinTranslationsIfTranslatable($tablesEntity);
         $this->dynamic->joinPermissionsIfPermissionable($tablesEntity);
-
         return $tablesEntity->where('id', $value)
-                            ->oneOrFail(
-                                function() {
+                            ->oneOrFail(function () {
+
                                     response()->unauthorized('Record not found');
-                                }
-                            );
+                            });
     }
 
     public function parametrize($record)
     {
         return $record->id;
     }
-
 }

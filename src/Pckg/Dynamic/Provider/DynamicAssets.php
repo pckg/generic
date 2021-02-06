@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Provider;
+<?php
+
+namespace Pckg\Dynamic\Provider;
 
 use Pckg\Charts\Provider\Charts;
 use Pckg\Framework\Provider;
@@ -31,5 +33,4 @@ class DynamicAssets extends Provider
             //Charts::class,
         ];
     }
-
 }

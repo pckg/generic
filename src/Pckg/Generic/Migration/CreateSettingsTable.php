@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Migration;
+<?php
+
+namespace Pckg\Generic\Migration;
 
 use Pckg\Migration\Migration;
 
@@ -25,5 +27,4 @@ class CreateSettingsTable extends Migration
 
         $this->save();
     }
-
 }
