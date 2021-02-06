@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Relation;
@@ -26,5 +28,4 @@ class Relations
             'relation' => $data,
         ];
     }
-
 }

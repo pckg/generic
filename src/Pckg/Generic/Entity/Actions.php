@@ -39,7 +39,4 @@ class Actions extends Entity
                     ->over(ActionsMorphs::class)
                     ->leftForeignKey('content_id');
     }
-
 }
-
-

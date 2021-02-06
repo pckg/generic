@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Repository;
@@ -54,5 +56,4 @@ class Relations extends DatabaseEntity
         return $this->belongsTo(Fields::class)
                     ->foreignKey('left_foreign_key_id');
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Pckg\Database\Record;
 use Pckg\Framework\Request;
@@ -24,11 +26,10 @@ class Action extends Record
 
     public function build($args = [])
     {
-        return measure('Making plugin ' . $this->class . ' @ ' . $this->method, function() use ($args) {
+        return measure('Making plugin ' . $this->class . ' @ ' . $this->method, function () use ($args) {
             $pluginService = new Plugin();
 
             return $pluginService->make($this->class, $this->method, $args, Request::GET, false);
         });
     }
-
 }

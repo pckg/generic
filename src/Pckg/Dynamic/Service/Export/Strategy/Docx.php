@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service\Export\Strategy;
+<?php
+
+namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
 use PhpOffice\PhpWord\IOFactory;
@@ -8,21 +10,18 @@ class Docx extends AbstractStrategy
 {
 
     protected $responseType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
     protected $extension = 'docx';
-
     public function save()
     {
         $file = path('tmp') . $this->getFilename();
         $lines = $this->getData();
-
         $phpWord = new PhpWord();
         $section = $phpWord->addSection(['orientation' => 'landscape']);
-
-        /**
-         * Make header
-         */
-        $table = $section->addTable(['width' => 100 * 50]); // width in 1/50 of percent
+    /**
+             * Make header
+             */
+        $table = $section->addTable(['width' => 100 * 50]);
+    // width in 1/50 of percent
         $i = 0;
         $j = 0;
         $table->addRow();
@@ -50,19 +49,16 @@ class Docx extends AbstractStrategy
          */
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($file);
-
         return $file;
     }
 
     public function prepare()
     {
         $file = $this->save();
-
-        /**
+/**
          * Implement strategy.
          */
         $this->setFileContent(file_get_contents($file));
         unlink($file);
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Middleware;
+<?php
+
+namespace Pckg\Dynamic\Middleware;
 
 use Pckg\Dynamic\Provider\DynamicAssets;
 use Pckg\Manager\Asset;
@@ -21,5 +23,4 @@ class RegisterDynamicAssets
 
         return $this;
     }
-
 }

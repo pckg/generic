@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Pckg\Generic\Record\Content as ContentRecord;
 use Pckg\Generic\Record\Setting;
@@ -29,7 +31,7 @@ class Content
     {
         return view(
             $action->getAction()->settings ? $action->getAction()->settings->first(
-                function(Setting $item) {
+                function (Setting $item) {
                     return $item->slug == 'pckg-generic-content-template';
                 }
             )->pivot->value : 'Pckg/Generic:content/simple',
@@ -38,5 +40,4 @@ class Content
             ]
         );
     }
-
 }

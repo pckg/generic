@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\Database\Entity;
 use Pckg\Dynamic\Record\Table;
@@ -35,5 +37,4 @@ class Paginate
 
         return $this;
     }
-
 }

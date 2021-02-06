@@ -34,7 +34,7 @@ class Route extends Record
         /**
          * Delete actions morphs.
          */
-        $this->actionsMorphs->each(function(ActionsMorph $actionsMorph) {
+        $this->actionsMorphs->each(function (ActionsMorph $actionsMorph) {
             $actionsMorph->deleteWidely();
         });
 
@@ -64,7 +64,7 @@ class Route extends Record
     public function export()
     {
         $route = $this->data();
-        $route['settings'] = $this->settings->map(function(Setting $setting) {
+        $route['settings'] = $this->settings->map(function (Setting $setting) {
             $data = $setting->pivot->data();
             $data['slug'] = $setting->slug;
 
@@ -74,7 +74,7 @@ class Route extends Record
         return [
             'route'   => $route,
             'actions' => $this->actions
-                ->map(function(Action $action) {
+                ->map(function (Action $action) {
                     return $action->pivot->export();
                 })
                 ->tree('parent_id', 'id', 'actions')
@@ -128,9 +128,9 @@ class Route extends Record
     {
         $data = $this->toArray();
 
-        $data['settings'] = $this->settings->keyBy('slug')->map(function(Setting $setting) {
+        $data['settings'] = $this->settings->keyBy('slug')->map(function (Setting $setting) {
                 return $setting->pivot->value;
-            });
+        });
         $data['resolvers'] = json_decode($data['resolvers'], true);
 
         if ($resolved) {
@@ -187,7 +187,7 @@ class Route extends Record
             return false;
         }
 
-        return (new Routes())->transaction(function() use ($newDetails) {
+        return (new Routes())->transaction(function () use ($newDetails) {
             $route = $this->saveAs($newDetails);
 
             /**
@@ -198,5 +198,4 @@ class Route extends Record
             return $route;
         });
     }
-
 }

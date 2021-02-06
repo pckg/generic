@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Resolver;
+<?php
+
+namespace Pckg\Dynamic\Resolver;
 
 use Pckg\Dynamic\Service\Export;
 use Pckg\Framework\Provider\RouteResolver;
@@ -22,5 +24,4 @@ class ExportStrategy implements RouteResolver
     {
         return $record;
     }
-
 }

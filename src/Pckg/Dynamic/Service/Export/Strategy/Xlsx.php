@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service\Export\Strategy;
+<?php
+
+namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -8,14 +10,11 @@ class Xlsx extends AbstractStrategy
 {
 
     protected $responseType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
     protected $extension = 'xlsx';
-
     public function save()
     {
         $file = path('tmp') . $this->getFilename();
         $spreadsheet = new Spreadsheet();
-
         $spreadsheet->getProperties()->setCreator('Comms')
                     ->setLastModifiedBy('Comms System')
                     ->setTitle('Comms Export')
@@ -23,15 +22,12 @@ class Xlsx extends AbstractStrategy
                     ->setDescription('Comms Export')
                     ->setKeywords('comms export')
                     ->setCategory('Comms Export');
-
         $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
         $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
-
         $lines = $this->getData();
-
-        /**
-         * Make header
-         */
+    /**
+             * Make header
+             */
         $i = 1;
         $j = 1;
         foreach ($lines[0] ?? [] as $key => $val) {
@@ -60,7 +56,6 @@ class Xlsx extends AbstractStrategy
          */
         $sheet = $spreadsheet->getActiveSheet();
         $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
-
         if ($lines) {
             $cellIterator->setIterateOnlyExistingCells(true);
         }
@@ -74,19 +69,16 @@ class Xlsx extends AbstractStrategy
          */
         $writer = new XlsxWriter($spreadsheet);
         $writer->save($file);
-
         return $file;
     }
 
     public function prepare()
     {
         $file = $this->save();
-
-        /**
+/**
          * Implement strategy.
          */
         $this->setFileContent(file_get_contents($file));
         unlink($file);
     }
-
 }

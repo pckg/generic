@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\Collection;
 use Pckg\CollectionInterface;
@@ -52,7 +54,7 @@ class Fields extends AbstractService
 
         //return cache('availableRelations', function() use ($sessionRelations) {
         return $this->table->relations->map(
-            function(Relation $relation) use ($sessionRelations) {
+            function (Relation $relation) use ($sessionRelations) {
                 $options = $relation->getOptions();
 
                 $filtered = (new Collection($sessionRelations['filters'] ?? []))->filter('relation', $relation->id)
@@ -92,7 +94,7 @@ class Fields extends AbstractService
                                       ->where('on_table_id', $tableId)
                                       ->withOnField()
                                       ->withForeignField()
-                                      ->withShowTable(function(BelongsTo $showTable) {
+                                      ->withShowTable(function (BelongsTo $showTable) {
                                           $showTable->joinTranslations();
                                           $showTable->withFields();
                                       })
@@ -100,7 +102,7 @@ class Fields extends AbstractService
                                       ->keyBy('on_field_id');
 
         return $fields->map(
-            function(Field $field) use ($sessionFields, $deep, $relations, $tableId) {
+            function (Field $field) use ($sessionFields, $deep, $relations, $tableId) {
                 $filtered = (new Collection($sessionFields['filters'] ?? []))->filter('field', $field->id)->first();
                 $sorted = (new Collection($sessionFields['sorts'] ?? []))->filter('field', $field->id)->first();
                 $grouped = (new Collection($sessionFields['groups'] ?? []))->filter('field', $field->id)->first();
@@ -144,5 +146,4 @@ class Fields extends AbstractService
     {
         return $this;
     }
-
 }

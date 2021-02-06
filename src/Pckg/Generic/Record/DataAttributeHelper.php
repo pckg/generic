@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 trait DataAttributeHelper
 {
@@ -15,5 +17,4 @@ trait DataAttributeHelper
 
         return $dataAttribute->value;
     }
-
 }

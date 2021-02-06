@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Record;
+<?php
+
+namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Record as DatabaseRecord;
@@ -18,7 +20,6 @@ class Field extends DatabaseRecord
 {
 
     protected $entity = Fields::class;
-
     protected $toArray = [
         'fieldType',
         'isTogglable',
@@ -27,8 +28,7 @@ class Field extends DatabaseRecord
         'isRaw',
         'title', // @T00D00 - this should be added to extension
     ];
-
-    /**
+/**
      * @param Table $onTable
      *
      * @return Relation
@@ -56,7 +56,6 @@ class Field extends DatabaseRecord
          * and select all records.
          */
         $relation = $this->hasOneSelectRelation;
-
         if (!$relation) {
             return $relation;
         }
@@ -64,15 +63,13 @@ class Field extends DatabaseRecord
         $showTable = $relation->showTable;
         $entity = $showTable->createEntity();
         $this->automaticallyApplyRelation($entity, $relation->value);
-
-        /**
+/**
          * Now, we have $record->addition->title, editing related orders_users_additions on orders_users.
          * We have to select additions that are added to packets_additions for orders_user.packet_id
          *
          * @T00D00
          */
         $relation->applyFilterOnEntity($entity, $foreignRecord, $record);
-
         return $entity;
     }
 
@@ -89,18 +86,17 @@ class Field extends DatabaseRecord
         foreach ($explodedEvals as $partialToExplode) {
             $explodedEval = explode('->', $partialToExplode);
             if (count($explodedEval) == 3) {
-                /**
-                 * We're calling something like $record->user->email
-                 */
-                $entity->{'with' . ucfirst($explodedEval[1])}(
-                    function($relation) {
-                        if ($relation->getRightEntity()->isTranslatable()) {
-                            if (!$relation->getRightEntity()->isTranslated()) {
-                                $relation->getRightEntity()->joinTranslations();
-                            }
+        /**
+                         * We're calling something like $record->user->email
+                         */
+                $entity->{'with' . ucfirst($explodedEval[1])}(function ($relation) {
+
+                    if ($relation->getRightEntity()->isTranslatable()) {
+                        if (!$relation->getRightEntity()->isTranslated()) {
+                            $relation->getRightEntity()->joinTranslations();
                         }
                     }
-                );
+                });
             }
         }
     }
@@ -108,22 +104,23 @@ class Field extends DatabaseRecord
     public function getItemForSelect($record, $foreignRecord, $value)
     {
         $relation = $this->hasOneSelectRelation;
-        $relatedRecord = $this->getRecordForSelect($record, $foreignRecord, $value,
-                                                   $relation->foreign_field_id ? $relation->foreignField->field : 'id');
-
+        $relatedRecord = $this->getRecordForSelect(
+            $record,
+            $foreignRecord,
+            $value,
+            $relation->foreign_field_id ? $relation->foreignField->field : 'id'
+        );
         if (!$relatedRecord) {
             return null;
         }
 
         $value = $this->eval($relation->value, $relatedRecord, $relation);
-
         return $value;
     }
 
     public function getRecordForSelect($record, $foreignRecord, $value, $by = 'id')
     {
         $entity = $this->getEntityForSelect($record, $foreignRecord);
-
         if (!$entity) {
             return null;
         }
@@ -132,7 +129,6 @@ class Field extends DatabaseRecord
          * We need to replace id with real relation slug.
          */
         $entity->where($by, $value);
-
         return $entity->one();
     }
 
@@ -147,7 +143,6 @@ class Field extends DatabaseRecord
         }
 
         $entity->limit(250);
-
         if ($entity->isDeletable()) {
             $entity->nonDeleted();
         }
@@ -161,19 +156,16 @@ class Field extends DatabaseRecord
         $foreignField = $relation->foreign_field_id
             ? $relation->foreignField->field
             : 'id';
-
         $values = [];
         $records = $entity->all();
-        $records->each(
-            function($record) use ($relation, &$values, $foreignField) {
+        $records->each(function ($record) use ($relation, &$values, $foreignField) {
+
                 $value = $this->eval($relation->value, $record, $relation);
-                $groupValue = $relation->group_value
+            $groupValue = $relation->group_value
                     ? $this->eval($relation->group_value, $record, $relation)
                     : null;
-                $values[$groupValue][$record->{$foreignField}] = $value;
-            }
-        );
-
+            $values[$groupValue][$record->{$foreignField}] = $value;
+        });
         if (count($values) == 1) {
             $values = end($values);
         }
@@ -219,12 +211,10 @@ class Field extends DatabaseRecord
 
     public function getSetting($key, $default = null)
     {
-        $setting = $this->settings->first(
-            function($item) use ($key) {
-                return $item->slug == $key;
-            }
-        );
+        $setting = $this->settings->first(function ($item) use ($key) {
 
+                return $item->slug == $key;
+        });
         if (!$setting) {
             return $default;
         }
@@ -235,7 +225,6 @@ class Field extends DatabaseRecord
     public function getJsonSetting($key, $default = null)
     {
         $setting = $this->getSetting($key, $default);
-
         if (!$setting) {
             return $default;
         }
@@ -246,7 +235,6 @@ class Field extends DatabaseRecord
     public function getMinTogglableAttribute()
     {
         $setting = $this->getJsonSetting('pckg-generic-field-toggle');
-
         if (!$setting) {
             return null;
         }
@@ -257,7 +245,6 @@ class Field extends DatabaseRecord
     public function getMaxTogglableAttribute()
     {
         $setting = $this->getJsonSetting('pckg-generic-field-toggle');
-
         if (!$setting) {
             return null;
         }
@@ -273,7 +260,6 @@ class Field extends DatabaseRecord
     public function getPreviewFileUrlAttribute($record = null)
     {
         $setting = $this->getSetting('pckg.dynamic.field.previewFileUrl');
-
         if (!$setting) {
             return null;
         }
@@ -284,7 +270,6 @@ class Field extends DatabaseRecord
     public function getGenerateFileUrlAttribute($record = null)
     {
         $setting = $this->getSetting('pckg.dynamic.field.generateFileUrl');
-
         if (!$setting) {
             return null;
         }
@@ -314,23 +299,20 @@ class Field extends DatabaseRecord
     public function getTransformedValue($entity)
     {
         $field = $this;
-
         if ($this->fieldType->slug == 'php') {
-            return function($record) use ($field) {
+            return function ($record) use ($field) {
+
                 return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
             };
         } elseif ($this->fieldType->slug == 'geo') {
-            $entity->addSelect(
-                [
+            $entity->addSelect([
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',
                     $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
-                ]
-            );
+                ]);
+            return function ($record) use ($field) {
 
-            return function($record) use ($field) {
                 $value = $record->{$field->field};
-
                 return $value
                     ? $record->{$field->field . '_x'} . ';' . $record->{$field->field . '_y'}
                     : null;
@@ -341,13 +323,11 @@ class Field extends DatabaseRecord
     public function selectMultiField(Entity $tablesEntity)
     {
         if ($this->fieldType->slug == 'geo') {
-            $tablesEntity->addSelect(
-                [
+            $tablesEntity->addSelect([
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',
                     $this->field        => 'CONCAT(X(' . $this->field . '), \';\', Y(' . $this->field . '))',
-                ]
-            );
+                ]);
         } else if ($this->fieldType->slug == 'mysql' && method_exists($tablesEntity, 'select' . ucfirst($this->field) . 'Field')) {
             $tablesEntity->{'select' . ucfirst($this->field) . 'Field'}();
         }
@@ -357,5 +337,4 @@ class Field extends DatabaseRecord
     {
         return !in_array($this->fieldType->slug, ['mysql', 'php']);
     }
-
 }

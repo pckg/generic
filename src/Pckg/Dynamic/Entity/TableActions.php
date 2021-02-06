@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Orderable;
@@ -7,7 +9,6 @@ use Pckg\Dynamic\Record\TableAction;
 
 class TableActions extends DatabaseEntity
 {
-
     use Orderable;
 
     protected $table = 'dynamic_table_actions';
@@ -15,5 +16,4 @@ class TableActions extends DatabaseEntity
     protected $record = TableAction::class;
 
     protected $repositoryName = Repository::class . '.dynamic';
-
 }

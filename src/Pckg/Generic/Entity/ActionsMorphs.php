@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Entity;
+<?php
+
+namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Relation\BelongsTo;
@@ -44,11 +46,10 @@ class ActionsMorphs extends Entity
 
     public function route()
     {
-        return $this->belongsTo(Routes::class, function(BelongsTo $routes) {
+        return $this->belongsTo(Routes::class, function (BelongsTo $routes) {
             $routes->getLeftEntity()
                    ->where('morph_id', Routes::class);
         })
                     ->foreignKey('poly_id');
     }
-
 }

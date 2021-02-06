@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Dataset;
+<?php
+
+namespace Pckg\Dynamic\Dataset;
 
 use Pckg\Dynamic\Entity\Relations as RelationsEntity;
 use Pckg\Dynamic\Entity\RelationTypes;
@@ -21,7 +23,7 @@ class Relations
         $distinctRelations = array_unique($distinctRelations + $relations->map('id')->all());
 
         $relations->each(
-            function(Relation $relation) use (&$distinctRelations) {
+            function (Relation $relation) use (&$distinctRelations) {
                 $relation->hasManyRelations = $this->getHasManyRelationsTreeForTable(
                     $relation->showTable,
                     $distinctRelations
@@ -31,5 +33,4 @@ class Relations
 
         return $relations;
     }
-
 }

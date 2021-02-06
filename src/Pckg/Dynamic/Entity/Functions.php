@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Repository;
@@ -12,5 +14,4 @@ class Functions extends DatabaseEntity
     protected $record = Func::class;
 
     protected $repositoryName = Repository::class . '.dynamic';
-
 }

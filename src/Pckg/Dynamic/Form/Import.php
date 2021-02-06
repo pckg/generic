@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Form;
+<?php
+
+namespace Pckg\Dynamic\Form;
 
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Htmlbuilder\Element\Form\ResolvesOnRequest;
@@ -14,5 +16,4 @@ class Import extends Bootstrap implements ResolvesOnRequest
 
         return $this;
     }
-
 }

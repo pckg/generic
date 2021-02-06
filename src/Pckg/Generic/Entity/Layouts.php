@@ -36,5 +36,4 @@ class Layouts extends Entity
                     ->over(SettingsMorphs::class)
                     ->rightForeignKey('setting_id');
     }
-
 }

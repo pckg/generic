@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Migration;
+<?php
+
+namespace Pckg\Generic\Migration;
 
 use Pckg\Migration\Migration;
 
@@ -16,5 +18,4 @@ class CreateTranslationsTable extends Migration
 
         $this->save();
     }
-
 }

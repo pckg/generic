@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Migration;
+<?php
+
+namespace Pckg\Generic\Migration;
 
 use Pckg\Migration\Migration;
 
@@ -33,5 +35,4 @@ class CreateCollectionsTable extends Migration
         $collectionItemsI18n->text('short_content');
         $collectionItemsI18n->text('content');
     }
-
 }

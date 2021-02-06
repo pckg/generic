@@ -1,10 +1,11 @@
-<?php namespace Pckg\Generic\Service\Generic;
+<?php
+
+namespace Pckg\Generic\Service\Generic;
 
 class CustomAction extends Action
 {
 
     protected $view;
-
     public function __construct($view)
     {
         $this->view = $view;
@@ -29,5 +30,4 @@ class CustomAction extends Action
     {
         return null;
     }
-
 }

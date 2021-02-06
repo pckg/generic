@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Repository;
@@ -22,5 +24,4 @@ class TableViews extends DatabaseEntity
                     ->foreignKey('dynamic_table_id')
                     ->fill('table');
     }
-
 }

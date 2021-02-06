@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
@@ -91,7 +93,7 @@ class Dynamic
         if (!$entity->isPermissionable()) {
             return;
         }
-        
+
         $entity->joinPermissionTo($action);
     }
 
@@ -149,7 +151,7 @@ class Dynamic
 
     public function optimizeSelectedFields(Entity $entity, Collection $listedFields)
     {
-        $listedFields->each(function(Field $field) use ($entity) {
+        $listedFields->each(function (Field $field) use ($entity) {
             $slug = $field->fieldType->slug;
             if (in_array($slug, ['php', 'mysql'])) {
                 if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
@@ -166,7 +168,7 @@ class Dynamic
         $fieldTransformations = [];
 
         $fields->each(
-            function(Field $field) use (&$fieldTransformations, $entity) {
+            function (Field $field) use (&$fieldTransformations, $entity) {
                 $transformation = $field->getTransformedValue($entity);
 
                 if ($transformation) {
@@ -177,5 +179,4 @@ class Dynamic
 
         return $fieldTransformations;
     }
-
 }

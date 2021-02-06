@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Migration;
+<?php
+
+namespace Pckg\Dynamic\Migration;
 
 use Pckg\Auth\Migration\CreateAuthTables;
 use Pckg\Database\Repository;
@@ -9,7 +11,6 @@ class CreateDynamicTables extends Migration
 {
 
     protected $repository = Repository::class . '.dynamic';
-
     public function dependencies()
     {
         return [
@@ -35,7 +36,6 @@ class CreateDynamicTables extends Migration
         $this->dynamicTableTabsUp();
         $this->dynamicFunctionsUp();
         $this->dynamicTableActionsUp();
-
         $this->save();
     }
 
@@ -46,10 +46,8 @@ class CreateDynamicTables extends Migration
         $dynamicTables->varchar('framework_entity');
         $dynamicTables->varchar('repository');
         $dynamicTables->varchar('order');
-
         $dynamicTablesI18n = $this->translatable('dynamic_tables');
         $dynamicTablesI18n->title();
-
         $dynamicTablesP17n = $this->permissiontable('dynamic_tables');
     }
 
@@ -57,7 +55,6 @@ class CreateDynamicTables extends Migration
     {
         $dynamicFieldTypes = $this->table('dynamic_field_types');
         $dynamicFieldTypes->slug();
-
         $dynamicFieldTypesI18n = $this->translatable('dynamic_field_types');
         $dynamicFieldTypesI18n->title();
     }
@@ -66,7 +63,6 @@ class CreateDynamicTables extends Migration
     {
         $dynamicFieldGroups = $this->table('dynamic_field_groups');
         $dynamicFieldGroups->boolean('opened');
-
         $dynamicFieldGroupsI18n = $this->translatable('dynamic_field_groups');
         $dynamicFieldGroupsI18n->title();
     }
@@ -79,16 +75,17 @@ class CreateDynamicTables extends Migration
         $dynamicFields->integer('dynamic_table_id')->references('dynamic_tables');
         $dynamicFields->integer('dynamic_field_group_id')->references('dynamic_field_groups');
         $dynamicFields->boolean('required');
-        $dynamicFields->boolean('visible'); // visible by default on listings
-        $dynamicFields->boolean('searchable'); // searchable in quick search
-        $dynamicFields->boolean('customizable'); // group by, order by, filter by, ...?
+        $dynamicFields->boolean('visible');
+// visible by default on listings
+        $dynamicFields->boolean('searchable');
+// searchable in quick search
+        $dynamicFields->boolean('customizable');
+// group by, order by, filter by, ...?
         $dynamicFields->orderable();
         $dynamicFields->boolean('preload');
-
         $dynamicFieldsI18n = $this->translatable('dynamic_fields');
         $dynamicFieldsI18n->title();
         $dynamicFieldsI18n->text('help');
-
         $dynamicFieldsP17n = $this->permissiontable('dynamic_fields');
     }
 
@@ -96,7 +93,6 @@ class CreateDynamicTables extends Migration
     {
         $dynamicRelationTypes = $this->table('dynamic_relation_types');
         $dynamicRelationTypes->slug();
-
         $dynamicRelationTypesI18n = $this->translatable('dynamic_relation_types');
         $dynamicRelationTypesI18n->title();
     }
@@ -117,10 +113,8 @@ class CreateDynamicTables extends Migration
         $dynamicRelations->integer('left_foreign_key_id')->references('dynamic_fields')->nullable();
         $dynamicRelations->integer('right_foreign_key_id')->references('dynamic_fields')->nullable();
         $dynamicRelations->boolean('preload');
-
         $dynamicRelationsI18n = $this->translatable('dynamic_relations');
         $dynamicRelationsI18n->title();
-
         $dynamicRelationsP17n = $this->permissiontable('dynamic_relations');
     }
 
@@ -129,7 +123,6 @@ class CreateDynamicTables extends Migration
         $dynamicTableTabs = $this->table('dynamic_table_tabs');
         $dynamicTableTabs->integer('dynamic_table_id')->references('dynamic_tables');
         $dynamicTableTabs->orderable();
-
         $dynamicTableTabsI18n = $this->translatable('dynamic_table_tabs');
         $dynamicTableTabsI18n->title();
     }
@@ -141,7 +134,6 @@ class CreateDynamicTables extends Migration
         $dynamicFunctions->integer('dynamic_table_tab_id')->references('dynamic_table_tabs')->nullable();
         $dynamicFunctions->varchar('class');
         $dynamicFunctions->varchar('method');
-
         $dynamicFunctionsI18n = $this->translatable('dynamic_functions');
         $dynamicFunctionsI18n->title();
     }
@@ -154,11 +146,8 @@ class CreateDynamicTables extends Migration
         $dynamicTableActions->varchar('template');
         $dynamicTableActions->varchar('type');
         $dynamicTableActions->orderable();
-
         $dynamicTableActionsI18n = $this->translatable('dynamic_table_actions');
         $dynamicTableActionsI18n->title();
-
         $dynamicTableActionsP17n = $this->permissiontable('dynamic_table_actions');
     }
-
 }

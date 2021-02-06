@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Factory;
+<?php
+
+namespace Pckg\Generic\Factory;
 
 use Faker\Factory;
 use Pckg\Generic\Record\Content as ContentRecord;
@@ -20,7 +22,7 @@ class Content
         $faker = Factory::create();
 
         if (!static::$files) {
-            static::$files = collect(scandir(path('uploads') . 'contents/'))->filter(function($file) {
+            static::$files = collect(scandir(path('uploads') . 'contents/'))->filter(function ($file) {
                 return is_file(path('uploads') . 'contents/' . $file);
             });
         }
@@ -42,5 +44,4 @@ class Content
                                      ] : []),
                                  ]);
     }
-
 }

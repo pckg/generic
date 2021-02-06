@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Resolver;
+<?php
+
+namespace Pckg\Dynamic\Resolver;
 
 use Impero\Apache\Record\Site;
 use Pckg\Database\Relation\HasMany;
@@ -13,7 +15,6 @@ class Table implements RouteResolver
      * @var Dynamic
      */
     protected $dynamic;
-
     public function __construct(Dynamic $dynamic)
     {
         $this->dynamic = $dynamic;
@@ -22,37 +23,30 @@ class Table implements RouteResolver
     public function resolve($value)
     {
         $dynamic = $this->dynamic;
-        $table = runInLocale(
-            function() use ($dynamic, $value) {
-                $tables = new Tables();
-                $dynamic->joinTranslationsIfTranslatable($tables);
-                $dynamic->joinPermissionsIfPermissionable($tables);
+        $table = runInLocale(function () use ($dynamic, $value) {
 
-                return $tables->where('id', $value)
-                              ->withRelations(
-                                  function(HasMany $relations) {
-                                      $relations->joinTranslations();
-                                      $relations->joinFallbackTranslation();
-                                  }
-                              )
+                $tables = new Tables();
+            $dynamic->joinTranslationsIfTranslatable($tables);
+            $dynamic->joinPermissionsIfPermissionable($tables);
+            return $tables->where('id', $value)
+                              ->withRelations(function (HasMany $relations) {
+
+                                        $relations->joinTranslations();
+                                $relations->joinFallbackTranslation();
+                              })
                               ->withFields()
-                              ->withTabs(
-                                  function(HasMany $tabs) {
-                                      $tabs->joinTranslation();
-                                      $tabs->joinFallbackTranslation();
-                                  }
-                              )
+                              ->withTabs(function (HasMany $tabs) {
+
+                                        $tabs->joinTranslation();
+                                $tabs->joinFallbackTranslation();
+                              })
                               ->withActions()
                               ->withListableFields()
-                              ->oneOrFail(
-                                  function() {
-                                      response()->unauthorized('Table not found');
-                                  }
-                              );
-            },
-            'en_GB'
-        );
+                              ->oneOrFail(function () {
 
+                                        response()->unauthorized('Table not found');
+                              });
+        }, 'en_GB');
         return $table;
     }
 
@@ -60,5 +54,4 @@ class Table implements RouteResolver
     {
         return $record->id ?? $record;
     }
-
 }

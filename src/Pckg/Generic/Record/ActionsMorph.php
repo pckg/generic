@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Comms\Hub\Api;
 use Complex\Exception;
@@ -35,7 +37,6 @@ use Pckg\Stringify;
  */
 class ActionsMorph extends Record
 {
-
     use SettingsHelper;
 
     protected $entity = ActionsMorphs::class;
@@ -106,7 +107,7 @@ class ActionsMorph extends Record
          */
         $data = $this->data();
         $data['action_slug'] = $this->action->slug;
-        $settings = $this->settings->map(function(Setting $setting) {
+        $settings = $this->settings->map(function (Setting $setting) {
             $data = $setting->pivot->data();
             $data['slug'] = $setting->slug;
 
@@ -255,7 +256,6 @@ class ActionsMorph extends Record
             ];
         } elseif (is_string($template)) {
             if (substr($template, 0, 1) === '{') {
-
             } else {
                 $template = [
                     'template' => $template,
@@ -375,7 +375,7 @@ class ActionsMorph extends Record
         /**
          * Map settings by clean slug and value.
          */
-        $settings = $this->settings->map(function(
+        $settings = $this->settings->map(function (
             Setting $setting
         ) {
             return [
@@ -416,7 +416,7 @@ class ActionsMorph extends Record
         /**
          * Get all custom classes.
          */
-        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function(
+        $allClasses = (new Stringify($settings->getKey('class')))->explodeToCollection(' ')->unique()->filter(function (
             $class
         ) {
             return substr(strrev($class), 0, 1) !== '-';
@@ -449,8 +449,10 @@ class ActionsMorph extends Record
          * @T00D00 - move this somewhere else
          */
         if ($this->action->slug == 'pckg-mail-mailchimp-enews') {
-            $settings->push((new Newsletter())->getActionConsentsAction($this)['consents'],
-                            'pckg.generic.actions.pckg-mail-mailchimp-enews.consents');
+            $settings->push(
+                (new Newsletter())->getActionConsentsAction($this)['consents'],
+                'pckg.generic.actions.pckg-mail-mailchimp-enews.consents'
+            );
         }
 
         /**
@@ -624,9 +626,9 @@ class ActionsMorph extends Record
 
     public function resolveSettings(&$args = [])
     {
-        measure('Resolving #' . $this->id, function() use (&$args) {
+        measure('Resolving #' . $this->id, function () use (&$args) {
             if (isset($args['settings'])) {
-                $args['settings']->each(function(Setting $setting) use (&$args) {
+                $args['settings']->each(function (Setting $setting) use (&$args) {
                     $setting->pivot->resolve($args);
                 });
             }
@@ -671,7 +673,7 @@ class ActionsMorph extends Record
 
     public function jsonSerialize()
     {
-        return measure('Serializing action #' . $this->id, function() {
+        return measure('Serializing action #' . $this->id, function () {
             $config = config('pckg.generic.actions.' . $this->action->slug, []);
             $slots = $config['slots'] ?? [];
             $content = $this->content ? $this->content->jsonSerialize() : null;
@@ -744,17 +746,16 @@ class ActionsMorph extends Record
         /**
          * Clone settings.
          */
-        $this->settings->each(function(Setting $setting) use ($newActionsMorph) {
+        $this->settings->each(function (Setting $setting) use ($newActionsMorph) {
             $setting->pivot->saveAs(['poly_id' => $newActionsMorph->id]);
         });
         /**
          * Clone subactions.
          */
-        $this->subActions->each(function(ActionsMorph $subaction) use ($newActionsMorph) {
+        $this->subActions->each(function (ActionsMorph $subaction) use ($newActionsMorph) {
             $subaction->cloneRecursively(['parent_id' => $newActionsMorph->id]);
         });
 
         return $newActionsMorph;
     }
-
 }

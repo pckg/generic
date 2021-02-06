@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Dataset;
+<?php
+
+namespace Pckg\Dynamic\Dataset;
 
 use Derive\Orders\Record\Order;
 use Pckg\Collection;

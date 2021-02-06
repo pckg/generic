@@ -136,7 +136,8 @@ class Action implements \JsonSerializable
         return $tree;
     }
 
-    public function hasChildren(...$index) {
+    public function hasChildren(...$index)
+    {
         if (!$this->action) {
             return false;
         }
@@ -193,8 +194,9 @@ class Action implements \JsonSerializable
      */
     public function getHtml()
     {
-        return measure('Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
-            function() {
+        return measure(
+            'Generic action ' . $this->getType() . ' #' . $this->action->pivot->id . ' ' . $this->getClass() . ' @ ' . $this->getMethod(),
+            function () {
                 $type = $this->getType();
 
                 if (in_array($type, ['wrapper', 'container', 'row', 'column'])) {
@@ -208,10 +210,12 @@ class Action implements \JsonSerializable
                     return $content;
                 }
 
-                $return = measure('Building pre-wrap',
-                    function() {
+                $return = measure(
+                    'Building pre-wrap',
+                    function () {
                         return '<pckg-action :action-id="' . $this->action->pivot->id . '"><template slot="body">';
-                    });
+                    }
+                );
                 $return .= $this->getBackgroundVideoHtml();
 
                 if ($this->getClass() && $this->getMethod()) {
@@ -230,7 +234,8 @@ class Action implements \JsonSerializable
                 $return .= '</template></pckg-action>';
 
                 return $return;
-            });
+            }
+        );
     }
 
     public function buildAndJsonSerialize()
@@ -326,5 +331,4 @@ class Action implements \JsonSerializable
     {
         return json_encode($this->jsonSerialize());
     }
-
 }

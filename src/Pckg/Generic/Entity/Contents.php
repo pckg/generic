@@ -31,10 +31,9 @@ class Contents extends Entity
 
     public function contents()
     {
-        return $this->hasMany(Contents::class, function(HasMany $contents) {
+        return $this->hasMany(Contents::class, function (HasMany $contents) {
             $contents->nonDeleted();
         })
                     ->foreignKey('parent_id');
     }
-
 }

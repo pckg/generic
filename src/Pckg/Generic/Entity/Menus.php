@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Entity;
+<?php
+
+namespace Pckg\Generic\Entity;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
@@ -8,12 +10,10 @@ class Menus extends Entity
 {
 
     protected $record = Menu::class;
-
     public function menuItems()
     {
         return $this->hasMany(MenuItems::class)
                     ->fill('menuItems')
                     ->foreignKey('menu_id');
     }
-
 }

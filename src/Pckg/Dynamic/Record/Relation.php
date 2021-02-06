@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Record;
+<?php
+
+namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
@@ -145,10 +147,10 @@ class Relation extends DatabaseRecord
 
         $values = [];
         $records = $entity->limit(500)->all();
-        $records->keyBy(function($record) use ($relation) {
+        $records->keyBy(function ($record) use ($relation) {
             return $record->{$relation->foreign_field_id ? $relation->foreignField->field : 'id'};
         })->each(
-            function($record) use ($relation, $foreignField, &$values) {
+            function ($record) use ($relation, $foreignField, &$values) {
                 $relationValue = $this->evalRelationValue($relation, $record);
 
                 $groupValue = $relation->group_value
@@ -204,7 +206,7 @@ class Relation extends DatabaseRecord
                 ->fill('relation_' . $this->onField->field)
                 ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
                 ->after(
-                    function($record) {
+                    function ($record) {
                         if (false && $this->method) {
                             $record->setRelation($this->method, $record->{'relation_' . $this->onField->field});
                         }
@@ -218,7 +220,7 @@ class Relation extends DatabaseRecord
                 ->fill('relation_' . $this->onField->field)
                 ->primaryKey($this->foreignField ? $this->foreignField->field : 'id')
                 ->after(
-                    function($record) {
+                    function ($record) {
                         $record->setRelation('select_relation_' . $this->onField->field, $this);
                         if (false && $this->method) {
                             $record->setRelation($this->method, $record->{'relation_' . $this->onField->field});
@@ -241,8 +243,10 @@ class Relation extends DatabaseRecord
             $subalias = $this->onTable->table;
         }
 
-        $query->join('LEFT JOIN ' . $this->showTable->table . ' AS ' . $alias,
-                     $alias . '.id = ' . $subalias . '.' . $this->onField->field);
+        $query->join(
+            'LEFT JOIN ' . $this->showTable->table . ' AS ' . $alias,
+            $alias . '.id = ' . $subalias . '.' . $this->onField->field
+        );
     }
 
     public function joinToEntity(Entity $entity, $alias = null, $subalias = null)
@@ -255,8 +259,9 @@ class Relation extends DatabaseRecord
             $subalias = $this->onTable->table;
         }
 
-        $entity->join('INNER JOIN ' . $this->showTable->table . ' AS ' . $alias,
-                      $alias . '.id = ' . $subalias . '.' . $this->onField->field);
+        $entity->join(
+            'INNER JOIN ' . $this->showTable->table . ' AS ' . $alias,
+            $alias . '.id = ' . $subalias . '.' . $this->onField->field
+        );
     }
-
 }

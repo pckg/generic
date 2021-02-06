@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Migration;
+<?php
+
+namespace Pckg\Generic\Migration;
 
 use Pckg\Migration\Migration;
 
@@ -8,18 +10,16 @@ class CreateLanguagesTable extends Migration
     protected $dependencies = [
         // translatable, permissionable
     ];
-
     public function up()
     {
         $this->languagesUp();
-
         $this->save();
     }
 
     protected function languagesUp()
     {
         $languages = $this->table('languages');
-        /**
+/**
          * @T00D00 - add index for relations on slug
          */
         $languages->slug();
@@ -32,9 +32,7 @@ class CreateLanguagesTable extends Migration
         $languages->boolean('frontend');
         $languages->boolean('backend');
         $languages->boolean('default');
-
         $languagesI18n = $this->translatable('languages');
         $languagesI18n->title();
     }
-
 }

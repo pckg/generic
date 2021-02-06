@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Entity;
+<?php
+
+namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Entity\Extension\Orderable;
@@ -10,21 +12,19 @@ use Pckg\Generic\Entity\SettingsMorphs;
 
 class Fields extends DatabaseEntity
 {
-
     use Orderable;
 
+
     protected $record = Field::class;
-
     protected $table = 'dynamic_fields';
-
     protected $repositoryName = Repository::class . '.dynamic';
-
     public function boot()
     {
         $this->joinTranslations();
         $this->joinFallbackTranslation();
         $this->withFieldType();
-        $this->withSettings(function(MorphsMany $settings) {
+        $this->withSettings(function (MorphsMany $settings) {
+
             $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
         });
     }
@@ -77,5 +77,4 @@ class Fields extends DatabaseEntity
         return $this->hasMany(Relations::class)
                     ->foreignKey('on_field_id');
     }
-
 }

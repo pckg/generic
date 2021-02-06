@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service\Export\Strategy;
+<?php
+
+namespace Pckg\Dynamic\Service\Export\Strategy;
 
 use Pckg\Dynamic\Service\Export\AbstractStrategy;
 
@@ -6,18 +8,14 @@ class Csv extends AbstractStrategy
 {
 
     protected $responseType = 'text/csv';
-
     protected $extension = 'csv';
-
     public function save()
     {
         $file = path('tmp') . $this->getFilename();
-
         $fp = fopen($file, 'w');
-
-        /**
-         * Add header.
-         */
+    /**
+             * Add header.
+             */
         if ($headers = $this->getHeaders()) {
             fputcsv($fp, array_keys($headers));
         }
@@ -30,7 +28,6 @@ class Csv extends AbstractStrategy
         }
 
         fclose($fp);
-
         return $file;
     }
 
@@ -40,5 +37,4 @@ class Csv extends AbstractStrategy
         $this->setFileContent(file_get_contents($file));
         unlink($file);
     }
-
 }

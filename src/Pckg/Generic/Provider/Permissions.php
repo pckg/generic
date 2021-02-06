@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Provider;
+<?php
+
+namespace Pckg\Generic\Provider;
 
 use Pckg\Framework\Provider;
 use Pckg\Generic\Controller\Permissions as PermissionsController;
@@ -18,5 +20,4 @@ class Permissions extends Provider
                        ]),
         ];
     }
-
 }

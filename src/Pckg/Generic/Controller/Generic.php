@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Derive\Internal\Cache\Service\Cache;
 use Pckg\Generic\Entity\Contents;
@@ -54,17 +56,17 @@ class Generic
 
     public function getGenericActionWrapper(Route $route)
     {
-        measure('Reading route', function() use ($route) {
+        measure('Reading route', function () use ($route) {
             $this->genericService->readRoute($route);
         });
 
         $route->applySeoSettings();
 
-        measure('Building actions', function() {
+        measure('Building actions', function () {
             $this->genericService->build();
         });
 
-        return measure('Stringifying output', function() use ($route) {
+        return measure('Stringifying output', function () use ($route) {
             $auth = auth();
             $structure = '<pckg-app data-frontend></pckg-app>';
 
@@ -76,7 +78,7 @@ class Generic
                 $themePath = path('src') . 'theme/comms/test/dist/';
                 $pagesPath = $themePath . 'pages/';
                 $layoutsPath = $themePath . 'layouts/';
-                $file = $pagesPath . $slug .'.html';
+                $file = $pagesPath . $slug . '.html';
                 if (file_exists($file)) {
                     $fileContent = file_get_contents($file);
                     $layoutContent = file_get_contents($layoutsPath . 'for-homepage.html');
@@ -160,5 +162,4 @@ class Generic
                                    'languages' => localeManager()->getFrontendLanguages(),
                                ]);
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Controller;
+<?php
+
+namespace Pckg\Generic\Controller;
 
 use Derive\Pagebuilder\Service\Pagebuilder;
 use Pckg\Concept\Context;
@@ -57,7 +59,7 @@ class PageStructure
         }
 
         return [
-            'records' => $contents->all()->keyBy('id')->map(function(Content $content) {
+            'records' => $contents->all()->keyBy('id')->map(function (Content $content) {
                 return collect([
                                    '#' . $content->id,
                                    $content->title,
@@ -100,12 +102,12 @@ class PageStructure
     public function getActionsMorphsForRouteAction(Route $route)
     {
         return [
-            'actionsMorphs' => $route->actions(function(MorphedBy $actions) {
+            'actionsMorphs' => $route->actions(function (MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
                 $actions->getMiddleEntity()->withContent();
-            })->sortBy(function(Action $action) {
+            })->sortBy(function (Action $action) {
                 return $action->pivot->order;
-            })->map(function(Action $action) {
+            })->map(function (Action $action) {
                 $array = $action->toArray();
                 $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
                 $array['pivot']['content'] = $action->pivot->content;
@@ -140,12 +142,12 @@ class PageStructure
         $route = (new Routes())->where('id', $route)->one();
 
         return [
-            'routeActions' => $route->actions(function(MorphedBy $actions) {
+            'routeActions' => $route->actions(function (MorphedBy $actions) {
                 $actions->getMiddleEntity()->withAllPermissions();
                 $actions->getMiddleEntity()->withContent();
-            })->sortBy(function(Action $action) {
+            })->sortBy(function (Action $action) {
                 return $action->pivot->order;
-            })->map(function(Action $action) {
+            })->map(function (Action $action) {
                 $array = $action->toArray();
                 $array['pivot']['permissions'] = $action->pivot->allPermissions->map('user_group_id');
                 $array['pivot']['content'] = $action->pivot->content;
@@ -292,11 +294,11 @@ class PageStructure
     {
         $orders = post('orders', []);
         $actionsMorphs = (new ActionsMorphs())->where('id', array_keys($orders))->all();
-        $root = $actionsMorphs->first(function(ActionsMorph $actionsMorph) {
+        $root = $actionsMorphs->first(function (ActionsMorph $actionsMorph) {
             return !$actionsMorph->parent_id;
         });
         $routeId = $root ? $root->poly_id : null;
-        $actionsMorphs->each(function(ActionsMorph $actionsMorph) use ($orders, $routeId) {
+        $actionsMorphs->each(function (ActionsMorph $actionsMorph) use ($orders, $routeId) {
             $update = [
                 'order'     => $orders[$actionsMorph->id]['order'],
                 'parent_id' => $orders[$actionsMorph->id]['parent'],
@@ -396,7 +398,7 @@ class PageStructure
 
     public function postContentAction(Content $content)
     {
-        runInLocale(function() use ($content) {
+        runInLocale(function () use ($content) {
             $content->setAndSave([
                                      'content' => post('content.content', null),
                                  ]);
@@ -429,13 +431,13 @@ class PageStructure
         $originalContext->bind(Request::class, $request);
         $tempContext->bind(Request::class, $request);
 
-        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
-            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+        $fetchedActions = $actionsMorph->route->actions(function (MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
                 $content->withContents();
-            })->withSettings(function(MorphedBy $settings) {
+            })->withSettings(function (MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action) {
+        })->map(function (Action $action) {
             return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
@@ -460,13 +462,13 @@ class PageStructure
         $parent = $partial->mostParent;
 
         $flatActions = $parent->flattenForGenericResponse(collect());
-        $fetchedActions = $route->actions(function(MorphedBy $actions) use ($flatActions) {
-            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+        $fetchedActions = $route->actions(function (MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
                 $content->withContents();
-            })->withSettings(function(MorphedBy $settings) {
+            })->withSettings(function (MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action) {
+        })->map(function (Action $action) {
             return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
@@ -480,13 +482,13 @@ class PageStructure
         $newActionsMorph = $actionsMorph->cloneRecursively();
 
         $flatActions = $newActionsMorph->flattenForGenericResponse(collect());
-        $fetchedActions = $actionsMorph->route->actions(function(MorphedBy $actions) use ($flatActions) {
-            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+        $fetchedActions = $actionsMorph->route->actions(function (MorphedBy $actions) use ($flatActions) {
+            $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
                 $content->withContents();
-            })->withSettings(function(MorphedBy $settings) {
+            })->withSettings(function (MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withAction()->where('actions_morphs.id', $flatActions->map('id')->all());
-        })->map(function(Action $action) {
+        })->map(function (Action $action) {
             return (new Generic\Action($action))->buildAndJsonSerialize();
         })->all();
 
@@ -557,7 +559,7 @@ class PageStructure
                 'resolvers' => [],
             ];
         }
-        $resolvers = collect(json_decode($resolvers, true))->map(function($resolver, $key) use ($route) {
+        $resolvers = collect(json_decode($resolvers, true))->map(function ($resolver, $key) use ($route) {
             $resolverObject = Reflect::create($resolver);
 
             if (!method_exists($resolverObject, 'prepareEntity')) {
@@ -569,7 +571,7 @@ class PageStructure
 
             return [
                 'key'   => $key,
-                'items' => $items->map(function(Record $record) use ($key, $resolverObject, $route) {
+                'items' => $items->map(function (Record $record) use ($key, $resolverObject, $route) {
                     return [
                         'id'    => $record->id,
                         'title' => $record->title,
@@ -585,5 +587,4 @@ class PageStructure
 
         return ['resolvers' => $resolvers];
     }
-
 }

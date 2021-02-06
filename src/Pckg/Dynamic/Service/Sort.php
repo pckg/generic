@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\Database\Entity;
 use Pckg\Dynamic\Entity\Fields;
@@ -21,7 +23,7 @@ class Sort extends AbstractService
 
     public function getAvailableSorts()
     {
-        return $this->table->listableFields->map(function(Field $field) {
+        return $this->table->listableFields->map(function (Field $field) {
             return [
                 'field'   => $field->field,
                 'label'   => $field->title ?? $field->field,
@@ -36,7 +38,7 @@ class Sort extends AbstractService
         if (!$this->table) {
             return;
         }
-        
+
         $field = (new Fields())->withFieldType()
                                ->where('field', $paginator['sort'] ?? 'id')
                                ->where('dynamic_table_id', $this->table->id)
@@ -78,5 +80,4 @@ class Sort extends AbstractService
             ],
         ];
     }
-
 }

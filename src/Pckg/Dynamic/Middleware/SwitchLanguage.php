@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Middleware;
+<?php
+
+namespace Pckg\Dynamic\Middleware;
 
 class SwitchLanguage
 {
@@ -12,5 +14,4 @@ class SwitchLanguage
 
         return $next();
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Controller;
+<?php
+
+namespace Pckg\Dynamic\Controller;
 
 use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Table;
@@ -14,20 +16,20 @@ class View extends Controller
          * @T00D00 - fix json encode
          */
         return url(
-                   'dynamic.record.view.share',
-                   [
+            'dynamic.record.view.share',
+            [
                        'table' => $table,
                    ],
-                   true
-               ) . '?data=' . base64_encode(
-                   json_encode($_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] ?? [])
-               );
+            true
+        ) . '?data=' . base64_encode(
+            json_encode($_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] ?? [])
+        );
     }
 
     public function getSaveViewAction(Table $table, TableView $tableView = null)
     {
         vueManager()->addView('Pckg/Dynamic:view/_save', [
-            'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(),
+            'savedViews'         => (new TableViews())->where('dynamic_table_id', $table->id)->all(),
             'saveCurrentViewUrl' => url(
                 $tableView
                     ? 'dynamic.record.view.savePlusView'
@@ -89,5 +91,4 @@ class View extends Controller
             )
         );
     }
-
 }

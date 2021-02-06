@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Service;
+<?php
+
+namespace Pckg\Dynamic\Service;
 
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
@@ -38,5 +40,4 @@ abstract class AbstractService
 
         return $session[$key] ?? [];
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Pckg\Database\Collection;
 
@@ -31,7 +33,7 @@ trait SettingsHelper
 
     public function getSetting($slug)
     {
-        return $this->settings->first(function(Setting $setting) use ($slug) {
+        return $this->settings->first(function (Setting $setting) use ($slug) {
             return $setting->slug == $slug;
         });
     }
@@ -50,5 +52,4 @@ trait SettingsHelper
 
         return $setting->pivot->value;
     }
-
 }

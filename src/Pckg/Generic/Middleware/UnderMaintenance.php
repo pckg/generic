@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Middleware;
+<?php
+
+namespace Pckg\Generic\Middleware;
 
 class UnderMaintenance
 {
@@ -11,5 +13,4 @@ class UnderMaintenance
 
         return $next();
     }
-
 }

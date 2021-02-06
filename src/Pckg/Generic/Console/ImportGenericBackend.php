@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Console;
+<?php
+
+namespace Pckg\Generic\Console;
 
 use Pckg\Collection;
 use Pckg\Framework\Console\Command;
@@ -19,10 +21,12 @@ class ImportGenericBackend extends Command
     {
         $this->setName('generic:import-backend')
              ->setDescription('Import actions, routes, variables, lists, items, ...')
-             ->addOptions([
+             ->addOptions(
+                 [
                               'do' => 'Manually select items to import',
                           ],
-                          InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL);
+                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL
+             );
     }
 
     public function importGenericList()
@@ -52,21 +56,21 @@ class ImportGenericBackend extends Command
                         $translatedTitle = is_array($title) ? $title['en'] : $title;
                         $deleted = strpos($translatedTitle, '**deleted**') === 0;
 
-                        if (!$listItem && !$deleted) {
-                            $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
-                            ListItem::create([
-                                                 'list_id' => $list->id,
-                                                 'slug'    => $key,
-                                                 'value'   => $translatedTitle,
-                                             ]);
-                        } elseif ($listItem) {
-                            if ($deleted) {
-                                $this->output('Deleting item ' . $listConfig['id'] . '.' . $key);
-                                $listItem->delete();
-                            } else {
-                                $listItem->setAndSave(['value' => $translatedTitle]);
-                            }
-                        }
+                if (!$listItem && !$deleted) {
+                    $this->output('Creating item ' . $listConfig['id'] . '.' . $key);
+                    ListItem::create([
+                                         'list_id' => $list->id,
+                                         'slug'    => $key,
+                                         'value'   => $translatedTitle,
+                                     ]);
+                } elseif ($listItem) {
+                    if ($deleted) {
+                        $this->output('Deleting item ' . $listConfig['id'] . '.' . $key);
+                        $listItem->delete();
+                    } else {
+                        $listItem->setAndSave(['value' => $translatedTitle]);
+                    }
+                }
 
                 /*    }, $language->locale);
                 }*/
@@ -76,7 +80,7 @@ class ImportGenericBackend extends Command
 
     public function importLayouts()
     {
-        (new Collection(config('pckg.generic.layouts', [])))->each(function($template, $slug) {
+        (new Collection(config('pckg.generic.layouts', [])))->each(function ($template, $slug) {
             $layout = Layout::getOrNew(['slug' => $slug]);
 
             $layout->setAndSave(['template' => $template]);
@@ -85,7 +89,7 @@ class ImportGenericBackend extends Command
 
     public function importMenus()
     {
-        (new Collection([['slug' => 'frontend', 'template' => 'frontendMainNav']]))->each(function($menu, $slug) {
+        (new Collection([['slug' => 'frontend', 'template' => 'frontendMainNav']]))->each(function ($menu, $slug) {
             $menuR = Menu::getOrNew(['slug' => $menu['slug']]);
 
             if ($menuR->isNew()) {
@@ -96,14 +100,14 @@ class ImportGenericBackend extends Command
 
     public function importSettingTypes()
     {
-        (new Collection([['slug' => 'array']]))->each(function($settingType, $slug) {
+        (new Collection([['slug' => 'array']]))->each(function ($settingType, $slug) {
             SettingType::getOrCreate(['slug' => $settingType['slug']]);
         });
     }
 
     public function importActions()
     {
-        (new Collection(config('pckg.generic.actions', [])))->each(function($action, $slug) {
+        (new Collection(config('pckg.generic.actions', [])))->each(function ($action, $slug) {
             $actionRecord = Action::getOrNew(['slug' => $slug]);
 
             $actionRecord->setAndSave($action);
@@ -159,5 +163,4 @@ class ImportGenericBackend extends Command
 
         $this->output('Done');
     }
-
 }

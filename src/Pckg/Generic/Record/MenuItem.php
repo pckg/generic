@@ -1,4 +1,6 @@
-<?php namespace Pckg\Generic\Record;
+<?php
+
+namespace Pckg\Generic\Record;
 
 use Pckg\Collection;
 use Pckg\Database\Record;
@@ -14,7 +16,6 @@ class MenuItem extends Record
 {
 
     protected $entity = MenuItems::class;
-
     public function getAdditionalClass()
     {
         if (strpos($this->url, '#') !== 0 && strpos($this->url, '/#') !== 0) {
@@ -39,7 +40,8 @@ class MenuItem extends Record
             return true;
         }
 
-        if (in_array(router()->get('name'), ['dynamic.record.edit', 'dynamic.record.view'])
+        if (
+            in_array(router()->get('name'), ['dynamic.record.edit', 'dynamic.record.view'])
             && $this->url == '/dynamic/tables/list/' . explode('/', router()->getCleanUri())[4]
         ) {
             return true;
@@ -50,11 +52,9 @@ class MenuItem extends Record
 
     public function isSubActive()
     {
-        return (new Collection($this->getChildren))->has(
-            function(MenuItem $menuItem) {
-                return $menuItem->isActive();
-            }
-        );
-    }
+        return (new Collection($this->getChildren))->has(function (MenuItem $menuItem) {
 
+                return $menuItem->isActive();
+        });
+    }
 }
