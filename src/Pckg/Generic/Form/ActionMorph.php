@@ -41,5 +41,4 @@ class ActionMorph extends Bootstrap
 
         return $this;
     }
-
 }
