@@ -215,7 +215,6 @@ class Table extends Record
 
         return $entity;
     }
-<<<<<<< HEAD
 
     public function checkPermissionsFor($action = 'write')
     {
@@ -235,6 +234,4 @@ class Table extends Record
             });
     }
 
-=======
->>>>>>> master
 }
