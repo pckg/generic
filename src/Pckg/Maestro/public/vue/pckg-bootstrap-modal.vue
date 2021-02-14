@@ -43,11 +43,15 @@
                 type: Boolean,
                 default: true
             },
-            id: null,
+            id: {
+                default: null
+            },
             visible: {
                 default: false
             },
-            size: null,
+            size: {
+                default: 'md'
+            },
             closable: {
                 type: Boolean,
                 default: true
