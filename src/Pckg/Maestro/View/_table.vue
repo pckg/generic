@@ -110,7 +110,7 @@
                     </div>
                 </div>
 
-                <div class="display-block" v-if="mode != 'filter' && records.length> 0">
+                <div class="display-block" v-if="mode != 'filter' && records.length > 0">
                     <div style="position: relative;" class="closest">
 
                         <!-- context menu -->
@@ -809,24 +809,24 @@
                  */
                 this.refreshDataRequestNum++;
                 let refreshDataRequestNum = this.refreshDataRequestNum;
-                dynamicEntity.all(this.table.id, function (data) {
+                dynamicEntity.all(this.table.id, function (data, json) {
                     if (this.refreshDataRequestNum != refreshDataRequestNum) {
                         return;
                     }
 
-                    if (data.tabelizes) {
-                        var d = data.tabelizes[0];
-                        this.records = d.records;
-                        this.groups = d.groups;
+                    if (json.tabelizes) {
+                        var d = json.tabelizes[0];
+                        this.records = json.records;
+                        this.groups = json.groups;
                         this.setPaginatorTotal(d.paginator.total);
 
                         if (params && params.callback) {
                             params.callback(data);
                         }
                     } else {
-                        this.records = data.records;
-                        this.groups = data.groups;
-                        this.setPaginatorTotal(data.paginator.total);
+                        this.records = json.records;
+                        this.groups = json.groups;
+                        this.setPaginatorTotal(json.paginator.total);
                     }
                     this.loading = false;
                     this.recalculateFreeze();
