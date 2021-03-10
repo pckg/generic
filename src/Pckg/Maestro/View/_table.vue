@@ -232,7 +232,7 @@
 
 <script type="text/javascript">
 
-    import {Entity, HttpQLRepository, Record, Repository} from "../../../../../helpers-js/webpack/orm";
+    import {Entity, HttpQLRepository, Record, Repository} from "pckg-orm/src/orm.js";
 
     import TableStatusbar from "./_table_statusbar.vue";
 
