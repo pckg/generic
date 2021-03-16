@@ -152,7 +152,7 @@ class Dynamic
     public function optimizeSelectedFields(Entity $entity, Collection $listedFields)
     {
         $listedFields->each(function (Field $field) use ($entity) {
-            $slug = $field->fieldType->slug;
+            $slug = $field->fieldType ? $field->fieldType->slug : null;
             if (in_array($slug, ['php', 'mysql'])) {
                 if (method_exists($entity, 'select' . ucfirst($field->field) . 'Field')) {
                     $entity->{'select' . ucfirst($field->field) . 'Field'}();

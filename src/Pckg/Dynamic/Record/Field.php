@@ -299,12 +299,12 @@ class Field extends DatabaseRecord
     public function getTransformedValue($entity)
     {
         $field = $this;
-        if ($this->fieldType->slug == 'php') {
+        if ($this->fieldType && $this->fieldType->slug == 'php') {
             return function ($record) use ($field) {
 
                 return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
             };
-        } elseif ($this->fieldType->slug == 'geo') {
+        } elseif ($this->fieldType && $this->fieldType->slug == 'geo') {
             $entity->addSelect([
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',

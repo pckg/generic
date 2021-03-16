@@ -413,7 +413,7 @@ class Filter extends AbstractService
         }
     }
 
-    public function filterByGet(Entity $entity, Collection $relations = null, $search = null)
+    public function filterByGet(Entity $entity, \Pckg\Collection $relations = null, $search = null)
     {
         if (!$search) {
             $search = get('search');

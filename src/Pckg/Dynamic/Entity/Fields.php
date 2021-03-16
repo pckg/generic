@@ -24,7 +24,10 @@ class Fields extends DatabaseEntity
         $this->joinFallbackTranslation();
         $this->withFieldType();
         $this->withSettings(function (MorphsMany $settings) {
-
+            /**
+             * What settings do we use here?
+             * This is strictly because have settings table also?
+             */
             $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
         });
     }
