@@ -955,6 +955,7 @@
             }
         },
         created: function () {
+            console.log('created', this);
             this.initialFetch();
 
             $('body').on('click', function () {
@@ -989,6 +990,16 @@
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setRecords', this.setRecords);
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setPaginatorTotal', this.setPaginatorTotal);
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':refresh', this.refreshData);
+            }
+        },
+        beforeDestroy() {
+            if (this.onTab) {
+                $dispatcher.$off('dynamic-tab-' + tab.id + ':refresh', this.refreshData);
+            }
+            if (this.onTable) {
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':setRecords', this.setRecords);
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':setPaginatorTotal', this.setPaginatorTotal);
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':refresh', this.refreshData);
             }
         }
     };

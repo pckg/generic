@@ -361,7 +361,7 @@ class Records extends Controller
                                                       'descriptions' => $descriptions,
                                                   ]);
         }
-        
+
         $form->populateToRecord($record);
         $form->populatePasswords($record);
         if ($record->language_id) {
@@ -503,13 +503,14 @@ class Records extends Controller
          * Resolve record for the frontend.
          * @var $generic Generic
          */
-        return component('pckg-dynamic-record-tabs', [
-            ':record' => $tabelize->transformRecord($record),
-            ':table' => $table,
-            ':actions' => $tabelize->getActionsArray(),
-            ':tabs' => $tabs,
-            ':relations' => $relations,
-            ':mode' => $form->isEditable() ? 'edit' : 'view',
+        return ([
+        //return component('pckg-dynamic-record-tabs', [
+            'mappedRecord' => $tabelize->transformRecord($record),
+            //'table' => $table,
+            'actions' => $tabelize->getActionsArray(),
+            'tabs' => $tabs,
+            'relations' => $relations,
+            'mode' => $form->isEditable() ? 'edit' : 'view',
         ]);
     }
 
@@ -558,20 +559,21 @@ class Records extends Controller
             $functionize = $pluginService->make($function->class, $function->method, $args);
             $functionizes[] = (string)$functionize;
         });
-        if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
+        /*if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
             return [
                 'functionizes' => $functionizes,
                 'tabelizes'    => $tabelizes,
             ];
-        }
+        }*/
 
         /**
          * We have to build tab.
          */
-        return view('edit/tab', [
+        return [
+        //return view('edit/tab', [
             'functionizes' => $functionizes,
             'tabelizes'    => $tabelizes,
-        ]);
+        ];
     }
 
     protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, Entity $entity)
@@ -949,6 +951,7 @@ class Records extends Controller
         ];
         return [
             'form' => $form,
+            'table' => $table,
         ];
     }
 }

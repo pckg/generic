@@ -23,12 +23,12 @@
 
             <ul class="nav nav-tabs">
                 <li :class="!selectedTab ? 'active' : ''">
-                    <pb-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" @click.native="selectTab(null)">General</pb-link>
+                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" @click.native="selectTab(null)">General</router-link>
                 </li>
                 <li v-for="tab in tabs" :class="selectedTab === tab.id ? 'active' : ''">
-                    <pb-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" @click.native="selectTab(tab.id)">
+                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" @click.native="selectTab(tab.id)">
                         {{ tab.title }}
-                    </pb-link>
+                    </router-link>
                 </li>
             </ul>
         </div>
@@ -40,16 +40,16 @@
             <div role="tabpanel" class="tab-pane active">
 
                 <keep-alive>
-                    <router-view></router-view>
+                    <router-view :key="$route.fullPath"></router-view>
                 </keep-alive>
 
             </div>
         </div>
 
-
         <!-- additional components -->
         <component :is="component" v-for="component in uniqueActions" :key="component"
                    @tab:refresh="selectTab"></component>
+
     </div>
 </template>
 
@@ -96,22 +96,22 @@ export default {
     },
     computed: {
         table: function () {
-            return this.$store.state.generic.metadata.router.table || {};
+            return this.$route.meta.resolved.table;
         },
         record: function () {
-            return this.$store.state.generic.metadata.router.record || {};
+            return this.$route.meta.resolved.mappedRecord || this.$route.meta.resolved.record;
         },
         actions: function () {
-            return this.$store.state.generic.metadata.router.actions || {};
+            return this.$route.meta.resolved.actions;
         },
         tabs: function () {
-            return this.$store.state.generic.metadata.router.tabs || {};
+            return this.$route.meta.resolved.tabs;
         },
         relations: function () {
-            return this.$store.state.generic.metadata.router.relations || {};
+            return this.$route.meta.resolved.relations;
         },
         mode: function () {
-            return this.$store.state.generic.metadata.router.mode || {};
+            return this.$route.meta.resolved.mode;
         },
         tabRelations: function () {
             return this.relations.filter((relation) => relation.dynamic_table_tab_id > 0);
@@ -134,7 +134,7 @@ export default {
         },
         recordIdentifier: function () {
             let identifier = this.record.id || null;
-            $.each(['email', 'title', 'slug'], (i, prop) => {
+            $.each(['email', 'title', 'slug', 'identifier', 'num', 'id'], (i, prop) => {
                 if (this.record[prop]) {
                     identifier = this.record[prop];
                 }

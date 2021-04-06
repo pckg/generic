@@ -2,16 +2,9 @@
     <pckg-loader v-if="loading"></pckg-loader>
     <div class="pckg-dynamic-record-singular" v-else>
 
-        <h1 class="h-page-title">
-            <pb-link to="/maestro" class="__maestro-back-button router-link-active">
-                <i class="fal fa-chevron-left"></i>
-            </pb-link> {{ record.id ? mode : 'Add new' }} {{ table.title }}
-        </h1>
-
-        <div class="clearfix"></div>
-
         <!--{{ formalize | raw }}-->
-        <pckg-maestro-form :table-id="$route.params.table" :form-model="record"></pckg-maestro-form>
+        <pckg-maestro-form :table-id="$route.params.table"
+                           :form-model="record"></pckg-maestro-form>
 
         <!--{% for tabelize in tabelizes.0 %}
             {{ tabelize | raw }}

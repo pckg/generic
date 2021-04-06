@@ -63,9 +63,11 @@ class Generic
         }
     }
 
-    public function pushMetadata($actionId, $key, $value)
+    public function pushMetadata($actionId, $key, $value, $store = true)
     {
-        $this->metadata[$actionId][$key] = $value;
+        if ($store) {
+            $this->metadata[$actionId][$key] = $value;
+        }
 
         return '$store.state.generic.metadata[\'' . $actionId . '\'][\'' . $key . '\']';
     }
@@ -97,7 +99,7 @@ class Generic
     }
 
     /**
-     * Return all custom styles from the database. 
+     * Return all custom styles from the database.
      */
     public function getStyles()
     {

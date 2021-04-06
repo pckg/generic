@@ -18,6 +18,7 @@ class Table implements RouteResolver
      * @var Dynamic
      */
     protected $dynamic;
+    
     public function __construct(Dynamic $dynamic)
     {
         $this->dynamic = $dynamic;

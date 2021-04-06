@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="form-group margin-top-sm">
+        <div class="form-group margin-top-sm" v-if="mode !== 'view'">
             <button type="button"
                     @click.prevent="submitForm"
                     class="__submit-btn btn btn-primary"
@@ -54,11 +54,8 @@ export default {
         mode: {
             default: 'edit'
         },
-        tableId: {},
         formModel: {
-            default: function () {
-                return {};
-            }
+            default: null
         },
         onSuccess: {
             default: null
@@ -72,6 +69,7 @@ export default {
             myForm: {
                 fields: []
             },
+            myFormModel: this.formModel,
             state: 'loading'
         };
     },
@@ -94,6 +92,9 @@ export default {
         rightGroups: function () {
             return this.groupFields(this.rightFields);
         },
+        table: function () {
+            return this.$route.meta.resolved.table;
+        }
     },
     methods: {
         groupFields: function (fields) {
@@ -125,7 +126,7 @@ export default {
         },
         initialFetch: function () {
             this.state = 'loading';
-            http.get('/api/dynamic/form/' + this.tableId + (this.formModel && this.formModel.id ? '/' + this.formModel.id : ''), function (data) {
+            http.get('/api/dynamic/form/' + this.table.id + (this.formModel && this.formModel.id ? '/' + this.formModel.id : ''), function (data) {
                 this.myForm = data.form;
                 this.state = null;
             }.bind(this));
@@ -134,8 +135,8 @@ export default {
             this.state = 'submitting';
             this.validateAndSubmit(function () {
                 let url = this.formModel.id
-                    ? ('/dynamic/records/' + this.tableId + '/' + this.formModel.id + '/edit')
-                    : ('/dynamic/records/' + this.tableId + '/add');
+                    ? ('/dynamic/records/' + this.table.id + '/' + this.formModel.id + '/edit')
+                    : ('/dynamic/records/' + this.table.id + '/add');
                 http.post(url, this.collectFormData(), function (data) {
                     this.$emit('saved');
                     this.state = 'success';
