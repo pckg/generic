@@ -137,6 +137,7 @@ export default {
             $.each(['email', 'title', 'slug', 'identifier', 'num', 'id'], (i, prop) => {
                 if (this.record[prop]) {
                     identifier = this.record[prop];
+                    return false;
                 }
             })
 

@@ -42,6 +42,7 @@ class Records extends Controller
 
 
     protected $pluginService;
+
     public function __construct(Plugin $pluginService)
     {
         $this->pluginService = $pluginService;
@@ -916,6 +917,7 @@ class Records extends Controller
             'order'   => 'number',
             'integer' => 'number',
             'slug'    => 'text',
+            'picture' => 'file:picture',
         ];
         $typeMapper = function(Field $field) use ($vueTypeMap) {
 
@@ -926,25 +928,17 @@ class Records extends Controller
             return $field->fieldType->slug;
         };
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
-        $initialOptions = $formObject->getInitialOptions();
+        $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
-            'fields' => $fields->map(function(Field $field) use ($typeMapper, $initialOptions) {
-
-                $options = new \stdClass();
+            'fields' => $fields->map(function(Field $field) use ($initialOptions, $record, $typeMapper) {
                 $type = $typeMapper($field);
-                if ($field->fieldType->slug === 'select') {
-                    $options = [
-                        'options' => $initialOptions[$field->field] ?? [],
-                    ];
-                }
-
                 return [
                     'title'    => $field->title,
                     'slug'     => $field->field,
                     'type'     => $type,
                     'help'     => $field->help,
                     'required' => !!$field->required,
-                    'options'  => $options,
+                    'options'  => $field->getVueOptions($initialOptions, $record),
                     'group'    => $field->fieldGroup,
                 ];
             })->rekey(),

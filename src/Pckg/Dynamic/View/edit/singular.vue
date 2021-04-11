@@ -1,64 +1,25 @@
 <template>
-    <pckg-loader v-if="loading"></pckg-loader>
-    <div class="pckg-dynamic-record-singular" v-else>
 
-        <!--{{ formalize | raw }}-->
-        <pckg-maestro-form :table-id="$route.params.table"
-                           :form-model="record"></pckg-maestro-form>
+    <div>
+        <div class="display-block">
 
-        <!--{% for tabelize in tabelizes.0 %}
-            {{ tabelize | raw }}
-        {% endfor %}
+            <h1 class="h-page-title">
+                <router-link to="/maestro" class="__maestro-back-button" title="Go to Dashboard">
+                    <i class="fal fa-chevron-left"></i>
+                </router-link>
 
-        {% for functionize in functionizes.0 %}
-            {{ functionize | raw }}
-        {% endfor %}-->
+                Add {{ table.titleSingular | lcfirst }}
+            </h1>
+        </div>
+
+        <pckg-maestro-form :table-id="$route.params.table"></pckg-maestro-form>
     </div>
+
 </template>
 
 <script>
 
-const routerLoading = function (props) {
-    let computed = {
-        loading: function () {
-            let loading = false;
-
-            $.each(props, (key, value) => {
-                if (!this[key]) {
-                    loading = true;
-                    return false;
-                }
-            });
-
-            return loading;
-        }
-    };
-
-    $.each(props, function (prop, val) {
-        val = JSON.parse(JSON.stringify(val));
-        computed[prop] = function () {
-            return this.$store.state.generic.metadata.router[prop] || val;
-        };
-    });
-
-    return computed;
-};
-
 export default {
-    data: function () {
-        return {
-            formalize: {},
-        };
-    },
-    watch: {
-        '$route': {
-            deep: true,
-            immediate: true,
-            handler: function () {
-                this.initialFetch();
-            }
-        }
-    },
     methods: {
         initialFetch: function () {
             return;
@@ -75,6 +36,16 @@ export default {
             }
         },
     },
-    computed: routerLoading({table: {}, record: {}, actions: {}, mode: 'view'}),
+    computed: {
+        table: function () {
+            return this.$route.meta.resolved.table;
+        },
+        record: function () {
+            return this.$route.meta.resolved.mappedRecord || this.$route.meta.resolved.record;
+        },
+        actions: function () {
+            return this.$route.meta.resolved.actions;
+        },
+    }
 }
 </script>

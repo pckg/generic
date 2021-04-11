@@ -3,6 +3,7 @@
 namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Fields;
 use Throwable;
@@ -336,5 +337,76 @@ class Field extends DatabaseRecord
     public function isImportable()
     {
         return !in_array($this->fieldType->slug, ['mysql', 'php']);
+    }
+
+    public function getRelationOptions($relation, Record $record = null)
+    {
+        $options = [];
+        $rawValue = $record->{$this->field} ?? null;
+        $foundValue = false;
+        foreach ($relation as $id => $value) {
+            if (is_array($value)) {
+                $optgroup = [];
+                foreach ($value as $k => $v) {
+                    $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
+                    $foundValue = $foundValue || $k == $rawValue;
+                }
+                $options[$id] = $optgroup;
+            } else {
+                $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
+                $foundValue = $foundValue || $id == $rawValue;
+            }
+        }
+
+        if (!$foundValue && $rawValue) {
+            $item = $this->getItemForSelect($record, null, $rawValue);
+            if (!trim($item)) {
+                $item = $rawValue;
+            }
+
+            $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
+        }
+
+        return $options;
+    }
+
+    public function getVueOptions($initialOptions, $record = null)
+    {
+        $options = new \stdClass();
+        $slug = $this->fieldType->slug;
+        if ($slug === 'select') {
+            $options = [
+                'options' => $initialOptions[$this->field] ?? [],
+            ];
+        } else if ($slug === 'picture') {
+
+            /*$url = $this->relation && $this->foreignRecord
+                ? url('dynamic.records.field.upload.newForeign', [
+                    'table' => $this->table,
+                    'field' => $field,
+                    'relation' => $this->relation,
+                    'record' => $this->foreignRecord,
+                ])
+                : ($this->record->id
+                    ? url('dynamic.records.field.upload', [
+                        'table' => $this->table,
+                        'field' => $field,
+                        'record' => $this->record,
+                    ])
+                    : url('dynamic.records.field.upload.new', [
+                        'table' => $this->table,
+                        'field' => $field,
+                    ]));*/
+
+            $options = [
+                'url' => url('dynamic.records.field.upload', [
+                    'table' => $this->table,
+                    'field' => $this,
+                    'record' => $record,
+                ]),
+            ];
+        }
+
+        return $options;
     }
 }

@@ -7,7 +7,7 @@
                 <div class="flex-grid --gap-md">
                     <div v-for="group in position" class="s-form-field-group box-with-padding --bg-color">
                         <div class="s-form-field animated fadeIn"
-                             :class="'--field-type' + field.type"
+                             :class="'--field-type-' + field.type"
                              v-for="(field, i) in group">
                             <h2 class="__component-title" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
 
@@ -55,7 +55,9 @@ export default {
             default: 'edit'
         },
         formModel: {
-            default: null
+            default() {
+                return {};
+            },
         },
         onSuccess: {
             default: null
@@ -135,8 +137,8 @@ export default {
             this.state = 'submitting';
             this.validateAndSubmit(function () {
                 let url = this.formModel.id
-                    ? ('/dynamic/records/' + this.table.id + '/' + this.formModel.id + '/edit')
-                    : ('/dynamic/records/' + this.table.id + '/add');
+                    ? ('/api/dynamic/records/' + this.table.id + '/' + this.formModel.id + '/edit')
+                    : ('/api/dynamic/records/' + this.table.id + '/add');
                 http.post(url, this.collectFormData(), function (data) {
                     this.$emit('saved');
                     this.state = 'success';

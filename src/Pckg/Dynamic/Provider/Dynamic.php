@@ -98,10 +98,28 @@ class Dynamic extends Provider
              */
             routeGroup([
                 'controller' => Records::class,
-                'urlPrefix' => '/dynamic/records/[table]/[record]',
+                'urlPrefix' => '/dynamic/records/[table]',
                 ], [
 
-                'dynamic.record' => vueRoute('', 'pckg-dynamic-record-tabs', [], [
+                'dynamic.record.add' => vueRoute('/add', 'dynamic-singular')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            //$table->checkPermissionsFor('write');
+                        });
+                    },
+                ])->mergeToData($backendData()),
+
+                'dynamic.record.add.relation' => vueRoute('/add/[relation]/[foreign]', 'pckg-maestro-form')->resolvers([
+                    'table' => function () {
+                        return resolve(TableResolver::class)->validator(function (Table $table) {
+                            $table->checkPermissionsFor('write');
+                        });
+                    },
+                    'relation' => Relation::class,
+                    'foreign' => ForeignRecord::class,
+                ])->mergeToData($backendData()),
+
+                'dynamic.record' => vueRoute('/[record]', 'pckg-dynamic-record-tabs', [], [
 
                     'view' => vueRoute('/view', '<pckg-maestro-form :form-model="$route.meta.resolved.mappedRecord" mode="view"></pckg-maestro-form>')->resolvers([
                         'table' => function () {
@@ -113,7 +131,7 @@ class Dynamic extends Provider
                         TableRecordRelated::class,
                     ])->mergeToData($backendData()),
 
-                    'edit' => vueRoute('/edit', '<pckg-maestro-form :form-model="$route.meta.resolved.mappedRecord" mode="edit"></pckg-maestro-form>')->resolvers([
+                    'edit' => vueRoute('/[record]/edit', '<pckg-maestro-form :form-model="$route.meta.resolved.mappedRecord" mode="edit"></pckg-maestro-form>')->resolvers([
                         'table' => function () {
                             return resolve(TableResolver::class)->validator(function (Table $table) {
                                 $table->checkPermissionsFor('write');
@@ -123,7 +141,7 @@ class Dynamic extends Provider
                         TableRecordRelated::class,
                     ])->mergeToData($backendData()),
 
-                    'tab' => vueRoute('/tab/[tab]', 'tabelize-functionize')->resolvers([
+                    'tab' => vueRoute('/[record]/tab/[tab]', 'tabelize-functionize')->resolvers([
                         'table' => function () {
                             return resolve(TableResolver::class)->validator(function (Table $table) {
                                 $table->checkPermissionsFor('read');
@@ -150,24 +168,6 @@ class Dynamic extends Provider
                 'controller' => Records::class,
                 'urlPrefix' => '/dynamic/records/[table]',
             ], [
-
-                'dynamic.record.add' => vueRoute('/add', 'dynamic-singular')->resolvers([
-                    'table' => function () {
-                        return resolve(TableResolver::class)->validator(function (Table $table) {
-                            $table->checkPermissionsFor('write');
-                        });
-                    },
-                ])->mergeToData($backendData()),
-
-                'dynamic.record.add.relation' => vueRoute('/add/[relation]/[foreign]', 'pckg-maestro-form')->resolvers([
-                    'table' => function () {
-                        return resolve(TableResolver::class)->validator(function (Table $table) {
-                            $table->checkPermissionsFor('write');
-                        });
-                    },
-                    'relation' => Relation::class,
-                    'foreign' => ForeignRecord::class,
-                ])->mergeToData($backendData()),
 
 
                 /*'dynamic.record.add.relation' => route('/dynamic/records/[table]/add/[relation]/[foreign]', 'add')->resolvers([
@@ -202,6 +202,32 @@ class Dynamic extends Provider
                         'controller' => Records::class,
                     ],
                     [
+
+                        '/api/dynamic/records/[table]/add' => [
+                            'name' => 'api.dynamic.records.add',
+                            'view' => 'add',
+                            'method' => 'POST',
+                            'resolvers' => [
+                                'table' => function () {
+                                    return resolve(TableResolver::class)->validator(function (Table $table) {
+                                        //$table->checkPermissionsFor('write');
+                                    });
+                                }
+                            ]
+                        ],
+                        '/api/dynamic/records/[table]/[record]/edit' => [
+                            'name' => 'api.dynamic.records.edit',
+                            'view' => 'add',
+                            'method' => 'POST',
+                            'resolvers' => [
+                                'table' => function () {
+                                    return resolve(TableResolver::class)->validator(function (Table $table) {
+                                        //$table->checkPermissionsFor('write');
+                                    });
+                                },
+                                'record' => RecordResolver::class,
+                            ]
+                        ],
                         '/api/vue/dynamic/table/[table]/actions' => [
                             'name' => 'api.vue.dynamic.table.actions',
                             'view' => 'tableActions',

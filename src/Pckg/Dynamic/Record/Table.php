@@ -30,17 +30,11 @@ class Table extends Record
 
     public function getPrivilegesAttribute()
     {
-        $tables = (new Tables(null, null, false));
-        $tables->usePermissionableTable();
-        return $tables->where('id', $this->id)
-                      ->where('user_group_id', auth()->getGroupId())
-                      ->all()
-                      ->keyBy('action')
-                      ->map(function() {
-
-                          return true;
-                      })
-                      ->all();
+        return $this->allPermissions
+            ->filter('user_group_id', auth()->getGroupId())
+            ->keyBy('action')
+            ->map(true)
+            ->all();
     }
 
     public function getTitleSingularAttribute() {

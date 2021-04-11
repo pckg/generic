@@ -46,6 +46,9 @@ class Dynamic extends Bootstrap
     protected $foreignFieldId;
     protected $editable = true;
     protected $lastFieldset;
+
+    protected $listableFields;
+
     public function __construct()
     {
         parent::__construct();
@@ -206,27 +209,23 @@ class Dynamic extends Bootstrap
         $this->addDiv()->addChild($child);
     }
 
-    public function initFields()
+    public function getListableFields()
     {
-        $this->setDecoratorClasses([
-                                       'label'           => '',
-                                       'field'           => '',
-                                       'fullField'       => '',
-                                       'offset'          => '',
-                                       'offsetField'     => '',
-                                       'offsetFullField' => '',
-                                   ]);
+        if ($this->listableFields) {
+            return $this->listableFields;
+        }
+
         $fields = collect();
         for ($i = 0; $i < 2; $i++) {
             $fields = $this->table->listableFields(function(HasMany $fields) use ($i) {
 
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withPermissions();
-                $fields->withHasOneSelectRelation(function(HasOne $relation) {
-
+                // @T00D00 - line below does not work with json?
+                /*$fields->withHasOneSelectRelation(function(HasOne $relation) {
                     $relation->withOnTable();
                     $relation->withShowTable();
-                });
+                });*/
                 $fields->withFieldGroup();
                 if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api')) {
                     return;
@@ -238,6 +237,21 @@ class Dynamic extends Bootstrap
                 break;
             }
         }
+
+        return $this->listableFields = $fields;
+    }
+
+    public function initFields()
+    {
+        $this->setDecoratorClasses([
+                                       'label'           => '',
+                                       'field'           => '',
+                                       'fullField'       => '',
+                                       'offset'          => '',
+                                       'offsetField'     => '',
+                                       'offsetFullField' => '',
+                                   ]);
+        $fields = $this->getListableFields();
 
         $prevGroup = null;
         $fieldPositions = $fields->groupBy(function(Field $field) {
@@ -533,36 +547,13 @@ ifrm.document.close();
             $element->setPrefix('<i class="fal fa-fw fa-map-marker" aria-hidden="true"></i>');
             return $element;
         } elseif ($type == 'select') {
-            $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
             $element = $this->getFieldset()->addSelect($name);
+
             /**
              * @T00D00 - add setting for select placeholder for speciffic field
              */
-            $options = [];
-            $rawValue = $this->record->{$field->field} ?? null;
-            $foundValue = false;
-            foreach ($relation as $id => $value) {
-                if (is_array($value)) {
-                    $optgroup = [];
-                    foreach ($value as $k => $v) {
-                        $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
-                        $foundValue = $foundValue || $k == $rawValue;
-                    }
-                    $options[$id] = $optgroup;
-                } else {
-                    $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
-                    $foundValue = $foundValue || $id == $rawValue;
-                }
-            }
-
-            if (!$foundValue && $rawValue) {
-                $item = $field->getItemForSelect($this->record, null, $rawValue);
-                if (!trim($item)) {
-                    $item = $rawValue;
-                }
-
-                $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
-            }
+            $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
+            $options = $field->getRelationOptions($relation, $this->record);
 
             $element->setAttribute('data-options', json_encode($options));
             $element->setAttribute(':initial-multiple', 'false');
@@ -586,5 +577,21 @@ ifrm.document.close();
         } else {
             ddd('Unknown dynamic form type: ' . $type);
         }
+    }
+
+    public function getDynamicInitialOptions()
+    {
+        $fields = $this->getListableFields();
+        return $fields->realReduce(function(Field $field, $key, $reduced){
+            $type = $field->fieldType->slug;
+            if ($type !== 'select') {
+                return $reduced;
+            }
+
+            $relation = $field->getRelationForSelect($this->record, $this->foreignRecord);
+            $reduced[$field->field] = $field->getRelationOptions($relation, $this->record);
+
+            return $reduced;
+        }, []);
     }
 }
