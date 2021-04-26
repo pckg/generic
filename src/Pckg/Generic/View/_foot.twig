@@ -7,7 +7,7 @@
         auth: {user:{{ _auth.getUserDataArray() | json_encode | raw }}}
     };
 
-    {% if true or _env.isDev() %}
+    {% if _env.isDev() %}
     Vue.config.debug = true;
     Vue.config.silent = false;
     Vue.config.devtools = true;
