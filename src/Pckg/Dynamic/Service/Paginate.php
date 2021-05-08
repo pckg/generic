@@ -13,6 +13,8 @@ class Paginate
 
     protected $get;
 
+    const LIMIT = 25;
+
     public function __construct(Get $get)
     {
         $this->get = $get;
@@ -29,10 +31,10 @@ class Paginate
     {
         $entity->count();
 
-        $limit = $ormPaginator['limit'];
+        $limit = $ormPaginator['limit'] ?? static::LIMIT;
         $entity->limit($limit == 'all' ? null : $limit);
 
-        $page = $ormPaginator['page'];
+        $page = $ormPaginator['page'] ?? 1;
         $entity->page($page);
 
         return $this;

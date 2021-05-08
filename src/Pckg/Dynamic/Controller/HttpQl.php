@@ -2,6 +2,7 @@
 
 namespace Pckg\Dynamic\Controller;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
@@ -9,9 +10,11 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
+use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Resolver\TableQl;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Generic\Controller\Generic;
 use Pckg\Maestro\Service\Tabelize;
 
 class HttpQl
@@ -34,6 +37,73 @@ class HttpQl
     }
 
     /**
+     * Get all records.
+     *
+     * @param Table $table
+     * @return mixed|null
+     * @throws \Throwable
+     */
+    public function getTableAction(Table $table)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return Reflect::method($this, 'searchIndexAction', ['table' => $table, 'tabelize' => $tabelize]);
+    }
+
+    /**
+     * Insert multiple records.
+     */
+    public function postTableAction()
+    {
+
+    }
+
+    /**
+     * Patch multiple records.
+     */
+    public function patchTableAction()
+    {
+
+    }
+
+    /**
+     * Delete multiple records.
+     */
+    public function deleteTableAction()
+    {
+
+    }
+
+    public function getRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
+            'record' => Reflect::method(Records::class, 'getViewAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    public function patchRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
+            'record' => Reflect::method(Records::class, 'postEditAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    public function deleteRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return Reflect::method(Records::class, 'deleteDeleteAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord'];
+    }
+
+    /**
      * This works the same as postAddAction from Record.
      * Except, it accepts data in other format.
      */
@@ -46,9 +116,8 @@ class HttpQl
 
     /**
      * This works only for file uploads.
-     * It will be refactored to a separate method in next version.
      */
-    public function postIndexAction(Dynamic $dynamic)
+    public function postUploadAction(Dynamic $dynamic)
     {
         if (!files()->all()) {
             throw new \Exception('Incomplete request');
@@ -78,18 +147,32 @@ class HttpQl
         Tabelize $tabelize,
         Table $table = null,
         $noLimit = false
-    ) {
+    )
+    {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
+
         /**
-         * Read Orm data.
+         * Read Orm data from body or headers.
          */
-        $ormFields = json_decode(post('X-Pckg-Orm-Fields'), true);
-        $ormFilters = json_decode(post('X-Pckg-Orm-Filters'), true);
-        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator'), true);
-        $ormSearch = json_decode(post('X-Pckg-Orm-Search'), true);
-        $ormMeta = json_decode(post('X-Pckg-Orm-Meta'), true);
+        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
+        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
+        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
+        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
+        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
+
+        foreach (['Fields' => [], 'Filters' => [], 'Paginator' => [], 'Search' => null, 'Meta' => []] as $key => $def) {
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = json_decode(request()->getHeader('X-Pckg-Orm-' . $key, ''), true);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = get(strtolower($key), []);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = $def;
+            }
+        }
 
         /**
          * Set defaults.
@@ -225,7 +308,8 @@ class HttpQl
         $ormFields,
         &$fields,
         &$fieldTransformations
-    ) {
+    )
+    {
         foreach ($ormFields as $field) {
             if (strpos($field, '.') === false) {
                 $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);

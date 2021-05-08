@@ -51,6 +51,8 @@ class Sort extends AbstractService
         $directionMapper = [
             'up'   => 'ASC',
             'down' => 'DESC',
+            'asc'   => 'ASC',
+            'desc' => 'DESC',
         ];
 
         if ($field) {
@@ -62,7 +64,7 @@ class Sort extends AbstractService
                              ->getExtendeeTableForField($entity->getTable(), $field->field);
 
                 $entity->orderBy('`' . ($table ?? $entity->getTable()) . '`.`' . $field->field . '` ' .
-                                 ($directionMapper[$paginator['dir']] ?? 'DESC'));
+                                 ($directionMapper[$paginator['dir'] ?? 'down'] ?? 'DESC'));
             } else {
                 $entity->orderBy('`' . $field->field . '` ' . ($directionMapper[$paginator['dir']] ?? 'DESC'));
             }

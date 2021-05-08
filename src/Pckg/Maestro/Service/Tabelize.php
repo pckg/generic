@@ -76,6 +76,9 @@ class Tabelize
      * @var TableView
      */
     protected $tableView;
+
+    protected $enriched = true;
+
     public function __construct(Entity $entity = null, $fields = [])
     {
         $this->entity = $entity;
@@ -83,6 +86,13 @@ class Tabelize
         $this->view = view('Pckg/Maestro:tabelize', [
             'tabelize' => $this,
         ]);
+    }
+
+    public function setEnriched(bool $enriched = true)
+    {
+        $this->enriched = $enriched;
+
+        return $this;
     }
 
     public function make()
@@ -557,7 +567,7 @@ class Tabelize
                         : $field['field']));
             $enriched = null;
             $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
-            if ($enriched) {
+            if ($this->enriched && $enriched) {
                 $transformed['*' . $realKey] = $enrichedValue;
             }
         }
@@ -574,7 +584,7 @@ class Tabelize
             }
         }
 
-        if ($this->dataOnly) {
+        if ($this->dataOnly || !$this->enriched) {
             return $transformed;
         }
 

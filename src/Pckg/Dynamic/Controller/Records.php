@@ -500,6 +500,10 @@ class Records extends Controller
             ->where('dynamic_table_tab_id', null, 'IS NOT')
             ->all();
 
+        if (strpos(router()->getUri(), '/api/http-ql') !== false) {
+            $tabelize->setEnriched(false);
+        }
+
         /**
          * Resolve record for the frontend.
          * @var $generic Generic

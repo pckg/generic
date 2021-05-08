@@ -15,6 +15,7 @@ class TableQl implements RouteResolver
      * @var Dynamic
      */
     protected $dynamic;
+
     public function __construct(Dynamic $dynamic)
     {
         $this->dynamic = $dynamic;
@@ -25,27 +26,27 @@ class TableQl implements RouteResolver
         $dynamic = $this->dynamic;
         $table = runInLocale(function () use ($dynamic, $value) {
 
-                $tables = new Tables();
+            $tables = new Tables();
             $dynamic->joinTranslationsIfTranslatable($tables);
             $dynamic->joinPermissionsIfPermissionable($tables);
             return $tables->where(is_numeric($value) ? 'id' : 'table', $value)
-                              ->withRelations(function (HasMany $relations) {
+                ->withRelations(function (HasMany $relations) {
 
-                                        $relations->joinTranslations();
-                                $relations->joinFallbackTranslation();
-                              })
-                              ->withFields()
-                              ->withTabs(function (HasMany $tabs) {
+                    $relations->joinTranslations();
+                    $relations->joinFallbackTranslation();
+                })
+                ->withFields()
+                ->withTabs(function (HasMany $tabs) {
 
-                                        $tabs->joinTranslation();
-                                $tabs->joinFallbackTranslation();
-                              })
-                              ->withActions()
-                              ->withListableFields()
-                              ->oneOrFail(function () {
+                    $tabs->joinTranslation();
+                    $tabs->joinFallbackTranslation();
+                })
+                ->withActions()
+                ->withListableFields()
+                ->oneOrFail(function () {
 
-                                        response()->unauthorized('Table not found');
-                              });
+                    response()->unauthorized('Table not found');
+                });
         }, 'en_GB');
         return $table;
     }
