@@ -317,6 +317,7 @@ class Records extends Controller
         $form->setTable($table);
         $form->setRecord($record);
         $form->initFields();
+
         if ($entity->isTranslatable()) {
             $form->initLanguageFields();
         }
@@ -326,6 +327,7 @@ class Records extends Controller
         }
 
         $form->populateFromRequest();
+
         /**
          * Populate from session?
          */
@@ -623,15 +625,20 @@ class Records extends Controller
         return [$tabelizes, $functionizes];
     }
 
+    public function patchEditAction(Dynamic $form, Record $record, Table $table, Entity $entity)
+    {
+        return $this->postEditAction($form, $record, $table, $entity);
+    }
+
     public function postEditAction(Dynamic $form, Record $record, Table $table, Entity $entity)
     {
         (new TableActions())->joinPermissionTo('execute')
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'edit')
                             ->oneOrFail(function(){
-
                                 $this->response()->unauthorized();
                             });
+
         $table = $this->router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);

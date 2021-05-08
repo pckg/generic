@@ -19,7 +19,7 @@ class HttpQl extends Provider
                     'group:api',
                 ],
             ], [
-                'api.httpql' => route('/api/http-ql', 'index')/*->methods(['GET', 'SEARCH', 'PUT'])*/,
+                'api.httpql' => route('/api/http-ql', 'index'),
                 'api.httpql.definition' => route('/api/http-ql/definition', 'definition'),
                 'api.httpql.export' => route('/api/http-ql/export', 'export'),
                 'api.httpql.download' => route('/api/http-ql/download', 'download'),

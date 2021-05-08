@@ -329,7 +329,7 @@ class Dynamic extends Bootstrap
 
                 $element->setHelp($field->help);
                 $element->setAttribute('data-field-id', $field->id);
-                if ($field->required) {
+                if ($field->required && !request()->isPatch()) {
                     $element->required();
                 }
             }

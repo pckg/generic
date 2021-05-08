@@ -58,6 +58,13 @@ class EncapsulateResponse
                 // $output = Reflect::create(Generic::class)->wrapIntoGeneric($output, $template);
                 $this->response->setOutput($output);
             }
+        } elseif (is_array($output)) {
+            if (isset($output['success']) && !isset($output['error'])) {
+                $output['error'] = false;
+            } else if (isset($output['error']) && !isset($output['success'])) {
+                $output['success'] = false;
+            }
+            $this->response->setOutput($output);
         }
 
         return $next();

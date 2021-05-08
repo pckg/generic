@@ -51,30 +51,6 @@ class HttpQl
         return Reflect::method($this, 'searchIndexAction', ['table' => $table, 'tabelize' => $tabelize]);
     }
 
-    /**
-     * Insert multiple records.
-     */
-    public function postTableAction()
-    {
-
-    }
-
-    /**
-     * Patch multiple records.
-     */
-    public function patchTableAction()
-    {
-
-    }
-
-    /**
-     * Delete multiple records.
-     */
-    public function deleteTableAction()
-    {
-
-    }
-
     public function getRecordAction(Table $table, Record $record)
     {
         $tabelize = resolve(Tabelize::class);
@@ -91,6 +67,17 @@ class HttpQl
         $tabelize->setEnriched(false);
 
         return [
+            'record' => Reflect::method(Records::class, 'patchEditAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    // full update
+    public function postRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
             'record' => Reflect::method(Records::class, 'postEditAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
         ];
     }
@@ -101,6 +88,30 @@ class HttpQl
         $tabelize->setEnriched(false);
 
         return Reflect::method(Records::class, 'deleteDeleteAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord'];
+    }
+
+    /**
+     * Insert multiple records.
+     */
+    public function postTableAction(Table $table)
+    {
+        return Reflect::method(Records::class, 'postAddAction', ['table' => $table]);
+    }
+
+    /**
+     * Patch multiple records.
+     */
+    public function patchTableAction()
+    {
+
+    }
+
+    /**
+     * Delete multiple records.
+     */
+    public function deleteTableAction()
+    {
+
     }
 
     /**
