@@ -23,6 +23,7 @@
                 if (this._chart) {
                     this._chart.destroy();
                 }
+                return; // chart is not available?
 
                 this._chart = new Chart($(this.$el).get()[0], {
                     type: this.type,
