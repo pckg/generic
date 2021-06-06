@@ -48,6 +48,11 @@ class Routes extends Entity
                     ->rightForeignKey('setting_id');
     }
 
+    public function published()
+    {
+        return $this->whereRaw('routes.published_at IS NOT NULL AND routes.published_at < ?', [date('Y-m-d H:i')]);
+    }
+
     /**
      * @return $this
      */
