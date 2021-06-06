@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="form-group margin-top-sm" v-if="mode !== 'view'">
+        <div class="__form-actions form-group margin-top-sm" v-if="mode !== 'view'">
             <button type="button"
                     @click.prevent="submitForm"
                     class="__submit-btn btn btn-primary"

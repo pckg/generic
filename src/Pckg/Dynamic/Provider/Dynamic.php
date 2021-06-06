@@ -131,7 +131,7 @@ class Dynamic extends Provider
                         TableRecordRelated::class,
                     ])->mergeToData($backendData()),
 
-                    'edit' => vueRoute('/[record]/edit', '<pckg-maestro-form :form-model="$route.meta.resolved.mappedRecord" mode="edit"></pckg-maestro-form>')->resolvers([
+                    'edit' => vueRoute('/edit', '<pckg-maestro-form :form-model="$route.meta.resolved.mappedRecord" mode="edit"></pckg-maestro-form>')->resolvers([
                         'table' => function () {
                             return resolve(TableResolver::class)->validator(function (Table $table) {
                                 $table->checkPermissionsFor('write');
@@ -141,7 +141,7 @@ class Dynamic extends Provider
                         TableRecordRelated::class,
                     ])->mergeToData($backendData()),
 
-                    'tab' => vueRoute('/[record]/tab/[tab]', 'tabelize-functionize')->resolvers([
+                    'tab' => vueRoute('/tab/[tab]', 'tabelize-functionize')->resolvers([
                         'table' => function () {
                             return resolve(TableResolver::class)->validator(function (Table $table) {
                                 $table->checkPermissionsFor('read');

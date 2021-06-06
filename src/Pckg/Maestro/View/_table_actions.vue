@@ -14,12 +14,12 @@
                 <i class="fal fa-ellipsis-h"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
-                <li><a href="#" @click.prevent="exportView"><i class="fal fa-download"></i> Export</a></li>
+                <li><a href="#" @click.prevent="exportView"><i class="fal fa-fw fa-download"></i> Export</a></li>
                 <li><a href="#" @click.prevent="importView"
-                       v-if="table.privileges.write"><i class="fal fa-upload"></i> Import</a></li>
+                       v-if="table.privileges.write"><i class="fal fa-fw fa-upload"></i> Import</a></li>
                 <li v-for="action in actions">
                     <a href="#" @click.prevent="entityAction(action.event)">
-                        <i class="fa" :class="'fa-' + action.icon"></i>
+                        <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
                         {{ action.title }}</a>
                 </li>
             </ul>

@@ -1,21 +1,32 @@
 <template>
     <div class="btn-group btn-group-sm pull-right">
 
-        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                class="btn btn-default dropdown-toggle"><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
-        </button>
+        <a href="#"
+           type="button"
+           data-toggle="dropdown"
+           aria-haspopup="true"
+           aria-expanded="false"
+           class="__maestro-back-button"
+           title="See more options">
+            <i class="fal fa-fw fa-chevron-double-down"></i>
+        </a>
+
+        <!--<button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="__maestro-back-button">
+            <i class="fal fa-fw fa-ellipsis-v"></i>
+        </button>-->
 
         <ul class="dropdown-menu dropdown-menu-right">
             <li v-for="action in actions.record"
                 v-if="action.recordHref && record[action.recordHref] || action.event">
                 <pb-link v-if="action.recordHref && record[action.recordHref]"
                    :to="record[action.recordHref]">
-                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
                     {{ action.title }}
                 </pb-link>
                 <a v-else-if="action.event" href="#"
                    @click.prevent="recordAction(record, action.event)">
-                    <i class="fa" :class="'fa-' + action.icon"></i>
+                    <i class="fa fa-fw" :class="'fa-' + action.icon"></i>
                     {{ action.title }}
                 </a>
             </li>
