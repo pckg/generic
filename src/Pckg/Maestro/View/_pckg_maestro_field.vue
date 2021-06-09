@@ -26,21 +26,24 @@
                                            :table="table"
                                            :url="orderFieldUrl"></pckg-tabelize-field-order>
             </template>
-            <template v-else-if="type == 'datetime' && isTogglable">
-                <template v-if="!editable">
-                    <template v-if="!hasPrivilegeToEdit">{{ value | datetime }}</template>
-                    <pckg-tabelize-field-datetime v-else
-                                                  :field="fieldId"
-                                                  :record="record.id"
-                                                  :value="value"
-                                                  :table="table"
-                                                  :min="minTogglable"
-                                                  :max="maxTogglable"
-                                                  :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
+            <template v-else-if="type == 'datetime'">
+                <template v-if="isTogglable">
+                    <template v-if="!editable">
+                        <template v-if="!hasPrivilegeToEdit">{{ value | datetime }}</template>
+                        <pckg-tabelize-field-datetime v-else
+                                                      :field="fieldId"
+                                                      :record="record.id"
+                                                      :value="value"
+                                                      :table="table"
+                                                      :min="minTogglable"
+                                                      :max="maxTogglable"
+                                                      :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
+                    </template>
+                    <template v-else>
+                        <input type="date" v-model="model"/>
+                    </template>
                 </template>
-                <template v-else>
-                    <input type="date" v-model="model"/>
-                </template>
+                <template v-else-if="value">{{ value | date }}<span class="color-grayish display-block">{{ value | time }}</span></template>
             </template>
             <template v-else-if="type == 'editor'">
                 <template v-if="!editable">

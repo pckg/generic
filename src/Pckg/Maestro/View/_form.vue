@@ -9,7 +9,7 @@
                         <div class="s-form-field animated fadeIn"
                              :class="'--field-type-' + field.type"
                              v-for="(field, i) in group">
-                            <h2 class="__component-title" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
+                            <h2 class="h-page-subsubtitle" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
 
                             <form-group :label="getFieldLabel(field)"
                                         :type="mode === 'edit' ? field.type : 'raw'"

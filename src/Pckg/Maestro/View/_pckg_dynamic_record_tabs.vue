@@ -1,6 +1,5 @@
 <template>
-    <pckg-loader v-if="loading"></pckg-loader>
-    <div v-else class="pckg-dynamic-record-tabs">
+    <div class="pckg-dynamic-record-tabs">
         <div class="display-block">
 
             <h1 class="h-page-title">
@@ -22,11 +21,11 @@
             </h1>
 
             <ul class="nav nav-tabs">
-                <li :class="!selectedTab ? 'active' : ''">
-                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" @click.native="selectTab(null)">General</router-link>
+                <li>
+                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" active-class="active">General</router-link>
                 </li>
-                <li v-for="tab in tabs" :class="selectedTab === tab.id ? 'active' : ''">
-                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" @click.native="selectTab(tab.id)">
+                <li v-for="tab in tabs">
+                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" active-class="active">
                         {{ tab.title }}
                     </router-link>
                 </li>
@@ -47,8 +46,7 @@
         </div>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component"
-                   @tab:refresh="selectTab"></component>
+        <component :is="component" v-for="component in uniqueActions" :key="component"></component>
 
     </div>
 </template>
@@ -58,41 +56,8 @@ export default {
     name: 'pckg-dynamic-record-tabs',
     data: function () {
         return {
-            loading: false,
-            selectedTab: null,
-            localBus: new Vue()
+            localBus: new Vue(), // @deprecated
         };
-    },
-    watch: {
-        '$route': {
-            deep: true,
-            immediate: true,
-            handler: function () {
-                this.initialFetch();
-            }
-        }
-    },
-    methods: {
-        initialFetch: function () {
-            //http.get('/api/dynamic/table/' + this.$route.params.table, (data) => {
-            //  this.actions = data.actions;
-            //this.tabs = data.tabs;
-            this.loading = false;
-            //});
-        },
-        selectTab: function (tabId) {
-            this.selectedTab = tabId;
-            /**
-             * Destroy and re-init component?
-             */
-            /*$dispatcher.$emit('dynamic-tab-' + tabId + ':refresh', {
-                tabId: tabId, callback: function (data) {
-                    if (data.functionizes) {
-                        $(this.$el).find('.tab-functionize').html(data.functionizes.join(''));
-                    }
-                }.bind(this)
-            });*/
-        },
     },
     computed: {
         table: function () {

@@ -262,10 +262,13 @@ Style tds
   th {
     white-space: nowrap;
     border-bottom-width: 1px;
+    text-transform: uppercase;
+    color: #777;
+    cursor: pointer;
   }
 
   > thead > tr > th {
-    padding: 1rem 2rem 1rem 1rem;
+    padding: 1.5rem 1.5rem 1.5rem 1rem;
   }
 
   td,
@@ -380,8 +383,9 @@ Style tds
       }
     }
 
+    vertical-align: middle;
     &.id {
-      vertical-align: middle;
+      //vertical-align: middle;
 
       > div {
         display: inline;
@@ -913,7 +917,11 @@ div.form-control {
 }
 
 .pckg-maestro-table {
-  margin-top: 2rem;
+  margin: 3rem 0;
+  &,
+  &.box-with-padding {
+    padding: 0;
+  }
 }
 
 .tab-tabelize {
@@ -1194,15 +1202,15 @@ table.table {
       > .freeze {
         &.checkboxes {
           padding: 0;
-          width: 4rem;
+          width: 5rem;
           text-align: center;
           > div {
             position: relative;
-            min-height: 4rem;
+            min-height: 5rem;
             > span {
               top: 50%;
               position: absolute;
-              transform: translate(-50%, -50%);
+              transform: translate(60%, -50%);
             }
           }
         }
