@@ -93,7 +93,6 @@ const $vue = new Vue({
             inIframe: window !== window.top
         };
     },
-    mixins: [pckgDelimiters],
     methods: {
         openModal: function (data) {
             this.modals.push(data);

@@ -562,7 +562,9 @@ class Records extends Controller
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
         $functions->each(function (Func $function) use (&$functionizes, $pluginService, $args) {
-
+            /**
+             * This is where a controller is called.
+             */
             $functionize = $pluginService->make($function->class, $function->method, $args);
             $functionizes[] = (string)$functionize;
         });

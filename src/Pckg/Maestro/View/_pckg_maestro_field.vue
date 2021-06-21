@@ -43,7 +43,10 @@
                         <input type="date" v-model="model"/>
                     </template>
                 </template>
-                <template v-else-if="value">{{ value | date }}<span class="color-grayish display-block">{{ value | time }}</span></template>
+                <template v-else-if="value">
+                    <span class="display-block nobr">{{ value | date }}</span>
+                    <span class="color-grayish display-block nobr">{{ value | time }}</span>
+                </template>
             </template>
             <template v-else-if="type == 'editor'">
                 <template v-if="!editable">
