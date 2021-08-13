@@ -11,7 +11,15 @@
                              v-for="(field, i) in group">
                             <h2 class="h-page-subsubtitle" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
 
-                            <form-group :label="getFieldLabel(field)"
+                            <form-group v-if="field.type === 'file:picture'"
+                                        :label="getFieldLabel(field)"
+                                        :type="mode === 'edit' ? field.type : 'raw'"
+                                        :help="field.help"
+                                        :options="Object.assign(field.options, {current: formModel.image})"
+                                        :name="field.slug"
+                                        v-model="formModel[field.slug]"></form-group>
+                            <form-group v-else
+                                        :label="getFieldLabel(field)"
                                         :type="mode === 'edit' ? field.type : 'raw'"
                                         :help="field.help"
                                         :options="field.options"
@@ -32,7 +40,7 @@
                 {{ formModel.id ? 'Save changes' : 'Add' }}
                 <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
                    class="fal fa-fw"
-                   :class="'submitting' === state ? 'fa-spinner fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
+                   :class="'submitting' === state ? 'fa-spinner-third fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
             </button>
         </div>
 
@@ -186,7 +194,7 @@ export default {
         },
         getFieldLabel: function (field) {
             return (field.required ? '* ' : '') + field.title;
-        },
+        }
     }
 }
 </script>
