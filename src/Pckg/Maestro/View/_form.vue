@@ -13,18 +13,22 @@
 
                             <form-group v-if="field.type === 'file:picture'"
                                         :label="getFieldLabel(field)"
-                                        :type="mode === 'edit' ? field.type : 'raw'"
+                                        :type="mode === 'edit' ? field.type : 'encoded'"
                                         :help="field.help"
-                                        :options="Object.assign(field.options, {current: formModel.image})"
+                                        :options="Object.assign(field.options, {current: myFormModel.image})"
                                         :name="field.slug"
-                                        v-model="formModel[field.slug]"></form-group>
+                                        v-model="myFormModel[field.slug]"></form-group>
                             <form-group v-else
                                         :label="getFieldLabel(field)"
-                                        :type="mode === 'edit' ? field.type : 'raw'"
+                                        :type="mode === 'edit' ? field.type : 'encoded'"
                                         :help="field.help"
                                         :options="field.options"
                                         :name="field.slug"
-                                        v-model="formModel[field.slug]"></form-group>
+                                        v-model="myFormModel[field.slug]">
+                                <slot name="element" v-if="mode === 'view' && field.type === 'select:single' && myFormModel[`*${field.slug}`] && typeof myFormModel[`*${field.slug}`] === 'object'">
+                                    <router-link :to="myFormModel[`*${field.slug}`].url">{{ myFormModel[`*${field.slug}`].value }}</router-link>
+                                </slot>
+                            </form-group>
 
                         </div>
                     </div>
@@ -37,7 +41,7 @@
                     @click.prevent="submitForm"
                     class="__submit-btn btn btn-primary"
                     :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
-                {{ formModel.id ? 'Save changes' : 'Add' }}
+                {{ myFormModel.id ? 'Save changes' : 'Add' }}
                 <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
                    class="fal fa-fw"
                    :class="'submitting' === state ? 'fa-spinner-third fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
@@ -74,6 +78,11 @@ export default {
     created: function () {
         this.initialFetch();
     },
+    watch: {
+        formModel: function (newValue) {
+            this.myFormModel = newValue;
+        }
+    },
     data: function () {
         return {
             myForm: {
@@ -85,7 +94,7 @@ export default {
     },
     computed: {
         isNew: function () {
-            return !this.formModel.id;
+            return !this.myFormModel.id;
         },
         visibleFields: function () {
             return this.myForm.fields.filter(this.isVisible);
@@ -136,16 +145,19 @@ export default {
         },
         initialFetch: function () {
             this.state = 'loading';
-            http.get('/api/dynamic/form/' + this.table.id + (this.formModel && this.formModel.id ? '/' + this.formModel.id : ''), function (data) {
+            http.get('/api/dynamic/form/' + this.table.id + (this.myFormModel && this.myFormModel.id ? '/' + this.myFormModel.id : ''), function (data) {
                 this.myForm = data.form;
+                if (data.model) {
+                    this.myFormModel = data.model;
+                }
                 this.state = null;
             }.bind(this));
         },
         submitForm: function () {
             this.state = 'submitting';
             this.validateAndSubmit(function () {
-                let url = this.formModel.id
-                    ? ('/api/dynamic/records/' + this.table.id + '/' + this.formModel.id + '/edit')
+                let url = this.myFormModel.id
+                    ? ('/api/dynamic/records/' + this.table.id + '/' + this.myFormModel.id + '/edit')
                     : ('/api/dynamic/records/' + this.table.id + '/add');
                 http.post(url, this.collectFormData(), function (data) {
                     this.$emit('saved');
@@ -154,7 +166,7 @@ export default {
                     if (this.onSuccess && this.onSuccess()) {
                         return;
                     }
-                    if (!this.formModel.id) {
+                    if (!this.myFormModel.id) {
                         this.state = 'redirecting';
                         $dispatcher.$emit('notification:info', 'The record has been added, redirecting to new page');
                         this.$router.push(data.redirect);
@@ -188,7 +200,7 @@ export default {
         collectFormData: function () {
             let d = {};
             $.each(this.myForm.fields, function (i, field) {
-                d[field.slug] = this.formModel[field.slug] || null;
+                d[field.slug] = this.myFormModel[field.slug] || null;
             }.bind(this));
             return d;
         },

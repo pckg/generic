@@ -35,11 +35,7 @@ class Export extends Controller
          */
         $listableFields = $table->listableFields;
         $listedFields = $table->getFields($listableFields, $dynamicService->getFilterService());
-        $relations = (new Relations())->withShowTable()
-                                      ->withOnField()
-                                      ->where('on_table_id', $table->id)
-                                      ->where('dynamic_relation_type_id', 1)
-                                      ->all();
+        $relations = $table->getBelongsToRelations();
         foreach ($relations as $relation) {
             $relation->loadOnEntity($entity, $dynamicService);
         }

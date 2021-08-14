@@ -8,8 +8,10 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
+use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Filter;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Service\Tabelize;
@@ -284,6 +286,31 @@ class Table extends Record
             ->oneOrFail(function(){
                 $this->response()->unauthorized();
             });
+    }
+
+    public function getBelongsToRelations()
+    {
+        return
+            $relations = (new Relations())->withShowTable()
+                ->withOnField()
+                ->where('on_table_id', $this->id)
+                ->where('dynamic_relation_type_id', 1)
+                ->all();
+    }
+
+    public function getTabelize(Entity $tableEntity)
+    {
+        $listableFields = $this->listableFields;
+        $fieldTransformations = resolve(Dynamic::class)->getFieldsTransformations($tableEntity, $listableFields);
+
+        return (new Tabelize())
+            ->setTable($this)
+            ->setEntity($tableEntity)
+            ->setEntityActions($this->getEntityActions())
+            ->setRecordActions($this->getRecordActions())
+            ->setViews($this->actions()->keyBy('slug'))
+            ->setFields($listableFields)
+            ->setFieldTransformations($fieldTransformations);
     }
 
 }

@@ -1,10 +1,10 @@
 <template>
     <div class="pckg-htmlbuilder-select btn-group">
-        <a href="button" :href="realViewUrl" :disabled="!value" target="_blank" class="btn btn-default btn-sm"
+        <a :href="realViewUrl" :disabled="!value" target="_blank" class="btn btn-default btn-sm"
            title="View">
             <i class="fa-fw fal fa-search" aria-hidden="true"></i>
         </a>
-        <a href="button" :href="url" target="_blank" class="btn btn-default btn-sm"
+        <a :href="url" target="_blank" class="btn btn-default btn-sm"
            title="Open list">
             <i class="fa-fw fal fa-list-ul" aria-hidden="true"></i>
         </a>

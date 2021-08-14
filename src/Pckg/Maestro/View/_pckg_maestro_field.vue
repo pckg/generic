@@ -61,7 +61,8 @@
                 <template v-if="!editable">
                     <pckg-maestro-field-indicator :field="myField" :record="record"
                                                   :db-field="dbField"></pckg-maestro-field-indicator>
-                    <span v-html="richValue"></span>
+                    <router-link :to="record[`*${key}`].url" v-if="typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</router-link>
+                    <span v-else v-html="richValue"></span>
                 </template>
             </template>
             <template v-else-if="type == 'php'">

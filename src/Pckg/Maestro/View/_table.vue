@@ -133,8 +133,8 @@
                         <div class="clearfix"></div>
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
-                        <div class="mode-padding">
-                            <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
+                        <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
+                            <div class="mode-padding">
                                 <table class="c-maestro-table table table-hover table-borderless table-items">
                                     <thead>
                                     <tr>

@@ -433,7 +433,7 @@ class Records extends Controller
         return $this->getEditAction($form, $record, $table, $dynamic, 'view');
     }
 
-    public function getEditAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamicService, $mode = 'edit')
+    public function getEditAction(Dynamic $form, Record $record, Table $table, $mode = 'edit')
     {
         // $this->seoManager()->setTitle(($form->isEditable() ? 'Edit' : 'View') . ' ' . $table->title . ' #' . $record->id . ' - ' . config('site.title'));
 
@@ -477,26 +477,8 @@ class Records extends Controller
         $actions = $table->getRecordActions();
         ksort($tabelizes);
         ksort($functionizes);
-        $listableFields = $table->listableFields;
-        $fieldTransformations = $dynamicService->getFieldsTransformations($tableEntity, $listableFields);
-        $tabelize = $this->tabelize()
-                         ->setTable($table)
-                         ->setEntity($tableEntity)
-                         ->setEntityActions($table->getEntityActions())
-                         ->setRecordActions($table->getRecordActions())
-                         ->setViews($table->actions()->keyBy('slug'))
-                         ->setFields($listableFields)
-                         ->setFieldTransformations($fieldTransformations)
-                         ->setDynamicRecord($record);
 
-        /**
-         * @T00D00 - this is one of the remaining .twig templates.
-         */
-        /*$this->vueManager()
-             ->addView('Pckg/Maestro:_pckg_maestro_actions_template', [
-                'recordActions' => $actions,
-                'table'         => $table->table,
-            ]);*/
+        $tabelize = $table->getTabelize($tableEntity)->setDynamicRecord($record);
 
         $relations = (new Relations())->where('on_table_id', $table->id)
             ->where('dynamic_table_tab_id', null, 'IS NOT')
@@ -956,9 +938,20 @@ class Records extends Controller
                 ];
             })->rekey(),
         ];
+
+        $entity = $record->getEntity()->where('id', $record->id);
+        $tabelize = $table->getTabelize($entity);
+        $dynamic = resolve(DynamicService::class);
+        $dynamic->joinTranslationsIfTranslatable($entity);
+        foreach ($table->getBelongsToRelations() as $relation) {
+            $relation->loadOnEntity($entity, $dynamic);
+        }
+        $model = $entity->allOrFail()->first();
+
         return [
             'form' => $form,
             'table' => $table,
+            'model' => $tabelize->setDynamicRecord($model)->transformRecord($model),
         ];
     }
 }

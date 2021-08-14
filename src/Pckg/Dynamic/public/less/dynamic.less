@@ -418,7 +418,7 @@ Style tds
     tr.checkboxes,
     td.freeze {
       & + td:not(.freeze) {
-        padding-left: 1rem;
+        //padding-left: 5rem;
       }
     }
   }
@@ -1219,6 +1219,7 @@ table.table {
         //min-height: 5rem;
         //background-color: transparent;
         left: 0;
+        left: -4rem;
         & + .freeze {
           left: ~"calc(var(--freeze) * 10rem + 3rem)";
         }
