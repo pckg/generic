@@ -18,7 +18,7 @@ class Table implements RouteResolver
      * @var Dynamic
      */
     protected $dynamic;
-    
+
     public function __construct(Dynamic $dynamic)
     {
         $this->dynamic = $dynamic;
@@ -38,7 +38,9 @@ class Table implements RouteResolver
                                       $relations->joinTranslations();
                                       $relations->joinFallbackTranslation();
                               })
-                              ->withFields()
+                              ->withFields(function (HasMany $fields){
+                                  $fields->withSettings();
+                              })
                               ->withTabs(function (HasMany $tabs) {
 
                                       $tabs->joinTranslation();

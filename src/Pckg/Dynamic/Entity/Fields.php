@@ -56,8 +56,8 @@ class Fields extends DatabaseEntity
     public function settings()
     {
         return $this->morphsMany(Settings::class)
-                    ->over(SettingsMorphs::class)
-                    ->rightForeignKey('setting_id');
+            ->over(SettingsMorphs::class)
+            ->rightForeignKey('setting_id');
     }
 
     /**
