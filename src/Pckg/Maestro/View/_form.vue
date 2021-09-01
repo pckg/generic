@@ -2,10 +2,10 @@
     <pckg-loader v-if="state === 'loading'"></pckg-loader>
     <div class="c-pckg-maestro-form" v-else :class="'--mode-' + mode">
 
-        <div class="flex-grid --gap-md grid-2-1">
+        <div class="flex-grid --gap-md" :class="gridClass">
             <div v-for="position in [leftGroups, rightGroups]">
                 <div class="flex-grid --gap-md">
-                    <div v-for="group in position" class="s-form-field-group box-with-padding --bg-color">
+                    <div v-for="group in position" class="s-form-field-group" :class="groupClass">
                         <div class="s-form-field animated fadeIn"
                              :class="'--field-type-' + field.type"
                              v-for="(field, i) in group">
@@ -25,8 +25,11 @@
                                         :options="field.options"
                                         :name="field.slug"
                                         v-model="myFormModel[field.slug]">
-                                <slot name="element" v-if="mode === 'view' && field.type === 'select:single' && myFormModel[`*${field.slug}`] && typeof myFormModel[`*${field.slug}`] === 'object'">
-                                    <router-link :to="myFormModel[`*${field.slug}`].url">{{ myFormModel[`*${field.slug}`].value }}</router-link>
+                                <slot name="element"
+                                      v-if="mode === 'view' && field.type === 'select:single' && myFormModel[`*${field.slug}`] && typeof myFormModel[`*${field.slug}`] === 'object'">
+                                    <router-link :to="myFormModel[`*${field.slug}`].url">
+                                        {{ myFormModel[`*${field.slug}`].value }}
+                                    </router-link>
                                 </slot>
                             </form-group>
 
@@ -73,6 +76,15 @@ export default {
         },
         onSuccess: {
             default: null
+        },
+        tableId: {
+            default: null
+        },
+        groupClass: {
+            default: () => 'box-with-padding --bg-color',
+        },
+        gridClass: {
+            default: () => 'grid-2-1',
         }
     },
     created: function () {
@@ -112,7 +124,7 @@ export default {
             return this.groupFields(this.rightFields);
         },
         table: function () {
-            return this.$route.meta.resolved.table;
+            return this.$route.meta.resolved.table || {id: this.tableId};
         }
     },
     methods: {

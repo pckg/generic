@@ -52,29 +52,83 @@
                 this.records = utils.collect(records);
                 this.modal = 'deleteTranslation';
             },
-            deleteRecord: function () {
+            deleteRecord: async function () {
                 this.modal = null;
 
-                var deleteTimeout = null;
-                $.each(this.records, function (i, record) {
-                    http.deleteJSON(record.deleteUrl, function () {
-                    }.bind(this), function () {
-                        $dispatcher.$emit('notification:error', 'Error deleting record');
+                $dispatcher.$emit('page:percentage', 1);
+                let hasSuccess = false;
+                let hasError = false;
+                let i = 0;
+                for (const record of this.records) {
+                    await new Promise(function (resolve, reject) {
+                        http.deleteJSON(record.deleteUrl, function (data) {
+                            hasSuccess = true;
+                            resolve(data);
+                        }, function () {
+                            hasError = true;
+                            resolve(false); // resolve on error
+                            $dispatcher.$emit('notification:error', 'Error deleting record');
+                        });
                     });
-                }.bind(this));
+                    i++;
+                    $dispatcher.$emit('page:percentage', i / this.records.length * 100);
+                }
 
+                if (hasSuccess) {
+                    if (hasError) {
+                        $dispatcher.$emit('notification:warning', 'Some records were deleted, some were not. Please refresh the page.');
+                    } else {
+                        $dispatcher.$emit('notification:success', this.records.length > 1 ? 'Records deleted' : 'Record deleted');
+                    }
+                } else {
+                    if (hasError) {
+                        $dispatcher.$emit('notification:error', this.records.length > 1 ? 'Error deleting records' : 'Error deleting record');
+                    } else {
+                        $dispatcher.$emit('notification:info', 'Something weird has happened');
+                    }
+                }
+
+                $dispatcher.$emit('page:loaded');
                 this.$emit('table:refresh');
             },
-            deleteRecordTranslation: function () {
+            deleteRecordTranslation: async function () {
                 this.modal = null;
 
-                $.each(this.records, function (i, record) {
-                    http.deleteJSON(record.deleteTranslationUrl, function () {
-                        $dispatcher.$emit('notification:error', 'Translation deleted');
-                    }, function () {
-                        $dispatcher.$emit('notification:error', 'Error deleting translation');
+                $dispatcher.$emit('page:percentage', 1);
+                let hasSuccess = false;
+                let hasError = false;
+                let i = 0;
+                for (const record of this.records) {
+                    await new Promise(function(resolve, reject) {
+                        http.deleteJSON(record.deleteTranslationUrl, function (data) {
+                            hasSuccess = true;
+                            resolve(data);
+                        }, function () {
+                            hasError = true;
+                            resolve(false); // resolve on error
+                            $dispatcher.$emit('notification:error', 'Error deleting translation');
+                        });
                     });
-                });
+                    i++;
+                    $dispatcher.$emit('page:percentage', i / this.records.length * 100);
+                }
+
+                if (hasSuccess) {
+                    if (hasError) {
+                        $dispatcher.$emit('notification:warning', 'Some translations were deleted, some were not. Please refresh the page.');
+                    } else {
+                        $dispatcher.$emit('notification:success', this.records.length > 1 ? 'Translations deleted' : 'Translation deleted');
+                    }
+                } else {
+                    if (hasError) {
+                        $dispatcher.$emit('notification:error', this.records.length > 1 ? 'Error deleting translations' : 'Error deleting translation');
+                    } else {
+                        $dispatcher.$emit('notification:info', 'Something weird has happened');
+                    }
+                }
+
+                $dispatcher.$emit('page:loaded');
+                this.$emit('table:refresh');
             }
         },
         computed: {

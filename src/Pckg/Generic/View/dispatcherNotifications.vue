@@ -63,12 +63,11 @@
                 return `${alertType} ${animationType}`;
             },
             iconClass: function (notification) {
-                return notification.type == 'danger'
-                    ? 'fa-exclamation'
-                    : (notification.type == 'success'
-                            ? 'fa-check'
-                            : 'fa-info'
-                    );
+                return {
+                    danger: 'fa-exclamation',
+                    success: 'fa-check',
+                    warning: 'fa-exclamation',
+                }[notification.type] || 'fa-info';
             },
             createNotification: function (msg, type) {
                 if (typeof msg === 'object') {
@@ -132,6 +131,10 @@
 
             $dispatcher.$on('notification:error', function (msg) {
                 this.processMsg(msg, 'danger');
+            }.bind(this));
+
+            $dispatcher.$on('notification:warning', function (msg) {
+                this.processMsg(msg, 'warning');
             }.bind(this));
 
             $dispatcher.$on('notification:info', function (msg) {

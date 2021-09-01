@@ -939,19 +939,24 @@ class Records extends Controller
             })->rekey(),
         ];
 
-        $entity = $record->getEntity()->where('id', $record->id);
-        $tabelize = $table->getTabelize($entity);
-        $dynamic = resolve(DynamicService::class);
-        $dynamic->joinTranslationsIfTranslatable($entity);
-        foreach ($table->getBelongsToRelations() as $relation) {
-            $relation->loadOnEntity($entity, $dynamic);
-        }
-        $model = $entity->allOrFail()->first();
-
-        return [
+        $data = [
             'form' => $form,
             'table' => $table,
-            'model' => $tabelize->setDynamicRecord($model)->transformRecord($model),
         ];
+
+        if ($record) {
+            $entity = $record->getEntity()->where('id', $record->id);
+            $tabelize = $table->getTabelize($entity);
+            $dynamic = resolve(DynamicService::class);
+            $dynamic->joinTranslationsIfTranslatable($entity);
+            foreach ($table->getBelongsToRelations() as $relation) {
+                $relation->loadOnEntity($entity, $dynamic);
+            }
+            $model = $entity->allOrFail()->first();
+
+            $data['model'] = $tabelize->setDynamicRecord($model)->transformRecord($model);
+        }
+
+        return $data;
     }
 }
