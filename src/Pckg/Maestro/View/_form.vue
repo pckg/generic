@@ -18,18 +18,36 @@
                                         :options="Object.assign(field.options, {current: myFormModel.image})"
                                         :name="field.slug"
                                         v-model="myFormModel[field.slug]"></form-group>
+                            <form-group v-else-if="field.type === 'editor'"
+                                        :label="getFieldLabel(field)"
+                                        :type="mode === 'edit' ? field.type : 'encoded'"
+                                        :help="field.help"
+                                        :options="{id: `${uuid}-${field.slug}-${field.id}`}"
+                                        :name="field.slug"
+                                        v-model="myFormModel[field.slug]">
+                                <!--<button type="button"
+                                        class="pckg-editor-toggle btn btn-xs btn-default"
+                                        @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off</button>-->
+                            </form-group>
                             <form-group v-else
                                         :label="getFieldLabel(field)"
                                         :type="mode === 'edit' ? field.type : 'encoded'"
                                         :help="field.help"
                                         :options="field.options"
                                         :name="field.slug"
+                                        :id="`${uuid}-${field.slug}-${field.id}`"
                                         v-model="myFormModel[field.slug]">
                                 <slot name="element"
                                       v-if="mode === 'view' && field.type === 'select:single' && myFormModel[`*${field.slug}`] && typeof myFormModel[`*${field.slug}`] === 'object'">
                                     <router-link :to="myFormModel[`*${field.slug}`].url">
                                         {{ myFormModel[`*${field.slug}`].value }}
                                     </router-link>
+                                </slot>
+                                <slot v-if="field.type === 'editor'"
+                                      name="default">
+                                    <button type="button"
+                                            class="pckg-editor-toggle btn btn-xs btn-default"
+                                            @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off</button>
                                 </slot>
                             </form-group>
 
@@ -63,6 +81,7 @@
 </style>
 
 <script>
+import {v4} from "uuid";
 export default {
     mixins: [pckgFormValidator, pckgTranslations],
     props: {
@@ -101,7 +120,8 @@ export default {
                 fields: []
             },
             myFormModel: this.formModel,
-            state: 'loading'
+            state: 'loading',
+            uuid: v4(),
         };
     },
     computed: {
@@ -218,7 +238,27 @@ export default {
         },
         getFieldLabel: function (field) {
             return (field.required ? '* ' : '') + field.title;
-        }
+        },
+        toggleEditor: function(name) {
+            var textarea = $('textarea[name="' + name + '"]');
+            textarea.idify();
+            var id = textarea.attr('id');
+            if (pckgEditors[id]) {
+                destroyTinymce(id);
+            } else {
+                var forcedRootBlock = 'p';
+                initTinymce(id, {
+                    setup: function (editor) {
+                        editor.on('Change', function (e) {
+                            this.myFormModel[name] = editor.getContent();
+                        }.bind(this)).on('KeyDown', function (e) {
+                            this.myFormModel[name] = editor.getContent();
+                        }.bind(this));
+                    }.bind(this),
+                    forced_root_block: forcedRootBlock
+                });
+            }
+        },
     }
 }
 </script>
