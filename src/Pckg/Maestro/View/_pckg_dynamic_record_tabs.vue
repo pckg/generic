@@ -22,7 +22,7 @@
 
             <ul class="nav nav-tabs">
                 <li>
-                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/view'" active-class="active">General</router-link>
+                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/' + viewOrEdit" active-class="active">General</router-link>
                 </li>
                 <li v-for="tab in tabs">
                     <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" active-class="active">
@@ -57,6 +57,7 @@ export default {
     data: function () {
         return {
             localBus: new Vue(), // @deprecated
+            viewOrEdit: this.$route.name.indexOf('.edit') > 0 ? 'edit' : 'view',
         };
     },
     computed: {
