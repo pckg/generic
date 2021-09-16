@@ -66,8 +66,18 @@ class Fields extends DatabaseEntity
     public function hasOneSelectRelation()
     {
         return $this->hasOne(Relations::class)
-                    ->foreignKey('on_field_id')
-                    ->where('dynamic_relation_type_id', [1]);
+            ->foreignKey('on_field_id')
+            ->where('dynamic_relation_type_id', [1]);
+    }
+
+    /**
+     * Show relation on listing.
+     */
+    public function hasOneReverseSelectRelation()
+    {
+        return $this->hasOne(Relations::class)
+            ->foreignKey('on_field_id')
+            ->where('dynamic_relation_type_id', [2]);
     }
 
     public function realFields()

@@ -398,13 +398,22 @@ class Field extends DatabaseRecord
                         'field' => $field,
                     ]));*/
 
-            $options = [
-                'url' => url('dynamic.records.field.upload', [
-                    'table' => $this->table,
-                    'field' => $this,
-                    'record' => $record,
-                ]),
-            ];
+            if ($record) {
+                $options = [
+                    'url' => url('dynamic.records.field.upload', [
+                        'table' => $this->table,
+                        'field' => $this,
+                        'record' => $record,
+                    ]),
+                ];
+            } else {
+                $options = [
+                    'url' => url('dynamic.records.field.upload.new', [
+                        'table' => $this->table,
+                        'field' => $this,
+                    ]),
+                ];
+            }
         }
 
         return $options;

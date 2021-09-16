@@ -181,6 +181,18 @@ export default {
                 this.myForm = data.form;
                 if (data.model) {
                     this.myFormModel = data.model;
+                } else {
+                    // pre-select foreign record when adding
+                    console.log('preselecting', this.$route.params)
+                    if (this.$route.params.foreign && this.$route.params.relation) {
+                        Object.values(data.form.fields).filter(field => field.reverseRelation)
+                            .forEach((field) => {
+                                if (field.reverseRelation.id === parseInt(this.$route.params.relation)) {
+                                    console.log('match', field.slug);
+                                    this.myFormModel[field.slug] = parseInt(this.$route.params.foreign);
+                                }
+                            })
+                    }
                 }
                 this.state = null;
             }.bind(this));

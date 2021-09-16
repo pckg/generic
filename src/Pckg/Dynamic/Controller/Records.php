@@ -935,6 +935,8 @@ class Records extends Controller
                     'required' => !!$field->required,
                     'options'  => $field->getVueOptions($initialOptions, $record),
                     'group'    => $field->fieldGroup,
+                    'relation' => $type === 'select:single' ? $field->hasOneSelectRelation : null,
+                    'reverseRelation' => $type === 'select:single' ? $field->hasOneReverseSelectRelation : null,
                 ];
             })->rekey(),
         ];
@@ -955,6 +957,8 @@ class Records extends Controller
             $model = $entity->allOrFail()->first();
 
             $data['model'] = $tabelize->setDynamicRecord($model)->transformRecord($model);
+        } else {
+            // do we need default hydrated model?
         }
 
         return $data;
