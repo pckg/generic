@@ -425,11 +425,7 @@ class PageStructure
          */
         $originalContext = context();
         $tempContext = clone $originalContext;
-
-        $request = (new Request())/*->setConstructs([], [], $_SERVER, [], $_COOKIE, [])*/;
-        $request->get()->setData([]);
-        $request->post()->setData([]);
-        $request->request()->setData([]);
+        $request = (new Request\MockRequest());
         $originalRequest = request();
         $originalContext->bind(Context::class, $tempContext);
         $originalContext->bind(Request::class, $request);
