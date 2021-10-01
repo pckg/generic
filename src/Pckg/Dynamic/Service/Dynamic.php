@@ -88,10 +88,17 @@ class Dynamic
         }
     }
 
-    public function joinPermissionsIfPermissionable($entity, $action = 'read')
+    public function joinPermissionsIfPermissionable(Entity $entity, $action = 'read')
     {
         if (!$entity->isPermissionable()) {
             return;
+        }
+
+        if ($auth = $entity->getPermissionableAuth()) {
+            $userId = $auth->userId();
+            if ($userId && (auth()->user('id') === $userId) && auth()->isAdmin()) {
+                return;
+            }
         }
 
         $entity->joinPermissionTo($action);
