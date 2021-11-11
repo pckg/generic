@@ -31,16 +31,15 @@ class Tables extends DatabaseEntity implements MaestroEntity
         return $this->fields(function (HasMany $fields) {
 
             //$hasMany->joinPermissionTo('view');
-        })->fill('searchableFields');
+        });
     }
 
     public function searchableFields()
     {
         return $this->fields(function (HasMany $fields) {
-
             //$hasMany->joinPermissionTo('view');
             $fields->where('searchable');
-        })->fill('listableFields');
+        });
     }
 
     public function actions()
