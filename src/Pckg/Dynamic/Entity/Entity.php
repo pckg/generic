@@ -4,7 +4,6 @@ namespace Pckg\Dynamic\Entity;
 
 use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Record;
-use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
 /**
  * Represents one dynamic table.
@@ -13,7 +12,7 @@ use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
  *
  * @package Pckg\Dynamic\Entity
  */
-class Entity extends DatabaseEntity implements MaestroEntity
+class Entity extends DatabaseEntity
 {
 
     protected $record = Record::class;

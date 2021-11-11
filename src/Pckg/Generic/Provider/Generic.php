@@ -2,6 +2,7 @@
 
 namespace Pckg\Generic\Provider;
 
+use CommsCenter\Pagebuilder\Provider\PageStructure;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Console\ImportGenericBackend;

@@ -6,9 +6,8 @@ use Pckg\Database\Entity as DatabaseEntity;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
 use Pckg\Dynamic\Record\Table;
-use Pckg\Maestro\Service\Contract\Entity as MaestroEntity;
 
-class Tables extends DatabaseEntity implements MaestroEntity
+class Tables extends DatabaseEntity
 {
 
     protected $record = Table::class;

@@ -4,6 +4,7 @@ namespace Pckg\Generic\Migration;
 
 use Pckg\Auth\Migration\CreateAuthTables;
 use Pckg\Migration\Migration;
+use Pckg\Translator\Migration\CreateTranslationsTable;
 
 class CreateGenericTables extends Migration
 {
