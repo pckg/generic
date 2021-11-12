@@ -13,15 +13,15 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
-use Pckg\Generic\Entity\Actions;
+use CommsCenter\Pagebuilder\Entity\Actions;
 use Pckg\Generic\Entity\DataAttributes;
-use Pckg\Generic\Entity\Layouts;
-use Pckg\Generic\Entity\Routes;
+use CommsCenter\Pagebuilder\Entity\Layouts;
+use CommsCenter\Pagebuilder\Entity\Routes;
 use Pckg\Generic\Entity\SettingsMorphs;
-use Pckg\Generic\Record\Action as ActionRecord;
-use Pckg\Generic\Record\ActionsMorph;
-use Pckg\Generic\Record\Layout;
-use Pckg\Generic\Record\Route;
+use CommsCenter\Pagebuilder\Record\Action as ActionRecord;
+use CommsCenter\Pagebuilder\Record\ActionsMorph;
+use CommsCenter\Pagebuilder\Record\Layout;
+use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
@@ -163,7 +163,7 @@ class Generic
 
     public function hasAction(array $actions = [])
     {
-        return $this->actions && $this->actions->has(function(\Pckg\Generic\Record\Action $action) use ($actions) {
+        return $this->actions && $this->actions->has(function(\CommsCenter\Pagebuilder\Record\Action $action) use ($actions) {
             return in_array($action->slug, $actions);
         });
     }
@@ -337,7 +337,7 @@ class Generic
      * @return Action
      */
     public function addAction(
-        \Pckg\Generic\Record\Action $action,
+        \CommsCenter\Pagebuilder\Record\Action $action,
         Route $route,
         $resolved = []
     ) {

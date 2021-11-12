@@ -3,8 +3,8 @@
 namespace Pckg\Generic\Controller;
 
 use Derive\Internal\Cache\Service\Cache;
-use Pckg\Generic\Entity\Contents;
-use Pckg\Generic\Record\Route;
+use CommsCenter\Pagebuilder\Entity\Contents;
+use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;

@@ -2,10 +2,10 @@
 
 namespace Pckg\Generic\Form;
 
-use Pckg\Generic\Entity\Actions;
-use Pckg\Generic\Entity\Contents;
-use Pckg\Generic\Record\Action;
-use Pckg\Generic\Record\Content;
+use CommsCenter\Pagebuilder\Entity\Actions;
+use CommsCenter\Pagebuilder\Entity\Contents;
+use CommsCenter\Pagebuilder\Record\Action;
+use CommsCenter\Pagebuilder\Record\Content;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
 class ActionMorph extends Bootstrap

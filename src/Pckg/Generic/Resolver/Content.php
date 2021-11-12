@@ -3,7 +3,7 @@
 namespace Pckg\Generic\Resolver;
 
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Generic\Entity\Contents;
+use CommsCenter\Pagebuilder\Entity\Contents;
 
 class Content implements RouteResolver
 {

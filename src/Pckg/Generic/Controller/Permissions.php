@@ -8,7 +8,7 @@ use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Generic\Entity\MenuItems;
-use Pckg\Generic\Entity\Routes;
+use CommsCenter\Pagebuilder\Entity\Routes;
 
 class Permissions
 {

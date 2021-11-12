@@ -3,7 +3,7 @@
 namespace Pckg\Generic\Resolver;
 
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Generic\Entity\Routes;
+use CommsCenter\Pagebuilder\Entity\Routes;
 
 class Route implements RouteResolver
 {

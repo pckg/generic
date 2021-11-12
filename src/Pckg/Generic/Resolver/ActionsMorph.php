@@ -3,7 +3,7 @@
 namespace Pckg\Generic\Resolver;
 
 use Pckg\Framework\Provider\RouteResolver;
-use Pckg\Generic\Entity\ActionsMorphs;
+use CommsCenter\Pagebuilder\Entity\ActionsMorphs;
 
 class ActionsMorph implements RouteResolver
 {

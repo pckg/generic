@@ -5,7 +5,7 @@ namespace Pckg\Generic\Record;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Dynamic\Resolver\Table;
-use Pckg\Generic\Entity\ActionsMorphs;
+use CommsCenter\Pagebuilder\Entity\ActionsMorphs;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
@@ -135,7 +135,7 @@ class SettingsMorph extends Record
         }
 
         $settingsMorph = (new SettingsMorphs())->where('setting_id', $setting->id)
-            ->where('morph_id', $morph)
+            ->where('morph_id', [$morph, str_replace('CommsCenter\\Pagebuilder', 'Pckg\\Generic', $morph)])
             ->where('poly_id', $poly)
             ->one();
 

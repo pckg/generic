@@ -5,7 +5,6 @@ namespace Pckg\Generic\Provider;
 use CommsCenter\Pagebuilder\Provider\PageStructure;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
-use Pckg\Generic\Console\ImportGenericBackend;
 use Pckg\Generic\Console\CreateListData;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Menu;
@@ -30,13 +29,6 @@ class Generic extends Provider
         return [
             '_menuService'   => Menu::class,
             '_pluginService' => Plugin::class,
-        ];
-    }
-
-    public function consoles()
-    {
-        return [
-            ImportGenericBackend::class,
         ];
     }
 
