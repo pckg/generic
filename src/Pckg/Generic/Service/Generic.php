@@ -23,7 +23,7 @@ use CommsCenter\Pagebuilder\Record\ActionsMorph;
 use CommsCenter\Pagebuilder\Record\Layout;
 use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Record\Setting;
-use Pckg\Generic\Resolver\Route as RouteResolver;
+use CommsCenter\Pagebuilder\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
 use Pckg\Generic\Service\Partial\AbstractPartial;

@@ -2,7 +2,6 @@
 
 namespace Pckg\Generic\Provider;
 
-use CommsCenter\Pagebuilder\Provider\PageStructure;
 use Pckg\Framework\Provider;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Generic\Console\CreateListData;
@@ -17,7 +16,6 @@ class Generic extends Provider
     public function providers()
     {
         return [
-            PageStructure::class,
             GenericPaths::class,
             GenericAssets::class,
             Permissions::class,
