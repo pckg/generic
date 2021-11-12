@@ -50,7 +50,7 @@ class Permissions
             $tables = (new Tables(null, null, false));
             $tables->usePermissionableTable();
             $allPermissions = $tables->where('id', $id)->all();
-            $allPermissions->each(function($permission) use (&$permissions) {
+            $allPermissions->each(function ($permission) use (&$permissions) {
                 $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
@@ -61,7 +61,7 @@ class Permissions
             $fields = (new Fields(null, null, false));
             $fields->usePermissionableTable();
             $allPermissions = $fields->where('id', $id)->all();
-            $allPermissions->each(function($permission) use (&$permissions) {
+            $allPermissions->each(function ($permission) use (&$permissions) {
                 $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
@@ -72,7 +72,7 @@ class Permissions
             $tableActions = (new TableActions(null, null, false));
             $tableActions->usePermissionableTable();
             $allPermissions = $tableActions->where('id', $id)->all();
-            $allPermissions->each(function($permission) use (&$permissions) {
+            $allPermissions->each(function ($permission) use (&$permissions) {
                 $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
@@ -82,7 +82,7 @@ class Permissions
             $menuItems = (new MenuItems(null, null, false));
             $menuItems->usePermissionableTable();
             $allPermissions = $menuItems->where('id', $id)->all();
-            $allPermissions->each(function($permission) use (&$permissions) {
+            $allPermissions->each(function ($permission) use (&$permissions) {
                 $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [
@@ -92,7 +92,7 @@ class Permissions
             $routes = (new Routes(null, null, false));
             $routes->usePermissionableTable();
             $allPermissions = $routes->where('id', $id)->all();
-            $allPermissions->each(function($permission) use (&$permissions) {
+            $allPermissions->each(function ($permission) use (&$permissions) {
                 $permissions[$permission->action][$permission->user_group_id ?? 0] = true;
             });
             $actions = [

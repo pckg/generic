@@ -25,6 +25,8 @@ class InstallDynamicTables extends Migration
         $this->installTables();
         $this->installRelations();
         $this->installGnp();
+
+        return $this;
     }
 
     protected function installTypes()

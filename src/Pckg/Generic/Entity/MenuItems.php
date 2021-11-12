@@ -27,5 +27,4 @@ class MenuItems extends Entity
     {
         return $this->belongsTo(Menus::class)->foreignKey('menu_id');
     }
-
 }

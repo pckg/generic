@@ -16,6 +16,7 @@ use Throwable;
  * @property string $settings
  * @property string $field
  * @property string $title
+ * @property Table $table
  */
 class Field extends DatabaseRecord
 {
@@ -379,7 +380,6 @@ class Field extends DatabaseRecord
                 'options' => $initialOptions[$this->field] ?? [],
             ];
         } else if ($slug === 'picture') {
-
             /*$url = $this->relation && $this->foreignRecord
                 ? url('dynamic.records.field.upload.newForeign', [
                     'table' => $this->table,

@@ -234,7 +234,7 @@ class Tabelize
             $this->fields = new Collection($this->fields);
         }
 
-        return $this->fields->map(function($item) {
+        return $this->fields->map(function ($item) {
 
             if (is_only_callable($item)) {
                 return $item;
@@ -496,7 +496,7 @@ class Tabelize
     {
         try {
             $string = '';
-            measure('Tabelize', function() use (&$string) {
+            measure('Tabelize', function () use (&$string) {
 
                 $string .= '<!-- start tabelize -->';
                 $string .= $this->view->autoparse();
@@ -739,7 +739,7 @@ class Tabelize
                 if (!$a) {
                     dd("no tabelize action", $parsed, $a);
                 }
-                if (is_object($action) && !isset($a['component']))  {
+                if (is_object($action) && !isset($a['component'])) {
                     $a['component'] = $action->vueComponent;
                 }
                 $actions[] = $a;
@@ -843,7 +843,7 @@ class Tabelize
     public function getDynamicTable()
     {
         if (!$this->table) {
-            $this->table = (new Tables())->where('framework_entity', get_class($this->entity))->oneOrFail(function() {
+            $this->table = (new Tables())->where('framework_entity', get_class($this->entity))->oneOrFail(function () {
 
                 response()->notFound('Dynamic table is missing');
             });

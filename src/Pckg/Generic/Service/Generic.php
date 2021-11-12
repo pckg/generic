@@ -89,11 +89,11 @@ class Generic
 
     public function getKeyedFlatActions()
     {
-        return collect($this->actions)->map(function(ActionRecord $action) {
+        return collect($this->actions)->map(function (ActionRecord $action) {
             return new Action($action);
-        })->keyBy(function(Action $action) {
+        })->keyBy(function (Action $action) {
             return $action->getAction()->pivot->id;
-        })->map(function(Action $action) {
+        })->map(function (Action $action) {
             return $action->getFlat();
         })->all();
     }
@@ -126,9 +126,9 @@ class Generic
 
     public function getGenericRoutes()
     {
-        return (new Routes())->joinTranslations()->withSettings()->nonDeleted()->all()->map(function(Route $route) {
+        return (new Routes())->joinTranslations()->withSettings()->nonDeleted()->all()->map(function (Route $route) {
                 return $route->forPageStructure();
-            })->all();
+        })->all();
     }
 
     /**
@@ -163,7 +163,7 @@ class Generic
 
     public function hasAction(array $actions = [])
     {
-        return $this->actions && $this->actions->has(function(\CommsCenter\Pagebuilder\Record\Action $action) use ($actions) {
+        return $this->actions && $this->actions->has(function (\CommsCenter\Pagebuilder\Record\Action $action) use ($actions) {
             return in_array($action->slug, $actions);
         });
     }
@@ -190,25 +190,25 @@ class Generic
             }
         }
 
-        $this->actions = $route->actions(function(MorphedBy $actions) {
+        $this->actions = $route->actions(function (MorphedBy $actions) {
             // $actions->getMiddleEntity()->joinPermissionTo('read');
-            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
+            $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
                 $content->withContents();
-            })->withSettings(function(MorphedBy $settings) {
+            })->withSettings(function (MorphedBy $settings) {
                 $settings->getMiddleEntity()->withSetting();
             })->withAction();
         });
 
-        $actions = $this->actions->sortBy(function($item) {
+        $actions = $this->actions->sortBy(function ($item) {
             return $item->pivot->order;
-        })->tree(function($action) {
+        })->tree(function ($action) {
             return $action->pivot->parent_id;
-        }, function($action) {
+        }, function ($action) {
             return $action->pivot->id;
         });
 
         $actions->each(
-            function(ActionRecord $action) use ($resolved) {
+            function (ActionRecord $action) use ($resolved) {
                 $this->addAction(
                     $action,
                     $this->route,
@@ -243,35 +243,35 @@ class Generic
         }
 
         $layoutActions = true
-            ? $layout->actions(function(MorphedBy $actions) {
+            ? $layout->actions(function (MorphedBy $actions) {
             // $actions->getMiddleEntity()->joinPermissionTo('read');
-            $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                $content->withContents();
-            })->withSettings(function(MorphedBy $settings) {
-                $settings->getMiddleEntity()->withSetting();
-            })->withAction();
-        })
+                $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
+                    $content->withContents();
+                })->withSettings(function (MorphedBy $settings) {
+                    $settings->getMiddleEntity()->withSetting();
+                })->withAction();
+            })
             : cache(
                 Generic::class . ':readLayout:' . $layout->id,
-            function() use ($layout) {
-                return $layout->actions(function(MorphedBy $actions) {
-                    // $actions->getMiddleEntity()->joinPermissionTo('read');
-                    $actions->getMiddleEntity()->withContent(function(BelongsTo $content) {
-                        $content->withContents();
-                    })->withSettings(function(MorphedBy $settings) {
-                        $settings->getMiddleEntity()->withSetting();
+                function () use ($layout) {
+                    return $layout->actions(function (MorphedBy $actions) {
+                        // $actions->getMiddleEntity()->joinPermissionTo('read');
+                        $actions->getMiddleEntity()->withContent(function (BelongsTo $content) {
+                            $content->withContents();
+                        })->withSettings(function (MorphedBy $settings) {
+                            $settings->getMiddleEntity()->withSetting();
+                        });
                     });
-                });
-            },
-                   'app',
+                },
+                'app',
                 1
             );
 
-        $layoutActions = $layoutActions->sortBy(function($item) {
+        $layoutActions = $layoutActions->sortBy(function ($item) {
             return $item->pivot->order;
-        })->tree(function($action) {
+        })->tree(function ($action) {
             return $action->pivot->parent_id;
-        }, function($action) {
+        }, function ($action) {
             return $action->pivot->id;
         })->filter(function (ActionRecord $action) use ($route) {
             /**
@@ -304,7 +304,7 @@ class Generic
         });
 
         $layoutActions->each(
-            function(ActionRecord $action) use ($resolved, $route) {
+            function (ActionRecord $action) use ($resolved, $route) {
 
                 $this->addAction(
                     $action,
@@ -324,7 +324,7 @@ class Generic
     protected function recursiveAddAction(ActionRecord $action)
     {
         $this->actions->push($action);
-        collect($action->getChildren)->each(function(ActionRecord $action) {
+        collect($action->getChildren)->each(function (ActionRecord $action) {
             $this->recursiveAddAction($action);
         });
     }
@@ -442,7 +442,7 @@ class Generic
     {
         $args = array_merge(router()->get('data'), router()->getResolves());
 
-        $this->actions->each(function(ActionRecord $action) use ($args) {
+        $this->actions->each(function (ActionRecord $action) use ($args) {
             (new Action($action))->build($args);
         });
     }
@@ -548,7 +548,7 @@ class Generic
         $arrRoutes = $routes->nonDeleted()
                             ->whereHas('routes.slug')
                             ->withLayout()
-                            ->withAllTranslations(function(HasMany $translations) use ($languages) {
+                            ->withAllTranslations(function (HasMany $translations) use ($languages) {
                                 /**
                                  * Load only active translations.
                                  */
@@ -640,7 +640,7 @@ class Generic
             /**
              * Register all translated routes.
              */
-            $route->_translations->each(function($routeTranslation) use (
+            $route->_translations->each(function ($routeTranslation) use (
                 $route,
                 $multilingual,
                 $defaultLanguage,

@@ -14,6 +14,8 @@ class CreateMenuTables extends Migration
     {
         $this->menusUp();
         $this->save();
+
+        return $this;
     }
 
     protected function menusUp()

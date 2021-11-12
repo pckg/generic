@@ -14,6 +14,8 @@ class CreateLanguagesTable extends Migration
     {
         $this->languagesUp();
         $this->save();
+
+        return $this;
     }
 
     protected function languagesUp()

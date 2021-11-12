@@ -1,4 +1,6 @@
-<?php namespace Pckg\Dynamic\Resolver;
+<?php
+
+namespace Pckg\Dynamic\Resolver;
 
 use Pckg\Dynamic\Controller\Records;
 use Pckg\Dynamic\Form\Dynamic;
@@ -34,5 +36,4 @@ class TableRecordRelated implements RouteResolver, ResolvesMultiple
     {
         // TODO: Implement parametrize() method.
     }
-
 }

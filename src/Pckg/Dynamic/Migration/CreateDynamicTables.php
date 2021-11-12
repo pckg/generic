@@ -37,6 +37,8 @@ class CreateDynamicTables extends Migration
         $this->dynamicFunctionsUp();
         $this->dynamicTableActionsUp();
         $this->save();
+
+        return $this;
     }
 
     protected function dynamicTablesUp()

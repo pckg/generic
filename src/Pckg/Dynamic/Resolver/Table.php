@@ -11,7 +11,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class Table implements RouteResolver
 {
-
     use PostValidationResolver;
 
     /**
@@ -38,7 +37,7 @@ class Table implements RouteResolver
                                       $relations->joinTranslations();
                                       $relations->joinFallbackTranslation();
                               })
-                              ->withFields(function (HasMany $fields){
+                              ->withFields(function (HasMany $fields) {
                                   $fields->withSettings();
                               })
                               ->withTabs(function (HasMany $tabs) {

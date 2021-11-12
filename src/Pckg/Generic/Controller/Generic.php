@@ -56,17 +56,17 @@ class Generic
 
     public function getGenericActionWrapper(Route $route)
     {
-        measure('Reading route', function() use ($route) {
+        measure('Reading route', function () use ($route) {
             $this->genericService->readRoute($route);
         });
 
         $route->applySeoSettings();
 
-        measure('Building actions', function() {
+        measure('Building actions', function () {
             $this->genericService->build();
         });
 
-        return measure('Stringifying output', function() use ($route) {
+        return measure('Stringifying output', function () use ($route) {
             $auth = auth();
             //$structure = '<pckg-app data-frontend></pckg-app>';
 

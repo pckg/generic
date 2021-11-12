@@ -10,6 +10,10 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
+/**
+ * @method withFieldType(callable $callback = null): $this
+ * @method withSettings(callable $callback = null): $this
+ */
 class Fields extends DatabaseEntity
 {
     use Orderable;
@@ -30,6 +34,8 @@ class Fields extends DatabaseEntity
              */
             $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
         });
+
+        return $this;
     }
 
     /**

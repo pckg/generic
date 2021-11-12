@@ -221,7 +221,7 @@ class Action implements \JsonSerializable
 
                 $return = measure(
                     'Building pre-wrap',
-                    function() {
+                    function () {
                         return '<pckg-action :action-id="' . $this->action->pivot->id . '"><template slot="body">';
                     }
                 );

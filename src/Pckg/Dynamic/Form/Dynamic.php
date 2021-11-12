@@ -104,7 +104,7 @@ class Dynamic extends Bootstrap
                                 ->where('field', array_keys($data))
                                 ->where('dynamic_field_type_id', 7)// password
                                 ->all();
-        $fields->each(function(Field $field) use ($record, $data) {
+        $fields->each(function (Field $field) use ($record, $data) {
 
             $password = $data[$field->field];
             if (!$password) {
@@ -156,7 +156,7 @@ class Dynamic extends Bootstrap
         /**
          * @T00D00 - this should be handled separately, like in different form or even different page/tab.
          */
-        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->map(function($permissions) {
+        $allPermissions = $this->record->allPermissions->groupBy('user_group_id')->map(function ($permissions) {
 
             return (new Collection($permissions))->keyBy('action');
         })->toArray();
@@ -194,7 +194,7 @@ class Dynamic extends Bootstrap
         foreach ($table->actions as $action) {
             $child .= '<tr>';
             $child .= '<td>' . $action->slug . '&nbsp;<input type="checkbox" class="toggle-horizontally"/></td>';
-            $allActionPermissions = $action->allPermissions->groupBy('user_group_id')->each(function($permissions) {
+            $allActionPermissions = $action->allPermissions->groupBy('user_group_id')->each(function ($permissions) {
 
                 return (new Collection($permissions))->groupBy('id');
             })->toArray();
@@ -217,7 +217,7 @@ class Dynamic extends Bootstrap
 
         $fields = collect();
         for ($i = 0; $i < 2; $i++) {
-            $fields = $this->table->listableFields(function(HasMany $fields) use ($i) {
+            $fields = $this->table->listableFields(function (HasMany $fields) use ($i) {
 
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withPermissions();
@@ -254,7 +254,7 @@ class Dynamic extends Bootstrap
         $fields = $this->getListableFields();
 
         $prevGroup = null;
-        $fieldPositions = $fields->groupBy(function(Field $field) {
+        $fieldPositions = $fields->groupBy(function (Field $field) {
 
             return $field->dynamic_field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
         });
@@ -582,7 +582,7 @@ ifrm.document.close();
     public function getDynamicInitialOptions()
     {
         $fields = $this->getListableFields();
-        return $fields->realReduce(function(Field $field, $key, $reduced){
+        return $fields->realReduce(function (Field $field, $key, $reduced) {
             $type = $field->fieldType->slug;
             if ($type !== 'select') {
                 return $reduced;

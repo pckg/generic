@@ -16,5 +16,7 @@ class FieldGroups extends DatabaseEntity
     {
         $this->joinTranslations();
         $this->joinFallbackTranslation();
+
+        return $this;
     }
 }

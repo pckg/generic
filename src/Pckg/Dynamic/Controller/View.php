@@ -16,14 +16,14 @@ class View extends Controller
          * @T00D00 - fix json encode
          */
         return url(
-                   'dynamic.record.view.share',
-                   [
+            'dynamic.record.view.share',
+            [
                        'table' => $table,
                    ],
-                   true
-               ) . '?data=' . base64_encode(
-                   json_encode($_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] ?? [])
-               );
+            true
+        ) . '?data=' . base64_encode(
+            json_encode($_SESSION['pckg']['dynamic']['view']['table_' . $table->id]['view'] ?? [])
+        );
     }
 
     public function getSaveViewAction(Table $table, TableView $tableView = null)

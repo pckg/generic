@@ -23,6 +23,10 @@ use Pckg\Maestro\Service\Tabelize;
  * @property string $title
  * @property string $repository
  * @property string $framework_entity
+ * @property Collection $listableFields
+ * @method actions(callable $callback = null)
+ * @method hasManyRelation(callable $callback = null)
+ * @method belongsToRelation(callable $callback = null)
  */
 class Table extends Record
 {
@@ -39,7 +43,8 @@ class Table extends Record
             ->all();
     }
 
-    public function getTitleSingularAttribute() {
+    public function getTitleSingularAttribute()
+    {
         $string = $this->title;
         // save some time in the case that singular and plural are the same
         /*if ( in_array( strtolower( $string ), self::$uncountable ) )
@@ -75,7 +80,7 @@ class Table extends Record
             '/(tive)s$/i'               => "$1",
             '/(hive)s$/i'               => "$1",
             '/(li|wi|kni)ves$/i'        => "$1fe",
-            '/(shea|loa|lea|thie)ves$/i'=> "$1f",
+            '/(shea|loa|lea|thie)ves$/i' => "$1f",
             '/(^analy)ses$/i'           => "$1sis",
             '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i'  => "$1$2sis",
             '/([ti])a$/i'               => "$1um",
@@ -86,10 +91,9 @@ class Table extends Record
             '/s$/i'                     => ""
         );
 
-        foreach ( $singular as $pattern => $result )
-        {
-            if ( preg_match( $pattern, $string ) ) {
-                return preg_replace( $pattern, $result, $string );
+        foreach ($singular as $pattern => $result) {
+            if (preg_match($pattern, $string)) {
+                return preg_replace($pattern, $result, $string);
             }
         }
 
@@ -204,9 +208,9 @@ class Table extends Record
 
                 $entity = new $entityClass($repository, $alias);
                 $entity->setTable($this->table);
-                if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
-                    $entity->joinTranslations();
-                }
+            if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
+                $entity->joinTranslations();
+            }
 
                 return $entity;
         }, $_SESSION['pckg_dynamic_lang_id']);
@@ -283,8 +287,8 @@ class Table extends Record
         (new TableActions())->joinPermissionTo('execute')
             ->where('dynamic_table_id', $this->id)
             ->where('slug', $action === 'read' ? 'view' : 'edit')
-            ->oneOrFail(function(){
-                $this->response()->unauthorized();
+            ->oneOrFail(function () {
+                response()->unauthorized();
             });
     }
 
@@ -312,5 +316,4 @@ class Table extends Record
             ->setFields($listableFields)
             ->setFieldTransformations($fieldTransformations);
     }
-
 }

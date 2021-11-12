@@ -16,5 +16,7 @@ class CreateDataAttributesTables extends Migration
         $dataAttributes->longtext('value');
         $dataAttributes->unique('poly_id', 'morph_id', 'slug');
         $this->save();
+
+        return $this;
     }
 }

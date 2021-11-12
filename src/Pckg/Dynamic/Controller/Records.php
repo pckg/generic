@@ -225,10 +225,10 @@ class Records extends Controller
                                               'searchUrl' => router()->getUri(),
                                               'tab'       => $tab,
                                           ]);
-            $columns = $tableRecord->fields->filter(function(Field $field) {
+            $columns = $tableRecord->fields->filter(function (Field $field) {
 
                 return $field->visible;
-            })->map(function(Field $field) {
+            })->map(function (Field $field) {
 
                 $f['field'] = $field->field;
                 $f['freeze'] = false;
@@ -242,7 +242,7 @@ class Records extends Controller
                 ],
                 'table'     => $tableRecord,
                 'tabs' => $tableRecord->tabs,
-                'fields'    => $tableRecord->fields->map(function(Field $field){
+                'fields'    => $tableRecord->fields->map(function (Field $field) {
 
                     $data = $field->toArray();
                     $options = [];
@@ -301,7 +301,7 @@ class Records extends Controller
     {
         (new Tables())->joinPermissionTo('write')
                       ->where('id', $table->id)
-                      ->oneOrFail(function(){
+                      ->oneOrFail(function () {
 
                           $this->response()->unauthorized();
                       });
@@ -509,7 +509,7 @@ class Records extends Controller
                                       ->where('dynamic_table_tab_id', $tab->id)
                                       ->all();
         $tabelizes = [];
-        $relations->each(function(Relation $relation) use ($record, &$tabelizes, $tab) {
+        $relations->each(function (Relation $relation) use ($record, &$tabelizes, $tab) {
 
             $entity = null;
             $tableId = $relation->over_table_id ?? $relation->show_table_id;
@@ -534,7 +534,7 @@ class Records extends Controller
             $tabelizes[] = $tabelize;
         });
         $functionizes = [];
-        $functions = $table->functions(function(HasMany $functions) use ($tab) {
+        $functions = $table->functions(function (HasMany $functions) use ($tab) {
 
             $functions->where('dynamic_table_tab_id', $tab->id);
         });
@@ -569,14 +569,14 @@ class Records extends Controller
 
     protected function getTabelizesAndFunctionizes($tabs, $record, Table $table, Entity $entity)
     {
-        $relations = $table->hasManyRelation(function(HasMany $query) {
+        $relations = $table->hasManyRelation(function (HasMany $query) {
 
             $query->where('dynamic_relation_type_id', 2);
             $query->where('dynamic_table_tab_id', null);
         });
         $tabelizes = [];
         $recordsController = Reflect::create(Records::class);
-        $relations->each(function(Relation $relation) use ($tabs, $record, &$tabelizes, $recordsController) {
+        $relations->each(function (Relation $relation) use ($tabs, $record, &$tabelizes, $recordsController) {
 
             $entity = $relation->showTable->createEntity();
             $entity->where($relation->onField->field, $record->id);
@@ -619,7 +619,7 @@ class Records extends Controller
         (new TableActions())->joinPermissionTo('execute')
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'edit')
-                            ->oneOrFail(function(){
+                            ->oneOrFail(function () {
                                 $this->response()->unauthorized();
                             });
 
@@ -717,7 +717,7 @@ class Records extends Controller
         (new TableActions())->joinPermissionTo('execute')
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'delete')
-                            ->oneOrFail(function(){
+                            ->oneOrFail(function () {
 
                                 $this->response()->unauthorized();
                             });
@@ -914,7 +914,7 @@ class Records extends Controller
             'slug'    => 'text',
             'picture' => 'file:picture',
         ];
-        $typeMapper = function(Field $field) use ($vueTypeMap) {
+        $typeMapper = function (Field $field) use ($vueTypeMap) {
 
             if (array_key_exists($field->fieldType->slug, $vueTypeMap)) {
                 return $vueTypeMap[$field->fieldType->slug];
@@ -925,7 +925,7 @@ class Records extends Controller
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
-            'fields' => $fields->map(function(Field $field) use ($initialOptions, $record, $typeMapper) {
+            'fields' => $fields->map(function (Field $field) use ($initialOptions, $record, $typeMapper) {
                 $type = $typeMapper($field);
                 return [
                     'title'    => $field->title,

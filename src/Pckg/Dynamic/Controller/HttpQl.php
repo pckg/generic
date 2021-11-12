@@ -103,7 +103,6 @@ class HttpQl
      */
     public function patchTableAction()
     {
-
     }
 
     /**
@@ -111,7 +110,6 @@ class HttpQl
      */
     public function deleteTableAction()
     {
-
     }
 
     /**
@@ -158,8 +156,7 @@ class HttpQl
         Tabelize $tabelize,
         Table $table = null,
         $noLimit = false
-    )
-    {
+    ) {
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
@@ -319,8 +316,7 @@ class HttpQl
         $ormFields,
         &$fields,
         &$fieldTransformations
-    )
-    {
+    ) {
         foreach ($ormFields as $field) {
             if (strpos($field, '.') === false) {
                 $fieldRecord = Field::gets(['field' => $field, 'dynamic_table_id' => $table->id]);

@@ -198,7 +198,9 @@ class Dynamic extends Provider
             'url' => array_merge_array(
                 [
                     'tags' => ['group:backend', 'layout:backend'],
-                ], array_merge_array([
+                ],
+                array_merge_array(
+                    [
                         'controller' => Records::class,
                     ],
                     [
@@ -416,7 +418,8 @@ class Dynamic extends Provider
                                 'table' => TableResolver::class,
                             ],
                         ],
-                    ]) + array_merge_array([
+                    ]
+                ) + array_merge_array([
                         'controller' => View::class,
                     ], [
                         /*'/dynamic/tables/view/[table]'                      => [
@@ -509,7 +512,7 @@ class Dynamic extends Provider
                         ],
                     ]) + array_merge_array([
                     'controller' => Relations::class,
-                ], [
+                    ], [
                     '/api/dynamic/relation/[relation]' => [
                         'name' => 'api.dynamic.relation',
                         'view' => 'relation',
@@ -517,7 +520,8 @@ class Dynamic extends Provider
                             'relation' => Relation::class,
                         ]
                     ]
-                    ])),
+                    ])
+            ),
         ];
     }
 }
