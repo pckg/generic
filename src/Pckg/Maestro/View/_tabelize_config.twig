@@ -172,7 +172,6 @@
 
                 http.post('{{ tabelize.getConfigureUrl() }}', data, function (json) {
                     $dispatcher.$emit('notification:success', 'Ok, saved');
-                    utils.closeAndRefresh();
                 });
             },
             // filter
