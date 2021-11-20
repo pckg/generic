@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a href="#" @click.prevent="toggle" class="text-center" :title="formattedValue">
+        <a href="#" @click.prevent="toggle" class="text-center" :title="formattedValue" :min="min" :max="max" :value="value">
             <i :class="'fa-' + iconClass"></i>
         </a>
     </div>
@@ -23,7 +23,7 @@
         methods: {
             toggle: function () {
                 var state = null
-                if (this.min == '2100-01-01 00:00:00') {
+                if (this.min == '2999-01-01 00:00:00') {
                     if (this.value <= this.max) {
                         this.value = this.min;
                         state = 0;
@@ -60,18 +60,43 @@
         },
         computed: {
             iconClass: function () {
-                if (this.min == '2100-01-01 00:00:00') {
-                    return this.value > this.max
-                        ? 'square far clr-error'
-                        : 'square fas clr-success';
-                } else if (this.min == null) {
-                    return this.value > this.max || this.value == this.min
-                        ? 'square far clr-error'
-                        : 'square fas clr-success';
+                const now = moment();
+                const end = '2999-01-01 00:00:00';
+                let max = this.max ? moment(this.max) : null;
+                let min = this.min ? moment(this.min) : null;
+
+                if (!this.value) {
+                    if (this.min === end) {
+                        // never closed by default
+                        return 'square fal clr-success 0';
+                    } else if (this.min) {
+                        // closes at some date possibly now?
+                        return 'square fas clr-error 1';
+                    }
+
+                    if (max) {
+                        return 'square fas clr-error 2';
+                    }
+
+                    return 'square fas clr-success 3';
+                }
+
+                if (now.isSameOrAfter(this.value)) {
+                    if (this.min === end) {
+                        // closed in past
+                        return 'square fas clr-error 4';
+                    } else {
+                        // published in past
+                        return 'square fas clr-success 7';
+                    }
                 } else {
-                    return this.value <= this.min
-                        ? 'square far clr-error'
-                        : 'square fas clr-success';
+                    if (this.min === end) {
+                        // closed in future
+                        return 'square fal clr-error 5';
+                    } else {
+                        // published in future
+                        return 'square fal clr-success 8';
+                    }
                 }
             },
             brValue: function () {
