@@ -334,7 +334,7 @@ class Action implements \JsonSerializable
         return $this->action;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getAction()->pivot->jsonSerialize();
     }
