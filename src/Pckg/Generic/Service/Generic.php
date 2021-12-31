@@ -222,6 +222,10 @@ class Generic
 
     public function readSystemRoute($template)
     {
+        if (!class_exists(Layouts::class)) {
+            return;
+        }
+        
         $repository = (new Layouts())->getRepository();
         if (!$repository || !$repository->getCache()->hasTable('layouts')) {
             return;

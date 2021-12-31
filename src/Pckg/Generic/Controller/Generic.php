@@ -122,13 +122,12 @@ class Generic
     public function wrapIntoGeneric($view, $template = 'Pckg/Generic:frontend')
     {
         message('Wrapping into generic ' . $template);
-        $center = $this->genericService->touchBlock('content');
 
         /**
          * We add view action to center:0.
          */
+        $center = $this->genericService->touchBlock('content');
         $center->addAction(new CustomAction($view));
-
         $this->genericService->readSystemRoute($template);
 
         $vars = $this->genericService->getVariables();
