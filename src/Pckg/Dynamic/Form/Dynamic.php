@@ -381,7 +381,8 @@ ifrm.document.close();
                     $field->getSetting('pckg.dynamic.field.dir'),
                     $field->getSetting('pckg.dynamic.field.privateUpload')
                 );
-                $fullPath = $this->record->{$field->field} ? media($this->record->{$field->field}, null, true, $dir)
+                $fullPath = $this->record->{$field->field}
+                    ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
                     '"><i class="fal fa-fw fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} .

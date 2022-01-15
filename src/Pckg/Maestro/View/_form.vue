@@ -11,7 +11,34 @@
                              v-for="(field, i) in group">
                             <h2 class="h-page-subsubtitle" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
 
-                            <form-group v-if="field.type === 'file:picture'"
+                            <form-group v-if="field.type === 'pdf'"
+                                        :label="getFieldLabel(field)"
+                                        :help="field.help"
+                                        :name="field.slug"
+                                        v-model="myFormModel[field.slug]">
+                                <a v-if="field.settings['pckg.dynamic.field.previewFileUrl']"
+                                   class="btn btn-default btn-md"
+                                   :href="makePreviewUrl(field)"
+                                   title="Preview">
+                                    <i class="fal fa-fw fa-external-link" aria-hidden="true"></i>
+                                    Preview
+                                </a>
+                                <a v-if="field.settings['pckg.dynamic.field.generateFileUrl']"
+                                   class="btn btn-default btn-md"
+                                   :href="makeGenerateUrl(field)"
+                                   title="Generate">
+                                    <i class="fal fa-fw fa-refresh" aria-hidden="true"></i>
+                                    Generate
+                                </a>
+                                <a v-if="myFormModel[field.slug]"
+                                   class="btn btn-default btn-md"
+                                   :href="makeDownloadUrl(field)"
+                                   title="Download">
+                                    <i class="fal fa-fw fa-download" aria-hidden="true"></i>
+                                    Download
+                                </a>
+                            </form-group>
+                            <form-group v-else-if="field.type === 'file:picture'"
                                         :label="getFieldLabel(field)"
                                         :type="mode === 'edit' ? field.type : 'encoded'"
                                         :help="field.help"
@@ -47,7 +74,8 @@
                                       name="default">
                                     <button type="button"
                                             class="pckg-editor-toggle btn btn-xs btn-default"
-                                            @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off</button>
+                                            @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off
+                                    </button>
                                 </slot>
                             </form-group>
 
@@ -82,6 +110,7 @@
 
 <script>
 import {v4} from "uuid";
+
 export default {
     mixins: [pckgFormValidator, pckgTranslations],
     props: {
@@ -251,7 +280,7 @@ export default {
         getFieldLabel: function (field) {
             return (field.required ? '* ' : '') + field.title;
         },
-        toggleEditor: function(name) {
+        toggleEditor: function (name) {
             var textarea = $('textarea[name="' + name + '"]');
             textarea.idify();
             var id = textarea.attr('id');
@@ -270,6 +299,17 @@ export default {
                     forced_root_block: forcedRootBlock
                 });
             }
+        },
+        makePreviewUrl(field) {
+            return `${field.settings['pckg.dynamic.field.previewFileUrl']}?zoom=1`
+                .replace('[order]', this.myFormModel.id);
+        },
+        makeGenerateUrl(field) {
+            return `${field.settings['pckg.dynamic.field.generateFileUrl']}`
+                .replace('[order]', this.myFormModel.id);
+        },
+        makeDownloadUrl(field) {
+            return `/storage/private/${field.settings['pckg.dynamic.field.dir']}/${this.myFormModel[field.slug]}`;
         },
     }
 }

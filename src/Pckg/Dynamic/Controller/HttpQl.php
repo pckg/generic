@@ -472,7 +472,7 @@ class HttpQl
     public function getDefinitionAction()
     {
         return [
-            'entities' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
+            'schemas' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
                 ->joinPermissionTo('write')
                 ->withFields(function (HasMany $fields) {
                     $fields->orderBy('order');
@@ -481,17 +481,52 @@ class HttpQl
                 ->orderBy('`order`')
                 ->all()
                 ->map(function (Table $table) {
+                    $singleton = ucfirst(toCamel($table->table));
+                    if (strrpos($singleton, 'ies') === strlen($singleton) - strlen('ies')) {
+                        $singleton = substr($singleton, 0, -strlen('ies')) . 'y';
+                    } else if (strrpos($singleton, 'es') === strlen($singleton) - strlen('es')) {
+                        $singleton = substr($singleton, 0, -strlen('es'));
+                    } else if (strrpos($singleton, 's') === strlen($singleton) - strlen('s')) {
+                        $singleton = substr($singleton, 0, -strlen('s'));
+                    }
+
+                    // http://niem.github.io/json/tutorial/#define-a-niem-exchange-model
                     return [
+                        '$schema' => router()->getRoutePrefix(true) . '/api/http-ql/definition#schemas.' . $table->table,
+                        'type' => 'object',
+                        'properties' => [
+                            '@context' => [
+                                '$ref' => '#/definitions/@context',
+                            ],
+                            'j:' . $singleton => [
+                                '$ref' => '#/definitions/@context'
+                            ],
+                        ],
+                        'additionalProperties' => false,
+                        'required' => [
+                            '@context',
+                            'j:' . $singleton => '#/definitions/j:' . $singleton,
+                        ],
+                        'definitions' => [
+                            '@context' => [
+                                'type' => 'object',
+                            ],
+                            'j:' . $singleton => [
+                                'type' => 'object',
+                                'properties' => $table->fields->map(function (Field $field) {
+                                        return [
+                                            'type' => 'nc:' . $field->fieldType->slug,
+                                            'title' => $field->title,
+                                        ];
+                                    })->keyBy('field')->all(),
+                                'additionalProperties' => false,
+                                'required' => $table->fields->filter(fn(Field $field) => $field->required)
+                                    ->map('field')
+                                    ->values(),
+                            ],
+                        ],
                         'table' => $table->table,
                         'title' => $table->title,
-                        'fields' => $table->fields->map(function (Field $field) {
-                            return [
-                                'field' => $field->field,
-                                'title' => $field->title,
-                                'type' => $field->fieldType->slug,
-                                'required' => !!$field->required,
-                            ];
-                        })->keyBy('field')->all()
                     ];
                 })->keyBy('table')->all(),
         ];

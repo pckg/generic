@@ -61,7 +61,7 @@
                 <template v-if="!editable">
                     <pckg-maestro-field-indicator :field="myField" :record="record"
                                                   :db-field="dbField"></pckg-maestro-field-indicator>
-                    <router-link :to="record[`*${key}`].url" v-if="typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</router-link>
+                    <router-link :to="record[`*${key}`].url" v-if="record[`*${key}`] && typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</router-link>
                     <span v-else v-html="richValue"></span>
                 </template>
             </template>
@@ -104,7 +104,7 @@
 
 <script>
     export default {
-        mixins: [pckgCdn],
+        mixins: [CommsHubHelpers.cdn],
         name: 'pckg-maestro-field',
         props: {
             field: {
