@@ -760,11 +760,12 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getOrderFieldAction(Table $table, Field $field, Record $record, $order)
+    public function postOrderFieldAction(Table $table, Field $field, Record $record, $order)
     {
         $record->{$field->field} = $order;
         $record->save($table->createEntity());
-        return $this->response()->respondWithSuccessRedirect();
+
+        return ['success' => true];
     }
 
     public function deleteUploadAction(Table $table, Record $record = null, Field $field)
