@@ -227,7 +227,7 @@ class Dynamic extends Bootstrap
                     $relation->withShowTable();
                 });*/
                 $fields->withFieldGroup();
-                if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api')) {
+                if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api') || context()->exists(Dynamic::class . ':fullFields')) {
                     return;
                 }
 
@@ -490,7 +490,7 @@ ifrm.document.close();
                     'relation' => $this->relation,
                     'record'   => $this->foreignRecord,
                 ])
-                : ($this->record->id
+                : ($this->record && $this->record->id
                     ? url('dynamic.records.field.upload', [
                         'table'  => $this->table,
                         'field'  => $field,
@@ -501,7 +501,7 @@ ifrm.document.close();
                         'field' => $field,
                     ])));
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-            $element->setAttribute('data-image', img($this->record->{$field->field}, null, true, $dir));
+            $element->setAttribute('data-image', $this->record ? img($this->record->{$field->field}, null, true, $dir) : null);
             $element->setAttribute('data-type', 'picture');
             return $element;
         } elseif ($type == 'datetime') {

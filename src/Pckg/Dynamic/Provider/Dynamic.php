@@ -345,6 +345,14 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
+                        '/api/dynamic/records/field/[table]/[field]/bulk-edit' => [
+                            'name' => 'dynamic.records.field.bulkEdit',
+                            'view' => 'bulkEdit',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                                'field' => FieldResolver::class,
+                            ],
+                        ],
                         '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]' => [
                             'name' => 'dynamic.records.field.toggle',
                             'view' => 'toggleField',

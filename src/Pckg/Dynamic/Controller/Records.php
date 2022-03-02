@@ -672,6 +672,63 @@ class Records extends Controller
                                                      ]);
     }
 
+    /**
+     * Patches the selection of records with selected value.
+     *
+     * @param Table $table
+     * @param Field $field
+     * @return bool[]
+     */
+    public function postBulkEditAction(Table $table, Field $field)
+    {
+        $total = (int)post('confirmTotal');
+        if (!$total) {
+            throw new \Exception('Total is required');
+        }
+
+        $posted = post()->all();
+        if (!array_key_exists($field->field, $posted)) {
+            throw new \Exception('Missing field data');
+        }
+
+        $entity = $table->createEntity();
+        if ($entity->isDeletable()) {
+            $entity->nonDeleted();
+        }
+
+        $ids = $posted['ids'] ?? null;
+        $filters = $posted['appliedFilters'] ?? null;
+        if ($ids) {
+            // apply only on ids
+            $entity->where('id', $ids);
+        } else if ($filters) {
+            $dynamicService = resolve(\Pckg\Dynamic\Service\Dynamic::class);
+            $dynamicService->setTable($table);
+            $dynamicService->getFilterService()->applyOnEntity($entity, $filters);
+            // apply filters
+        } else {
+            // change all?
+        }
+
+        $entityTotal = (clone $entity)->total();
+        if ($entityTotal !== $total) {
+            throw new \Exception('Total does not match - is ' . $entityTotal);
+        }
+
+        $newValue = $posted[$field->field];
+        $entity->set([
+            $field->field => $newValue,
+        ])
+            ->update();
+
+        return [
+            'success' => true,
+            'table' => $table->table,
+            'field' => $field->field,
+            'value' => $newValue,
+        ];
+    }
+
     protected function saveP17n(Record $record, Entity $entity)
     {
         $p17n = $this->post()->p17n;
@@ -924,12 +981,19 @@ class Records extends Controller
 
             return $field->fieldType->slug;
         };
+
+        // select options for bulk edit requests
+        if (!$record) {
+            context()->bind(Dynamic::class . ':fullFields', true);
+        }
+
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
             'fields' => $fields->map(function (Field $field) use ($initialOptions, $record, $typeMapper) {
                 $type = $typeMapper($field);
                 return [
+                    'id'       => $field->id,
                     'title'    => $field->title,
                     'slug'     => $field->field,
                     'type'     => $type,
