@@ -219,7 +219,7 @@ class Dynamic extends Provider
                         ],
                         '/api/dynamic/records/[table]/[record]/edit' => [
                             'name' => 'api.dynamic.records.edit',
-                            'view' => 'add',
+                            'view' => 'edit',
                             'method' => 'POST',
                             'resolvers' => [
                                 'table' => function () {
