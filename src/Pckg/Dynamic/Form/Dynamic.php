@@ -218,7 +218,7 @@ class Dynamic extends Bootstrap
         $fields = collect();
         for ($i = 0; $i < 2; $i++) {
             $fields = $this->table->listableFields(function (HasMany $fields) use ($i) {
-
+                $fields->getRightEntity()->where('field', 'id', '!=');
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withPermissions();
                 // @T00D00 - line below does not work with json?
