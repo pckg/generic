@@ -438,9 +438,10 @@ class Generic
         return $variables;
     }
 
-    public function build()
+    public function build(Route $route)
     {
         $args = array_merge(router()->get('data'), router()->getResolves());
+        $args['route'] = $route;
 
         $this->actions->each(function (ActionRecord $action) use ($args) {
             (new Action($action))->build($args);
