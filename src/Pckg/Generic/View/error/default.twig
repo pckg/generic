@@ -8,12 +8,11 @@
 <div class="container">
 
     <h1>{{ __('error.heading') }}</h1>
-    <p code="{{ _response.getCode() }}">{{ __('error.code_' ~ _response.getCode()) }}</p>
+    <p code="{{ _response.getCode() }}">{{ __('error.code_' ~ _response.getCode()) }} - {{ exception.getMessage() }}</p>
 
     <p>Go to <a href="#back">previous page</a> or <a href="/">home</a></p>
 
     {% if _env.implicitDev() %}
-        <p>{{ exception.getMessage() }}</p>
         <p>{{ exception.getTraceAsString() | nl2br }}</p>
     {% endif %}
 </div>
