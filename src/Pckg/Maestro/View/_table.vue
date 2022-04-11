@@ -577,7 +577,7 @@
                     this.view = data.view;
                     this.actions = data.actions;
                     this.loading = false;
-                    if (this.myFields.length == 0) {
+                    if (data.view && this.myFields.length == 0) {
                         this.myFields = data.view.columns;
                     }
 

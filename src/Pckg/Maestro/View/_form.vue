@@ -18,21 +18,21 @@
                                         v-model="myFormModel[field.slug]">
                                 <a v-if="field.settings['pckg.dynamic.field.previewFileUrl']"
                                    class="btn btn-default btn-md"
-                                   :href="makePreviewUrl(field)"
+                                   :href="$root.tenantUrl(makePreviewUrl(field))"
                                    title="Preview">
                                     <i class="fal fa-fw fa-external-link" aria-hidden="true"></i>
                                     Preview
                                 </a>
                                 <a v-if="field.settings['pckg.dynamic.field.generateFileUrl']"
                                    class="btn btn-default btn-md"
-                                   :href="makeGenerateUrl(field)"
+                                   :href="$root.tenantUrl(makeGenerateUrl(field))"
                                    title="Generate">
                                     <i class="fal fa-fw fa-refresh" aria-hidden="true"></i>
                                     Generate
                                 </a>
                                 <a v-if="myFormModel[field.slug]"
                                    class="btn btn-default btn-md"
-                                   :href="makeDownloadUrl(field)"
+                                   :href="$root.tenantUrl(makeDownloadUrl(field))"
                                    title="Download">
                                     <i class="fal fa-fw fa-download" aria-hidden="true"></i>
                                     Download

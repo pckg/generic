@@ -3,13 +3,13 @@
         <div class="display-block">
 
             <h1 class="h-page-title">
-                <router-link to="/maestro" class="__maestro-back-button" title="Go to Dashboard">
+                <router-link :to="$root.tenantUrl()" class="__maestro-back-button" title="Go to Dashboard">
                     <i class="fal fa-chevron-left"></i>
                 </router-link>
 
                 {{ table.title }}
 
-                <router-link to="/maestro" class="__maestro-back-button" title="Open list">
+                <router-link :to="$root.tenantUrl()" class="__maestro-back-button" title="Open list">
                     <i class="fal fa-chevron-left"></i>
                 </router-link>
 
@@ -22,10 +22,10 @@
 
             <ul class="nav nav-tabs">
                 <li>
-                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/' + viewOrEdit" active-class="active">General</router-link>
+                    <router-link :to="$root.tenantUrl('/dynamic/records/' + table.id +'/' + record.id + '/' + viewOrEdit)" active-class="active">General</router-link>
                 </li>
                 <li v-for="tab in tabs">
-                    <router-link :to="'/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id" active-class="active">
+                    <router-link :to="$root.tenantUrl('/dynamic/records/' + table.id +'/' + record.id + '/tab/' + tab.id)" active-class="active">
                         {{ tab.title }}
                     </router-link>
                 </li>
