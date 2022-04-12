@@ -35,6 +35,7 @@ class Menu
 
             return $entity->all();
         }, $locale);
+        
         if ($slug == 'admin') {
             $menuItems = new Collection();
         }

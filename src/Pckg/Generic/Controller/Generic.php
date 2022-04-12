@@ -62,8 +62,8 @@ class Generic
 
         $route->applySeoSettings();
 
-        measure('Building actions', function () {
-            $this->genericService->build();
+        measure('Building actions', function () use ($route) {
+            $this->genericService->build($route);
         });
 
         return measure('Stringifying output', function () use ($route) {

@@ -33,27 +33,27 @@
 
                 let value = this.value;
                 if (['confirmed', 'payed', 'published', 'taken', 'delivered', 'resolving', 'ordered'].indexOf(value) >= 0) {
-                    return 'fas fa-square clr-success';
+                    return 'fas fa-circle clr-success';
                 }
 
                 if (['reserved', 'sent', 'shipped', 'closed'].indexOf(value) >= 0) {
-                    return 'fal fa-square clr-success';
+                    return 'fal fa-circle clr-success';
                 }
 
                 if (['submitted', 'allocated', 'data', 'responded'].indexOf(value) >= 0) {
-                    return 'fal fa-square clr-info';
+                    return 'fal fa-circle clr-info';
                 }
 
                 if (['canceled', 'rejected', 'quo'].indexOf(value) >= 0) {
-                    return 'fal fa-square clr-error';
+                    return 'fal fa-circle clr-error';
                 }
 
                 if (['returned', 'opened', 'expired', 'high'].indexOf(value) >= 0) {
-                    return 'fas fa-square clr-error';
+                    return 'fas fa-circle clr-error';
                 }
 
                 if (['basket', 'split', 'none', 'created', 'archived'].indexOf(value) >= 0) {
-                    return 'fal fa-square';
+                    return 'fal fa-circle';
                 }
 
                 return null;

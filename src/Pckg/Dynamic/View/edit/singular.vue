@@ -4,7 +4,7 @@
         <div class="display-block">
 
             <h1 class="h-page-title">
-                <router-link to="/maestro" class="__maestro-back-button" title="Go to Dashboard">
+                <router-link :to="$root.tenantUrl()" class="__maestro-back-button" title="Go to Dashboard">
                     <i class="fal fa-chevron-left"></i>
                 </router-link>
 

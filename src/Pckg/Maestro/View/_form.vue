@@ -3,15 +3,42 @@
     <div class="c-pckg-maestro-form" v-else :class="'--mode-' + mode">
 
         <div class="flex-grid --gap-md" :class="gridClass">
-            <div v-for="position in [leftGroups, rightGroups]">
+            <div v-for="position in filteredPositions">
                 <div class="flex-grid --gap-md">
                     <div v-for="group in position" class="s-form-field-group" :class="groupClass">
                         <div class="s-form-field animated fadeIn"
                              :class="'--field-type-' + field.type"
                              v-for="(field, i) in group">
-                            <h2 class="h-page-subsubtitle" v-if="i === 0 && field.group">{{ field.group.title }}</h2>
+                            <h2 class="h-page-subsubtitle" v-if="!onlyField && i === 0 && field.group">{{ field.group.title }}</h2>
 
-                            <form-group v-if="field.type === 'file:picture'"
+                            <form-group v-if="field.type === 'pdf'"
+                                        :label="getFieldLabel(field)"
+                                        :help="field.help"
+                                        :name="field.slug"
+                                        v-model="myFormModel[field.slug]">
+                                <a v-if="field.settings['pckg.dynamic.field.previewFileUrl']"
+                                   class="btn btn-default btn-md"
+                                   :href="$root.tenantUrl(makePreviewUrl(field))"
+                                   title="Preview">
+                                    <i class="fal fa-fw fa-external-link" aria-hidden="true"></i>
+                                    Preview
+                                </a>
+                                <a v-if="field.settings['pckg.dynamic.field.generateFileUrl']"
+                                   class="btn btn-default btn-md"
+                                   :href="$root.tenantUrl(makeGenerateUrl(field))"
+                                   title="Generate">
+                                    <i class="fal fa-fw fa-refresh" aria-hidden="true"></i>
+                                    Generate
+                                </a>
+                                <a v-if="myFormModel[field.slug]"
+                                   class="btn btn-default btn-md"
+                                   :href="$root.tenantUrl(makeDownloadUrl(field))"
+                                   title="Download">
+                                    <i class="fal fa-fw fa-download" aria-hidden="true"></i>
+                                    Download
+                                </a>
+                            </form-group>
+                            <form-group v-else-if="field.type === 'file:picture'"
                                         :label="getFieldLabel(field)"
                                         :type="mode === 'edit' ? field.type : 'encoded'"
                                         :help="field.help"
@@ -47,7 +74,8 @@
                                       name="default">
                                     <button type="button"
                                             class="pckg-editor-toggle btn btn-xs btn-default"
-                                            @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off</button>
+                                            @click.prevent="toggleEditor(field.slug)">Turn Editor On/Off
+                                    </button>
                                 </slot>
                             </form-group>
 
@@ -57,12 +85,14 @@
             </div>
         </div>
 
-        <div class="__form-actions form-group margin-top-sm" v-if="mode !== 'view'">
+        <slot></slot>
+
+        <div class="__form-actions form-group margin-top-sm" v-if="mode !== 'view' && visibleFields.length">
             <button type="button"
                     @click.prevent="submitForm"
                     class="__submit-btn btn btn-primary"
                     :disabled="['submitting', 'redirecting'].indexOf(state) >= 0">
-                {{ myFormModel.id ? 'Save changes' : 'Add' }}
+                {{ onlyField ? 'Overwrite' : (myFormModel.id ? 'Save changes' : 'Add') }}
                 <i v-if="['submitting', 'error', 'success'].indexOf(state) >= 0"
                    class="fal fa-fw"
                    :class="'submitting' === state ? 'fa-spinner-third fa-spin' : ('error' === state ? 'fa-times' : 'fa-check')"></i>
@@ -82,6 +112,7 @@
 
 <script>
 import {v4} from "uuid";
+
 export default {
     mixins: [pckgFormValidator, pckgTranslations],
     props: {
@@ -104,6 +135,12 @@ export default {
         },
         gridClass: {
             default: () => 'grid-2-1',
+        },
+        onlyField: {
+            defafult: () => null,
+        },
+        additionalModel: {
+            default: () => ({}),
         }
     },
     created: function () {
@@ -129,6 +166,10 @@ export default {
             return !this.myFormModel.id;
         },
         visibleFields: function () {
+            if (this.onlyField) {
+                return this.myForm.fields.filter((field) => this.onlyField === `${field.id}`);
+            }
+
             return this.myForm.fields.filter(this.isVisible);
         },
         leftFields: function () {
@@ -145,6 +186,9 @@ export default {
         },
         table: function () {
             return this.$route.meta.resolved.table || {id: this.tableId};
+        },
+        filteredPositions: function () {
+            return [this.leftGroups, this.rightGroups].filter(groups => Object.keys(groups).length);
         }
     },
     methods: {
@@ -200,9 +244,11 @@ export default {
         submitForm: function () {
             this.state = 'submitting';
             this.validateAndSubmit(function () {
-                let url = this.myFormModel.id
+                let url = this.onlyField
+                    ? ('/api/dynamic/records/field/' + this.table.id + '/' + this.onlyField + '/bulk-edit')
+                    : (this.myFormModel.id
                     ? ('/api/dynamic/records/' + this.table.id + '/' + this.myFormModel.id + '/edit')
-                    : ('/api/dynamic/records/' + this.table.id + '/add');
+                    : ('/api/dynamic/records/' + this.table.id + '/add'));
                 http.post(url, this.collectFormData(), function (data) {
                     this.$emit('saved');
                     this.state = 'success';
@@ -210,7 +256,10 @@ export default {
                     if (this.onSuccess && this.onSuccess()) {
                         return;
                     }
-                    if (!this.myFormModel.id) {
+                    if (this.onlyField) {
+                        $dispatcher.$emit('notification:success', 'Records have been updated');
+                        this.$emit('update');
+                    } else if (!this.myFormModel.id) {
                         this.state = 'redirecting';
                         $dispatcher.$emit('notification:info', 'The record has been added, redirecting to new page');
                         this.$router.push(data.redirect);
@@ -242,8 +291,8 @@ export default {
             }.bind(this));
         },
         collectFormData: function () {
-            let d = {};
-            $.each(this.myForm.fields, function (i, field) {
+            let d = this.additionalModel;
+            $.each(this.visibleFields, function (i, field) {
                 d[field.slug] = this.myFormModel[field.slug] || null;
             }.bind(this));
             return d;
@@ -251,7 +300,7 @@ export default {
         getFieldLabel: function (field) {
             return (field.required ? '* ' : '') + field.title;
         },
-        toggleEditor: function(name) {
+        toggleEditor: function (name) {
             var textarea = $('textarea[name="' + name + '"]');
             textarea.idify();
             var id = textarea.attr('id');
@@ -270,6 +319,17 @@ export default {
                     forced_root_block: forcedRootBlock
                 });
             }
+        },
+        makePreviewUrl(field) {
+            return `${field.settings['pckg.dynamic.field.previewFileUrl']}?zoom=1`
+                .replace('[order]', this.myFormModel.id);
+        },
+        makeGenerateUrl(field) {
+            return `${field.settings['pckg.dynamic.field.generateFileUrl']}`
+                .replace('[order]', this.myFormModel.id);
+        },
+        makeDownloadUrl(field) {
+            return `/storage/private/${field.settings['pckg.dynamic.field.dir']}/${this.myFormModel[field.slug]}`;
         },
     }
 }

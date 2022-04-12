@@ -33,12 +33,19 @@ body {
 
   &.--bg-color {
     background-color: #fff;//@maestro-bg-dark;
+    box-shadow: 2px 4px 6px #eee;
+
+    a&:hover {
+      background-color: #f7f6fc;
+    }
+
     .o-info {
       background-color: var(--o-info--bg-color, transparent);
     }
 
     &.--style-error {
       background-color: @clr-error;
+      box-shadow: 2px 4px 6px @clr-error;
       color: white;
       .color-grayish {
         color: #eee;
@@ -48,6 +55,10 @@ body {
     // sub box?
     .--bg-color {
       background-color: #f7f6fc;
+    }
+
+    a.--bg-color:hover {
+      background-color: #efeff7;
     }
   }
 
@@ -226,6 +237,7 @@ th .form-group {
 
 .maestro-sidebar {
   background: #fff; // @maestro-bg-dark;
+  background-color: #efeff7;
   bottom: 0;
   float: left;
   height: 100%;
@@ -323,6 +335,10 @@ th .form-group {
         position: relative;
         font-size: 1.6rem;
         line-height: 2rem;
+
+        &.router-link-active {
+          color: #0061ff;
+        }
 
         i {
           float: left;
@@ -538,10 +554,6 @@ th .form-group {
     margin: 0 auto;
     max-width: 768px;
     width: auto;
-  }
-
-  &.login {
-    margin-left: 0;
   }
 
   body.collapsed & {

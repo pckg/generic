@@ -5,9 +5,9 @@
 <script>
     export default {
         name: 'pckg-icon',
-        mixins: [pckgSmartComponent],
+        mixins: [CommsHub.component],
         data: function () {
-            let d = pckgSmartComponent.data.call(this);
+            let d = CommsHub.component.data.call(this);
             d.mapper = {
                 normal: 'fa',
                 solid: 'fas',

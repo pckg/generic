@@ -31,7 +31,11 @@
                                             :record-id="recordId"
                                             :columns="dbFields"
                                             :relations="dbRelations"
-                                            @export-view="exportView"></pckg-maestro-table-actions>
+                                            :filters="filters"
+                                            :ids="ids"
+                                            :total="paginator.total"
+                                            @export-view="exportView"
+                                            @update="timeoutRefreshData(1000)"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -40,6 +44,14 @@
 
         <pckg-loader :icon="loading === 'error' ? 'fa-exclamation-circle' : 'fa-spinner-third fa-spin'"
                      :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
+
+        <template v-if="false && !loading && records.length === 0">
+            <div class="text-center padding-top-lg color-grayish">
+                <i class="fal fa-fw fa-3x fa-empty-set"></i>
+                <span class="font-size-xl">No results found</span>
+                <p class="margin-top-xs">Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        </template>
 
         <!-- table template -->
         <div class="pckg-maestro-table box-with-padding --bg-color --radius-sm">
@@ -313,11 +325,11 @@
             },
             filters: {
                 default: function () {
-                    return [{
+                    return [/*{
                         field: null,
                         value: null,
                         comp: 'is'
-                    }];
+                    }*/];
                 }
             },
             defaultFields: {
@@ -565,7 +577,7 @@
                     this.view = data.view;
                     this.actions = data.actions;
                     this.loading = false;
-                    if (this.myFields.length == 0) {
+                    if (data.view && this.myFields.length == 0) {
                         this.myFields = data.view.columns;
                     }
 
@@ -719,7 +731,7 @@
                 entity.getQuery().addSelect(keys.join('.'));
             },
             mapComp: function (comp) {
-                let data = {
+                return {
                     'is': '=',
                     'not': '!=',
                     'in': 'IN',
@@ -730,9 +742,7 @@
                     'lessOrEquals': '<=',
                     'like': 'LIKE',
                     'notLike': 'NOT LIKE',
-                };
-
-                return data[comp];
+                }[comp];
             },
             applyFilters: function (entity) {
                 $.each(this.myFilters, function (i, filter) {

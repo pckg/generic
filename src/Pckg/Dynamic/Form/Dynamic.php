@@ -218,7 +218,7 @@ class Dynamic extends Bootstrap
         $fields = collect();
         for ($i = 0; $i < 2; $i++) {
             $fields = $this->table->listableFields(function (HasMany $fields) use ($i) {
-
+                $fields->getRightEntity()->where('field', 'id', '!=');
                 $fields->getRightEntity()->orderBy('dynamic_field_group_id ASC, `order` ASC');
                 $fields->withPermissions();
                 // @T00D00 - line below does not work with json?
@@ -227,7 +227,7 @@ class Dynamic extends Bootstrap
                     $relation->withShowTable();
                 });*/
                 $fields->withFieldGroup();
-                if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api')) {
+                if ($i || ($this->record && $this->record->id) || context()->exists(Auth::class . ':api') || context()->exists(Dynamic::class . ':fullFields')) {
                     return;
                 }
 
@@ -381,7 +381,8 @@ ifrm.document.close();
                     $field->getSetting('pckg.dynamic.field.dir'),
                     $field->getSetting('pckg.dynamic.field.privateUpload')
                 );
-                $fullPath = $this->record->{$field->field} ? media($this->record->{$field->field}, null, true, $dir)
+                $fullPath = $this->record->{$field->field}
+                    ? media($this->record->{$field->field}, null, true, $dir)
                     : null;
                 $value = '<a class="btn btn-success btn-md" title="Download ' . $type . '" href="' . $fullPath .
                     '"><i class="fal fa-fw fa-download" aria-hidden="true"></i> Download ' . $this->record->{$field->field} .
@@ -489,7 +490,7 @@ ifrm.document.close();
                     'relation' => $this->relation,
                     'record'   => $this->foreignRecord,
                 ])
-                : ($this->record->id
+                : ($this->record && $this->record->id
                     ? url('dynamic.records.field.upload', [
                         'table'  => $this->table,
                         'field'  => $field,
@@ -500,7 +501,7 @@ ifrm.document.close();
                         'field' => $field,
                     ])));
             $dir = $field->getAbsoluteDir($field->getSetting('pckg.dynamic.field.dir'));
-            $element->setAttribute('data-image', img($this->record->{$field->field}, null, true, $dir));
+            $element->setAttribute('data-image', $this->record ? img($this->record->{$field->field}, null, true, $dir) : null);
             $element->setAttribute('data-type', 'picture');
             return $element;
         } elseif ($type == 'datetime') {

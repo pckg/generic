@@ -23,8 +23,7 @@
                                            :field="fieldId"
                                            :record="record.id"
                                            :value="value"
-                                           :table="table"
-                                           :url="orderFieldUrl"></pckg-tabelize-field-order>
+                                           :table="table"></pckg-tabelize-field-order>
             </template>
             <template v-else-if="type == 'datetime'">
                 <template v-if="isTogglable">
@@ -61,7 +60,7 @@
                 <template v-if="!editable">
                     <pckg-maestro-field-indicator :field="myField" :record="record"
                                                   :db-field="dbField"></pckg-maestro-field-indicator>
-                    <router-link :to="record[`*${key}`].url" v-if="typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</router-link>
+                    <pb-link :to="record[`*${key}`].url" v-if="record[`*${key}`] && typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</pb-link>
                     <span v-else v-html="richValue"></span>
                 </template>
             </template>
@@ -104,7 +103,7 @@
 
 <script>
     export default {
-        mixins: [pckgCdn],
+        mixins: [CommsHubHelpers.cdn],
         name: 'pckg-maestro-field',
         props: {
             field: {
@@ -139,8 +138,7 @@
                 myRelations: this.relations,
                 myFields: this.parentFields,
                 editable: false,
-                toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle'],
-                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order'],
+                toggleFieldUrl: '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]',
                 model: null
             };
         },

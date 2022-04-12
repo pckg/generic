@@ -23,6 +23,7 @@ use Pckg\Dynamic\Service\Dynamic as DynamicService;
 use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
+use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Service\Generic;
 use Pckg\Htmlbuilder\Datasource\Method\Request;
 use Pckg\Locale\Lang;
@@ -671,6 +672,63 @@ class Records extends Controller
                                                      ]);
     }
 
+    /**
+     * Patches the selection of records with selected value.
+     *
+     * @param Table $table
+     * @param Field $field
+     * @return bool[]
+     */
+    public function postBulkEditAction(Table $table, Field $field)
+    {
+        $total = (int)post('confirmTotal');
+        if (!$total) {
+            throw new \Exception('Total is required');
+        }
+
+        $posted = post()->all();
+        if (!array_key_exists($field->field, $posted)) {
+            throw new \Exception('Missing field data');
+        }
+
+        $entity = $table->createEntity();
+        if ($entity->isDeletable()) {
+            $entity->nonDeleted();
+        }
+
+        $ids = $posted['ids'] ?? null;
+        $filters = $posted['appliedFilters'] ?? null;
+        if ($ids) {
+            // apply only on ids
+            $entity->where('id', $ids);
+        } else if ($filters) {
+            $dynamicService = resolve(\Pckg\Dynamic\Service\Dynamic::class);
+            $dynamicService->setTable($table);
+            $dynamicService->getFilterService()->applyOnEntity($entity, $filters);
+            // apply filters
+        } else {
+            // change all?
+        }
+
+        $entityTotal = (clone $entity)->total();
+        if ($entityTotal !== $total) {
+            throw new \Exception('Total does not match - is ' . $entityTotal);
+        }
+
+        $newValue = $posted[$field->field];
+        $entity->set([
+            $field->field => $newValue,
+        ])
+            ->update();
+
+        return [
+            'success' => true,
+            'table' => $table->table,
+            'field' => $field->field,
+            'value' => $newValue,
+        ];
+    }
+
     protected function saveP17n(Record $record, Entity $entity)
     {
         $p17n = $this->post()->p17n;
@@ -759,11 +817,12 @@ class Records extends Controller
         return $this->response()->respondWithSuccessRedirect();
     }
 
-    public function getOrderFieldAction(Table $table, Field $field, Record $record, $order)
+    public function postOrderFieldAction(Table $table, Field $field, Record $record, $order)
     {
         $record->{$field->field} = $order;
         $record->save($table->createEntity());
-        return $this->response()->respondWithSuccessRedirect();
+
+        return ['success' => true];
     }
 
     public function deleteUploadAction(Table $table, Record $record = null, Field $field)
@@ -922,12 +981,19 @@ class Records extends Controller
 
             return $field->fieldType->slug;
         };
+
+        // select options for bulk edit requests
+        if (!$record) {
+            context()->bind(Dynamic::class . ':fullFields', true);
+        }
+
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
             'fields' => $fields->map(function (Field $field) use ($initialOptions, $record, $typeMapper) {
                 $type = $typeMapper($field);
                 return [
+                    'id'       => $field->id,
                     'title'    => $field->title,
                     'slug'     => $field->field,
                     'type'     => $type,
@@ -937,6 +1003,14 @@ class Records extends Controller
                     'group'    => $field->fieldGroup,
                     'relation' => $type === 'select:single' ? $field->hasOneSelectRelation : null,
                     'reverseRelation' => $type === 'select:single' ? $field->hasOneReverseSelectRelation : null,
+                    'settings' => $field->settings
+                        ->keyBy(fn(Setting $setting) => str_replace('pckg.generic.setting.', '', $setting->slug))
+                        ->map(function(Setting $setting) {
+                            if (in_array($setting->slug, ['pckg.dynamic.field.previewFileUrl','pckg.dynamic.field.generateFileUrl'])) {
+                                return url($setting->pivot->value);
+                            }
+                            return $setting->pivot->value;
+                        }),
                 ];
             })->rekey(),
         ];

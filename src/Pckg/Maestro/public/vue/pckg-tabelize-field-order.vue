@@ -14,7 +14,6 @@
             record: null,
             value: null,
             table: null,
-            url: null
         },
         watch: {
             value: function () {
@@ -26,12 +25,12 @@
         },
         methods: {
             saveData: function () {
-                http.getJSON(utils.url(this.url, {
+                http.post(utils.url('/dynamic/records/field/[table]/[field]/[record]/order/[order]', {
                         record: this.record,
                         field: this.field,
                         order: this.value,
                         table: this.table.id
-                    }), function (data) {
+                    }), {}, function (data) {
                     }.bind(this)
                 );
             }
