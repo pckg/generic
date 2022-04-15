@@ -928,7 +928,7 @@ class Records extends Controller
             ];
         }
 
-        $dir = path('app_uploads') . 'editor' . path('ds');
+        $dir = path('uploads') . 'editor' . path('ds');
         $upload->save($dir);
         $filename = $upload->getUploadedFilename();
         $location = img($filename, null, true, $dir);
