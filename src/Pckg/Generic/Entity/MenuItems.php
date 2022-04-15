@@ -6,6 +6,9 @@ use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Orderable;
 use Pckg\Generic\Record\MenuItem;
 
+/**
+ * @method withMenu(?callable $callable = null)
+ */
 class MenuItems extends Entity
 {
     use Orderable;

@@ -11,6 +11,9 @@ use Pckg\Generic\Entity\MenuItems;
  * @package Pckg\Generic\Record
  * @property string $url
  * @property Collection $getChildren
+ * @property string $title
+ * @property string $icon
+ * @property string $parent_id
  */
 class MenuItem extends Record
 {
