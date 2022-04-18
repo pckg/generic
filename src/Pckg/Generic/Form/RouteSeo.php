@@ -9,7 +9,6 @@ use Pckg\Htmlbuilder\Validator\Method\Custom;
 
 class RouteSeo extends Bootstrap implements ResolvesOnRequest
 {
-
     public function initFields()
     {
         $title = $this->addText('seo[title]')->addCustomValidator(function ($value, Custom $validator) {

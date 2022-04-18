@@ -11,7 +11,6 @@ use Pckg\Database\Collection;
  */
 trait SettingsHelper
 {
-
     public function saveSetting($key, $value, $type = null)
     {
         $setting = Setting::getOrNew(['slug' => $key]);

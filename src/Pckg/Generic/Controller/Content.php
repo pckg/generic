@@ -8,7 +8,6 @@ use Pckg\Generic\Service\Generic\Action;
 
 class Content
 {
-
     public function getSimpleAction(Action $action)
     {
         return $action->toVue('pckg-generic-content-simple');

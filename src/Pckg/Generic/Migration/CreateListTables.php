@@ -6,7 +6,6 @@ use Pckg\Migration\Migration;
 
 class CreateListTables extends Migration
 {
-
     protected $dependencies = [
         // translatable, permissionable
     ];

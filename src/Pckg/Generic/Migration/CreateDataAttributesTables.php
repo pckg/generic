@@ -8,7 +8,6 @@ use Pckg\Translator\Migration\CreateTranslationsTable;
 
 class CreateDataAttributesTables extends Migration
 {
-
     public function up()
     {
         $dataAttributes = $this->morphtable('data_attributes', null, null);

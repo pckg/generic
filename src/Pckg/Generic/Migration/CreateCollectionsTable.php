@@ -6,7 +6,6 @@ use Pckg\Migration\Migration;
 
 class CreateCollectionsTable extends Migration
 {
-
     public function up()
     {
         $this->collectionsUp();

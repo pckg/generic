@@ -13,7 +13,6 @@ use Pckg\Framework\Request\Data\Get;
 
 class Fields extends AbstractService
 {
-
     protected $get;
 
     public function __construct(Get $get)

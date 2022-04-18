@@ -14,7 +14,6 @@ use Pckg\Dynamic\Entity\Tabs;
  */
 class Tab extends DatabaseRecord
 {
-
     protected $entity = Tabs::class;
     public function getNameAttribute()
     {

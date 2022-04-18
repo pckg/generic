@@ -7,7 +7,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class ExportStrategy implements RouteResolver
 {
-
     protected $exportService;
 
     public function __construct(Export $exportService)

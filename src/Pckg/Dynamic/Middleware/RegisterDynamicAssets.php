@@ -7,7 +7,6 @@ use Pckg\Manager\Asset;
 
 class RegisterDynamicAssets
 {
-
     protected $provider;
 
     public function __construct(DynamicAssets $provider)

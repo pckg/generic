@@ -7,7 +7,6 @@ use CommsCenter\Pagebuilder\Record\Content as ContentRecord;
 
 class Content
 {
-
     const LENGTH_SHORT  = [1, 1];
     const LENGTH_MEDIUM = [3, 5];
     const LENGTH_LONG   = [3, 10];

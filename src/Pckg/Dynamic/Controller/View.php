@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\TableView;
 
 class View
 {
-
     public function getShareViewAction(Table $table)
     {
         /**

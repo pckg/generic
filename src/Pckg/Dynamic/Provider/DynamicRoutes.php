@@ -46,7 +46,7 @@ class DynamicRoutes extends Provider
                 'tags' => $defaultTags
             ];
         };
-        
+
         return [
             /**
              * Views.

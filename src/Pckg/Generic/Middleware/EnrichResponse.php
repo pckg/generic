@@ -9,7 +9,6 @@ use Pckg\Generic\Controller\Generic;
 
 class EnrichResponse
 {
-
     protected $response;
     protected $request;
     public function __construct(Response $response, Request $request)

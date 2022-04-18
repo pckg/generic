@@ -6,7 +6,6 @@ use Pckg\Dynamic\Service\Export\AbstractStrategy;
 
 class Html extends AbstractStrategy
 {
-
     protected $responseType = 'text/html';
     protected $extension = 'html';
     public function save()

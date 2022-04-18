@@ -8,7 +8,6 @@ use Pckg\Generic\Record\Menu;
 
 class Menus extends Entity
 {
-
     protected $record = Menu::class;
     public function menuItems()
     {

@@ -8,7 +8,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class Record implements RouteResolver
 {
-
     /**
      * @var Dynamic
      */

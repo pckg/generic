@@ -7,7 +7,6 @@ use Pckg\Maestro\Service\Tabelize;
 
 class Cloner
 {
-
     public function getListAction(Tabelize $tabelize)
     {
         /**

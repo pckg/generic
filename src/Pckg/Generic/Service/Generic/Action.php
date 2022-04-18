@@ -21,7 +21,6 @@ use Throwable;
  */
 class Action implements \JsonSerializable
 {
-
     /**
      * @var array
      */

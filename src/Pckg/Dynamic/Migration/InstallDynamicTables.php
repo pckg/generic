@@ -18,7 +18,6 @@ use Pckg\Migration\Migration;
 
 class InstallDynamicTables extends Migration
 {
-
     public function up()
     {
         $this->installTypes();

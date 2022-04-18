@@ -15,7 +15,6 @@ use Pckg\Dynamic\Entity\TableViews;
  */
 class TableView extends DatabaseRecord
 {
-
     protected $entity = TableViews::class;
 
     public function getLoadUrl()

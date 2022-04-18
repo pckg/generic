@@ -10,7 +10,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class TableQl implements RouteResolver
 {
-
     /**
      * @var Dynamic
      */

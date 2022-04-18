@@ -6,7 +6,6 @@ use Pckg\Dynamic\Service\Export\AbstractStrategy;
 
 class Csv extends AbstractStrategy
 {
-
     protected $responseType = 'text/csv';
     protected $extension = 'csv';
     public function save()

@@ -9,7 +9,6 @@ use Pckg\Dynamic\Record\Table;
 
 class Tables extends DatabaseEntity
 {
-
     protected $record = Table::class;
     protected $table = 'dynamic_tables';
     protected $repositoryName = Repository::class . '.dynamic';

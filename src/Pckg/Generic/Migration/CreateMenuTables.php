@@ -6,7 +6,6 @@ use Pckg\Migration\Migration;
 
 class CreateMenuTables extends Migration
 {
-
     protected $dependencies = [
         // translatable, permissionable
     ];

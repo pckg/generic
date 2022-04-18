@@ -9,7 +9,6 @@ use Pckg\Generic\Entity\Menus;
 
 class Menu
 {
-
     public function build($slug, $repository = null, $language = null, $permissions = false, $params = [])
     {
         $repositoryObject = null;
@@ -35,7 +34,7 @@ class Menu
 
             return $entity->all();
         }, $locale);
-        
+
         if ($slug == 'admin') {
             $menuItems = new Collection();
         }

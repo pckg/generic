@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\FieldGroup;
 
 class FieldGroups extends DatabaseEntity
 {
-
     protected $table = 'dynamic_field_groups';
     protected $record = FieldGroup::class;
     protected $repositoryName = Repository::class . '.dynamic';

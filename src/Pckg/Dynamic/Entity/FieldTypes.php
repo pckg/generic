@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\FieldType;
 
 class FieldTypes extends DatabaseEntity
 {
-
     protected $table = 'dynamic_field_types';
     protected $record = FieldType::class;
     protected $repositoryName = Repository::class . '.dynamic';

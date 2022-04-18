@@ -7,7 +7,6 @@ use Pckg\Dynamic\Record\Relation;
 
 class Relations
 {
-
     public function getRelationAction(Relation $relation)
     {
         $with = get('with', []);

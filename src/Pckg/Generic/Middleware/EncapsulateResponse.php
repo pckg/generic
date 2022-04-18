@@ -9,7 +9,6 @@ use Pckg\Generic\Controller\Generic;
 
 class EncapsulateResponse
 {
-
     protected $response;
     protected $request;
     public function __construct(Response $response, Request $request)

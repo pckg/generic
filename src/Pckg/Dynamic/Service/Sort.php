@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\Field;
 
 class Sort extends AbstractService
 {
-
     public function getSaveSortUrl()
     {
         return url('dynamic.record.sort.save', [

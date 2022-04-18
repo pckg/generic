@@ -7,7 +7,6 @@ use Pckg\Dynamic\Record\TableView;
 
 abstract class AbstractService
 {
-
     /**
      * @var Table
      */

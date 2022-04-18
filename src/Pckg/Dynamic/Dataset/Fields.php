@@ -11,5 +11,4 @@ use Pckg\Dynamic\Record\Table;
 
 class Fields
 {
-
 }

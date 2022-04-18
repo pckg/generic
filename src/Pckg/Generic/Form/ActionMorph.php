@@ -10,7 +10,6 @@ use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 
 class ActionMorph extends Bootstrap
 {
-
     public function initFields()
     {
         $this->addSelect('action_id')

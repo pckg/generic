@@ -12,7 +12,6 @@ use Pckg\Locale\Lang;
 
 class Dynamic
 {
-
     /**
      * @var Filter
      */

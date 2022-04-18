@@ -4,7 +4,6 @@ namespace Pckg\Generic\Middleware;
 
 class UnderMaintenance
 {
-
     public function execute(callable $next)
     {
         if (config('maintenance') && !dev()) {

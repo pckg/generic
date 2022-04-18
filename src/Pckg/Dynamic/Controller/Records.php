@@ -1004,7 +1004,7 @@ class Records
                     'reverseRelation' => $type === 'select:single' ? $field->hasOneReverseSelectRelation : null,
                     'settings' => $field->settings
                         ->keyBy(fn(Setting $setting) => str_replace('pckg.generic.setting.', '', $setting->slug))
-                        ->map(function(Setting $setting) {
+                        ->map(function (Setting $setting) {
                             if (in_array($setting->slug, ['pckg.dynamic.field.previewFileUrl','pckg.dynamic.field.generateFileUrl'])) {
                                 return url($setting->pivot->value);
                             }

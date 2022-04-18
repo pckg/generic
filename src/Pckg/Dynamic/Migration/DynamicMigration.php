@@ -10,7 +10,6 @@ use Pckg\Dynamic\Record\Table;
 
 trait DynamicMigration
 {
-
     public function upDynamicTables($data = [])
     {
         foreach ($data as $table => $properties) {

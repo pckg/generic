@@ -10,7 +10,6 @@ use Pckg\Maestro\Service\Tabelize;
 
 trait Maestro
 {
-
     /**
      * @param Entity $entity
      * @param array  $fields

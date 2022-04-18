@@ -7,7 +7,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class Tab implements RouteResolver
 {
-
     public function resolve($value)
     {
         return (new Tabs())->where('id', $value)

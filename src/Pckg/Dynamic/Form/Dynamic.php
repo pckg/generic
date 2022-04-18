@@ -26,7 +26,6 @@ use Pckg\Locale\Record\Language;
  */
 class Dynamic extends Bootstrap
 {
-
     /**
      * @var Table
      */

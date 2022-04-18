@@ -6,7 +6,6 @@ use Pckg\Framework\Provider;
 
 class RegisterDynamicProviders extends Provider
 {
-
     public function handle()
     {
         $this->register();

@@ -6,7 +6,6 @@ use Pckg\Database\Entity;
 
 interface Strategy
 {
-
     public function input(Entity $entity);
     public function output();
     public function prepare();

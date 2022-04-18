@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\Relation;
 
 class Relations extends DatabaseEntity
 {
-
     protected $record = Relation::class;
 
     protected $table = 'dynamic_relations';

@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\TableView;
 
 class TableViews extends DatabaseEntity
 {
-
     protected $table = 'dynamic_table_views';
 
     protected $record = TableView::class;

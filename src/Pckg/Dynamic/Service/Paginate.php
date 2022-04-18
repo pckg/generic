@@ -8,7 +8,6 @@ use Pckg\Framework\Request\Data\Get;
 
 class Paginate
 {
-
     protected $table;
 
     protected $get;

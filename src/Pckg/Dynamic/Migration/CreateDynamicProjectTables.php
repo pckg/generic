@@ -8,7 +8,6 @@ use Pckg\Migration\Migration;
 
 class CreateDynamicProjectTables extends Migration
 {
-
     public function up()
     {
         $this->dynamicTableViewsUp();

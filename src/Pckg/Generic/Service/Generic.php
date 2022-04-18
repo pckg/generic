@@ -37,7 +37,6 @@ use Throwable;
  */
 class Generic
 {
-
     /**
      * @var array
      */
@@ -225,7 +224,7 @@ class Generic
         if (!class_exists(Layouts::class)) {
             return;
         }
-        
+
         $repository = (new Layouts())->getRepository();
         if (!$repository || !$repository->getCache()->hasTable('layouts')) {
             return;

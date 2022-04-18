@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\Tab;
 
 class Tabs extends DatabaseEntity
 {
-
     protected $table = 'dynamic_table_tabs';
     protected $record = Tab::class;
     protected $repositoryName = Repository::class . '.dynamic';

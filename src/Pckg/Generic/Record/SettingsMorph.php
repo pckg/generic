@@ -18,7 +18,6 @@ use Pckg\Generic\Entity\SettingsMorphs;
  */
 class SettingsMorph extends Record
 {
-
     protected $entity = SettingsMorphs::class;
 
     public function resolve(&$args)

@@ -7,6 +7,5 @@ use Pckg\Generic\Entity\Lists;
 
 class ListRecord extends Record
 {
-
     protected $entity = Lists::class;
 }

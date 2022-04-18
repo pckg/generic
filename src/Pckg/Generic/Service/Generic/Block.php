@@ -9,7 +9,6 @@ namespace Pckg\Generic\Service\Generic;
  */
 class Block
 {
-
     /**
      * @var
      */

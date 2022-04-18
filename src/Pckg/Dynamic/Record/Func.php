@@ -7,6 +7,5 @@ use Pckg\Dynamic\Entity\Functions;
 
 class Func extends DatabaseRecord
 {
-
     protected $entity = Functions::class;
 }

@@ -7,7 +7,6 @@ use Pckg\Htmlbuilder\Element\Form\ResolvesOnRequest;
 
 class Simple extends Bootstrap implements ResolvesOnRequest
 {
-
     public function initFields()
     {
         $this->addCheckbox('picture')

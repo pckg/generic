@@ -9,7 +9,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class TableRecordRelated implements RouteResolver, ResolvesMultiple
 {
-
     /**
      * @var \Pckg\Dynamic\Record\Table
      */

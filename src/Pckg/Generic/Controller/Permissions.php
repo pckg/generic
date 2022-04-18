@@ -12,7 +12,6 @@ use CommsCenter\Pagebuilder\Entity\Routes;
 
 class Permissions
 {
-
     public function getIndexAction()
     {
         /**

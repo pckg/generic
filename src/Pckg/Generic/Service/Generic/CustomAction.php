@@ -4,7 +4,6 @@ namespace Pckg\Generic\Service\Generic;
 
 class CustomAction extends Action
 {
-
     protected $view;
     public function __construct($view)
     {

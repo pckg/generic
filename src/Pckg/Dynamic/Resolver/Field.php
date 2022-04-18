@@ -7,7 +7,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class Field implements RouteResolver
 {
-
     public function resolve($value)
     {
         return (new Fields())->where('id', $value)

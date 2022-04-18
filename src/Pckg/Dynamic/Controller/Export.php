@@ -13,7 +13,6 @@ use Pckg\Manager\Locale\Locale;
 
 class Export
 {
-
     public function getExportTableAction(Table $table, Strategy $strategy, Dynamic $dynamicService, ExportService $exportService, TableView $tableView = null)
     {
         ini_set('memory_limit', '512M');

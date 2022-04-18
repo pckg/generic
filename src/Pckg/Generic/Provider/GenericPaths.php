@@ -6,7 +6,6 @@ use Pckg\Framework\Provider;
 
 class GenericPaths extends Provider
 {
-
     public function paths()
     {
         $paths = $this->getViewPaths();

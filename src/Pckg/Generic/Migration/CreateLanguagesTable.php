@@ -6,7 +6,6 @@ use Pckg\Migration\Migration;
 
 class CreateLanguagesTable extends Migration
 {
-
     protected $dependencies = [
         // translatable, permissionable
     ];

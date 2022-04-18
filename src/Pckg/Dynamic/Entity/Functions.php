@@ -8,7 +8,6 @@ use Pckg\Dynamic\Record\Func;
 
 class Functions extends DatabaseEntity
 {
-
     protected $table = 'dynamic_functions';
 
     protected $record = Func::class;

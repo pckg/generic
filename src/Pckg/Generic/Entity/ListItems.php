@@ -7,7 +7,6 @@ use Pckg\Generic\Record\ListItem;
 
 class ListItems extends Entity
 {
-
     protected $record = ListItem::class;
 
     public function boot()

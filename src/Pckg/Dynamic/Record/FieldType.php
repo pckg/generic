@@ -7,6 +7,5 @@ use Pckg\Dynamic\Entity\FieldTypes;
 
 class FieldType extends DatabaseRecord
 {
-
     protected $entity = FieldTypes::class;
 }

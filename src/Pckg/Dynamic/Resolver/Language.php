@@ -6,7 +6,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class Language implements RouteResolver
 {
-
     public function resolve($value)
     {
         $language = localeManager()->getLanguages()

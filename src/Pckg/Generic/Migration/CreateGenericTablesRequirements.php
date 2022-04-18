@@ -7,7 +7,6 @@ use Pckg\Migration\Migration;
 
 class CreateGenericTablesRequirements extends Migration
 {
-
     /**
      * Those packets need to be installed before this migration.
      */

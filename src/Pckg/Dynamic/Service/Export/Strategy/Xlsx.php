@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
 class Xlsx extends AbstractStrategy
 {
-
     protected $responseType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     protected $extension = 'xlsx';
     public function save()

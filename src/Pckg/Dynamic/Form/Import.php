@@ -7,7 +7,6 @@ use Pckg\Htmlbuilder\Element\Form\ResolvesOnRequest;
 
 class Import extends Bootstrap implements ResolvesOnRequest
 {
-
     public function initFields()
     {
         $this->addFile('file')->setLabel('File (.csv)');

@@ -6,7 +6,6 @@ use Pckg\Framework\Provider;
 
 class MaestroAssets extends Provider
 {
-
     /**
      * @return array
      */

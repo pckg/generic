@@ -30,7 +30,6 @@ use Pckg\Maestro\Service\Tabelize;
  */
 class Table extends Record
 {
-
     protected $entity = Tables::class;
     protected $toArray = ['privileges', 'titleSingular', 'indexUrl'];
 

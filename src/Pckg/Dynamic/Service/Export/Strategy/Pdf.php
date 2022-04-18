@@ -4,7 +4,6 @@ namespace Pckg\Dynamic\Service\Export\Strategy;
 
 class Pdf extends Html
 {
-
     protected $responseType = 'application/pdf';
     protected $extension = 'pdf';
     public function save()

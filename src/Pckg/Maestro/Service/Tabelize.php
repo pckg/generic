@@ -16,7 +16,6 @@ use Throwable;
 
 class Tabelize
 {
-
     /**
      * @var Entity
      */

@@ -6,7 +6,6 @@ use Pckg\Database\Entity;
 
 abstract class AbstractStrategy implements Strategy
 {
-
     /**
      * @var Entity
      */

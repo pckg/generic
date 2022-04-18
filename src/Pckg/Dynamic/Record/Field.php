@@ -20,7 +20,6 @@ use Throwable;
  */
 class Field extends DatabaseRecord
 {
-
     protected $entity = Fields::class;
     protected $toArray = [
         'fieldType',

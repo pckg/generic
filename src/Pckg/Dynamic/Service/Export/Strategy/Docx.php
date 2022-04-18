@@ -8,7 +8,6 @@ use PhpOffice\PhpWord\PhpWord;
 
 class Docx extends AbstractStrategy
 {
-
     protected $responseType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     protected $extension = 'docx';
     public function save()

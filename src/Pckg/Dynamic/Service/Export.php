@@ -11,7 +11,6 @@ use Pckg\Dynamic\Service\Export\Strategy\Xlsx;
 
 class Export
 {
-
     protected $strategy;
     protected $strategies = [
         'txt'  => Strategy\Txt::class,

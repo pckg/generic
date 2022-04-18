@@ -7,7 +7,6 @@ use Pckg\Generic\Controller\Permissions as PermissionsController;
 
 class Permissions extends Provider
 {
-
     public function routes()
     {
         return [

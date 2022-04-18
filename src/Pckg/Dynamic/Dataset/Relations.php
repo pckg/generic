@@ -9,7 +9,6 @@ use Pckg\Dynamic\Record\Table;
 
 class Relations
 {
-
     public function getHasManyRelationsTreeForTable(Table $table, &$distinctRelations)
     {
         $relations = (new RelationsEntity())->where('on_table_id', $table->id)

@@ -19,7 +19,6 @@ use Pckg\Maestro\Service\Tabelize;
 
 class HttpQl
 {
-
     /**
      * @return Table
      */
@@ -518,7 +517,7 @@ class HttpQl
                                             'type' => 'nc:' . $field->fieldType->slug,
                                             'title' => $field->title,
                                         ];
-                                    })->keyBy('field')->all(),
+                                })->keyBy('field')->all(),
                                 'additionalProperties' => false,
                                 'required' => $table->fields->filter(fn(Field $field) => $field->required)
                                     ->map('field')

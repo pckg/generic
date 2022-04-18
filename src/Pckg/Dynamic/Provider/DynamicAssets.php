@@ -7,7 +7,6 @@ use Pckg\Framework\Provider;
 
 class DynamicAssets extends Provider
 {
-
     /**
      * @return array
      */

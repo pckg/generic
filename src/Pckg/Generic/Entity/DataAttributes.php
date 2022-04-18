@@ -7,6 +7,5 @@ use Pckg\Generic\Record\DataAttribute;
 
 class DataAttributes extends Entity
 {
-
     protected $record = DataAttribute::class;
 }

@@ -14,7 +14,6 @@ use Pckg\Dynamic\Entity\TableActions;
  */
 class TableAction extends DatabaseRecord
 {
-
     protected $entity = TableActions::class;
 
     public function getEntityTemplateAttribute()

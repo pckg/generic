@@ -8,7 +8,6 @@ use Pckg\Generic\Record\SettingsMorph;
 
 class SettingsMorphs extends Entity
 {
-
     protected $record = SettingsMorph::class;
 
     public function setting()

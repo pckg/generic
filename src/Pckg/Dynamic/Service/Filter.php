@@ -19,7 +19,6 @@ use Pckg\Framework\Request\Data\Get;
 
 class Filter extends AbstractService
 {
-
     protected $get;
 
     public function __construct(Get $get)

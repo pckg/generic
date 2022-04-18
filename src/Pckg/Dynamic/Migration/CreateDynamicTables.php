@@ -9,7 +9,6 @@ use Pckg\Migration\Migration;
 
 class CreateDynamicTables extends Migration
 {
-
     protected $repository = Repository::class . '.dynamic';
     public function dependencies()
     {

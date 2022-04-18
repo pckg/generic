@@ -14,7 +14,6 @@ use Pckg\Database\Record;
  */
 class Entity extends DatabaseEntity
 {
-
     protected $record = Record::class;
     public function hasManyRelation()
     {

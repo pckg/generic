@@ -31,7 +31,6 @@ use Throwable;
  */
 class Relation extends DatabaseRecord
 {
-
     protected $entity = Relations::class;
 
     public function applyFilterOnEntity(Entity $entity, $foreignRecord = null, $record = null)

@@ -9,7 +9,6 @@ use Pckg\Htmlbuilder\Validator\Method\Custom;
 
 class NewRoute extends Bootstrap implements ResolvesOnRequest
 {
-
     public function initFields()
     {
         $text = $this->addText('slug')->required()->addValidator((new Custom(function ($value, Custom $validator) {

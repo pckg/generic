@@ -6,7 +6,6 @@ use Pckg\Migration\Migration;
 
 class CreateSettingsTable extends Migration
 {
-
     public function up()
     {
         $settingTypes = $this->table('setting_types');

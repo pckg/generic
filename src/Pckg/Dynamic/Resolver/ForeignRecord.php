@@ -9,7 +9,6 @@ use Pckg\Framework\Provider\RouteResolver;
 
 class ForeignRecord implements RouteResolver
 {
-
     /**
      * @var Dynamic
      */

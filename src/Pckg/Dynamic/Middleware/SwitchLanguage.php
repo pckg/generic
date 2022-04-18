@@ -4,7 +4,6 @@ namespace Pckg\Dynamic\Middleware;
 
 class SwitchLanguage
 {
-
     public function execute(callable $next)
     {
         if (request()->isPost() && post()->switch_language) {

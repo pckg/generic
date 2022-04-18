@@ -7,6 +7,5 @@ use Pckg\Generic\Record\SettingType;
 
 class SettingTypes extends Entity
 {
-
     protected $record = SettingType::class;
 }

@@ -16,7 +16,6 @@ use Pckg\Generic\Service\Generic\CustomAction;
  */
 class Generic
 {
-
     /**
      * @var GenericService
      */

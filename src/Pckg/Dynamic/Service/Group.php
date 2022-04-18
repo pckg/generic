@@ -10,7 +10,6 @@ use Pckg\Dynamic\Record\Field;
 
 class Group extends AbstractService
 {
-
     public function getSaveGroupUrl()
     {
         return url(

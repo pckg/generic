@@ -17,7 +17,6 @@ use Pckg\Generic\Entity\MenuItems;
  */
 class MenuItem extends Record
 {
-
     protected $entity = MenuItems::class;
     public function getAdditionalClass()
     {

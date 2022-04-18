@@ -7,7 +7,6 @@ use Pckg\Htmlbuilder\Element\Form;
 
 class Formalize
 {
-
     /**
      * @var Form
      */
