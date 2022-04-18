@@ -2,19 +2,16 @@
 
 namespace Pckg\Dynamic\Controller;
 
-use Pckg\Dynamic\Entity\Relations;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
 use Pckg\Dynamic\Service\Export\Strategy;
-use Pckg\Framework\Controller;
-use Pckg\Locale\Record\Language;
 use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Locale\Locale;
 
-class Export extends Controller
+class Export
 {
 
     public function getExportTableAction(Table $table, Strategy $strategy, Dynamic $dynamicService, ExportService $exportService, TableView $tableView = null)
@@ -96,6 +93,6 @@ class Export extends Controller
         $strategy->setFileName($table->table . '-' . date('Ymd-his'));
         $strategy->prepare();
         $strategy->output();
-        $this->response()->respond();
+        response()->respond();
     }
 }

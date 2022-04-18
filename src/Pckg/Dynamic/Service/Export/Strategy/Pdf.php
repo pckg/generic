@@ -18,6 +18,7 @@ class Pdf extends Html
         $file = parent::save();
         $domain = server('HTTP_HOST', config('domain'));
         $pdf = \Derive\Basket\Service\Pdf::make('https://' . $domain . '/storage/tmp/' . $tempFilename, path('tmp'), $finalFilename);
+
         return path('tmp') . $finalFilename;
     }
 

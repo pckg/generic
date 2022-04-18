@@ -20,7 +20,6 @@ use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
 use Pckg\Dynamic\Service\Dynamic as DynamicService;
-use Pckg\Framework\Controller;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View\Twig;
 use Pckg\Generic\Record\Setting;
@@ -33,7 +32,7 @@ use Pckg\Maestro\Service\Tabelize;
 use Pckg\Manager\Upload;
 use Throwable;
 
-class Records extends Controller
+class Records
 {
     use Maestro;
 
@@ -53,7 +52,7 @@ class Records extends Controller
     {
         $language = post('language');
         $_SESSION['pckg_dynamic_lang_id'] = $language;
-        return $this->response()->respondWithSuccess();
+        return response()->respondWithSuccess();
     }
 
     public function getSelectListAction(Table $table, Field $field = null, Record $record = null, DynamicService $dynamicService)
@@ -93,7 +92,7 @@ class Records extends Controller
         $dynamicService->setView($tableView);
         if (get('force')) {
             $tableView->loadToSession();
-            $this->response()->redirect();
+            response()->redirect();
         } else {
             $tableView->loadToSessionIfNotLoaded();
         }
@@ -264,7 +263,7 @@ class Records extends Controller
                 'views'     => $tabelize->getSavedViews(),
             ];
         };
-        $this->response()->sendCacheHeaders(1);
+        response()->sendCacheHeaders(1);
 
         return cache(
             Records::class . '.getViewTableApiAction.' . $tableRecord->id . '.' . $viewType .
@@ -304,7 +303,7 @@ class Records extends Controller
                       ->where('id', $table->id)
                       ->oneOrFail(function () {
 
-                          $this->response()->unauthorized();
+                          response()->unauthorized();
                       });
         $entity = $table->createEntity();
         $record = $record ? $entity->transformRecordToEntities($record) : $entity->getRecord();
@@ -387,7 +386,7 @@ class Records extends Controller
 
         if (!$newRecord) {
             $record->save($entity);
-            if ($this->post()->p17n) {
+            if (post()->p17n) {
                 $this->saveP17n($record, $entity);
             }
         }
@@ -405,7 +404,7 @@ class Records extends Controller
             ]);
         }
 
-        return $this->response()->respondWithSuccess([
+        return response()->respondWithSuccess([
             'message' => __('dynamic.records.add.success'),
             'redirect' => $url,
             'record' => $newRecord ?? $record,
@@ -420,7 +419,7 @@ class Records extends Controller
             $clones--;
         }
 
-        return $this->response()->respondWithSuccess([
+        return response()->respondWithSuccess([
                                                          'clonedUrl' => url('dynamic.record.edit', [
                                                              'table'  => $table,
                                                              'record' => $clonedRecord ?? null,
@@ -431,7 +430,7 @@ class Records extends Controller
     public function getViewAction(Dynamic $form, Record $record, Table $table, DynamicService $dynamic)
     {
         $form->setEditable(false);
-        return $this->getEditAction($form, $record, $table, $dynamic, 'view');
+        return $this->getEditAction($form, $record, $table, 'view');
     }
 
     public function getEditAction(Dynamic $form, Record $record, Table $table, $mode = 'edit')
@@ -621,10 +620,10 @@ class Records extends Controller
                             ->where('dynamic_table_id', $table->id)
                             ->where('slug', 'edit')
                             ->oneOrFail(function () {
-                                $this->response()->unauthorized();
+                                response()->unauthorized();
                             });
 
-        $table = $this->router()->resolved('table');
+        $table = router()->resolved('table');
         $entity = $table->createEntity();
         $record = $entity->transformRecordToEntities($record);
         $record->setEntity($entity);
@@ -658,11 +657,11 @@ class Records extends Controller
             $record->save($entity);
         }
 
-        if ($this->post()->p17n) {
+        if (post()->p17n) {
             $this->saveP17n($record, $entity);
         }
 
-        return $this->response()->respondWithSuccess([
+        return response()->respondWithSuccess([
                                                          'message'  => __('dynamic.records.edit.success'),
                                                          'redirect' => post('as_new') ? url('dynamic.record.edit', [
                                                              'table'  => $table,
@@ -731,7 +730,7 @@ class Records extends Controller
 
     protected function saveP17n(Record $record, Entity $entity)
     {
-        $p17n = $this->post()->p17n;
+        $p17n = post()->p17n;
         if (isset($p17n['table'])) {
             $entity = (new Entity($entity->getRepository()))->setTable($entity->getTable() .
                                                                        $entity->getPermissionableTableSuffix());
@@ -777,26 +776,26 @@ class Records extends Controller
                             ->where('slug', 'delete')
                             ->oneOrFail(function () {
 
-                                $this->response()->unauthorized();
+                                response()->unauthorized();
                             });
         $entity = $table->createEntity();
         $record->delete($entity);
-        return $this->response()->respondWithSuccessRedirect();
+        return response()->respondWithSuccessRedirect();
     }
 
     public function deleteDeleteTranslationAction(Record $record, Table $table, Language $language)
     {
         $entity = $table->createEntity();
         $record->deleteTranslation($language->slug, $entity);
-        return $this->response()->respondWithSuccessRedirect();
+        return response()->respondWithSuccessRedirect();
     }
 
     public function deleteForceDeleteAction(Record $record)
     {
-        $table = $this->router()->resolved('table');
+        $table = router()->resolved('table');
         $entity = $table->createEntity();
         $record->forceDelete($entity);
-        return $this->response()->respondWithSuccessRedirect();
+        return response()->respondWithSuccessRedirect();
     }
 
     public function getToggleFieldAction(Table $table, Field $field, Record $record, $state)
@@ -814,7 +813,7 @@ class Records extends Controller
          */
 
         $record->save($table->createEntity());
-        return $this->response()->respondWithSuccessRedirect();
+        return response()->respondWithSuccessRedirect();
     }
 
     public function postOrderFieldAction(Table $table, Field $field, Record $record, $order)
@@ -942,7 +941,7 @@ class Records extends Controller
     public function deleteDeleteViewAction(TableView $tableView)
     {
         $tableView->delete();
-        return $this->response()->respondWithSuccess();
+        return response()->respondWithSuccess();
     }
 
     public function getTableActionsAction(Table $table)

@@ -5,9 +5,8 @@ namespace Pckg\Dynamic\Controller;
 use Pckg\Dynamic\Entity\TableViews;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Record\TableView;
-use Pckg\Framework\Controller;
 
-class View extends Controller
+class View
 {
 
     public function getShareViewAction(Table $table)
@@ -46,14 +45,14 @@ class View extends Controller
 
     public function postSaveViewAction(Table $table)
     {
-        if ($id = $this->post()->get('id')) {
+        if ($id = post()->get('id')) {
             $view = (new TableViews())->where('id', $id)->oneOrFail();
             $view->loadFromSession(post('sessionView', null));
         } else {
             $view = new TableView(
                 [
                     'dynamic_table_id' => $table->id,
-                    'title'            => $this->post()->get('name'),
+                    'title'            => post()->get('name'),
                 ]
             );
             $view->loadFromSession(post('sessionView', null));
@@ -61,14 +60,14 @@ class View extends Controller
 
         $view->save();
 
-        return $this->response()->respondWithAjaxSuccessAndRedirectBack();
+        return response()->respondWithAjaxSuccessAndRedirectBack();
     }
 
     public function getResetViewAction(Table $table)
     {
         $_SESSION['pckg']['dynamic']['view']['table_' . $table->id . '_']['view'] = [];
 
-        return $this->response()->redirect(
+        return response()->redirect(
             url(
                 'dynamic.record.list',
                 [
@@ -82,8 +81,8 @@ class View extends Controller
     {
         $view->loadToSession();
 
-        return $this->response()->redirect(
-            $this->server('HTTP_REFERER') ? -1 : url(
+        return response()->redirect(
+            server('HTTP_REFERER') ? -1 : url(
                 'dynamic.record.list',
                 [
                     'table' => $view->table,

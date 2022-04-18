@@ -14,5 +14,6 @@ class ListItems extends Entity
     {
         /*$this->joinTranslation()
              ->addSelect(['value' => 'IFNULL(' . $this->getAlias() . '_i18n.value, ' . $this->getAlias() . '.value)']);*/
+        return $this;
     }
 }

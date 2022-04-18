@@ -21,6 +21,9 @@ use Pckg\Htmlbuilder\Decorator\Method\Wrapper\Dynamic as DynamicDecorator;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Locale\Record\Language;
 
+/**
+ * @method setDecoratorClasses(array $classes)
+ */
 class Dynamic extends Bootstrap
 {
 
@@ -259,6 +262,7 @@ class Dynamic extends Bootstrap
             return $field->dynamic_field_group_id ? ($field->fieldGroup->position ?? 'left') : 'left';
         });
 
+        $fieldset = null;
         foreach ($fieldPositions as $position => $fields) {
             // $positionFieldset = $this->addFieldset('position-' . $position);
             foreach ($fields as $field) {

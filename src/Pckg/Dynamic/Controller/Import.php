@@ -11,12 +11,9 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Export as ExportService;
-use Pckg\Framework\Controller;
-use Pckg\Maestro\Service\Tabelize;
-use Pckg\Manager\Locale\Locale;
 use Pckg\Manager\Upload;
 
-class Import extends Controller
+class Import
 {
 
     /**
@@ -158,7 +155,7 @@ class Import extends Controller
             return in_array($field->dynamic_field_type_id, [1, 6]);
 // id, slug
         });
-        $defaultLocales = $this->localeManager()->getFrontendLanguages()->keyBy('slug')->map('slug')->all();
+        $defaultLocales = localeManager()->getFrontendLanguages()->keyBy('slug')->map('slug')->all();
         collect($mapped)->each(function ($item) use ($uniqueFields, $availableFields, $table, $defaultLocales, $strategy) {
 
             $locales = [];
@@ -246,6 +243,6 @@ class Import extends Controller
         $strategy->setFileName($table->table . '-empty');
         $strategy->prepare();
         $strategy->output();
-        $this->response()->respond();
+        response()->respond();
     }
 }
