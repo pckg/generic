@@ -111,6 +111,7 @@
 </style>
 
 <script>
+import {initTinymce} from "/vendor/pckg/generic/src/Pckg/Dynamic/public/js/tiny.js";
 import {v4} from "uuid";
 
 export default {

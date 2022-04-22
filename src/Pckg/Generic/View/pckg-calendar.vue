@@ -134,6 +134,7 @@
 </template>
 
 <script>
+import Moment from "moment-timezone/builds/moment-timezone.min";
     export default {
         name: 'pckg-calendar',
         props: {
@@ -226,7 +227,7 @@
                 };
             },
             moment: function (date) {
-                let m = date ? moment(date) : moment();
+                let m = date ? Moment(date) : Moment();
                 m.locale(this.options.locale || 'en');
 
                 return m;
