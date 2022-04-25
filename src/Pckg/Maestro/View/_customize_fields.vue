@@ -43,7 +43,12 @@
 </template>
 
 <script>
+import draggable from "vuedraggable";
+
     export default {
+        components: {
+            draggable,
+        },
         name: 'pckg-maestro-customize-fields',
         mode: 'view',
         props: {

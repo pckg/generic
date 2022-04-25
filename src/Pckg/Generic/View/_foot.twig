@@ -13,10 +13,6 @@
     Vue.config.devtools = true;
     Vue.config.performance = true;
     {% endif %}
-
-    if (typeof moment !== 'undefined' && Pckg.config.locale) {
-        moment.locale(Pckg.config.locale.current);
-    }
 </script>
 
 {{ _assetManager.getMeta(['js'], ['php', 'vue', 'footer']) | raw }}

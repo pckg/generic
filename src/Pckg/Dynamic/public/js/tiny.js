@@ -22,7 +22,6 @@ import 'tinymce/plugins/table';*/
 const pckgEditors = {};
 
 export function destroyTinymce(selector) {
-    console.log('destroying tinymce', selector);
     //if (pckgEditors[selector]) {
     $('#' + selector).parent().find('.manual-dropzone').remove(); // @T00D00?
     //tinymce.remove('#' + selector);
@@ -300,7 +299,7 @@ export function initTinymce(selector, config) {
     let contentCss = typeof Dropzone !== 'undefined'
         ? '/app/derive/src/Pckg/Generic/public/tinymce.css'
         : '/storage/tinymce-themes/tinymce.css';
-    console.log('content css', contentCss);
+
     var defaultConfig = Object.assign(c, {
         content_css: contentCss,
         selector: '#' + selector,
@@ -386,8 +385,6 @@ export function initTinymce(selector, config) {
         });
     }
 
-    console.log('initializing tinymce', defaultConfig, selected, tinymce);
-
     if (!window.pckgEditors) {
         window.pckgEditors = {};
         
@@ -400,13 +397,16 @@ export function initTinymce(selector, config) {
                 e.stopImmediatePropagation();
             }
         });
+
+        if ($dispatcher) {
+            $dispatcher.$emit('tinymce:init:first', tinymce);
+        }
     }
 
     // link themes, plugins and skins
     tinymce.baseURL = '/storage/static/tinymce';
 
     window.pckgEditors[selector] = tinymce.init(defaultConfig);
-    console.log('initialized');
 
     return window.pckgEditors[selector];
 };
