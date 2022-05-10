@@ -1040,7 +1040,7 @@ class Records extends Controller
             $data['model'] = $tabelize->setDynamicRecord($model)->transformRecord($model);
         } else if ($relation) {
             $data['model'] = [
-                $field->field => $foreign->id,
+                $relation->onField->field => $foreign->id,
             ];
         } else {
             // do we need default hydrated model?
