@@ -380,30 +380,21 @@ class Field extends DatabaseRecord
                 'options' => $initialOptions[$this->field] ?? [],
             ];
         } else if ($slug === 'picture') {
-            /*$url = $this->relation && $this->foreignRecord
-                ? url('dynamic.records.field.upload.newForeign', [
-                    'table' => $this->table,
-                    'field' => $field,
-                    'relation' => $this->relation,
-                    'record' => $this->foreignRecord,
-                ])
-                : ($this->record->id
-                    ? url('dynamic.records.field.upload', [
-                        'table' => $this->table,
-                        'field' => $field,
-                        'record' => $this->record,
-                    ])
-                    : url('dynamic.records.field.upload.new', [
-                        'table' => $this->table,
-                        'field' => $field,
-                    ]));*/
-
             if ($record) {
                 $options = [
                     'url' => url('dynamic.records.field.upload', [
                         'table' => $this->table,
                         'field' => $this,
                         'record' => $record,
+                    ]),
+                ];
+            } else if ($this->relation && $this->foreignRecord) {
+                $options = [
+                    'url' => url('dynamic.records.field.upload.newForeign', [
+                        'table' => $this->table,
+                        'field' => $field,
+                        'relation' => $this->relation,
+                        'record' => $this->foreignRecord,
                     ]),
                 ];
             } else {
