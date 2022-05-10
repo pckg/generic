@@ -961,7 +961,12 @@ class Records extends Controller
         return $this->getViewFormApiRecordAction($table);
     }
 
-    public function getViewFormApiRecordAction(Table $table, Record $record = null)
+    public function getViewFormApiRelationAction(Table $table, Relation $relation, Record $foreign)
+    {
+        return $this->getViewFormApiRecordAction($table, null, $relation, $foreign);
+    }
+
+    public function getViewFormApiRecordAction(Table $table, Record $record = null, Relation $relation = null, Record $foreign = null)
     {
         $fields = $table->fields;
         $vueTypeMap = [
@@ -990,7 +995,9 @@ class Records extends Controller
         $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
-            'fields' => $fields->map(function (Field $field) use ($initialOptions, $record, $typeMapper) {
+            'fields' => $fields
+                ->filter(fn(Field $field) => !$relation || $relation->on_field_id !== $field->id) // remove field from pre-selected foreign forms
+                ->map(function (Field $field) use ($initialOptions, $record, $typeMapper, $relation, $foreign) {
                 $type = $typeMapper($field);
                 return [
                     'id'       => $field->id,
@@ -999,7 +1006,7 @@ class Records extends Controller
                     'type'     => $type,
                     'help'     => $field->help,
                     'required' => !!$field->required,
-                    'options'  => $field->getVueOptions($initialOptions, $record),
+                    'options'  => $field->getVueOptions($initialOptions, $record, $relation, $foreign),
                     'group'    => $field->fieldGroup,
                     'relation' => $type === 'select:single' ? $field->hasOneSelectRelation : null,
                     'reverseRelation' => $type === 'select:single' ? $field->hasOneReverseSelectRelation : null,
@@ -1031,8 +1038,13 @@ class Records extends Controller
             $model = $entity->allOrFail()->first();
 
             $data['model'] = $tabelize->setDynamicRecord($model)->transformRecord($model);
+        } else if ($relation) {
+            $data['model'] = [
+                $field->field => $foreign->id,
+            ];
         } else {
             // do we need default hydrated model?
+            // sometimes with defaults?
         }
 
         return $data;

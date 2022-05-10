@@ -270,6 +270,15 @@ class Dynamic extends Provider
                                 'record' => RecordResolver::class,
                             ],
                         ],
+                        '/api/dynamic/form/[table]/[relation]/[foreign]' => [
+                            'name' => 'api.dynamic.form.record.relation',
+                            'view' => 'viewFormApiRelation',
+                            'resolvers' => [
+                                'table' => TableResolver::class,
+                                'relation' => Relation::class,
+                                'foreign' => ForeignRecord::class,
+                            ],
+                        ],
                         '/api/dynamic/table/[table]/relation/[relation]/record/[record]' => [
                             'name' => 'api.dynamic.record.relation.list',
                             'view' => 'viewTableApi',

@@ -221,7 +221,12 @@ export default {
         },
         initialFetch: function () {
             this.state = 'loading';
-            http.get('/api/dynamic/form/' + this.table.id + (this.myFormModel && this.myFormModel.id ? '/' + this.myFormModel.id : ''), function (data) {
+            let url = '/api/dynamic/form/' + this.table.id + (this.myFormModel && this.myFormModel.id ? '/' + this.myFormModel.id : '');
+            if (this.$route.params.relation) {
+                const params = this.$route.params;
+                url = '/api/dynamic/form/' + this.table.id + '/' + params.relation + '/' + params.foreign;
+            }
+            http.get(url, function (data) {
                 this.myForm = data.form;
                 if (data.model) {
                     this.myFormModel = data.model;

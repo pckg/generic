@@ -371,7 +371,7 @@ class Field extends DatabaseRecord
         return $options;
     }
 
-    public function getVueOptions($initialOptions, $record = null)
+    public function getVueOptions($initialOptions, Record $record = null, Relation $relation = null, Record $foreignRecord = null)
     {
         $options = new \stdClass();
         $slug = $this->fieldType->slug;
@@ -388,13 +388,13 @@ class Field extends DatabaseRecord
                         'record' => $record,
                     ]),
                 ];
-            } else if ($this->relation && $this->foreignRecord) {
+            } else if ($relation && $foreignRecord) {
                 $options = [
                     'url' => url('dynamic.records.field.upload.newForeign', [
                         'table' => $this->table,
-                        'field' => $field,
-                        'relation' => $this->relation,
-                        'record' => $this->foreignRecord,
+                        'field' => $this,
+                        'relation' => $relation,
+                        'record' => $foreignRecord,
                     ]),
                 ];
             } else {
