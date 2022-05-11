@@ -169,17 +169,6 @@ class Dynamic extends Provider
                 'urlPrefix' => '/dynamic/records/[table]',
             ], [
 
-
-                /*'dynamic.record.add.relation' => route('/dynamic/records/[table]/add/[relation]/[foreign]', 'add')->resolvers([
-                    'table' => function () {
-                        return resolve(TableResolver::class)->validator(function (Table $table) {
-                            $table->checkPermissionsFor('write');
-                        });
-                    },
-                    'relation' => Relation::class,
-                    'foreign' => ForeignRecord::class,
-                ])->mergeToData($backendData('<pckg-maestro-form :table-id="$route.params.table" :form-model="$route.meta.resolved.record"></pckg-maestro-form>')),*/
-
                 /*'dynamic.record.edit.foreign' => route('/dynamic/records/[table]/[record]/edit/[relation]/[foreign]', 'edit')->resolvers([
                     'table' => function () {
                         return resolve(TableResolver::class)->validator(function (Table $table) {
@@ -215,6 +204,20 @@ class Dynamic extends Provider
                                         //$table->checkPermissionsFor('write');
                                     });
                                 }
+                            ]
+                        ],
+                        '/api/dynamic/records/[table]/add/[relation]/[foreign]' => [
+                            'name' => 'api.dynamic.records.add',
+                            'view' => 'add',
+                            'method' => 'POST',
+                            'resolvers' => [
+                                'table' => function () {
+                                    return resolve(TableResolver::class)->validator(function (Table $table) {
+                                        //$table->checkPermissionsFor('write');
+                                    });
+                                },
+                                'relation' => Relation::class,
+                                'foreign' => ForeignRecord::class,
                             ]
                         ],
                         '/api/dynamic/records/[table]/[record]/edit' => [

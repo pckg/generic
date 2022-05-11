@@ -373,12 +373,14 @@ class Records extends Controller
             $entity->setTranslatableLang($lang);
         }
 
+        // why is this here? isn't this populated in $form->populateToRecord($record)?
         $newRecord = null;
         foreach ($sessionUpload as $i => $uploadedData) {
             if ($uploadedData['_relation'] != $relation->id) {
                 continue;
             }
-            $data = array_merge($uploadedData, $record->data());
+            $record->{$uploadedData['_field']} = $uploadedData[$uploadedData['_field']];
+            $data = $record->data();
             unset($data['id']);
             $newRecord = new $record($data);
             $newRecord->save($entity);
@@ -396,7 +398,7 @@ class Records extends Controller
             'table'  => $table,
             'record' => $newRecord ?? $record,
         ]);
-        if ($relation && $foreign) {
+        if (false && $relation && $foreign) {
             $url = url('dynamic.record.edit.foreign', [
                 'table'    => $table,
                 'record'   => $newRecord ?? $record,
@@ -992,11 +994,15 @@ class Records extends Controller
             context()->bind(Dynamic::class . ':fullFields', true);
         }
 
-        $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
+        $formObject = (new Dynamic())
+            ->setTable($table)
+            ->setRecord($record)
+            ->setRelation($relation)
+            ->setForeignRecord($foreign)
+            ->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
             'fields' => $fields
-                ->filter(fn(Field $field) => !$relation || $relation->on_field_id !== $field->id) // remove field from pre-selected foreign forms
                 ->map(function (Field $field) use ($initialOptions, $record, $typeMapper, $relation, $foreign) {
                 $type = $typeMapper($field);
                 return [
