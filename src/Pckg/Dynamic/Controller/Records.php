@@ -503,6 +503,8 @@ class Records extends Controller
             'tabs' => $tabs,
             'relations' => $relations,
             'mode' => $form->isEditable() ? 'edit' : 'view',
+            'tabelizes' => $tabelizes,
+            'functionizes' => $functionizes,
         ]);
     }
 
@@ -979,6 +981,7 @@ class Records extends Controller
             'integer' => 'number',
             'slug'    => 'text',
             'picture' => 'file:picture',
+            'json'    => 'textarea',
         ];
         $typeMapper = function (Field $field) use ($vueTypeMap) {
 

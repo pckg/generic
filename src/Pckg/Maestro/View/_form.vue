@@ -87,6 +87,14 @@
 
         <slot></slot>
 
+        <div>
+            <template v-for="actions in $route.meta.resolved.functionizes || []">
+                <div v-for="action in actions">
+                    <pckg-raw :body="action"></pckg-raw>
+                </div>
+            </template>
+        </div>
+
         <div class="__form-actions form-group margin-top-sm" v-if="mode !== 'view' && visibleFields.length">
             <button type="button"
                     @click.prevent="submitForm"
