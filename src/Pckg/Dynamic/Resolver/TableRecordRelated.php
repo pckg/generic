@@ -28,8 +28,11 @@ class TableRecordRelated implements RouteResolver, ResolvesMultiple
 
     public function resolve($value)
     {
-        // mock the controller?
-        return resolve(Records::class)->getViewAction(resolve(Dynamic::class), $this->record, $this->table, resolve(\Pckg\Dynamic\Service\Dynamic::class));
+        $dynamicService = resolve(\Pckg\Dynamic\Service\Dynamic::class);
+        $dynamicForm = resolve(Dynamic::class);
+        $controller = resolve(Records::class);
+
+        return $controller->getViewAction($dynamicForm, $this->record, $this->table, $dynamicService);
     }
 
     public function parametrize($record)

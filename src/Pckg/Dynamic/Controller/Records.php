@@ -538,9 +538,8 @@ class Records extends Controller
             );
             $tabelizes[] = $tabelize;
         });
-        $functionizes = [];
+        $functionizes = collect();
         $functions = $table->functions(function (HasMany $functions) use ($tab) {
-
             $functions->where('dynamic_table_tab_id', $tab->id);
         });
         $pluginService = $this->pluginService;
@@ -548,26 +547,19 @@ class Records extends Controller
         if ($table->framework_entity) {
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
-        $functions->each(function (Func $function) use (&$functionizes, $pluginService, $args) {
+        $functions->each(function (Func $function) use ($functionizes, $pluginService, $args) {
             /**
              * This is where a controller is called.
              */
             $functionize = $pluginService->make($function->class, $function->method, $args);
-            $functionizes[] = (string)$functionize;
+            $functionizes->push((string)$functionize);
         });
-        /*if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
-            return [
-                'functionizes' => $functionizes,
-                'tabelizes'    => $tabelizes,
-            ];
-        }*/
 
         /**
          * We have to build tab.
          */
         return [
-        //return view('edit/tab', [
-            'functionizes' => $functionizes,
+            'functionizes' => $functionizes->all(),
             'tabelizes'    => $tabelizes,
         ];
     }
@@ -599,6 +591,9 @@ class Records extends Controller
         $functions = $table->functions;
         $pluginService = $this->pluginService;
         $functions->each(function (Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
+            if ($function->dynamic_table_tab_id) {
+                return;
+            }
 
             $functionize = $pluginService->make(
                 $function->class,

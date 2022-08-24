@@ -149,8 +149,8 @@ class Dynamic extends Provider
                         },
                         'record' => RecordResolver::class, // relation.show_table_id, relation.id
                         'tab' => TabResolver::class,
-                        FunctionizesTabelizes::class,
                         TableRecordRelated::class,
+                        FunctionizesTabelizes::class,
                     ])->mergeToData($backendData()),
 
                 ])->resolvers([
