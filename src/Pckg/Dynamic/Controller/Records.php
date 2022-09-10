@@ -372,12 +372,14 @@ class Records
             $entity->setTranslatableLang($lang);
         }
 
+        // why is this here? isn't this populated in $form->populateToRecord($record)?
         $newRecord = null;
         foreach ($sessionUpload as $i => $uploadedData) {
             if ($uploadedData['_relation'] != $relation->id) {
                 continue;
             }
-            $data = array_merge($uploadedData, $record->data());
+            $record->{$uploadedData['_field']} = $uploadedData[$uploadedData['_field']];
+            $data = $record->data();
             unset($data['id']);
             $newRecord = new $record($data);
             $newRecord->save($entity);
@@ -395,7 +397,7 @@ class Records
             'table'  => $table,
             'record' => $newRecord ?? $record,
         ]);
-        if ($relation && $foreign) {
+        if (false && $relation && $foreign) {
             $url = url('dynamic.record.edit.foreign', [
                 'table'    => $table,
                 'record'   => $newRecord ?? $record,
@@ -500,6 +502,8 @@ class Records
             'tabs' => $tabs,
             'relations' => $relations,
             'mode' => $form->isEditable() ? 'edit' : 'view',
+            'tabelizes' => $tabelizes,
+            'functionizes' => $functionizes,
         ]);
     }
 
@@ -533,9 +537,8 @@ class Records
             );
             $tabelizes[] = $tabelize;
         });
-        $functionizes = [];
+        $functionizes = collect();
         $functions = $table->functions(function (HasMany $functions) use ($tab) {
-
             $functions->where('dynamic_table_tab_id', $tab->id);
         });
         $pluginService = $this->pluginService;
@@ -543,26 +546,19 @@ class Records
         if ($table->framework_entity) {
             $args[] = $table->createEntity()->where('id', $record->id)->one();
         }
-        $functions->each(function (Func $function) use (&$functionizes, $pluginService, $args) {
+        $functions->each(function (Func $function) use ($functionizes, $pluginService, $args) {
             /**
              * This is where a controller is called.
              */
             $functionize = $pluginService->make($function->class, $function->method, $args);
-            $functionizes[] = (string)$functionize;
+            $functionizes->push((string)$functionize);
         });
-        /*if (!get('html') && (request()->isAjax() || $this->request()->isJson())) {
-            return [
-                'functionizes' => $functionizes,
-                'tabelizes'    => $tabelizes,
-            ];
-        }*/
 
         /**
          * We have to build tab.
          */
         return [
-        //return view('edit/tab', [
-            'functionizes' => $functionizes,
+            'functionizes' => $functionizes->all(),
             'tabelizes'    => $tabelizes,
         ];
     }
@@ -594,6 +590,9 @@ class Records
         $functions = $table->functions;
         $pluginService = $this->pluginService;
         $functions->each(function (Func $function) use ($tabs, &$functionizes, $pluginService, $record, $table, $entity) {
+            if ($function->dynamic_table_tab_id) {
+                return;
+            }
 
             $functionize = $pluginService->make(
                 $function->class,
@@ -960,7 +959,12 @@ class Records
         return $this->getViewFormApiRecordAction($table);
     }
 
-    public function getViewFormApiRecordAction(Table $table, Record $record = null)
+    public function getViewFormApiRelationAction(Table $table, Relation $relation, Record $foreign)
+    {
+        return $this->getViewFormApiRecordAction($table, null, $relation, $foreign);
+    }
+
+    public function getViewFormApiRecordAction(Table $table, Record $record = null, Relation $relation = null, Record $foreign = null)
     {
         $fields = $table->fields;
         $vueTypeMap = [
@@ -971,6 +975,7 @@ class Records
             'integer' => 'number',
             'slug'    => 'text',
             'picture' => 'file:picture',
+            'json'    => 'textarea',
         ];
         $typeMapper = function (Field $field) use ($vueTypeMap) {
 
@@ -986,10 +991,16 @@ class Records
             context()->bind(Dynamic::class . ':fullFields', true);
         }
 
-        $formObject = (new Dynamic())->setTable($table)->setRecord($record)->initFields();
+        $formObject = (new Dynamic())
+            ->setTable($table)
+            ->setRecord($record)
+            ->setRelation($relation)
+            ->setForeignRecord($foreign)
+            ->initFields();
         $initialOptions = $formObject->getDynamicInitialOptions();
         $form = [
-            'fields' => $fields->map(function (Field $field) use ($initialOptions, $record, $typeMapper) {
+            'fields' => $fields
+                ->map(function (Field $field) use ($initialOptions, $record, $typeMapper, $relation, $foreign) {
                 $type = $typeMapper($field);
                 return [
                     'id'       => $field->id,
@@ -998,7 +1009,7 @@ class Records
                     'type'     => $type,
                     'help'     => $field->help,
                     'required' => !!$field->required,
-                    'options'  => $field->getVueOptions($initialOptions, $record),
+                    'options'  => $field->getVueOptions($initialOptions, $record, $relation, $foreign),
                     'group'    => $field->fieldGroup,
                     'relation' => $type === 'select:single' ? $field->hasOneSelectRelation : null,
                     'reverseRelation' => $type === 'select:single' ? $field->hasOneReverseSelectRelation : null,
@@ -1030,8 +1041,13 @@ class Records
             $model = $entity->allOrFail()->first();
 
             $data['model'] = $tabelize->setDynamicRecord($model)->transformRecord($model);
+        } else if ($relation) {
+            $data['model'] = [
+                $relation->onField->field => $foreign->id,
+            ];
         } else {
             // do we need default hydrated model?
+            // sometimes with defaults?
         }
 
         return $data;

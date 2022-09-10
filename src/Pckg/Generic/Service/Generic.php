@@ -245,6 +245,11 @@ class Generic
             return;
         }
 
+        /**
+         * We have 2 layouts at the moment:
+         *  - layout connected with layout_id
+         *  - layout connected with layout_component
+         */
         $layoutActions = true
             ? $layout->actions(function (MorphedBy $actions) {
             // $actions->getMiddleEntity()->joinPermissionTo('read');
@@ -270,19 +275,30 @@ class Generic
                 1
             );
 
+        $parentMost = null;
+        $i = 0;
+        while ($i < 10 && $parentMost !== $route) {
+            $i++;
+            $lastParentMost = $parentMost;
+            $parentMost = ($parentMost ?? $route)->parent ?? ($parentMost ?? $route);
+            if ($lastParentMost === $parentMost) {
+                break;
+            }
+        }
+
         $layoutActions = $layoutActions->sortBy(function ($item) {
             return $item->pivot->order;
         })->tree(function ($action) {
             return $action->pivot->parent_id;
         }, function ($action) {
             return $action->pivot->id;
-        })->filter(function (ActionRecord $action) use ($route) {
+        })->filter(function (ActionRecord $action) use ($route, $parentMost) {
             /**
              * Filter out hidden and shown.
              */
             if ($route) {
                 $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
-                if ($hide && in_array($route->id, $hide)) {
+                if ($hide && (in_array($route->id, $hide) || in_array($parentMost->id, $hide))) {
                     /**
                      * If action has defined hide values, hide actions on current route.
                      */
@@ -290,7 +306,7 @@ class Generic
                 }
 
                 $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
-                if ($show && !in_array($route->id, $show)) {
+                if ($show && (!in_array($route->id, $show) && !in_array($parentMost->id, $show))) {
                     /**
                      * If action has defined show values, hide action if route is not defined.
                      */

@@ -87,6 +87,14 @@
 
         <slot></slot>
 
+        <div>
+            <template v-for="actions in $route.meta.resolved.functionizes || []">
+                <div v-for="action in actions">
+                    <pckg-raw :body="action"></pckg-raw>
+                </div>
+            </template>
+        </div>
+
         <div class="__form-actions form-group margin-top-sm" v-if="mode !== 'view' && visibleFields.length">
             <button type="button"
                     @click.prevent="submitForm"
@@ -171,7 +179,14 @@ export default {
                 return this.myForm.fields.filter((field) => this.onlyField === `${field.id}`);
             }
 
-            return this.myForm.fields.filter(this.isVisible);
+            return this.myForm.fields.filter(this.isVisible).filter((field) => !this.isHidden(field));
+        },
+        modelFields: function () {
+            if (this.onlyField) {
+                return this.myForm.fields.filter((field) => this.onlyField === `${field.id}`);
+            }
+
+            return this.myForm.fields.filter(this.isVisible); // include hidden relations
         },
         leftFields: function () {
             return this.visibleFields.filter(field => !field.group || field.group.position === 'left');
@@ -205,6 +220,14 @@ export default {
 
             return grouped;
         },
+        isHidden: function(field) {
+            // hide relations from url, but keep them in model
+            if (this.$route.meta?.resolved?.relation?.on_field_id === field.id) {
+                return true;
+            }
+
+            return false;
+        },
         isVisible: function (field) {
             if (field.type === 'id') {
                 return false;
@@ -222,7 +245,12 @@ export default {
         },
         initialFetch: function () {
             this.state = 'loading';
-            http.get('/api/dynamic/form/' + this.table.id + (this.myFormModel && this.myFormModel.id ? '/' + this.myFormModel.id : ''), function (data) {
+            let url = '/api/dynamic/form/' + this.table.id + (this.myFormModel && this.myFormModel.id ? '/' + this.myFormModel.id : '');
+            if (this.$route.params.relation) {
+                const params = this.$route.params;
+                url = '/api/dynamic/form/' + this.table.id + '/' + params.relation + '/' + params.foreign;
+            }
+            http.get(url, function (data) {
                 this.myForm = data.form;
                 if (data.model) {
                     this.myFormModel = data.model;
@@ -247,9 +275,13 @@ export default {
             this.validateAndSubmit(function () {
                 let url = this.onlyField
                     ? ('/api/dynamic/records/field/' + this.table.id + '/' + this.onlyField + '/bulk-edit')
-                    : (this.myFormModel.id
-                    ? ('/api/dynamic/records/' + this.table.id + '/' + this.myFormModel.id + '/edit')
-                    : ('/api/dynamic/records/' + this.table.id + '/add'));
+                    : (
+                        this.$route.params.relation
+                            ? '/api/dynamic/records/' + this.table.id + '/add/' + this.$route.params.relation + '/' + this.$route.params.foreign
+                            : (this.myFormModel.id
+                                ? ('/api/dynamic/records/' + this.table.id + '/' + this.myFormModel.id + '/edit')
+                                : ('/api/dynamic/records/' + this.table.id + '/add'))
+                    );
                 http.post(url, this.collectFormData(), function (data) {
                     this.$emit('saved');
                     this.state = 'success';
@@ -293,7 +325,7 @@ export default {
         },
         collectFormData: function () {
             let d = this.additionalModel;
-            $.each(this.visibleFields, function (i, field) {
+            $.each(this.modelFields, function (i, field) {
                 d[field.slug] = this.myFormModel[field.slug] || null;
             }.bind(this));
             return d;

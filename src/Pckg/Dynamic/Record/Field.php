@@ -370,7 +370,7 @@ class Field extends DatabaseRecord
         return $options;
     }
 
-    public function getVueOptions($initialOptions, $record = null)
+    public function getVueOptions($initialOptions, Record $record = null, Relation $relation = null, Record $foreignRecord = null)
     {
         $options = new \stdClass();
         $slug = $this->fieldType->slug;
@@ -379,30 +379,21 @@ class Field extends DatabaseRecord
                 'options' => $initialOptions[$this->field] ?? [],
             ];
         } else if ($slug === 'picture') {
-            /*$url = $this->relation && $this->foreignRecord
-                ? url('dynamic.records.field.upload.newForeign', [
-                    'table' => $this->table,
-                    'field' => $field,
-                    'relation' => $this->relation,
-                    'record' => $this->foreignRecord,
-                ])
-                : ($this->record->id
-                    ? url('dynamic.records.field.upload', [
-                        'table' => $this->table,
-                        'field' => $field,
-                        'record' => $this->record,
-                    ])
-                    : url('dynamic.records.field.upload.new', [
-                        'table' => $this->table,
-                        'field' => $field,
-                    ]));*/
-
             if ($record) {
                 $options = [
                     'url' => url('dynamic.records.field.upload', [
                         'table' => $this->table,
                         'field' => $this,
                         'record' => $record,
+                    ]),
+                ];
+            } else if ($relation && $foreignRecord) {
+                $options = [
+                    'url' => url('dynamic.records.field.upload.newForeign', [
+                        'table' => $this->table,
+                        'field' => $this,
+                        'relation' => $relation,
+                        'record' => $foreignRecord,
                     ]),
                 ];
             } else {
