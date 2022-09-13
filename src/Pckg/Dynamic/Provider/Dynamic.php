@@ -54,6 +54,35 @@ class Dynamic extends Provider
 
     public function routes()
     {
+        $backendData = function ($component = null, $tags = []) {
+            $defaultTags = $component ? [
+                'auth:in',
+                'group:backend',
+                'layout:backend',
+                'vue:route',
+                'vue:route:template' => substr($component, 0, 1) !== '<' ? '<' . $component . '></' . $component . '>' : $component,
+            ] : [
+                'auth:in',
+                'group:backend',
+                'layout:backend',
+                'vue:route',
+            ];
+
+            if ($tags) {
+                foreach ($tags as $k => $v) {
+                    if (is_numeric($k) && !in_array($v, $defaultTags)) {
+                        $defaultTags[] = $v;
+                    } else if (!is_numeric($k)) {
+                        $defaultTags[$k] = $v;
+                    }
+                }
+            }
+
+            return [
+                'tags' => $defaultTags
+            ];
+        };
+        
         return [
             /**
              * Views.
