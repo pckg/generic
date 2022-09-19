@@ -143,6 +143,28 @@ class HttpQl
     }
 
     /**
+     * Read Orm data from body or headers.
+     */
+    public function fetchORM()
+    {
+        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
+        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
+        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
+        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
+        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
+
+        if (!$ormFields && !$ormFilters && !$ormPaginator && !$ormSearch && !$ormMeta) {
+            $ormFields = json_decode(request()->getHeaderLine('X-Pckg-Orm-Fields', ''), true);
+            $ormFilters = json_decode(request()->getHeaderLine('X-Pckg-Orm-Filters', ''), true);
+            $ormPaginator = json_decode(request()->getHeaderLine('X-Pckg-Orm-Paginator', ''), true);
+            $ormSearch = json_decode(request()->getHeaderLine('X-Pckg-Orm-Search', ''), true);
+            $ormMeta = json_decode(request()->getHeaderLine('X-Pckg-Orm-Meta', ''), true);
+        }
+
+        return [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta];
+    }
+
+    /**
      * Return list of all records, paginated.
      *
      * @param Dynamic $dynamicService
@@ -161,14 +183,7 @@ class HttpQl
             $table = $this->fetchTable($dynamicService);
         }
 
-        /**
-         * Read Orm data from body or headers.
-         */
-        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
-        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
-        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
-        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
-        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
+        [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta] = $this->fetchORM();
 
         foreach (['Fields' => [], 'Filters' => [], 'Paginator' => [], 'Search' => null, 'Meta' => []] as $key => $def) {
             if (!${'orm' . $key}) {
