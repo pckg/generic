@@ -142,6 +142,32 @@ class HttpQl
     }
 
     /**
+     * Read Orm data from body or headers.
+     */
+    public function fetchORM()
+    {
+        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
+        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
+        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
+        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
+        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
+
+        foreach (['Fields' => [], 'Filters' => [], 'Paginator' => [], 'Search' => null, 'Meta' => []] as $key => $def) {
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = json_decode(request()->getHeaderLine('X-Pckg-Orm-' . $key, ''), true);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = get(strtolower($key), []);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = $def;
+            }
+        }
+
+        return [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta];
+    }
+
+    /**
      * Return list of all records, paginated.
      *
      * @param Dynamic $dynamicService
@@ -160,26 +186,7 @@ class HttpQl
             $table = $this->fetchTable($dynamicService);
         }
 
-        /**
-         * Read Orm data from body or headers.
-         */
-        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
-        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
-        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
-        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
-        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
-
-        foreach (['Fields' => [], 'Filters' => [], 'Paginator' => [], 'Search' => null, 'Meta' => []] as $key => $def) {
-            if (!${'orm' . $key}) {
-                ${'orm' . $key} = json_decode(request()->getHeader('X-Pckg-Orm-' . $key, ''), true);
-            }
-            if (!${'orm' . $key}) {
-                ${'orm' . $key} = get(strtolower($key), []);
-            }
-            if (!${'orm' . $key}) {
-                ${'orm' . $key} = $def;
-            }
-        }
+        [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta] = $this->fetchORM();
 
         /**
          * Set defaults.
