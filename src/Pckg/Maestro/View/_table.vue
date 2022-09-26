@@ -227,7 +227,9 @@
                          :all-checked="allChecked"
                          :ids="ids">
             <div slot="actions">
-                <a href="#" style="margin-left: 2rem;" v-for="action in actions.entity"
+                <a href="#" style="margin-left: 2rem;"
+                   v-for="action in actions.entity"
+                   :data-event="action.event"
                    @click.prevent="entityAction(action.event)">
                     <i class="fa" :class="'fa-' + action.icon"></i>
                     {{ action.title }}
@@ -236,7 +238,10 @@
         </table-statusbar>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component"
+        <component :is="component"
+                   v-for="component in uniqueActions"
+                   :key="component"
+                   :data-component="component"
                    @table:refresh="timeoutRefreshData(100)"></component>
 
     </div>
@@ -377,7 +382,7 @@
                 configureSection: 'closed',
                 quickView: 'closed',
                 _quickViewDelay: null,
-                doubleClickDiff: null,
+                _quickViewDelayId: null,
                 view: {
                     /**
                      * Visible columns.
@@ -523,10 +528,13 @@
                         return;
                     }
 
-                    this.doubleClick(record);
-                    return;
+                    if (record.id === this._quickViewDelayId) {
+                        this.doubleClick(record);
+                        return;
+                    }
                 }
 
+                this._quickViewDelayId = record.id;
                 this._quickViewDelay = setTimeout(function () {
                     clearTimeout(this._quickViewDelay);
                     this._quickViewDelay = null;
