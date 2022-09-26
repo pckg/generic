@@ -2,7 +2,7 @@
 
 namespace Pckg\Generic\Form;
 
-use Pckg\Generic\Entity\Routes;
+use CommsCenter\Pagebuilder\Entity\Routes;
 use Pckg\Htmlbuilder\Element\Form\Bootstrap;
 use Pckg\Htmlbuilder\Element\Form\ResolvesOnRequest;
 use Pckg\Htmlbuilder\Validator\Method\Custom;

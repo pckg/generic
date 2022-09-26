@@ -26,5 +26,7 @@ class CreateListTables extends Migration
         $listItemsI18n->varchar('value');*/
 
         $this->save();
+
+        return $this;
     }
 }

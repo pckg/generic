@@ -13,6 +13,8 @@ class CreateDynamicProjectTables extends Migration
     {
         $this->dynamicTableViewsUp();
         $this->save();
+
+        return $this;
     }
 
     protected function dynamicTableViewsUp()

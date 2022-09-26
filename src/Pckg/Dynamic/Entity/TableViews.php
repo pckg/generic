@@ -16,6 +16,8 @@ class TableViews extends DatabaseEntity
     public function boot()
     {
         $this->joinTranslations();
+
+        return $this;
     }
 
     public function table()

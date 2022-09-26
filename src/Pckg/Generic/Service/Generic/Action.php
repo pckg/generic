@@ -6,10 +6,10 @@ use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Framework\Service\Plugin;
 use Pckg\Framework\View;
-use Pckg\Generic\Entity\Routes;
-use Pckg\Generic\Record\Action as ActionRecord;
-use Pckg\Generic\Record\Content;
-use Pckg\Generic\Record\Route;
+use CommsCenter\Pagebuilder\Entity\Routes;
+use CommsCenter\Pagebuilder\Record\Action as ActionRecord;
+use CommsCenter\Pagebuilder\Record\Content;
+use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Service\Generic;
 use Throwable;
@@ -60,13 +60,22 @@ class Action implements \JsonSerializable
      */
     public function toVue(string $component, $props = [])
     {
+        /**
+         * @var $generic Generic
+         */
+        $generic = resolve(Generic::class);
         $mergedProps = [];
+        $action = $this->getAction();
         foreach ($props as $prop => $value) {
-            $mergedProps[] = ' ' . $prop . '="' . (is_numeric($value) ? $value : (substr($prop, 0, 1) === ':' ? $value : htmlspecialchars(json_encode($value)))) . '"';
+            if (is_numeric($value) || (is_string($prop) && substr($prop, 0, 1) === ':')) {
+                $mergedProps[] = ' ' . $prop . '="' . $value . '"';
+            } else {
+                $mergedProps[] = ' :' . $prop . '="' . $generic->pushMetadata($action->pivot->id, $prop, $value) . '"';
+            }
         }
 
         return '<' . $component .
-            ($this->getAction()->pivot ? ' :action-id="' . $this->getAction()->pivot->id . '"' : '')
+            ($action->pivot ? ' :action-id="' . $action->pivot->id . '"' : '')
             . implode(' ', $mergedProps)
             . '></' . $component . '>';
     }
@@ -252,6 +261,9 @@ class Action implements \JsonSerializable
         $this->getAction()->pivot->resolveSettings($args);
 
         $build = $this->getAction()->pivot->buildHtml($args);
+        /*if (response()->getCode() !== 200) {
+            ddd($this->getAction()->data());
+        }*/
 
         $this->getAction()->pivot->build = $build;
     }

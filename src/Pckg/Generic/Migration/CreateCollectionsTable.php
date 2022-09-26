@@ -13,6 +13,8 @@ class CreateCollectionsTable extends Migration
         $this->collectionItemsUp();
 
         $this->save();
+
+        return $this;
     }
 
     protected function collectionsUp()

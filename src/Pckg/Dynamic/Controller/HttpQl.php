@@ -2,6 +2,7 @@
 
 namespace Pckg\Dynamic\Controller;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
@@ -9,9 +10,11 @@ use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Fields;
 use Pckg\Dynamic\Record\Field;
 use Pckg\Dynamic\Record\Relation;
+use Pckg\Dynamic\Record\Tab;
 use Pckg\Dynamic\Record\Table;
 use Pckg\Dynamic\Resolver\TableQl;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Generic\Controller\Generic;
 use Pckg\Maestro\Service\Tabelize;
 
 class HttpQl
@@ -34,6 +37,82 @@ class HttpQl
     }
 
     /**
+     * Get all records.
+     *
+     * @param Table $table
+     * @return mixed|null
+     * @throws \Throwable
+     */
+    public function getTableAction(Table $table)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return Reflect::method($this, 'searchIndexAction', ['table' => $table, 'tabelize' => $tabelize]);
+    }
+
+    public function getRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
+            'record' => Reflect::method(Records::class, 'getViewAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    public function patchRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
+            'record' => Reflect::method(Records::class, 'patchEditAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    // full update
+    public function postRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return [
+            'record' => Reflect::method(Records::class, 'postEditAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord']
+        ];
+    }
+
+    public function deleteRecordAction(Table $table, Record $record)
+    {
+        $tabelize = resolve(Tabelize::class);
+        $tabelize->setEnriched(false);
+
+        return Reflect::method(Records::class, 'deleteDeleteAction', ['table' => $table, 'record' => $record, 'tabelize' => $tabelize])['mappedRecord'];
+    }
+
+    /**
+     * Insert multiple records.
+     */
+    public function postTableAction(Table $table)
+    {
+        return Reflect::method(Records::class, 'postAddAction', ['table' => $table]);
+    }
+
+    /**
+     * Patch multiple records.
+     */
+    public function patchTableAction()
+    {
+    }
+
+    /**
+     * Delete multiple records.
+     */
+    public function deleteTableAction()
+    {
+    }
+
+    /**
      * This works the same as postAddAction from Record.
      * Except, it accepts data in other format.
      */
@@ -46,9 +125,8 @@ class HttpQl
 
     /**
      * This works only for file uploads.
-     * It will be refactored to a separate method in next version.
      */
-    public function postIndexAction(Dynamic $dynamic)
+    public function postUploadAction(Dynamic $dynamic)
     {
         if (!files()->all()) {
             throw new \Exception('Incomplete request');
@@ -62,6 +140,32 @@ class HttpQl
         $record = $table->createEntity()->where('id', get('record'))->oneOrFail();
 
         return resolve(Records::class)->postUploadAction($table, $record, $field);
+    }
+
+    /**
+     * Read Orm data from body or headers.
+     */
+    public function fetchORM()
+    {
+        $ormFields = json_decode(post('X-Pckg-Orm-Fields', ''), true);
+        $ormFilters = json_decode(post('X-Pckg-Orm-Filters', ''), true);
+        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator', ''), true);
+        $ormSearch = json_decode(post('X-Pckg-Orm-Search', ''), true);
+        $ormMeta = json_decode(post('X-Pckg-Orm-Meta', ''), true);
+
+        foreach (['Fields' => [], 'Filters' => [], 'Paginator' => [], 'Search' => null, 'Meta' => []] as $key => $def) {
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = json_decode(request()->getHeaderLine('X-Pckg-Orm-' . $key, ''), true);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = get(strtolower($key), []);
+            }
+            if (!${'orm' . $key}) {
+                ${'orm' . $key} = $def;
+            }
+        }
+
+        return [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta];
     }
 
     /**
@@ -82,14 +186,8 @@ class HttpQl
         if (!$table) {
             $table = $this->fetchTable($dynamicService);
         }
-        /**
-         * Read Orm data.
-         */
-        $ormFields = json_decode(post('X-Pckg-Orm-Fields'), true);
-        $ormFilters = json_decode(post('X-Pckg-Orm-Filters'), true);
-        $ormPaginator = json_decode(post('X-Pckg-Orm-Paginator'), true);
-        $ormSearch = json_decode(post('X-Pckg-Orm-Search'), true);
-        $ormMeta = json_decode(post('X-Pckg-Orm-Meta'), true);
+
+        [$ormFields, $ormFilters, $ormPaginator, $ormSearch, $ormMeta] = $this->fetchORM();
 
         /**
          * Set defaults.
@@ -381,7 +479,7 @@ class HttpQl
     public function getDefinitionAction()
     {
         return [
-            'entities' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
+            'schemas' => (new \Pckg\Dynamic\Entity\Tables())->where('repository', 'default')
                 ->joinPermissionTo('write')
                 ->withFields(function (HasMany $fields) {
                     $fields->orderBy('order');
@@ -390,17 +488,52 @@ class HttpQl
                 ->orderBy('`order`')
                 ->all()
                 ->map(function (Table $table) {
+                    $singleton = ucfirst(toCamel($table->table));
+                    if (strrpos($singleton, 'ies') === strlen($singleton) - strlen('ies')) {
+                        $singleton = substr($singleton, 0, -strlen('ies')) . 'y';
+                    } else if (strrpos($singleton, 'es') === strlen($singleton) - strlen('es')) {
+                        $singleton = substr($singleton, 0, -strlen('es'));
+                    } else if (strrpos($singleton, 's') === strlen($singleton) - strlen('s')) {
+                        $singleton = substr($singleton, 0, -strlen('s'));
+                    }
+
+                    // http://niem.github.io/json/tutorial/#define-a-niem-exchange-model
                     return [
+                        '$schema' => router()->getRoutePrefix(true) . '/api/http-ql/definition#schemas.' . $table->table,
+                        'type' => 'object',
+                        'properties' => [
+                            '@context' => [
+                                '$ref' => '#/definitions/@context',
+                            ],
+                            'j:' . $singleton => [
+                                '$ref' => '#/definitions/@context'
+                            ],
+                        ],
+                        'additionalProperties' => false,
+                        'required' => [
+                            '@context',
+                            'j:' . $singleton => '#/definitions/j:' . $singleton,
+                        ],
+                        'definitions' => [
+                            '@context' => [
+                                'type' => 'object',
+                            ],
+                            'j:' . $singleton => [
+                                'type' => 'object',
+                                'properties' => $table->fields->map(function (Field $field) {
+                                        return [
+                                            'type' => 'nc:' . $field->fieldType->slug,
+                                            'title' => $field->title,
+                                        ];
+                                    })->keyBy('field')->all(),
+                                'additionalProperties' => false,
+                                'required' => $table->fields->filter(fn(Field $field) => $field->required)
+                                    ->map('field')
+                                    ->values(),
+                            ],
+                        ],
                         'table' => $table->table,
                         'title' => $table->title,
-                        'fields' => $table->fields->map(function (Field $field) {
-                            return [
-                                'field' => $field->field,
-                                'title' => $field->title,
-                                'type' => $field->fieldType->slug,
-                                'required' => !!$field->required,
-                            ];
-                        })->keyBy('field')->all()
                     ];
                 })->keyBy('table')->all(),
         ];

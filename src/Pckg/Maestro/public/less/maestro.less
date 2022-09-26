@@ -33,12 +33,19 @@ body {
 
   &.--bg-color {
     background-color: #fff;//@maestro-bg-dark;
+    box-shadow: 2px 4px 6px #eee;
+
+    a&:hover {
+      background-color: #f7f6fc;
+    }
+
     .o-info {
       background-color: var(--o-info--bg-color, transparent);
     }
 
     &.--style-error {
       background-color: @clr-error;
+      box-shadow: 2px 4px 6px @clr-error;
       color: white;
       .color-grayish {
         color: #eee;
@@ -47,7 +54,11 @@ body {
 
     // sub box?
     .--bg-color {
-      background-color: #f9f9f9; //@pagebuilder-bg-color;//#fff;
+      background-color: #f7f6fc;
+    }
+
+    a.--bg-color:hover {
+      background-color: #efeff7;
     }
   }
 
@@ -226,6 +237,7 @@ th .form-group {
 
 .maestro-sidebar {
   background: #fff; // @maestro-bg-dark;
+  background-color: #efeff7;
   bottom: 0;
   float: left;
   height: 100%;
@@ -239,7 +251,7 @@ th .form-group {
   width: 20rem;
   z-index: 97;
 
-  &:before {
+  /*&:before {
     background: rgb(247,246,252);
     background: linear-gradient(180deg, rgba(247,246,252,1) 33%, rgba(247,246,252,0) 100%);
     content: "";
@@ -257,7 +269,7 @@ th .form-group {
     position: absolute;
     width: 100%;
     z-index: 1;
-  }
+  }*/
 
   a {
     color: @text;
@@ -316,7 +328,10 @@ th .form-group {
 
       a {
         display: block;
-        padding: 1rem 0;
+        padding: 1.2rem .6rem;
+        body.collapsed & {
+          padding: 1.2rem 0;
+        }
         position: relative;
         font-size: 1.6rem;
         line-height: 2rem;
@@ -325,7 +340,7 @@ th .form-group {
           float: left;
           width: 5rem;
           line-height: 2rem;
-          font-size: 2rem;
+          font-size: 1.8rem;
         }
 
         span {
@@ -348,11 +363,16 @@ th .form-group {
   }
 
   .help {
+    padding: 1.2rem .6rem;
+    body.collapsed & {
+      padding: 1rem 0;
+    }
+
     i {
       float: left;
       width: 5rem;
       line-height: 2rem;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
 
     a {
@@ -532,10 +552,6 @@ th .form-group {
     width: auto;
   }
 
-  &.login {
-    margin-left: 0;
-  }
-
   body.collapsed & {
     width: ~"calc(100% - 9rem)";
     @media (min-width: 768px) {
@@ -601,7 +617,7 @@ textarea,
 
 ul.nav-tabs {
   border: none;
-  margin-bottom: 2rem;
+  margin: 3rem 0;
   border-bottom: 2px solid @whiteActive;
 
   > li {
@@ -618,6 +634,7 @@ ul.nav-tabs {
     & a.active,
     &:hover a,
     &.active-router-link,
+    &.router-link-exact-active,
     & a.active-router-link {
       &,
       > a {
@@ -752,7 +769,7 @@ ul.vertical-mid-menu {
   text-decoration-line: underline;
   text-decoration-style: double;
   vertical-align: top;
-  .inline-block();
+  display: inline-block;
 
   i {
     margin-right: .3rem;
@@ -761,7 +778,7 @@ ul.vertical-mid-menu {
 
 //When word is between two elements
 .__word-separator {
-  .inline-block();
+  display: inline-block;
   margin-left: @spacing-xs;
   margin-right: @spacing-xs;
 }
@@ -841,6 +858,10 @@ ul.vertical-mid-menu {
   &:hover {
     background-color: @clr-primary;
     color: #FFF;
+  }
+
+  &:not(:first-child) {
+    margin-left: @spacing-sm;
   }
 }
 
@@ -923,6 +944,29 @@ ul.vertical-mid-menu {
   & + & {
     margin-left: 1rem;
   }
+}
+
+ul.nav-tabs > li > a {
+  font-weight: 400;
+  color: #777;
+  padding-bottom: 1.5rem;
+}
+
+.__form-actions {
+  position: fixed;
+  bottom: 0;
+}
+
+.c-pckg-maestro-form {
+  .__form-label-holder label {
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+}
+
+.c-maestro-table {
+  color: #111;
 }
 
 //Border used as a vertical separator between columns

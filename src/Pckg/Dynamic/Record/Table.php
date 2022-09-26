@@ -8,7 +8,10 @@ use Pckg\Database\Record;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Repository;
+use Pckg\Dynamic\Entity\Relations;
+use Pckg\Dynamic\Entity\TableActions;
 use Pckg\Dynamic\Entity\Tables;
+use Pckg\Dynamic\Service\Dynamic;
 use Pckg\Dynamic\Service\Filter;
 use Pckg\Framework\View\Twig;
 use Pckg\Maestro\Service\Tabelize;
@@ -20,25 +23,81 @@ use Pckg\Maestro\Service\Tabelize;
  * @property string $title
  * @property string $repository
  * @property string $framework_entity
+ * @property Collection $listableFields
+ * @method actions(callable $callback = null)
+ * @method hasManyRelation(callable $callback = null)
+ * @method belongsToRelation(callable $callback = null)
  */
 class Table extends Record
 {
 
     protected $entity = Tables::class;
-    protected $toArray = ['privileges'];
+    protected $toArray = ['privileges', 'titleSingular', 'indexUrl'];
+
     public function getPrivilegesAttribute()
     {
-        $tables = (new Tables(null, null, false));
-        $tables->usePermissionableTable();
-        return $tables->where('id', $this->id)
-                      ->where('user_group_id', auth()->getGroupId())
-                      ->all()
-                      ->keyBy('action')
-                      ->map(function () {
+        return $this->allPermissions
+            ->filter('user_group_id', auth()->getGroupId())
+            ->keyBy('action')
+            ->map(true)
+            ->all();
+    }
 
-                          return true;
-                      })
-                      ->all();
+    public function getTitleSingularAttribute()
+    {
+        $string = $this->title;
+        // save some time in the case that singular and plural are the same
+        /*if ( in_array( strtolower( $string ), self::$uncountable ) )
+            return $string;*/
+
+        // check for irregular plural forms
+        /*foreach ( self::$irregular as $result => $pattern )
+        {
+            $pattern = '/' . $pattern . '$/i';
+
+            if ( preg_match( $pattern, $string ) )
+                return preg_replace( $pattern, $result, $string);
+        }*/
+
+        // check for matches using regular expressions
+        $singular = array(
+            '/(quiz)zes$/i'             => "$1",
+            '/(matr)ices$/i'            => "$1ix",
+            '/(vert|ind)ices$/i'        => "$1ex",
+            '/^(ox)en$/i'               => "$1",
+            '/(alias)es$/i'             => "$1",
+            '/(octop|vir)i$/i'          => "$1us",
+            '/(cris|ax|test)es$/i'      => "$1is",
+            '/(shoe)s$/i'               => "$1",
+            '/(o)es$/i'                 => "$1",
+            '/(bus)es$/i'               => "$1",
+            '/([m|l])ice$/i'            => "$1ouse",
+            '/(x|ch|ss|sh)es$/i'        => "$1",
+            '/(m)ovies$/i'              => "$1ovie",
+            '/(s)eries$/i'              => "$1eries",
+            '/([^aeiouy]|qu)ies$/i'     => "$1y",
+            '/([lr])ves$/i'             => "$1f",
+            '/(tive)s$/i'               => "$1",
+            '/(hive)s$/i'               => "$1",
+            '/(li|wi|kni)ves$/i'        => "$1fe",
+            '/(shea|loa|lea|thie)ves$/i' => "$1f",
+            '/(^analy)ses$/i'           => "$1sis",
+            '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i'  => "$1$2sis",
+            '/([ti])a$/i'               => "$1um",
+            '/(n)ews$/i'                => "$1ews",
+            '/(h|bl)ouses$/i'           => "$1ouse",
+            '/(corpse)s$/i'             => "$1",
+            '/(us)es$/i'                => "$1",
+            '/s$/i'                     => ""
+        );
+
+        foreach ($singular as $pattern => $result) {
+            if (preg_match($pattern, $string)) {
+                return preg_replace($pattern, $result, $string);
+            }
+        }
+
+        return $string;
     }
 
     public function getEntityActions()
@@ -46,7 +105,7 @@ class Table extends Record
         return $this->actions(function (HasMany $relation) {
 
                 $relation->where('type', ['entity', 'entity-plugin', 'mixed']);
-            $relation->joinPermission();
+                $relation->joinPermission();
         });
         return $actions;
     }
@@ -56,7 +115,7 @@ class Table extends Record
         return $this->actions(function (HasMany $relation) {
 
                 $relation->where('type', ['record', 'record-plugin', 'mixed']);
-            $relation->joinPermission();
+                $relation->joinPermission();
         });
     }
 
@@ -76,7 +135,7 @@ class Table extends Record
             ? url('dynamic.record.view', [
                     'table' => $this,
                     'record' => $record,
-            ])
+                ])
             : url('dynamic.record.list', [
                     'table' => $this,
                 ]);
@@ -148,7 +207,7 @@ class Table extends Record
         $entity = runInLocale(function () use ($entityClass, $repository, $alias, $extensions) {
 
                 $entity = new $entityClass($repository, $alias);
-            $entity->setTable($this->table);
+                $entity->setTable($this->table);
             if ($extensions && $entity->isTranslatable() && !$entity->isTranslated()) {
                 $entity->joinTranslations();
             }
@@ -200,7 +259,7 @@ class Table extends Record
                 'View' . path('ds');
             $dir = path('app_src') . $partial;
             Twig::addDir($dir);
-/*if (config('app') != config('app_parent')) {
+            /*if (config('app') != config('app_parent')) {
                 $dir = path('apps') . config('app_parent') . path('ds') . 'src' . path('ds') . $partial;
                 Twig::addDir($dir);
             }*/
@@ -213,5 +272,48 @@ class Table extends Record
         }
 
         return $entity;
+    }
+
+    public function checkPermissionsFor($action = 'write')
+    {
+        if (!$this->hasPermissionTo($action)) {
+            response()->unauthorized('Missing permissions to write');
+        }
+
+        if (!$this->listableFields->count()) {
+            response()->unauthorized('Missing view field permissions.');
+        }
+
+        (new TableActions())->joinPermissionTo('execute')
+            ->where('dynamic_table_id', $this->id)
+            ->where('slug', $action === 'read' ? 'view' : 'edit')
+            ->oneOrFail(function () {
+                response()->unauthorized();
+            });
+    }
+
+    public function getBelongsToRelations()
+    {
+        return
+            $relations = (new Relations())->withShowTable()
+                ->withOnField()
+                ->where('on_table_id', $this->id)
+                ->where('dynamic_relation_type_id', 1)
+                ->all();
+    }
+
+    public function getTabelize(Entity $tableEntity)
+    {
+        $listableFields = $this->listableFields;
+        $fieldTransformations = resolve(Dynamic::class)->getFieldsTransformations($tableEntity, $listableFields);
+
+        return (new Tabelize())
+            ->setTable($this)
+            ->setEntity($tableEntity)
+            ->setEntityActions($this->getEntityActions())
+            ->setRecordActions($this->getRecordActions())
+            ->setViews($this->actions()->keyBy('slug'))
+            ->setFields($listableFields)
+            ->setFieldTransformations($fieldTransformations);
     }
 }

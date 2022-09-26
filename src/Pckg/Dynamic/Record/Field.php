@@ -3,6 +3,7 @@
 namespace Pckg\Dynamic\Record;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Record;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Dynamic\Entity\Fields;
 use Throwable;
@@ -15,6 +16,7 @@ use Throwable;
  * @property string $settings
  * @property string $field
  * @property string $title
+ * @property Table $table
  */
 class Field extends DatabaseRecord
 {
@@ -299,12 +301,12 @@ class Field extends DatabaseRecord
     public function getTransformedValue($entity)
     {
         $field = $this;
-        if ($this->fieldType->slug == 'php') {
+        if ($this->fieldType && $this->fieldType->slug == 'php') {
             return function ($record) use ($field) {
 
                 return $record->{'get' . ucfirst($field->field) . 'Attribute'}();
             };
-        } elseif ($this->fieldType->slug == 'geo') {
+        } elseif ($this->fieldType && $this->fieldType->slug == 'geo') {
             $entity->addSelect([
                     $this->field . '_x' => 'X(' . $this->field . ')',
                     $this->field . '_y' => 'Y(' . $this->field . ')',
@@ -336,5 +338,75 @@ class Field extends DatabaseRecord
     public function isImportable()
     {
         return !in_array($this->fieldType->slug, ['mysql', 'php']);
+    }
+
+    public function getRelationOptions($relation, Record $record = null)
+    {
+        $options = [];
+        $rawValue = $record->{$this->field} ?? null;
+        $foundValue = false;
+        foreach ($relation as $id => $value) {
+            if (is_array($value)) {
+                $optgroup = [];
+                foreach ($value as $k => $v) {
+                    $optgroup[$k] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $v);
+                    $foundValue = $foundValue || $k == $rawValue;
+                }
+                $options[$id] = $optgroup;
+            } else {
+                $options[$id] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $value);
+                $foundValue = $foundValue || $id == $rawValue;
+            }
+        }
+
+        if (!$foundValue && $rawValue) {
+            $item = $this->getItemForSelect($record, null, $rawValue);
+            if (!trim($item)) {
+                $item = $rawValue;
+            }
+
+            $options[$rawValue] = str_replace(['<br />', '<br/>', '<br>'], ' - ', $item);
+        }
+
+        return $options;
+    }
+
+    public function getVueOptions($initialOptions, Record $record = null, Relation $relation = null, Record $foreignRecord = null)
+    {
+        $options = new \stdClass();
+        $slug = $this->fieldType->slug;
+        if ($slug === 'select') {
+            $options = [
+                'options' => $initialOptions[$this->field] ?? [],
+            ];
+        } else if ($slug === 'picture') {
+            if ($record) {
+                $options = [
+                    'url' => url('dynamic.records.field.upload', [
+                        'table' => $this->table,
+                        'field' => $this,
+                        'record' => $record,
+                    ]),
+                ];
+            } else if ($relation && $foreignRecord) {
+                $options = [
+                    'url' => url('dynamic.records.field.upload.newForeign', [
+                        'table' => $this->table,
+                        'field' => $this,
+                        'relation' => $relation,
+                        'record' => $foreignRecord,
+                    ]),
+                ];
+            } else {
+                $options = [
+                    'url' => url('dynamic.records.field.upload.new', [
+                        'table' => $this->table,
+                        'field' => $this,
+                    ]),
+                ];
+            }
+        }
+
+        return $options;
     }
 }

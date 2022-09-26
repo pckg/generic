@@ -69,7 +69,6 @@
 
 <script type="text/javascript">
     Vue.component('pckg-maestro-table-config-{{ table }}', {
-        mixins: [pckgDelimiters],
         name: 'pckg-maestro-table-config-{{ table }}',
         template: '#pckg-maestro-table-config-{{ table }}',
         data: function () {
@@ -173,7 +172,6 @@
 
                 http.post('{{ tabelize.getConfigureUrl() }}', data, function (json) {
                     $dispatcher.$emit('notification:success', 'Ok, saved');
-                    utils.closeAndRefresh();
                 });
             },
             // filter

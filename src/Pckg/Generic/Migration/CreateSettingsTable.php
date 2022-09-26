@@ -26,5 +26,7 @@ class CreateSettingsTable extends Migration
         $settingsMorphs->text('value');
 
         $this->save();
+
+        return $this;
     }
 }

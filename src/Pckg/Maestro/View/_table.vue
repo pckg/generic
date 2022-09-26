@@ -31,7 +31,11 @@
                                             :record-id="recordId"
                                             :columns="dbFields"
                                             :relations="dbRelations"
-                                            @export-view="exportView"></pckg-maestro-table-actions>
+                                            :filters="filters"
+                                            :ids="ids"
+                                            :total="paginator.total"
+                                            @export-view="exportView"
+                                            @update="timeoutRefreshData(1000)"></pckg-maestro-table-actions>
 
             </div>
         </div>
@@ -41,8 +45,16 @@
         <pckg-loader :icon="loading === 'error' ? 'fa-exclamation-circle' : 'fa-spinner-third fa-spin'"
                      :loading="loading" class="fixed-centered" style="z-index: 1000;"></pckg-loader>
 
+        <template v-if="false && !loading && records.length === 0">
+            <div class="text-center padding-top-lg color-grayish">
+                <i class="fal fa-fw fa-3x fa-empty-set"></i>
+                <span class="font-size-xl">No results found</span>
+                <p class="margin-top-xs">Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        </template>
+
         <!-- table template -->
-        <div class="pckg-maestro-table box-with-padding --bg-color padding-sm --radius-sm">
+        <div class="pckg-maestro-table box-with-padding --bg-color --radius-sm">
             <template v-if="depth > 0">
                 <table class="table table-borderless table-hover">
                     <tr v-for="(record,i) in records" :key="record.id">
@@ -117,11 +129,11 @@
                         <div class="showContextMenu dropdown-menu" v-if="selectedRecord">
                             <li v-for="action in actions.record"
                                 v-if="action.recordHref && selectedRecord[action.recordHref] || action.event">
-                                <a v-if="action.recordHref && selectedRecord[action.recordHref]"
-                                   :href="selectedRecord[action.recordHref]">
+                                <pb-link v-if="action.recordHref && selectedRecord[action.recordHref]"
+                                   :to="selectedRecord[action.recordHref]">
                                     <i class="fal fa-fw" :class="'fa-' + action.icon"></i>
                                     {{ action.title }}
-                                </a>
+                                </pb-link>
                                 <a v-else-if="action.event" href="#"
                                    @click.prevent="recordAction(selectedRecord, action.event)">
                                     <i class="fal fa-fw" :class="'fa-' + action.icon"></i>
@@ -133,8 +145,8 @@
                         <div class="clearfix"></div>
 
                         <!--<div :style="{'padding-left': (3 + (3 * 10)) + 'rem'}">-->
-                        <div class="mode-padding">
-                            <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
+                        <div style="overflow-x: auto; overflow-y: visible;" @scroll="scrollTable($event)">
+                            <div class="mode-padding">
                                 <table class="c-maestro-table table table-hover table-borderless table-items">
                                     <thead>
                                     <tr>
@@ -215,7 +227,9 @@
                          :all-checked="allChecked"
                          :ids="ids">
             <div slot="actions">
-                <a href="#" style="margin-left: 2rem;" v-for="action in actions.entity"
+                <a href="#" style="margin-left: 2rem;"
+                   v-for="action in actions.entity"
+                   :data-event="action.event"
                    @click.prevent="entityAction(action.event)">
                     <i class="fa" :class="'fa-' + action.icon"></i>
                     {{ action.title }}
@@ -224,7 +238,10 @@
         </table-statusbar>
 
         <!-- additional components -->
-        <component :is="component" v-for="component in uniqueActions" :key="component"
+        <component :is="component"
+                   v-for="component in uniqueActions"
+                   :key="component"
+                   :data-component="component"
                    @table:refresh="timeoutRefreshData(100)"></component>
 
     </div>
@@ -313,11 +330,11 @@
             },
             filters: {
                 default: function () {
-                    return [{
+                    return [/*{
                         field: null,
                         value: null,
                         comp: 'is'
-                    }];
+                    }*/];
                 }
             },
             defaultFields: {
@@ -365,7 +382,7 @@
                 configureSection: 'closed',
                 quickView: 'closed',
                 _quickViewDelay: null,
-                doubleClickDiff: null,
+                _quickViewDelayId: null,
                 view: {
                     /**
                      * Visible columns.
@@ -511,10 +528,13 @@
                         return;
                     }
 
-                    this.doubleClick(record);
-                    return;
+                    if (record.id === this._quickViewDelayId) {
+                        this.doubleClick(record);
+                        return;
+                    }
                 }
 
+                this._quickViewDelayId = record.id;
                 this._quickViewDelay = setTimeout(function () {
                     clearTimeout(this._quickViewDelay);
                     this._quickViewDelay = null;
@@ -530,7 +550,7 @@
                 }.bind(this), 333);
             },
             doubleClick: function (record) {
-                http.redirect('/dynamic/records/view/' + this.table.id + '/' + record.id);
+                this.$router.push('/dynamic/records/' + this.table.id + '/' + record.id + '/view');
             },
             showContextMenu: function ($event, record) {
                 this.selectedRecord = record;
@@ -719,7 +739,7 @@
                 entity.getQuery().addSelect(keys.join('.'));
             },
             mapComp: function (comp) {
-                let data = {
+                return {
                     'is': '=',
                     'not': '!=',
                     'in': 'IN',
@@ -730,9 +750,7 @@
                     'lessOrEquals': '<=',
                     'like': 'LIKE',
                     'notLike': 'NOT LIKE',
-                };
-
-                return data[comp];
+                }[comp];
             },
             applyFilters: function (entity) {
                 $.each(this.myFilters, function (i, filter) {
@@ -955,6 +973,7 @@
             }
         },
         created: function () {
+            console.log('created', this);
             this.initialFetch();
 
             $('body').on('click', function () {
@@ -989,6 +1008,16 @@
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setRecords', this.setRecords);
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':setPaginatorTotal', this.setPaginatorTotal);
                 $dispatcher.$on('pckg-maestro-table-' + this.table.table + ':refresh', this.refreshData);
+            }
+        },
+        beforeDestroy() {
+            if (this.onTab) {
+                $dispatcher.$off('dynamic-tab-' + tab.id + ':refresh', this.refreshData);
+            }
+            if (this.onTable) {
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':setRecords', this.setRecords);
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':setPaginatorTotal', this.setPaginatorTotal);
+                $dispatcher.$off('pckg-maestro-table-' + this.table.table + ':refresh', this.refreshData);
             }
         }
     };

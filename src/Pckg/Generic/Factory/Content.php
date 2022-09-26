@@ -3,7 +3,7 @@
 namespace Pckg\Generic\Factory;
 
 use Faker\Factory;
-use Pckg\Generic\Record\Content as ContentRecord;
+use CommsCenter\Pagebuilder\Record\Content as ContentRecord;
 
 class Content
 {

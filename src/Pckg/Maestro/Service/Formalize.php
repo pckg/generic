@@ -12,16 +12,16 @@ class Formalize
      * @var Form
      */
     protected $form;
-/**
+    /**
      * @var Record
      */
     protected $record;
-/**
+    /**
      * @var string
      */
     protected $title;
     protected $table;
-/**
+    /**
      * Formalize constructor.
      *
      * @param Form   $form

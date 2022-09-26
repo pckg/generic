@@ -40,7 +40,6 @@ class Record implements RouteResolver
         });
         return $tablesEntity->where('id', $value)
                             ->oneOrFail(function () {
-
                                     response()->unauthorized('Record not found');
                             });
     }

@@ -274,6 +274,6 @@ Vue.directive('vhax', {
 
         rowGridCallback(el);
         $(document).ready(rowGridCallback);
-        $(window).load(rowGridCallback).resize(rowGridCallback);
+        $(window).on('load', rowGridCallback).on('resize', rowGridCallback);
     }
 });

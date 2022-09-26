@@ -9,7 +9,7 @@
 <script>
 
     export default {
-        mixins: [pckgStaticComponent]
+        mixins: [CommsHubUse.static]
     }
 
 </script>

@@ -2,7 +2,7 @@
 
 namespace Pckg\Generic\Controller;
 
-use Pckg\Generic\Record\Content as ContentRecord;
+use CommsCenter\Pagebuilder\Record\Content as ContentRecord;
 use Pckg\Generic\Record\Setting;
 use Pckg\Generic\Service\Generic\Action;
 

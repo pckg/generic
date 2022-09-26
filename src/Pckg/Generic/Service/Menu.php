@@ -20,7 +20,6 @@ class Menu
         $menus = new Menus($repositoryObject);
         $locale = first($language, config('pckg.locale.default'), 'en_GB');
         $menus = runInLocale(function () use ($menus, $slug) {
-
                 return $menus->where('slug', $slug)->all();
         }, $locale);
         if (!$menus->count()) {
@@ -36,6 +35,7 @@ class Menu
 
             return $entity->all();
         }, $locale);
+        
         if ($slug == 'admin') {
             $menuItems = new Collection();
         }

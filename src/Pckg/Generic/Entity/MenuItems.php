@@ -20,6 +20,11 @@ class MenuItems extends Entity
     public function menuItems()
     {
         return $this->hasMany(MenuItems::class)
-                    ->foreignKey('parent_id');
+            ->foreignKey('parent_id');
+    }
+
+    public function menu()
+    {
+        return $this->belongsTo(Menus::class)->foreignKey('menu_id');
     }
 }

@@ -6,15 +6,18 @@ use Impero\Apache\Record\Site;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Dynamic\Entity\Tables;
 use Pckg\Dynamic\Service\Dynamic;
+use Pckg\Framework\Provider\Helper\PostValidationResolver;
 use Pckg\Framework\Provider\RouteResolver;
 
 class Table implements RouteResolver
 {
+    use PostValidationResolver;
 
     /**
      * @var Dynamic
      */
     protected $dynamic;
+
     public function __construct(Dynamic $dynamic)
     {
         $this->dynamic = $dynamic;
@@ -26,27 +29,31 @@ class Table implements RouteResolver
         $table = runInLocale(function () use ($dynamic, $value) {
 
                 $tables = new Tables();
-            $dynamic->joinTranslationsIfTranslatable($tables);
-            $dynamic->joinPermissionsIfPermissionable($tables);
-            return $tables->where('id', $value)
+                $dynamic->joinTranslationsIfTranslatable($tables);
+                $dynamic->joinPermissionsIfPermissionable($tables);
+                return $tables->where('id', $value)
                               ->withRelations(function (HasMany $relations) {
 
-                                        $relations->joinTranslations();
-                                $relations->joinFallbackTranslation();
+                                      $relations->joinTranslations();
+                                      $relations->joinFallbackTranslation();
                               })
-                              ->withFields()
+                              ->withFields(function (HasMany $fields) {
+                                  $fields->withSettings();
+                              })
                               ->withTabs(function (HasMany $tabs) {
 
-                                        $tabs->joinTranslation();
-                                $tabs->joinFallbackTranslation();
+                                      $tabs->joinTranslation();
+                                      $tabs->joinFallbackTranslation();
                               })
                               ->withActions()
                               ->withListableFields()
                               ->oneOrFail(function () {
-
                                         response()->unauthorized('Table not found');
                               });
         }, 'en_GB');
+
+        $this->validate($table);
+
         return $table;
     }
 

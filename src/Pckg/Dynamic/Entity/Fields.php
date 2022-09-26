@@ -10,6 +10,10 @@ use Pckg\Dynamic\Record\Field;
 use Pckg\Generic\Entity\Settings;
 use Pckg\Generic\Entity\SettingsMorphs;
 
+/**
+ * @method withFieldType(callable $callback = null): $this
+ * @method withSettings(callable $callback = null): $this
+ */
 class Fields extends DatabaseEntity
 {
     use Orderable;
@@ -24,9 +28,14 @@ class Fields extends DatabaseEntity
         $this->joinFallbackTranslation();
         $this->withFieldType();
         $this->withSettings(function (MorphsMany $settings) {
-
+            /**
+             * What settings do we use here?
+             * This is strictly because have settings table also?
+             */
             $settings->getMiddleEntity()->setRepository($settings->getLeftRepository());
         });
+
+        return $this;
     }
 
     /**
@@ -53,8 +62,8 @@ class Fields extends DatabaseEntity
     public function settings()
     {
         return $this->morphsMany(Settings::class)
-                    ->over(SettingsMorphs::class)
-                    ->rightForeignKey('setting_id');
+            ->over(SettingsMorphs::class)
+            ->rightForeignKey('setting_id');
     }
 
     /**
@@ -63,8 +72,18 @@ class Fields extends DatabaseEntity
     public function hasOneSelectRelation()
     {
         return $this->hasOne(Relations::class)
-                    ->foreignKey('on_field_id')
-                    ->where('dynamic_relation_type_id', [1]);
+            ->foreignKey('on_field_id')
+            ->where('dynamic_relation_type_id', [1]);
+    }
+
+    /**
+     * Show relation on listing.
+     */
+    public function hasOneReverseSelectRelation()
+    {
+        return $this->hasOne(Relations::class)
+            ->foreignKey('on_field_id')
+            ->where('dynamic_relation_type_id', [2]);
     }
 
     public function realFields()

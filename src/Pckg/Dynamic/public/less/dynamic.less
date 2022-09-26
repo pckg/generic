@@ -262,24 +262,27 @@ Style tds
   th {
     white-space: nowrap;
     border-bottom-width: 1px;
+    text-transform: uppercase;
+    color: #777;
+    cursor: pointer;
   }
 
   > thead > tr > th {
-    padding: 1rem 2rem 1rem 1rem;
+    padding: 1.5rem 1.5rem 1.5rem 1rem;
   }
 
   td,
   th {
     &.boolean,
-    &.order,
-    &.date,
-    &.time,
-    &.datetime {
+    &.order {
       text-align: center;
     }
 
     &.integer,
-    &.decimal {
+    &.decimal,
+    &.date,
+    &.time,
+    &.datetime {
       text-align: right;
     }
 
@@ -380,8 +383,9 @@ Style tds
       }
     }
 
+    vertical-align: middle;
     &.id {
-      vertical-align: middle;
+      //vertical-align: middle;
 
       > div {
         display: inline;
@@ -414,7 +418,7 @@ Style tds
     tr.checkboxes,
     td.freeze {
       & + td:not(.freeze) {
-        padding-left: 1rem;
+        //padding-left: 5rem;
       }
     }
   }
@@ -670,6 +674,12 @@ input[type=number].narrow {
       color: @midGray;
     }
   }
+  li {
+    display: inline-block;
+  }
+  a {
+    padding: .5rem 1rem;
+  }
 }
 
 .row {
@@ -907,7 +917,11 @@ div.form-control {
 }
 
 .pckg-maestro-table {
-  margin-top: 2rem;
+  margin: 3rem 0;
+  &,
+  &.box-with-padding {
+    padding: 0;
+  }
 }
 
 .tab-tabelize {
@@ -944,7 +958,7 @@ div.form-control {
   margin-top: 12px;
 }
 
-.tab-pane > div {
+/*.tab-pane > div {
 
   &:not([class]):empty {
     padding: 12px;
@@ -963,7 +977,7 @@ div.form-control {
       transform: translateY(-50%);
     }
   }
-}
+}*/
 
 li.double-link {
   display: table;
@@ -1188,15 +1202,15 @@ table.table {
       > .freeze {
         &.checkboxes {
           padding: 0;
-          width: 4rem;
+          width: 5rem;
           text-align: center;
           > div {
             position: relative;
-            min-height: 4rem;
+            min-height: 5rem;
             > span {
               top: 50%;
               position: absolute;
-              transform: translate(-50%, -50%);
+              transform: translate(60%, -50%);
             }
           }
         }
@@ -1205,6 +1219,7 @@ table.table {
         //min-height: 5rem;
         //background-color: transparent;
         left: 0;
+        left: -4rem;
         & + .freeze {
           left: ~"calc(var(--freeze) * 10rem + 3rem)";
         }

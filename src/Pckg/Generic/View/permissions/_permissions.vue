@@ -1,21 +1,21 @@
-<script type="text/x-template" id="pckg-generic-permissions">
+<template>
     <div class="pckg-generic-permissions">
         <table class="table">
             <thead>
             <tr>
                 <th>Groups</th>
-                <th v-for="group in groups" v-bind:colspan="actions.length">${ group }</th>
+                <th v-for="group in groups" v-bind:colspan="actions.length">{{ group }}</th>
             </tr>
             <tr>
                 <th>Permissions</th>
                 <template v-for="group in groups">
-                    <th v-for="action in actions">${ action }</th>
+                    <th v-for="action in actions">{{ action }}</th>
                 </template>
             </tr>
             </thead>
             <tbody>
             <tr v-for="record in records">
-                <td>${ record.name }</td>
+                <td>{{ record.name }}</td>
                 <template v-for="(group,gk) in groups">
                     <td v-for="(action,ak) in actions">
                         <input type="checkbox" v-model="permissions[ak][gk]" value="1"/>
@@ -27,13 +27,11 @@
 
         <button class="btn btn-success btn-block" @click.prevent="savePermissions">Save permissions</button>
     </div>
-</script>
+</template>
 
 <script type="text/javascript">
-    Vue.component('pckg-generic-permissions', {
+    export default {
         name: 'pckg-generic-permissions',
-        template: '#pckg-generic-permissions',
-        mixins: [pckgDelimiters],
         props: {
             type: {
                 required: true
@@ -53,7 +51,7 @@
         },
         methods: {
             fetchData: function () {
-                http.get('{{ url('api.pckg.generic.permissions') }}?for=' + this.type + '&id=' + this.id, function (data) {
+                http.get('/api/permissions?for=' + this.type + '&id=' + this.id, function (data) {
                     this.groups = data.groups;
                     this.actions = data.actions;
                     this.records = data.records;
@@ -71,7 +69,7 @@
                 this.permissions[ak][gk] = this.permissions[ak][gk] ? false : true;
             },
             savePermissions: function () {
-                http.post('{{ url('api.pckg.generic.permissions') }}?for=' + this.type + '&id=' + this.id, {permissions: this.permissions}, function (data) {
+                http.post('/api/permissions?for=' + this.type + '&id=' + this.id, {permissions: this.permissions}, function (data) {
 
                 }.bind(this));
             }
@@ -79,5 +77,5 @@
         created: function () {
             this.fetchData();
         }
-    });
+    }
 </script>

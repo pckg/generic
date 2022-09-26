@@ -418,15 +418,15 @@ class Filter extends AbstractService
         if (!$search) {
             $search = get('search');
         }
+
         if (!$search) {
             return;
         }
 
         /**
-         * We will build new part of sql.
+         * Sub where
          */
-        $where = new Parenthesis();
-        $where->setGlue('OR');
+        $relationsSubWhere = new Parenthesis('OR');
 
         /**
          * Filter relations in separate query.
@@ -440,16 +440,16 @@ class Filter extends AbstractService
              */
             $relationEntity = $relation->showTable->createEntity();
             $this->filterByGet($relationEntity, null, $search);
-            $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->all();
+            $data = $relationEntity->addSelect([$relationEntity->getTable() . '.id'])->all()->map('id')->unique()->removeEmpty()->all();
             if ($data) {
-                $where->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .
+                $relationsSubWhere->push($relation->onTable->table . '.' . $relation->onField->field . ' IN (' .
                              str_repeat('?,', count($data) - 1) . '?)', $data);
             }
         }
 
         if ($relations && $selected = get('selected')) {
             $exploded = explode(',', $selected);
-            $where->push(
+            $relationsSubWhere->push(
                 $entity->getTable() . '.id IN (' . substr(str_repeat('?,', count($exploded)), 0, -1) . ')',
                 $exploded
             );
@@ -465,7 +465,28 @@ class Filter extends AbstractService
          *
          * @T00D00 - filter them by filterable fields only
          */
-        $this->fullSearchTables($entity, $tables, $where, $search);
+        $searchSubWhere = new Parenthesis('OR');
+        $this->fullSearchTables($entity, $tables, $searchSubWhere, $search);
+
+        /**
+         * We will build new part of sql.
+         */
+        $where = new Parenthesis('OR');
+
+        $where->when(
+            $relationsSubWhere->hasChildren(),
+            fn(Parenthesis $where) => $where->push($relationsSubWhere, $relationsSubWhere->buildBinds())
+        );
+
+        $where->when(
+            $searchSubWhere->hasChildren(),
+            fn(Parenthesis $where) => $where->push($searchSubWhere, $searchSubWhere->buildBinds()),
+        );
+
+        $entity->when(
+            $where->hasChildren(),
+            fn(Entity $entity) => $entity->where($where, $where->buildBinds()),
+        );
     }
 
     public function getTypeMethods()
@@ -539,9 +560,6 @@ class Filter extends AbstractService
                 $s = 'MATCH(' . implode(',', $match) . ') AGAINST(?)';
                 $where->push($s, $search);
             }
-        }
-        if ($where->hasChildren()) {
-            $entity->where($where);
         }
     }
 

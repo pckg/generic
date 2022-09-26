@@ -3,8 +3,8 @@
 namespace Pckg\Generic\Controller;
 
 use Derive\Internal\Cache\Service\Cache;
-use Pckg\Generic\Entity\Contents;
-use Pckg\Generic\Record\Route;
+use CommsCenter\Pagebuilder\Entity\Contents;
+use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Service\Generic as GenericService;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\CustomAction;
@@ -62,33 +62,34 @@ class Generic
 
         $route->applySeoSettings();
 
-        measure('Building actions', function () {
-            $this->genericService->build();
+        measure('Building actions', function () use ($route) {
+            $this->genericService->build($route);
         });
 
         return measure('Stringifying output', function () use ($route) {
             $auth = auth();
-            $structure = '<pckg-app data-frontend></pckg-app>';
+            //$structure = '<pckg-app data-frontend></pckg-app>';
 
             /**
              * Check for themed page?
              */
-            if (false) {
+            /*if (false) {
                 $slug = $route->slug;
                 $themePath = path('src') . 'theme/comms/test/dist/';
                 $pagesPath = $themePath . 'pages/';
                 $layoutsPath = $themePath . 'layouts/';
-                $file = $pagesPath . $slug . '.html';
+                $file = $pagesPath . $slug .'.html';
                 if (file_exists($file)) {
                     $fileContent = file_get_contents($file);
                     $layoutContent = file_get_contents($layoutsPath . 'for-homepage.html');
                     $structure = str_replace('##PAGE##', $fileContent, $layoutContent);
                 }
-            }
+            }*/
 
-            $vars = [
+            /*$vars = [
                 'content' => $structure,
-            ];
+            ];*/
+            $vars = [];
 
             trigger(static::class . '.stringifying');
 

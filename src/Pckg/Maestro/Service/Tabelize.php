@@ -21,19 +21,19 @@ class Tabelize
      * @var Entity
      */
     protected $entity;
-/**
+    /**
      * @var array
      */
     protected $fields = [];
-/**
+    /**
      * @var array
      */
     protected $fieldTransformations = [];
-/**
+    /**
      * @var Collection
      */
     protected $records = [];
-/**
+    /**
      * @var array
      */
     protected $recordActions = [
@@ -43,7 +43,7 @@ class Tabelize
         'clone',
     ];
     protected $listActions = [];
-/**
+    /**
      * @var array
      */
     protected $entityActions = [
@@ -51,11 +51,11 @@ class Tabelize
         'options',
         'export',
     ];
-/**
+    /**
      * @var null
      */
     protected $groups = [];
-/**
+    /**
      * @var string
      */
     protected $title;
@@ -72,10 +72,13 @@ class Tabelize
     protected $listableFields = [];
     protected $listableRelations = [];
     protected $viewData = [];
-/**
+    /**
      * @var TableView
      */
     protected $tableView;
+
+    protected $enriched = true;
+
     public function __construct(Entity $entity = null, $fields = [])
     {
         $this->entity = $entity;
@@ -83,6 +86,13 @@ class Tabelize
         $this->view = view('Pckg/Maestro:tabelize', [
             'tabelize' => $this,
         ]);
+    }
+
+    public function setEnriched(bool $enriched = true)
+    {
+        $this->enriched = $enriched;
+
+        return $this;
     }
 
     public function make()
@@ -315,7 +325,7 @@ class Tabelize
              */
             if ($originalRecord->relationExists('relation_' . $field->field)) {
                 $enriched = true;
-/**
+                /**
                  * Select type.
                  */
                 $record = $originalRecord->getRelation('relation_' . $field->field);
@@ -328,8 +338,10 @@ class Tabelize
 
                     $enrichedValue = $this->dataOnly
                         ? $eval
-                        : ('<a href="' . ($relation->showTable ? $relation->showTable->getViewUrl($record) : '') . '" title="Open related record">' .
-                            htmlspecialchars($eval) . '</a>');
+                        : [
+                            'url' => $relation->showTable ? $relation->showTable->getViewUrl($record) : '',
+                            'value' => $eval,
+                        ];
                 } else {
                     $enrichedValue = null;
                 }
@@ -417,15 +429,15 @@ class Tabelize
     public function __toStringViews()
     {
         $string = '';
-/**
+        /**
          * Then parse all additional views (custom actions).
          */
         foreach ([$this->views, $this->listActions] as $data) {
             foreach ($data as $key => $view) {
                 try {
-        /**
-                             * Hardcoded string actions.
-                             */
+                    /**
+                     * Hardcoded string actions.
+                     */
                     if (is_string($key) && in_array($key, ['delete', 'clone'])) {
                         $string .= '<maestro-tabelize-' . $key . '></maestro-tabelize-' . $key . '>';
                         continue;
@@ -508,7 +520,7 @@ class Tabelize
         $actionsTemplate = '<!-- start tabelize views -->' . $this->__toStringViews() . '<!-- end tabelize views-->';
         $vueTemplate = '';
         $pattern = "#<\s*?script\b[^>]*>(.*?)</script\b[^>]*>#s";
-/**
+        /**
          * Add all scripts to vue header.
          */
         preg_match_all($pattern, $actionsTemplate, $matches);
@@ -547,7 +559,7 @@ class Tabelize
     public function transformRecord(Obj $record)
     {
         $transformed = [];
-/**
+        /**
          * Table fields
          */
         foreach ($this->getFields() as $key => $field) {
@@ -557,7 +569,7 @@ class Tabelize
                         : $field['field']));
             $enriched = null;
             $transformed[$realKey] = $this->getRecordValue($field, $record, $enrichedValue, $enriched);
-            if ($enriched) {
+            if ($this->enriched && $enriched) {
                 $transformed['*' . $realKey] = $enrichedValue;
             }
         }
@@ -574,7 +586,7 @@ class Tabelize
             }
         }
 
-        if ($this->dataOnly) {
+        if ($this->dataOnly || !$this->enriched) {
             return $transformed;
         }
 
@@ -604,7 +616,7 @@ class Tabelize
         }
         $transformed = array_merge($record->getToArrayValues(), $transformed);
         $transformed = array_merge($transformed, $record->getToJsonValues());
-/**
+        /**
          * ID is mandatory.
          */
         if (!isset($transformed['id'])) {

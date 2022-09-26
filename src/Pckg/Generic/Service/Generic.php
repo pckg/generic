@@ -13,17 +13,17 @@ use Pckg\Database\Relation\MorphedBy;
 use Pckg\Framework\Exception\NotFound;
 use Pckg\Framework\Router;
 use Pckg\Generic\Controller\Generic as GenericController;
-use Pckg\Generic\Entity\Actions;
+use CommsCenter\Pagebuilder\Entity\Actions;
 use Pckg\Generic\Entity\DataAttributes;
-use Pckg\Generic\Entity\Layouts;
-use Pckg\Generic\Entity\Routes;
+use CommsCenter\Pagebuilder\Entity\Layouts;
+use CommsCenter\Pagebuilder\Entity\Routes;
 use Pckg\Generic\Entity\SettingsMorphs;
-use Pckg\Generic\Record\Action as ActionRecord;
-use Pckg\Generic\Record\ActionsMorph;
-use Pckg\Generic\Record\Layout;
-use Pckg\Generic\Record\Route;
+use CommsCenter\Pagebuilder\Record\Action as ActionRecord;
+use CommsCenter\Pagebuilder\Record\ActionsMorph;
+use CommsCenter\Pagebuilder\Record\Layout;
+use CommsCenter\Pagebuilder\Record\Route;
 use Pckg\Generic\Record\Setting;
-use Pckg\Generic\Resolver\Route as RouteResolver;
+use CommsCenter\Pagebuilder\Resolver\Route as RouteResolver;
 use Pckg\Generic\Service\Generic\Action;
 use Pckg\Generic\Service\Generic\Block;
 use Pckg\Generic\Service\Partial\AbstractPartial;
@@ -63,11 +63,13 @@ class Generic
         }
     }
 
-    public function pushMetadata($actionId, $key, $value)
+    public function pushMetadata($actionId, $key, $value, $store = true)
     {
-        $this->metadata[$actionId][$key] = $value;
+        if ($store) {
+            $this->metadata[$actionId][$key] = $value;
+        }
 
-        return '$store.state.generic.metadata[' . $actionId . '].' . $key;
+        return '$store.state.generic.metadata[\'' . $actionId . '\'][\'' . $key . '\']';
     }
 
     public function getMetaData()
@@ -161,12 +163,12 @@ class Generic
 
     public function hasAction(array $actions = [])
     {
-        return $this->actions && $this->actions->has(function (\Pckg\Generic\Record\Action $action) use ($actions) {
+        return $this->actions && $this->actions->has(function (\CommsCenter\Pagebuilder\Record\Action $action) use ($actions) {
             return in_array($action->slug, $actions);
         });
     }
 
-    public function readRoute(Route $route, $resolvers = true)
+    public function readRoute(Route $route, $resolvers = true, $nativeResolvers = null)
     {
         $this->route = $route;
 
@@ -175,7 +177,7 @@ class Generic
          */
         $resolved = [];
         if ($resolvers && $route->resolvers) {
-            $router = router()->get();
+            $router = is_null($nativeResolvers) ? router()->get() : $nativeResolvers;
             $decoded = @json_decode($route->resolvers, true);
             foreach ($decoded ?? [] as $key => $conf) {
                 if (is_array($conf)) {
@@ -240,6 +242,11 @@ class Generic
             return;
         }
 
+        /**
+         * We have 2 layouts at the moment:
+         *  - layout connected with layout_id
+         *  - layout connected with layout_component
+         */
         $layoutActions = true
             ? $layout->actions(function (MorphedBy $actions) {
             // $actions->getMiddleEntity()->joinPermissionTo('read');
@@ -265,19 +272,30 @@ class Generic
                 1
             );
 
+        $parentMost = null;
+        $i = 0;
+        while ($i < 10 && $parentMost !== $route) {
+            $i++;
+            $lastParentMost = $parentMost;
+            $parentMost = ($parentMost ?? $route)->parent ?? ($parentMost ?? $route);
+            if ($lastParentMost === $parentMost) {
+                break;
+            }
+        }
+
         $layoutActions = $layoutActions->sortBy(function ($item) {
             return $item->pivot->order;
         })->tree(function ($action) {
             return $action->pivot->parent_id;
         }, function ($action) {
             return $action->pivot->id;
-        })->filter(function (ActionRecord $action) use ($route) {
+        })->filter(function (ActionRecord $action) use ($route, $parentMost) {
             /**
              * Filter out hidden and shown.
              */
             if ($route) {
                 $hide = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockHide', []);
-                if ($hide && in_array($route->id, $hide)) {
+                if ($hide && (in_array($route->id, $hide) || in_array($parentMost->id, $hide))) {
                     /**
                      * If action has defined hide values, hide actions on current route.
                      */
@@ -285,7 +303,7 @@ class Generic
                 }
 
                 $show = $action->pivot->getSettingValue('pckg.generic.pageStructure.wrapperLockShow', []);
-                if ($show && !in_array($route->id, $show)) {
+                if ($show && (!in_array($route->id, $show) && !in_array($parentMost->id, $show))) {
                     /**
                      * If action has defined show values, hide action if route is not defined.
                      */
@@ -335,7 +353,7 @@ class Generic
      * @return Action
      */
     public function addAction(
-        \Pckg\Generic\Record\Action $action,
+        \CommsCenter\Pagebuilder\Record\Action $action,
         Route $route,
         $resolved = []
     ) {
@@ -436,9 +454,10 @@ class Generic
         return $variables;
     }
 
-    public function build()
+    public function build(Route $route)
     {
         $args = array_merge(router()->get('data'), router()->getResolves());
+        $args['route'] = $route;
 
         $this->actions->each(function (ActionRecord $action) use ($args) {
             (new Action($action))->build($args);
@@ -474,223 +493,10 @@ class Generic
     }
 
     /**
-     * @param Routes $routes
-     * @param Router $router
-     */
-    public static function addRoutesFromDb()
-    {
-        /**
-         * We should cache routes.
-         */
-        $router = router();
-        /*$cacheName = Generic::class . ':addRoutesFromDb';
-        $cache = cache()->getAppCache();
-
-        if (false && $cache->contains($cacheName)) {
-            $routes = unserialize($cache->fetch($cacheName));
-            $router->setRoutes($routes);
-            return;
-        }*/
-
-        /**
-         *
-         */
-        $localeManager = localeManager();
-        $languages = $localeManager->getFrontendLanguages()->keyBy('slug');
-        $defaultLanguage = $localeManager->getDefaultFrontendLanguage();
-        $multilingual = $localeManager->isMultilingual();
-
-        if (false && $multilingual) {
-            /**
-             * Copy existing routes to all languages with prefix so translated api things works.
-             */
-            $existingRoutes = $router->getRoutes();
-            foreach ($existingRoutes as $url => $routes) {
-                $route = $routes[0];
-                router()->removeRouteByName($route['name']);
-
-                foreach ($languages as $language) {
-                    /**
-                     * Copy only first route.
-                     */
-                    $route['language'] = $language->slug;
-                    if ($language->id != $defaultLanguage->id && !$language->domain) {
-                        $router->add(
-                            '/' . $language->slug . $url,
-                            $route,
-                            $route['name'] . ':' . $language->slug,
-                            first($language->domain, $defaultLanguage->domain)
-                        );
-                    } else {
-                        $router->add(
-                            $url,
-                            $route,
-                            $route['name'] . ':' . $language->slug,
-                            first($language->domain, $defaultLanguage->domain)
-                        );
-                    }
-                }
-            }
-        }
-
-        $routes = new Routes();
-        if (!$defaultLanguage || !$routes->getRepository()->getCache()->hasTable('routes')) {
-            return;
-        }
-        $onDefaultDomain = $defaultLanguage->domain == server('HTTP_HOST');
-
-        /*if (!auth()->isLoggedIn() || (!auth()->isAdmin() && auth()->getGroupId() != 8)) {
-            $routes->where('published_at', date('Y-m-d H:i'), '<=');
-        }*/
-
-        $arrRoutes = $routes->nonDeleted()
-                            ->whereHas('routes.slug')
-                            ->withLayout()
-                            ->withAllTranslations(function (HasMany $translations) use ($languages) {
-                                /**
-                                 * Load only active translations.
-                                 */
-                                $translations->where('language_id', $languages->keys());
-                                $translations->getRightEntity()->joinLanguage()->orderBy('`default` ASC');
-                            })
-                            ->all();
-
-        /**
-         * When theme setup is not finished.
-         * We need config loaded here. :/
-         */
-        if (!$arrRoutes->count()) {
-            router()->add(
-                '/',
-                [
-                    'tags' => ['layout:backend', 'layout:focused', 'group:admin'],
-                    'view' => function () {
-                        return '<derive-setup-themify></derive-setup-themify>';
-                    }
-                ],
-                'homepage'
-            );
-
-            return;
-        }
-
-        /**
-         * Should we load routes by domain?
-         */
-        foreach ($arrRoutes as $route) {
-            $resolvers = [
-                'route' => RouteResolver::class,
-            ];
-
-            /**
-             * Add route to router.
-             * @deprecated
-             */
-            /*$existingRouteByName = router()->getRouteByName($route->slug);
-
-            if ($existingRouteByName) {
-                / **
-                 * Route already exists, remove and replace it.
-                 * Keep existing resolvers.
-                 * Where was this used? Kalypso offers? Old system?
-                 * /
-                foreach ($existingRouteByName['resolvers'] ?? [] as $key => $res) {
-                    $resolvers[$key] = $res;
-                }
-                router()->removeRouteByName($route->slug);
-                message('Removing system route ' . $route->slug);
-            }*/
-
-            $routeResolvers = $route->resolvers;
-            if ($routeResolvers) {
-                $routeResolvers = (array)json_decode($routeResolvers, true);
-                foreach ($routeResolvers as $key => $res) {
-                    $resolvers[$key] = $res;
-                }
-            }
-
-            /**
-             * Generic controller will take care of rendering and all actions.
-             */
-            $tags = stringify($route->tags)->explodeToCollection(',')->removeEmpty();
-
-            if ($route->layout && strpos($route->layout->template, 'frontend') !== false) {
-                $tags->push('layout:frontend');
-                $tags = $tags->unique();
-            }
-
-            $tags = $tags->all();
-
-            $newRoute = [
-                "controller" => GenericController::class,
-                "view"       => "generic",
-                'resolvers'  => $resolvers,
-                'tags'       => $tags,
-            ];
-
-            /**
-             * Register all translated routes.
-             */
-            $route->_translations->each(function ($routeTranslation) use (
-                $route,
-                $multilingual,
-                $defaultLanguage,
-                $newRoute,
-                $router,
-                $languages
-            ) {
-                /**
-                 * Single-lingual is really simple. :)
-                 */
-                if (!$multilingual) {
-                    $router->add(
-                        $routeTranslation->route,
-                        $newRoute,
-                        $route->slug,
-                        first($defaultLanguage->domain, server('HTTP_HOST'), config('domain'))
-                    );
-
-                    return;
-                }
-
-                $routesLanguage = $languages->getKey($routeTranslation->language_id);
-                if (!$routesLanguage) {
-                    /**
-                     * Language is not enabled on frontend?
-                     */
-                    return;
-                }
-
-                $newRoute['language'] = $routeTranslation->language_id;
-                $domain = $routesLanguage->domain ?? $defaultLanguage->domain;
-                $langPrefix = !$routesLanguage->default ? '/' . $routeTranslation->language_id : '';
-                $url = $routesLanguage->domain
-                    ? $routeTranslation->route
-                    : ($langPrefix . $routeTranslation->route);
-
-                $router->add(
-                    $url,
-                    $newRoute,
-                    $route->slug . ':' . $routeTranslation->language_id,
-                    $domain
-                );
-            });
-        }
-
-        /**
-         * This is where cache should be dumped?
-         */
-        return;
-        cache($cacheName, function () use ($router) {
-            return serialize($router->getRoutes());
-        }, 'app', '2minutes');
-    }
-
-    /**
      * @return mixed|object|AbstractPartial
      * @throws \Exception
      */
-    public function prepareHubPartial($share)
+    public function prepareHubPartial($uuid)
     {
         /**
          * Get definition from hub?
@@ -698,7 +504,7 @@ class Generic
          * @var $hub Api
          */
         $hub = resolve(Api::class);
-        $shareDefinition = $hub->getApi('share/' . $share . '/definition')->getApiResponse('share');
+        $shareDefinition = $hub->getApi('share/' . $uuid . '/definition')->getApiResponse('share');
 
         /**
          * Share definition now holds:
@@ -707,28 +513,34 @@ class Generic
          *  - attributes
          *  - settings
          */
-        $partial = Reflect::create($shareDefinition['extends'] ?? $shareDefinition['object']);
+        $partial = Reflect::create($shareDefinition['props']['extends'] ?? $shareDefinition['props']['object']);
 
-        if (isset($shareDefinition['content'])) {
+        if (isset($shareDefinition['props']['content'])) {
             $partial->setContent($shareDefinition['content']);
         }
 
-        if (isset($shareDefinition['settings'])) {
-            $partial->setSettings($shareDefinition['settings']);
+        if (isset($shareDefinition['props']['settings'])) {
+            $partial->setSettings($shareDefinition['props']['settings']);
         }
 
-        if (isset($shareDefinition['attributes'])) {
-            $partial->setAttributes($shareDefinition['attributes']);
+        if (isset($shareDefinition['props']['attributes'])) {
+            $partial->setAttributes($shareDefinition['props']['attributes']);
         }
 
-        $multi = $shareDefinition['multi'] ?? [];
+        /**
+         * Add multiple shares to the parent?
+         */
+        $multi = $shareDefinition['props']['multi'] ?? [];
         if ($multi) {
             // what to do when multi sub-shares are re-used?
             // - link group, button group
             // we should add first element (which needs a wrapper if needed), and then add all siblings to his parent?
         }
 
-        $style = $shareDefinition['style'] ?? [];
+        /**
+         * Basic events table on Overdose.
+         */
+        $style = $shareDefinition['props']['style'] ?? [];
         if ($style) {
             // this is when style is shared
             // marked span styles, custom heading afters, styled table styles, ...

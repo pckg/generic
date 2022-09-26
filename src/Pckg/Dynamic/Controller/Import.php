@@ -116,7 +116,6 @@ class Import extends Controller
         $headers = [];
         $csv->setHeaderOffset(1);
         $availableFields = $table->listableFields(function (HasMany $fields) {
-
             $fields->realFields();
         });
         $arrAvailableFields = $availableFields->map('field')->all();
@@ -202,17 +201,16 @@ class Import extends Controller
                 }
 
                 runInLocale(function () use ($uniqueFields, $table, $values, $uniqueValues, &$prevRecord, $strategy) {
-
                     $entity = $table->createEntity();
                     if (!$prevRecord && $uniqueFields && $uniqueValues) {
-                    /**
-                                             * Check for existing records.
-                                             */
-                        $record = Record::getOrNew($uniqueValues, $entity);
+                        /**
+                         * Check for existing records.
+                         */
+                        $record = $prevRecord = Record::getOrNew($uniqueValues, $entity);
                         if ($strategy === 'skip' && !$record->isNew()) {
+                            // import translations separately?
                             return;
                         }
-                        $prevRecord = $record;
                     } elseif (!$prevRecord) {
                     // no unique fields or no unique values, insert
                         /**
@@ -220,16 +218,16 @@ class Import extends Controller
                          */
                         $record = $prevRecord = new Record([], $entity);
                     } else {
-                    /**
-                                             * Update translation.
-                                             */
+                        /**
+                         * Update translation.
+                         */
                         $record = $prevRecord;
                     }
 
                     $record->set($values);
-    /**
-                         * Save record.
-                         */
+                    /**
+                     * Save record.
+                     */
                     $record->save($entity);
                 }, $locale);
             }

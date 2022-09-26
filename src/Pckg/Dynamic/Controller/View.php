@@ -28,8 +28,8 @@ class View extends Controller
 
     public function getSaveViewAction(Table $table, TableView $tableView = null)
     {
-        vueManager()->addView('Pckg/Dynamic:view/_save', [
-            'savedViews'         => (new TableViews())->where('dynamic_table_id', $table->id)->all(),
+        /*vueManager()->addView('Pckg/Dynamic:view/_save', [
+            'savedViews'         => (new TableViews)->where('dynamic_table_id', $table->id)->all(),
             'saveCurrentViewUrl' => url(
                 $tableView
                     ? 'dynamic.record.view.savePlusView'
@@ -39,7 +39,7 @@ class View extends Controller
                     'tableView' => $tableView,
                 ]
             ),
-        ]);
+        ]);*/
 
         return view('Pckg/Dynamic:view/save', ['view' => $tableView]);
     }

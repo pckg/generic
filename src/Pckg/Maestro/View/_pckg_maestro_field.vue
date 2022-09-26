@@ -23,23 +23,28 @@
                                            :field="fieldId"
                                            :record="record.id"
                                            :value="value"
-                                           :table="table"
-                                           :url="orderFieldUrl"></pckg-tabelize-field-order>
+                                           :table="table"></pckg-tabelize-field-order>
             </template>
-            <template v-else-if="type == 'datetime' && isTogglable">
-                <template v-if="!editable">
-                    <template v-if="!hasPrivilegeToEdit">{{ value | datetime }}</template>
-                    <pckg-tabelize-field-datetime v-else
-                                                  :field="fieldId"
-                                                  :record="record.id"
-                                                  :value="value"
-                                                  :table="table"
-                                                  :min="minTogglable"
-                                                  :max="maxTogglable"
-                                                  :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
+            <template v-else-if="type == 'datetime'">
+                <template v-if="isTogglable">
+                    <template v-if="!editable">
+                        <template v-if="!hasPrivilegeToEdit">{{ value | datetime }}</template>
+                        <pckg-tabelize-field-datetime v-else
+                                                      :field="fieldId"
+                                                      :record="record.id"
+                                                      :value="value"
+                                                      :table="table"
+                                                      :min="minTogglable"
+                                                      :max="maxTogglable"
+                                                      :url="toggleFieldUrl"></pckg-tabelize-field-datetime>
+                    </template>
+                    <template v-else>
+                        <input type="date" v-model="model"/>
+                    </template>
                 </template>
-                <template v-else>
-                    <input type="date" v-model="model"/>
+                <template v-else-if="value">
+                    <span class="display-block nobr">{{ value | date }}</span>
+                    <span class="color-grayish display-block nobr">{{ value | time }}</span>
                 </template>
             </template>
             <template v-else-if="type == 'editor'">
@@ -55,7 +60,8 @@
                 <template v-if="!editable">
                     <pckg-maestro-field-indicator :field="myField" :record="record"
                                                   :db-field="dbField"></pckg-maestro-field-indicator>
-                    <span v-html="richValue"></span>
+                    <router-link :to="record[`*${key}`].url" v-if="record[`*${key}`] && typeof record[`*${key}`] === 'object'">{{ record[`*${key}`].value }}</router-link>
+                    <span v-else v-html="richValue"></span>
                 </template>
             </template>
             <template v-else-if="type == 'php'">
@@ -74,13 +80,9 @@
             </template>
             <template v-else>
                 <template v-if="!editable">
-                    <template v-if="key == 'id'">
-                        <a :href="record.viewUrl" v-html="value" class="nobr" title="Open record"></a>
-                    </template>
-                    <template v-else-if="key == 'title'">
-                        <a :href="record.viewUrl" v-html="value" title="Open record"></a>
-                    </template>
-                    <template v-else-if="true || field.isRaw"><span class="raw">{{ value }}</span></template>
+                    <pb-link v-if="key == 'id'" :to="record.viewUrl" v-html="value" class="nobr" title="Open record"></pb-link>
+                    <pb-link v-else-if="key == 'title'" :to="record.viewUrl" v-html="value" title="Open record"></pb-link>
+                    <span class="raw" v-else-if="true || field.isRaw">{{ value }}</span>
                     <template v-else><span v-html="value" class="else"></span></template>
                 </template>
                 <template v-else>
@@ -101,7 +103,7 @@
 
 <script>
     export default {
-        mixins: [pckgCdn],
+        mixins: [CommsHubHelpers.cdn],
         name: 'pckg-maestro-field',
         props: {
             field: {
@@ -136,8 +138,7 @@
                 myRelations: this.relations,
                 myFields: this.parentFields,
                 editable: false,
-                toggleFieldUrl: Pckg.router.urls['dynamic.records.field.toggle'],
-                orderFieldUrl: Pckg.router.urls['dynamic.records.field.order'],
+                toggleFieldUrl: '/dynamic/records/field/[table]/[field]/[record]/toggle/[state]',
                 model: null
             };
         },

@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
     export default {
-        mixins: [pckgDelimiters, dynamicEvents],
+        mixins: [dynamicEvents],
         name: 'pckg-generic-routes-importexport',
         data: function () {
             return {
